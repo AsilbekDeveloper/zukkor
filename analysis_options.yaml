@@ -1,0 +1,29 @@
+# Zukkor lint sozlamalari — flutter_lints asosida, bir nechta qat'iyroq
+# qoidalar bilan.
+
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    # freezed konstruktorlarida @JsonKey ishlatish rasmiy tavsiya etilgan
+    # uslub — bu warning freezed uchun noto'g'ri signal.
+    invalid_annotation_target: ignore
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    avoid_print: true
+    require_trailing_commas: true
+    unawaited_futures: true
+    always_declare_return_types: true
+    prefer_single_quotes: true
+    directives_ordering: true

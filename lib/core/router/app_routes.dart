@@ -1,0 +1,33 @@
+/// Marshrut manzillari — string'lar kod bo'ylab sochilmaydi.
+abstract final class AppRoutes {
+  static const String splash = '/';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String onboarding = '/onboarding';
+  static const String home = '/home';
+  static const String categories = '/categories';
+  static const String leaderboard = '/leaderboard';
+  static const String friends = '/friends';
+  static const String addFriend = '/friends/add';
+  static const String duel = '/duel';
+  static const String profile = '/profile';
+  static const String quizIntro = '/quiz-intro';
+  static const String quiz = '/quiz';
+  static const String result = '/result';
+  static const String joinCode = '/join-code';
+  static const String lobby = '/lobby';
+  static const String fullLeaderboard = '/leaderboard/full';
+  static const String playerDetail = '/leaderboard/player';
+  static const String rankFilter = '/leaderboard/filter';
+  static const String settings = '/profile/settings';
+  static const String history = '/profile/history';
+  static const String duelWaiting = '/duel-waiting';
+  static const String duelInvite = '/duel-invite';
+  static const String notifications = '/notifications';
+  static const String editProfile = '/profile/edit';
+  static const String languageSettings = '/profile/settings/language';
+  static const String notificationSettings = '/profile/settings/notifications';
+  static const String privacyPolicy = '/profile/settings/privacy';
+  static const String helpCenter = '/profile/settings/help';
+  static const String termsOfUse = '/profile/settings/terms';
+}
