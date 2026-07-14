@@ -6,7 +6,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
-import 'step_header.dart';
+import '../../../../core/widgets/step_header.dart';
 
 /// Onboarding step 1 — pick an avatar background color (photo upload is a
 /// stub for now, see [onUploadPhoto]).

@@ -10,6 +10,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/invite_code_card.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
+import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../models/lobby_player.dart';
 import '../widgets/lobby_waiting_indicator.dart';
 import '../widgets/player_list.dart';
@@ -27,7 +28,9 @@ enum LobbyRole { host, guest }
 /// once realtime multiplayer exists this comes from a room-state
 /// WebSocket instead. The host's "Start the game" jumps straight to the
 /// Quiz screen with a fixed category, matching the prototype (which has
-/// no category-selection step inside the lobby itself).
+/// no category-selection step inside the lobby itself). Marked as a
+/// lobby game ([QuizLaunchArgs.isLobbyGame]), so it ends on a room
+/// leaderboard (`LobbyResultScreen`) instead of the plain solo result.
 class LobbyScreen extends StatelessWidget {
   const LobbyScreen({required this.role, super.key});
 
@@ -78,8 +81,10 @@ class LobbyScreen extends StatelessWidget {
     );
   }
 
-  void _startGame(BuildContext context) =>
-      context.push(AppRoutes.quiz, extra: QuizCategory.sample.first);
+  void _startGame(BuildContext context) => context.push(
+        AppRoutes.quiz,
+        extra: QuizLaunchArgs(category: QuizCategory.sample.first, isLobbyGame: true),
+      );
 }
 
 class _LobbyHeader extends StatelessWidget {

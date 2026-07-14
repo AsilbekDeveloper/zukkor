@@ -6,7 +6,7 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
-import 'step_header.dart';
+import '../../../../core/widgets/step_header.dart';
 
 /// Onboarding step 2 — first name, last name, username
 /// (Zukkor_Profil_Yaratish.docx: all three required).

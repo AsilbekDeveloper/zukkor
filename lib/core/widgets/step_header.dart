@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/extensions/context_x.dart';
-import '../../../../core/extensions/num_x.dart';
-import '../../../../core/theme/app_spacing.dart';
+import '../extensions/context_x.dart';
+import '../extensions/num_x.dart';
+import '../theme/app_spacing.dart';
 
-/// Shared header for each wizard step: a colored icon badge, a headline,
-/// and a short explanatory subtext — mirrors the prototype's
-/// `.setup-badge` / `.setup-headline` / `.setup-subtext`.
+/// Shared header for a wizard step: a colored icon badge, a headline, and
+/// a short explanatory subtext — mirrors the prototype's `.setup-badge` /
+/// `.setup-headline` / `.setup-subtext`. Shared by the Onboarding wizard
+/// and the Introduction walkthrough.
 class StepHeader extends StatelessWidget {
   const StepHeader({
     super.key,

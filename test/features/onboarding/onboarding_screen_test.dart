@@ -20,7 +20,10 @@ Future<void> _pumpAppOnOnboarding(WidgetTester tester) async {
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
-  SharedPreferences.setMockInitialValues(<String, Object>{});
+  // Skips the Introduction walkthrough (its explainer pages run a
+  // continuous animation that would make the pumpAndSettle below hang) —
+  // this file only cares about the Onboarding wizard itself.
+  SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   await tester.pumpWidget(

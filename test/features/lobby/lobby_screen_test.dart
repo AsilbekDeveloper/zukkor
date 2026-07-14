@@ -8,9 +8,13 @@ import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
+import 'package:zukkor/features/leaderboard/presentation/widgets/leaderboard_podium.dart';
+import 'package:zukkor/features/lobby/presentation/screens/lobby_result_screen.dart';
 import 'package:zukkor/features/lobby/presentation/screens/lobby_screen.dart';
-import 'package:zukkor/features/quiz/presentation/models/quiz_category.dart';
+import 'package:zukkor/features/quiz/presentation/models/quiz_launch_args.dart';
+import 'package:zukkor/features/quiz/presentation/models/quiz_result.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_screen.dart';
+import 'package:zukkor/features/quiz/presentation/widgets/answer_button.dart';
 
 Future<GoRouter> _pumpLobby(
   WidgetTester tester, {
@@ -32,7 +36,14 @@ Future<GoRouter> _pumpLobby(
       ),
       GoRoute(
         path: AppRoutes.quiz,
-        builder: (context, state) => QuizScreen(category: state.extra! as QuizCategory),
+        builder: (context, state) {
+          final QuizLaunchArgs args = state.extra! as QuizLaunchArgs;
+          return QuizScreen(category: args.category, isLobbyGame: args.isLobbyGame);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.lobbyResult,
+        builder: (context, state) => LobbyResultScreen(result: state.extra! as QuizResult),
       ),
     ],
   );
@@ -100,5 +111,32 @@ void main() {
 
     expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
     expect(find.text(AppStrings.lobbyScreenTitle), findsNothing);
+  });
+
+  testWidgets('host: playing through all questions lands on the room results (leaderboard)', (tester) async {
+    await _pumpLobby(tester, role: LobbyRole.host);
+
+    await tester.tap(find.text(AppStrings.startGameButton));
+    await tester.pumpAndSettle();
+    expect(find.byType(QuizScreen), findsOneWidget);
+
+    for (int question = 1; question <= 5; question++) {
+      await tester.tap(find.byType(AnswerButton).first);
+      await tester.pump(const Duration(milliseconds: 900));
+      if (question < 5) {
+        await tester.pump();
+      }
+    }
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // A room leaderboard, not the plain solo Result screen.
+    expect(find.byType(LobbyResultScreen), findsOneWidget);
+    expect(find.text(AppStrings.lobbyResultTitle), findsOneWidget);
+    expect(find.byType(LeaderboardPodium), findsOneWidget);
+    // The room's mock players are ranked alongside "You".
+    expect(find.text('Aziz'), findsOneWidget);
+    expect(find.text(AppStrings.currentUserName), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

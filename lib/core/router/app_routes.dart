@@ -1,6 +1,7 @@
 /// Marshrut manzillari — string'lar kod bo'ylab sochilmaydi.
 abstract final class AppRoutes {
   static const String splash = '/';
+  static const String introduction = '/introduction';
   static const String login = '/login';
   static const String register = '/register';
   static const String onboarding = '/onboarding';
@@ -16,6 +17,7 @@ abstract final class AppRoutes {
   static const String result = '/result';
   static const String joinCode = '/join-code';
   static const String lobby = '/lobby';
+  static const String lobbyResult = '/lobby-result';
   static const String fullLeaderboard = '/leaderboard/full';
   static const String playerDetail = '/leaderboard/player';
   static const String rankFilter = '/leaderboard/filter';

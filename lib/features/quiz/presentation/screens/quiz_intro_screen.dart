@@ -10,6 +10,7 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../models/quiz_category.dart';
+import '../models/quiz_launch_args.dart';
 
 /// Short "5, 4, 3, 2, 1, Start!" countdown shown right after a category
 /// is picked — mirrors the prototype's `view-quiz-intro` /
@@ -46,7 +47,7 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
       timer.cancel();
       _navigateTimer = Timer(_startHoldDuration, () {
         if (!mounted) return;
-        context.pushReplacement(AppRoutes.quiz, extra: widget.category);
+        context.pushReplacement(AppRoutes.quiz, extra: QuizLaunchArgs(category: widget.category));
       });
     }
   }

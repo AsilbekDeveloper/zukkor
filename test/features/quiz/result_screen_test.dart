@@ -9,6 +9,7 @@ import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_category.dart';
+import 'package:zukkor/features/quiz/presentation/models/quiz_launch_args.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_result.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:zukkor/features/quiz/presentation/screens/result_screen.dart';
@@ -29,7 +30,10 @@ Future<GoRouter> _pumpResult(WidgetTester tester, {Size size = const Size(390, 8
       GoRoute(path: AppRoutes.duel, builder: (context, state) => const DuelScreen()),
       GoRoute(
         path: AppRoutes.quiz,
-        builder: (context, state) => QuizScreen(category: state.extra! as QuizCategory),
+        builder: (context, state) {
+          final QuizLaunchArgs args = state.extra! as QuizLaunchArgs;
+          return QuizScreen(category: args.category, isLobbyGame: args.isLobbyGame);
+        },
       ),
       GoRoute(
         path: AppRoutes.result,

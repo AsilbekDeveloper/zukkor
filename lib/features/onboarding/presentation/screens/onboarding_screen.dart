@@ -9,10 +9,10 @@ import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/onboarding_progress_header.dart';
 import '../models/onboarding_direction.dart';
 import '../widgets/avatar_step.dart';
 import '../widgets/direction_step.dart';
-import '../widgets/onboarding_progress_header.dart';
 import '../widgets/profile_info_step.dart';
 
 /// 3-step profile setup wizard: Avatar → Name/Username → Direction

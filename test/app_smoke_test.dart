@@ -17,7 +17,9 @@ import 'package:zukkor/core/storage/app_preferences.dart';
 /// buzilmagani kafolatlanadi.
 void main() {
   testWidgets('ilova Login ekranida ochiladi', (tester) async {
-    SharedPreferences.setMockInitialValues(<String, Object>{});
+    // These tests exercise the post-Introduction Login/Register/Onboarding
+    // flow directly, so the walkthrough gate is pre-cleared here.
+    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -46,7 +48,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    SharedPreferences.setMockInitialValues(<String, Object>{});
+    // These tests exercise the post-Introduction Login/Register/Onboarding
+    // flow directly, so the walkthrough gate is pre-cleared here.
+    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -102,7 +106,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    SharedPreferences.setMockInitialValues(<String, Object>{});
+    // These tests exercise the post-Introduction Login/Register/Onboarding
+    // flow directly, so the walkthrough gate is pre-cleared here.
+    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -146,7 +152,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    SharedPreferences.setMockInitialValues(<String, Object>{});
+    // These tests exercise the post-Introduction Login/Register/Onboarding
+    // flow directly, so the walkthrough gate is pre-cleared here.
+    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -176,5 +184,41 @@ void main() {
 
     expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
     expect(find.text(AppStrings.loginTitle), findsNothing);
+  });
+
+  testWidgets('first launch shows the Introduction walkthrough before Login', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    // No `hasSeenIntroduction` flag set — this is a brand-new install.
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // The Introduction explainer pages run a continuous "breathing"/orbit
+    // animation for as long as they're mounted, so `pumpAndSettle()`
+    // would never return here — bounded pumps only.
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        ],
+        child: const ZukkorApp(),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text(AppStrings.introWelcomeTitle), findsOneWidget);
+    expect(find.text(AppStrings.loginTitle), findsNothing);
+
+    // Skip jumps straight to Login and persists the flag.
+    await tester.tap(find.text(AppStrings.introSkip));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text(AppStrings.loginTitle), findsOneWidget);
+    expect(prefs.getBool('zukkor.has_seen_introduction'), isTrue);
   });
 }

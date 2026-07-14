@@ -14,22 +14,27 @@ import '../models/quiz_result.dart';
 import '../widgets/answer_button.dart';
 import '../widgets/question_card.dart';
 import '../widgets/quiz_progress_header.dart';
-import '../widgets/timer_track.dart';
 
 /// The question-answer loop — mirrors the prototype's `view-quiz`.
 ///
 /// CURRENT STATE: presentation only, [QuizQuestionBank] placeholder
 /// questions (5 per category, shuffled each attempt) — once the quiz
 /// data layer exists these come from the backend along with real-time
-/// duel/lobby state. Each question gets 15 seconds (mirrors the
-/// prototype's `.timer-track`); running out of time locks in a wrong
-/// answer automatically, same as picking one. The back button abandons
-/// the quiz and returns straight to Home (matches the prototype's
+/// duel/lobby state. Each question gets 15 seconds; running out of time
+/// locks in a wrong answer automatically, same as picking one. No
+/// countdown is shown to the player — it only drives scoring in the
+/// background (see [_startSpeedTimer]). The back button abandons the
+/// quiz and returns straight to Home (matches the prototype's
 /// `data-nav="home"` — no confirmation dialog).
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({required this.category, super.key});
+  const QuizScreen({required this.category, this.isLobbyGame = false, super.key});
 
   final QuizCategory category;
+
+  /// Set when reached from the Lobby (multiplayer room) — changes the
+  /// destination once every question is answered from the plain
+  /// [ResultScreen] to [LobbyResultScreen] (a room leaderboard).
+  final bool isLobbyGame;
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -40,12 +45,23 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
   static const Duration _feedbackDelay = Duration(milliseconds: 900);
   static const int _xpPerCorrectAnswer = 15;
 
+  // Kahoot-style hidden per-question score: never shown to the player,
+  // just ticked down every 10ms and used to scale the XP a correct
+  // answer earns (see [_lockInAnswer]).
+  static const int _pointsMax = 1000;
+  static const Duration _speedTick = Duration(milliseconds: 10);
+  static const int _speedTicksPerQuestion = 1500; // _perQuestionDuration ÷ _speedTick
+  static const double _pointsDecrementPerTick = _pointsMax / _speedTicksPerQuestion;
+
   late final List<QuizQuestion> _questions;
   late final AnimationController _timerController;
   Timer? _feedbackTimer;
+  Timer? _speedTimer;
+  double _pointsRemaining = _pointsMax.toDouble();
 
   int _index = 0;
   int _correctCount = 0;
+  int _totalXp = 0;
   int? _selectedIndex;
   bool _answered = false;
 
@@ -56,16 +72,34 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
     _timerController = AnimationController(vsync: this, duration: _perQuestionDuration)
       ..addStatusListener(_onTimerStatusChanged)
       ..forward();
+    _startSpeedTimer();
   }
 
   @override
   void dispose() {
     _feedbackTimer?.cancel();
+    _speedTimer?.cancel();
     _timerController.dispose();
     super.dispose();
   }
 
   QuizQuestion get _current => _questions[_index];
+
+  /// Resets the hidden 1000 → 0 point countdown for a fresh question. It
+  /// isn't rendered anywhere, so this deliberately skips `setState` —
+  /// there's nothing on screen for it to invalidate.
+  void _startSpeedTimer() {
+    _pointsRemaining = _pointsMax.toDouble();
+    _speedTimer?.cancel();
+    _speedTimer = Timer.periodic(_speedTick, (_) {
+      _pointsRemaining = (_pointsRemaining - _pointsDecrementPerTick).clamp(0, _pointsMax.toDouble());
+    });
+  }
+
+  /// Kahoot's own formula: a correct answer earns between 500 (right at
+  /// the buzzer) and 1000 (instant) points, scaled by how much of the
+  /// hidden countdown is left when it's answered.
+  int _kahootPoints() => (_pointsMax * (0.5 + (_pointsRemaining / _pointsMax) * 0.5)).round();
 
   void _onTimerStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.completed && !_answered) {
@@ -76,10 +110,22 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
   void _lockInAnswer(int? pickedIndex) {
     if (_answered) return;
     _timerController.stop();
+    _speedTimer?.cancel();
+
+    final bool isCorrect = pickedIndex == _current.correctIndex;
+    // Points convert 1:1 into the app's XP economy at _xpPerCorrectAnswer
+    // per full 1000 — an instant correct answer earns the full 15 XP, a
+    // last-moment one about half.
+    final int earnedXp =
+        isCorrect ? (_kahootPoints() / _pointsMax * _xpPerCorrectAnswer).round() : 0;
+
     setState(() {
       _answered = true;
       _selectedIndex = pickedIndex;
-      if (pickedIndex == _current.correctIndex) _correctCount++;
+      if (isCorrect) {
+        _correctCount++;
+        _totalXp += earnedXp;
+      }
     });
     _feedbackTimer = Timer(_feedbackDelay, _advance);
   }
@@ -92,9 +138,10 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
         category: widget.category,
         correctCount: _correctCount,
         totalCount: _questions.length,
-        xpEarned: _correctCount * _xpPerCorrectAnswer,
+        xpEarned: _totalXp,
       );
-      context.pushReplacement(AppRoutes.result, extra: result);
+      final String destination = widget.isLobbyGame ? AppRoutes.lobbyResult : AppRoutes.result;
+      context.pushReplacement(destination, extra: result);
       return;
     }
 
@@ -106,6 +153,7 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
     _timerController
       ..reset()
       ..forward();
+    _startSpeedTimer();
   }
 
   AnswerVisualState _stateFor(int optionIndex) {
@@ -133,13 +181,8 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
               QuizProgressHeader(
                 questionNumber: _index + 1,
                 totalQuestions: _questions.length,
-                score: _correctCount * _xpPerCorrectAnswer,
+                score: _totalXp,
                 onBack: () => context.go(AppRoutes.home),
-              ),
-              AppSpacing.lg.vGap,
-              AnimatedBuilder(
-                animation: _timerController,
-                builder: (context, child) => TimerTrack(progress: 1 - _timerController.value),
               ),
               AppSpacing.lg.vGap,
               QuestionCard(categoryName: widget.category.name, question: question.text),

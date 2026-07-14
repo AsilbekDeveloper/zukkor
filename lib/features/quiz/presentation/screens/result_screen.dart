@@ -9,6 +9,7 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../models/quiz_launch_args.dart';
 import '../models/quiz_result.dart';
 import '../widgets/score_ring.dart';
 
@@ -64,7 +65,10 @@ class ResultScreen extends StatelessWidget {
               AppButton.primary(
                 label: AppStrings.playAgain,
                 icon: const Icon(TablerIcons.refresh, color: Colors.white, size: 18),
-                onPressed: () => context.pushReplacement(AppRoutes.quiz, extra: result.category),
+                onPressed: () => context.pushReplacement(
+                  AppRoutes.quiz,
+                  extra: QuizLaunchArgs(category: result.category),
+                ),
               ),
               AppSpacing.sm.vGap,
               AppButton.secondary(

@@ -10,6 +10,7 @@ class AppPreferences {
   final SharedPreferences _prefs;
 
   static const String _themeModeKey = 'zukkor.theme_mode';
+  static const String _hasSeenIntroductionKey = 'zukkor.has_seen_introduction';
 
   ThemeMode get themeMode {
     return switch (_prefs.getString(_themeModeKey)) {
@@ -21,6 +22,11 @@ class AppPreferences {
 
   Future<void> saveThemeMode(ThemeMode mode) =>
       _prefs.setString(_themeModeKey, mode.name);
+
+  bool get hasSeenIntroduction => _prefs.getBool(_hasSeenIntroductionKey) ?? false;
+
+  Future<void> saveHasSeenIntroduction(bool value) =>
+      _prefs.setBool(_hasSeenIntroductionKey, value);
 }
 
 /// main() da SharedPreferences yuklangach override qilinadi —

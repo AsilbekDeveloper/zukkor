@@ -17,12 +17,14 @@ import 'package:zukkor/features/friends/presentation/screens/duel_waiting_screen
 import 'package:zukkor/features/friends/presentation/screens/friends_screen.dart';
 import 'package:zukkor/features/history/presentation/screens/history_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
+import 'package:zukkor/features/introduction/presentation/screens/introduction_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/models/leaderboard_entry.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/leaderboard_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/rank_filter_screen.dart';
 import 'package:zukkor/features/lobby/presentation/screens/join_code_screen.dart';
+import 'package:zukkor/features/lobby/presentation/screens/lobby_result_screen.dart';
 import 'package:zukkor/features/lobby/presentation/screens/lobby_screen.dart';
 import 'package:zukkor/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:zukkor/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -81,6 +83,7 @@ typedef _ScreenCase = ({String name, WidgetBuilder builder});
 
 final List<_ScreenCase> _screens = [
   (name: 'Splash', builder: (_) => const SplashScreen()),
+  (name: 'Introduction', builder: (_) => const IntroductionScreen()),
   (name: 'Login', builder: (_) => const LoginScreen()),
   (name: 'Register', builder: (_) => const RegisterScreen()),
   (name: 'Onboarding', builder: (_) => const OnboardingScreen()),
@@ -102,6 +105,12 @@ final List<_ScreenCase> _screens = [
   (name: 'JoinCode', builder: (_) => const JoinCodeScreen()),
   (name: 'LobbyHost', builder: (_) => const LobbyScreen(role: LobbyRole.host)),
   (name: 'LobbyGuest', builder: (_) => const LobbyScreen(role: LobbyRole.guest)),
+  (
+    name: 'LobbyResult',
+    builder: (_) => LobbyResultScreen(
+      result: QuizResult(category: QuizCategory.sample.first, correctCount: 4, totalCount: 5, xpEarned: 58),
+    ),
+  ),
   (name: 'FullLeaderboard', builder: (_) => const FullLeaderboardScreen()),
   (name: 'PlayerDetail', builder: (_) => PlayerDetailScreen(entry: LeaderboardEntry.sampleFull.first)),
   (name: 'RankFilter', builder: (_) => const RankFilterScreen(currentFilter: null)),
@@ -220,6 +229,56 @@ void main() {
         expect(tester.takeException(), isNull, reason: 'step 3 overflowed');
 
         expect(find.text(AppStrings.directionStepTitle), findsOneWidget);
+      });
+    }
+  });
+
+  // Same idea for the Introduction walkthrough's 6 pages — walk to the
+  // last page (survey inputs included) without tapping the final button,
+  // since that calls `context.go` and this harness has no GoRouter.
+  group('Introduction walkthrough', () {
+    const List<Size> walkSizes = [Size(320, 568), Size(390, 844), Size(844, 390), Size(1024, 768)];
+
+    for (final Size size in walkSizes) {
+      testWidgets('all 6 pages @ ${size.width.toInt()}x${size.height.toInt()}', (tester) async {
+        await _pumpAt(tester, size, (_) => const IntroductionScreen());
+        expect(tester.takeException(), isNull, reason: 'page 1 overflowed');
+
+        // Pages 1 → 5: plain explainer pages, just advance through them.
+        for (int page = 2; page <= 5; page++) {
+          await tester.tap(find.text(AppStrings.onboardingContinue));
+          await tester.pump(const Duration(milliseconds: 400));
+          expect(tester.takeException(), isNull, reason: 'page $page overflowed');
+        }
+
+        // Page 5: interests survey — select a couple of chips including
+        // "Other", which reveals a text field. The chip grid can overflow
+        // the shortest test viewports, so scroll each chip into view
+        // before tapping it.
+        await tester.ensureVisible(find.text('Math'));
+        await tester.tap(find.text('Math'));
+        await tester.ensureVisible(find.text(AppStrings.introOtherOption));
+        await tester.tap(find.text(AppStrings.introOtherOption));
+        await tester.pump();
+        expect(tester.takeException(), isNull, reason: 'page 5 (interests) overflowed');
+
+        await tester.enterText(find.byType(TextFormField), 'Chess');
+        await tester.pump();
+
+        await tester.tap(find.text(AppStrings.onboardingContinue));
+        await tester.pump(const Duration(milliseconds: 400));
+
+        // Page 6: study place + quiz liking — switch both segments to
+        // their non-default option to exercise the wider labels.
+        expect(tester.takeException(), isNull, reason: 'page 6 overflowed');
+        await tester.ensureVisible(find.text(AppStrings.introStudyPlaceExamPrep));
+        await tester.tap(find.text(AppStrings.introStudyPlaceExamPrep));
+        await tester.ensureVisible(find.text(AppStrings.introQuizLikingNotReally));
+        await tester.tap(find.text(AppStrings.introQuizLikingNotReally));
+        await tester.pump();
+        expect(tester.takeException(), isNull, reason: 'page 6 after selection overflowed');
+
+        expect(find.text(AppStrings.introQuizLikingLabel), findsOneWidget);
       });
     }
   });

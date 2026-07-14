@@ -12,18 +12,21 @@ import '../../features/friends/presentation/screens/duel_waiting_screen.dart';
 import '../../features/friends/presentation/screens/friends_screen.dart';
 import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/introduction/presentation/screens/introduction_screen.dart';
 import '../../features/leaderboard/presentation/models/leaderboard_entry.dart';
 import '../../features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import '../../features/leaderboard/presentation/screens/leaderboard_screen.dart';
 import '../../features/leaderboard/presentation/screens/player_detail_screen.dart';
 import '../../features/leaderboard/presentation/screens/rank_filter_screen.dart';
 import '../../features/lobby/presentation/screens/join_code_screen.dart';
+import '../../features/lobby/presentation/screens/lobby_result_screen.dart';
 import '../../features/lobby/presentation/screens/lobby_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/quiz/presentation/models/quiz_category.dart';
+import '../../features/quiz/presentation/models/quiz_launch_args.dart';
 import '../../features/quiz/presentation/models/quiz_result.dart';
 import '../../features/quiz/presentation/screens/categories_screen.dart';
 import '../../features/quiz/presentation/screens/quiz_intro_screen.dart';
@@ -37,18 +40,29 @@ import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/settings/presentation/screens/terms_of_use_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../constants/app_strings.dart';
+import '../storage/app_preferences.dart';
 import 'app_routes.dart';
 
 /// Hozircha statik marshrutlar — auth holatiga bog'liq yo'naltirish
 /// (redirect) auth qatlami qayta qurilganda qaytariladi. Ekranlar orasida
 /// hozircha to'g'ridan-to'g'ri `context.go(...)` bilan o'tiladi.
+///
+/// `initialLocation` faqat bittasi bundan mustasno: birinchi marta
+/// kirganda (hali [AppPreferences.hasSeenIntroduction] false bo'lganda)
+/// ilova Login/Register'dan OLDIN Introduction oqimini ko'rsatadi.
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
+  final AppPreferences prefs = ref.watch(appPreferencesProvider);
+
   return GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: prefs.hasSeenIntroduction ? AppRoutes.home : AppRoutes.introduction,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.introduction,
+        builder: (context, state) => const IntroductionScreen(),
       ),
       GoRoute(
         path: AppRoutes.login,
@@ -102,13 +116,21 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.quiz,
-        redirect: (context, state) => state.extra is QuizCategory ? null : AppRoutes.home,
-        builder: (context, state) => QuizScreen(category: state.extra! as QuizCategory),
+        redirect: (context, state) => state.extra is QuizLaunchArgs ? null : AppRoutes.home,
+        builder: (context, state) {
+          final QuizLaunchArgs args = state.extra! as QuizLaunchArgs;
+          return QuizScreen(category: args.category, isLobbyGame: args.isLobbyGame);
+        },
       ),
       GoRoute(
         path: AppRoutes.result,
         redirect: (context, state) => state.extra is QuizResult ? null : AppRoutes.home,
         builder: (context, state) => ResultScreen(result: state.extra! as QuizResult),
+      ),
+      GoRoute(
+        path: AppRoutes.lobbyResult,
+        redirect: (context, state) => state.extra is QuizResult ? null : AppRoutes.home,
+        builder: (context, state) => LobbyResultScreen(result: state.extra! as QuizResult),
       ),
       GoRoute(
         path: AppRoutes.joinCode,

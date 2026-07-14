@@ -5,8 +5,8 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/step_header.dart';
 import '../models/onboarding_direction.dart';
-import 'step_header.dart';
 
 /// Onboarding step 3 — single-select "why are you using Zukkor" cards
 /// (Zukkor_Profil_Yaratish.docx: `direction`, required).

@@ -144,6 +144,11 @@ abstract final class AppStrings {
 
   static String playerCount(int current, int max) => '$current/$max';
 
+  // Lobby result (room leaderboard) screen
+  static const String lobbyResultTitle = 'Room results';
+  static const String lobbyResultSubtitle = "Here's how everyone in the room did";
+  static const String backToLobby = 'Play again';
+
   // Duel waiting screen
   static const String duelWaitingTitle = 'Duel';
   static const String waitingForAnswerLabel = 'Waiting for their answer…';
@@ -267,6 +272,49 @@ abstract final class AppStrings {
       "I'm preparing for an exam (e.g. IELTS)";
   static const String directionCasualTitle = 'Just for fun';
   static const String directionCasualSubtitle = 'Playing and passing the time';
+
+  // Introduction — 6-page first-launch walkthrough, shown once before
+  // Login/Register.
+  static const String introSkip = 'Skip';
+  static const String introGetStarted = 'Get started';
+
+  static const String introWelcomeTitle = 'Welcome to Zukkor!';
+  static const String introWelcomeSubtitle =
+      'The knowledge competition app where learning feels like a game';
+  static const String introLanguageLabel = 'Choose your language';
+
+  static const String introSoloTitle = 'Test yourself';
+  static const String introSoloSubtitle =
+      'Pick a category and answer questions solo — earn XP and beat your own best score';
+
+  static const String introDuelTitle = 'Challenge your friends';
+  static const String introDuelSubtitle =
+      'Duel a friend head-to-head, or create a room and play with a whole group in real time';
+
+  static const String introLeaderboardTitle = 'Climb the leaderboard';
+  static const String introLeaderboardSubtitle =
+      'Every correct answer earns XP — track your rank among friends and everyone else';
+
+  static const String introInterestsTitle = 'What are you into?';
+  static const String introInterestsSubtitle =
+      "Pick a few — we'll use these to recommend categories";
+
+  static const String introStudyTitle = 'Almost done!';
+  static const String introStudySubtitle = 'A couple more quick questions';
+  static const String introStudyPlaceLabel = 'Where do you study?';
+  static const String introQuizLikingLabel = 'Do you enjoy solving quizzes and puzzles?';
+
+  static const String introStudyPlaceSchool = 'School';
+  static const String introStudyPlaceUniversity = 'University';
+  static const String introStudyPlaceExamPrep = 'Exam prep';
+
+  static const String introQuizLikingLoveIt = 'Love it';
+  static const String introQuizLikingItsOk = "It's ok";
+  static const String introQuizLikingNotReally = 'Not really';
+
+  static const String introOtherOption = 'Other';
+  static const String introOtherFieldLabel = 'Tell us more';
+  static const String introOtherFieldHint = 'Type here...';
 
   // Auth — screen
   static const String loginTitle = 'Welcome back!';
