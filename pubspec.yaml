@@ -27,6 +27,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   tabler_icons_plus: ^3.44.0
 
+  # UI sound effects
+  audioplayers: ^6.5.1
+
+  # Localization (English/Uzbek/Russian) — lib/i18n/*.i18n.json, generated
+  # via `dart run slang` (no build_runner needed).
+  slang: ^4.7.3
+  slang_flutter: ^4.7.0
+  flutter_localizations:
+    sdk: flutter
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -35,6 +45,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/sounds/
 
   fonts:
     - family: PlusJakartaSans

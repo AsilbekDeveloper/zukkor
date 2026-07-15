@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
@@ -9,6 +8,7 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../leaderboard/presentation/models/leaderboard_entry.dart';
 import '../../../leaderboard/presentation/widgets/leaderboard_podium.dart';
 import '../../../leaderboard/presentation/widgets/rank_list.dart';
@@ -47,7 +47,7 @@ class LobbyResultScreen extends StatelessWidget {
           isCurrentUser: false,
         ),
       (
-        name: AppStrings.currentUserName,
+        name: 'You',
         initials: LobbyPlayer.you.initials,
         avatarColor: LobbyPlayer.you.avatarColor,
         xp: result.xpEarned,
@@ -83,12 +83,12 @@ class LobbyResultScreen extends StatelessWidget {
             children: [
               AppSpacing.xl.vGap,
               Center(
-                child: Text(AppStrings.lobbyResultTitle, style: context.textStyles.labelSmall),
+                child: Text(context.t.lobbyResult.title, style: context.textStyles.labelSmall),
               ),
               AppSpacing.xs.vGap,
               Center(
                 child: Text(
-                  AppStrings.lobbyResultSubtitle,
+                  context.t.lobbyResult.subtitle,
                   textAlign: TextAlign.center,
                   style: context.textStyles.bodyMedium,
                 ),
@@ -99,14 +99,14 @@ class LobbyResultScreen extends StatelessWidget {
               RankList(entries: rest, onEntryTap: (_) {}),
               AppSpacing.xxl.vGap,
               AppButton.primary(
-                label: AppStrings.backToLobby,
+                label: context.t.lobbyResult.playAgain,
                 onPressed: () => context.pushReplacement(AppRoutes.lobby, extra: LobbyRole.host),
               ),
               AppSpacing.sm.vGap,
               Center(
                 child: TextButton(
                   onPressed: () => context.go(AppRoutes.home),
-                  child: const Text(AppStrings.backToHome),
+                  child: Text(context.t.result.backToHome),
                 ),
               ),
               AppSpacing.lg.vGap,

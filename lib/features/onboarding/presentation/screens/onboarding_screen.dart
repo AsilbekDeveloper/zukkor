@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_durations.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
@@ -10,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/onboarding_progress_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/onboarding_direction.dart';
 import '../widgets/avatar_step.dart';
 import '../widgets/direction_step.dart';
@@ -133,8 +133,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               AppSpacing.md.vGap,
               AppButton.primary(
                 label: _step == _totalSteps
-                    ? AppStrings.onboardingStart
-                    : AppStrings.onboardingContinue,
+                    ? context.t.onboarding.start
+                    : context.t.onboarding.continueButton,
                 onPressed: _next,
               ),
               AppSpacing.lg.vGap,
@@ -171,7 +171,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             if (_directionTouched && _direction == null) ...[
               AppSpacing.xs.vGap,
               Text(
-                AppStrings.directionRequired,
+                context.t.onboarding.directionRequired,
                 style: context.textStyles.bodySmall?.copyWith(color: context.colors.error),
                 textAlign: TextAlign.center,
               ),

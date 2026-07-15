@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../lobby/presentation/screens/lobby_screen.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../widgets/category_grid.dart';
@@ -41,7 +41,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _hasUnreadNotifications = true;
 
-  void _comingSoon(BuildContext context) => context.showSnack(AppStrings.comingSoon);
+  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
   Future<void> _openNotifications(BuildContext context) async {
     await context.push(AppRoutes.notifications);

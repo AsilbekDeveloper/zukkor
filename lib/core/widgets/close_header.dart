@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../audio/app_sound.dart';
+import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
 
@@ -39,13 +42,13 @@ class CloseHeader extends StatelessWidget {
   }
 }
 
-class _CloseIconButton extends StatelessWidget {
+class _CloseIconButton extends ConsumerWidget {
   const _CloseIconButton({required this.onTap});
 
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Material(
       color: context.colors.card,
       shape: RoundedRectangleBorder(
@@ -53,7 +56,10 @@ class _CloseIconButton extends StatelessWidget {
         side: BorderSide(color: context.colors.line),
       ),
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          ref.playSound(AppSound.tap);
+          onTap();
+        },
         borderRadius: AppRadius.smAll,
         child: SizedBox(
           width: 44,

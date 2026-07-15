@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
+import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
@@ -12,6 +15,7 @@ import 'package:zukkor/features/quiz/presentation/models/quiz_category.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_launch_args.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_intro_screen.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 final QuizCategory _math = QuizCategory.sample.first;
 
@@ -40,10 +44,18 @@ Future<void> _pumpIntro(WidgetTester tester, {Size size = const Size(390, 844)})
     ],
   );
 
+  SharedPreferences.setMockInitialValues(<String, Object>{});
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
   await tester.pumpWidget(
-    MaterialApp.router(
-      theme: AppTheme.light(),
-      routerConfig: router,
+    ProviderScope(
+      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      child: TranslationProvider(
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
+      ),
     ),
   );
   unawaited(router.push(AppRoutes.quizIntro, extra: _math));

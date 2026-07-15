@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../profile/presentation/widgets/settings_list.dart';
 
 /// Which notification categories are on/off — mirrors the 5 types shown
@@ -67,37 +67,37 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.notificationsPrefTitle, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.notificationSettings.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               SettingsList(
                 rows: [
                   _toggleRow(
                     icon: TablerIcons.swords,
-                    label: AppStrings.notifPrefDuelInvites,
+                    label: context.t.notificationSettings.duelInvites,
                     value: _duelInvites,
                     onChanged: (v) => setState(() => _duelInvites = v),
                   ),
                   _toggleRow(
                     icon: TablerIcons.flame,
-                    label: AppStrings.notifPrefStreakReminders,
+                    label: context.t.notificationSettings.streakReminders,
                     value: _streakReminders,
                     onChanged: (v) => setState(() => _streakReminders = v),
                   ),
                   _toggleRow(
                     icon: TablerIcons.trophy,
-                    label: AppStrings.notifPrefLeaderboardUpdates,
+                    label: context.t.notificationSettings.leaderboardUpdates,
                     value: _leaderboardUpdates,
                     onChanged: (v) => setState(() => _leaderboardUpdates = v),
                   ),
                   _toggleRow(
                     icon: TablerIcons.userPlus,
-                    label: AppStrings.notifPrefFriendRequests,
+                    label: context.t.notificationSettings.friendRequests,
                     value: _friendRequests,
                     onChanged: (v) => setState(() => _friendRequests = v),
                   ),
                   _toggleRow(
                     icon: TablerIcons.sparkles,
-                    label: AppStrings.notifPrefProductUpdates,
+                    label: context.t.notificationSettings.productUpdates,
                     value: _productUpdates,
                     onChanged: (v) => setState(() => _productUpdates = v),
                   ),

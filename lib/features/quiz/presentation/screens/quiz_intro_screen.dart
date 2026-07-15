@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/quiz_category.dart';
 import '../models/quiz_launch_args.dart';
 
@@ -98,7 +98,7 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                     child: FadeTransition(opacity: animation, child: child),
                   ),
                   child: Text(
-                    isStart ? AppStrings.quizStartLabel : '$_count',
+                    isStart ? context.t.quizIntro.startLabel : '$_count',
                     key: ValueKey(isStart ? 'start' : _count),
                     style: TextStyle(
                       fontFamily: 'PlusJakartaSans',

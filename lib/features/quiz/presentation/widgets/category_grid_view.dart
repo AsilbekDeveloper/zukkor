@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/quiz_category.dart';
 
 /// A fluid grid of category cards — mirrors the prototype's `.cat-grid`.
@@ -117,7 +117,7 @@ class _CategoryCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      AppStrings.questionCount(category.questionCount),
+                      context.t.common.questionCount(count: category.questionCount),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textStyles.labelSmall,

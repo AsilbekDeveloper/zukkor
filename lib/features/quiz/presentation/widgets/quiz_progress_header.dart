@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Back button + "Question X/Y" progress bar + running score — mirrors
 /// the prototype's quiz `.header` / `.quiz-progress` / `.quiz-score`.
@@ -48,7 +48,7 @@ class QuizProgressHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppStrings.questionProgress(questionNumber, totalQuestions),
+                context.t.quiz.questionProgress(current: questionNumber, total: totalQuestions),
                 style: context.textStyles.labelSmall,
               ),
               const SizedBox(height: 6),

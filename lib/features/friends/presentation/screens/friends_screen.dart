@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
@@ -9,6 +8,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../core/widgets/section_head.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/friend_entry.dart';
 import '../widgets/friend_list.dart';
 import '../widgets/friends_header.dart';
@@ -45,7 +45,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
     super.dispose();
   }
 
-  void _comingSoon(BuildContext context) => context.showSnack(AppStrings.comingSoon);
+  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
   List<FriendEntry> get _filteredFriends {
     if (_query.isEmpty) return FriendEntry.sampleAll;
@@ -68,13 +68,13 @@ class _FriendsScreenState extends State<FriendsScreen> {
             FriendsHeader(onAddFriendTap: () => context.push(AppRoutes.addFriend)),
             AppSpacing.lg.vGap,
             FriendsSearchBar(
-              placeholder: AppStrings.searchFriendsPlaceholder,
+              placeholder: context.t.friends.searchPlaceholder,
               controller: _searchController,
               onChanged: (value) => setState(() => _query = value),
             ),
             AppSpacing.lg.vGap,
             if (!isSearching) ...[
-              const SectionHead(title: AppStrings.onlineSectionTitle),
+              SectionHead(title: context.t.friends.onlineSection),
               AppSpacing.sm.vGap,
               OnlineFriendsRow(
                 entries: FriendEntry.sampleOnline,
@@ -83,7 +83,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
               AppSpacing.lg.vGap,
             ],
             SectionHead(
-              title: AppStrings.allFriendsSectionTitle,
+              title: context.t.friends.allSection,
               trailing: isSearching ? null : '${FriendEntry.totalFriendCount}',
             ),
             AppSpacing.sm.vGap,
@@ -92,7 +92,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                 padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                 child: Center(
                   child: Text(
-                    AppStrings.noFriendsFound,
+                    context.t.friends.noneFound,
                     style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                   ),
                 ),

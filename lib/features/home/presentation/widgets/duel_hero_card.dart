@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// The big coral "start a duel" card — mirrors the prototype's `.hero`.
 class DuelHeroCard extends StatelessWidget {
@@ -63,12 +63,12 @@ class DuelHeroCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppStrings.duelHeroTitle,
+                context.t.home.duelHeroTitle,
                 style: context.textStyles.headlineMedium?.copyWith(color: Colors.white),
               ),
               AppSpacing.xxs.vGap,
               Text(
-                AppStrings.duelHeroSubtitle,
+                context.t.home.duelHeroSubtitle,
                 style: context.textStyles.bodyMedium?.copyWith(
                   color: Colors.white.withValues(alpha: 0.85),
                 ),
@@ -129,7 +129,7 @@ class _StartDuelButton extends StatelessWidget {
               AppSpacing.xs.hGap,
               Flexible(
                 child: Text(
-                  AppStrings.startDuel,
+                  context.t.home.startDuel,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textStyles.labelLarge?.copyWith(
@@ -177,7 +177,7 @@ class _StreakChip extends StatelessWidget {
           ),
           const SizedBox(width: 3),
           Text(
-            AppStrings.dayUnit(days),
+            context.t.common.dayUnit(count: days),
             style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.85)),
           ),
         ],

@@ -100,6 +100,7 @@ abstract final class AppStrings {
   static const String settingsTheme = 'Theme';
   static const String settingsThemeLight = 'Light';
   static const String settingsThemeDark = 'Dark';
+  static const String settingsSoundEffects = 'Sound effects';
   static const String settingsGroupAccount = 'Account';
   static const String settingsPrivacy = 'Privacy';
   static const String settingsHelpCenter = 'Help center';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Dark card showing overlapping avatars of online friends + a "duel"
 /// shortcut — mirrors the prototype's `.friends`.
@@ -64,7 +64,7 @@ class FriendsOnlineCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppStrings.friendsOnline(onlineCount),
+                      context.t.common.friendsOnline(count: onlineCount),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textStyles.bodyMedium?.copyWith(
@@ -73,7 +73,7 @@ class FriendsOnlineCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      AppStrings.challengeToDuel,
+                      context.t.home.challengeToDuel,
                       style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.7)),
                     ),
                   ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// 3-stat strip (total games, win rate, longest streak) — mirrors the
 /// prototype's `.stats` (same container as Home's [StatsStrip], but
@@ -31,11 +31,11 @@ class ProfileStatsRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: _Stat(value: '$totalGames', label: AppStrings.statTotalGames)),
+          Expanded(child: _Stat(value: '$totalGames', label: context.t.profile.statTotalGames)),
           _divider(context),
-          Expanded(child: _Stat(value: '$winRatePercent%', label: AppStrings.statWinRate)),
+          Expanded(child: _Stat(value: '$winRatePercent%', label: context.t.profile.statWinRate)),
           _divider(context),
-          Expanded(child: _Stat(value: '$longestStreak', label: AppStrings.statLongestStreak)),
+          Expanded(child: _Stat(value: '$longestStreak', label: context.t.profile.statLongestStreak)),
         ],
       ),
     );

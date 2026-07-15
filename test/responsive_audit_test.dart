@@ -43,6 +43,7 @@ import 'package:zukkor/features/settings/presentation/screens/privacy_policy_scr
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/terms_of_use_screen.dart';
 import 'package:zukkor/features/splash/splash_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 /// RESPONSIVE AUDIT — the project's overflow safety net.
 ///
@@ -134,7 +135,7 @@ final List<_ScreenCase> _screens = [
   (name: 'DuelInvite', builder: (_) => const DuelInviteScreen()),
   (name: 'Notifications', builder: (_) => const NotificationsScreen()),
   (name: 'EditProfile', builder: (_) => const EditProfileScreen()),
-  (name: 'Language', builder: (_) => const LanguageScreen(currentLanguage: AppStrings.languageEnglish)),
+  (name: 'Language', builder: (_) => const LanguageScreen()),
   (name: 'NotificationSettings', builder: (_) => const NotificationSettingsScreen()),
   (name: 'PrivacyPolicy', builder: (_) => const PrivacyPolicyScreen()),
   (name: 'HelpCenter', builder: (_) => const HelpCenterScreen()),
@@ -160,15 +161,17 @@ Future<void> _pumpAt(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
-      child: MaterialApp(
-        theme: AppTheme.light(),
-        // Mirrors production: `clampTextScaling` caps the system scale at
-        // 1.3, so 1.3 here is exactly the worst case a user can produce.
-        builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
-          child: child!,
+      child: TranslationProvider(
+        child: MaterialApp(
+          theme: AppTheme.light(),
+          // Mirrors production: `clampTextScaling` caps the system scale at
+          // 1.3, so 1.3 here is exactly the worst case a user can produce.
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(textScale)),
+            child: child!,
+          ),
+          home: Builder(builder: builder),
         ),
-        home: Builder(builder: builder),
       ),
     ),
   );

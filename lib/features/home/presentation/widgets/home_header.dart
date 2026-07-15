@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Greeting + avatar on the left, notifications bell on the right —
 /// mirrors the prototype's `.header`.
@@ -49,7 +49,7 @@ class HomeHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppStrings.homeGreeting, style: context.textStyles.bodySmall),
+              Text(context.t.home.greeting, style: context.textStyles.bodySmall),
               Text(
                 name,
                 style: context.textStyles.titleLarge,

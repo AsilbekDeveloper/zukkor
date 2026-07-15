@@ -18,6 +18,7 @@ import 'package:zukkor/features/settings/presentation/screens/notification_setti
 import 'package:zukkor/features/settings/presentation/screens/privacy_policy_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/terms_of_use_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 // SettingsScreen's theme switch reads/writes themeControllerProvider,
 // which depends on appPreferencesProvider — needs a real ProviderScope
@@ -40,8 +41,7 @@ Future<GoRouter> _pumpSettings(WidgetTester tester, {Size size = const Size(390,
       GoRoute(path: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
       GoRoute(
         path: AppRoutes.languageSettings,
-        builder: (context, state) =>
-            LanguageScreen(currentLanguage: (state.extra as String?) ?? AppStrings.languageEnglish),
+        builder: (context, state) => const LanguageScreen(),
       ),
       GoRoute(
         path: AppRoutes.notificationSettings,
@@ -56,7 +56,9 @@ Future<GoRouter> _pumpSettings(WidgetTester tester, {Size size = const Size(390,
   await tester.pumpWidget(
     ProviderScope(
       overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
-      child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      child: TranslationProvider(
+        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      ),
     ),
   );
   unawaited(router.push(AppRoutes.settings));
@@ -74,6 +76,7 @@ void main() {
     expect(find.text(AppStrings.settingsNotifications), findsOneWidget);
     expect(find.text(AppStrings.settingsTheme), findsOneWidget);
     expect(find.text(AppStrings.settingsThemeLight), findsOneWidget);
+    expect(find.text(AppStrings.settingsSoundEffects), findsOneWidget);
     expect(find.text(AppStrings.settingsPrivacy), findsOneWidget);
     expect(find.text(AppStrings.settingsHelpCenter), findsOneWidget);
     expect(find.text(AppStrings.settingsTermsOfUse), findsOneWidget);
@@ -98,6 +101,18 @@ void main() {
 
     expect(find.text(AppStrings.settingsThemeDark), findsOneWidget);
     expect(find.text(AppStrings.settingsThemeLight), findsNothing);
+  });
+
+  testWidgets('tapping the sound effects row toggles it on', (tester) async {
+    await _pumpSettings(tester);
+
+    // Off by default for now — see AppPreferences.soundEffectsEnabled.
+    expect(tester.widget<Switch>(find.byType(Switch).last).value, isFalse);
+
+    await tester.tap(find.text(AppStrings.settingsSoundEffects));
+    await tester.pump();
+
+    expect(tester.widget<Switch>(find.byType(Switch).last).value, isTrue);
   });
 
   testWidgets('tapping Language opens the Language picker, and picking one updates the row', (tester) async {

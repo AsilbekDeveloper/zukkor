@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/close_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../lobby/presentation/widgets/lobby_waiting_indicator.dart';
 import '../models/duel_match.dart';
 import '../widgets/duel_category_chip.dart';
@@ -43,7 +43,7 @@ class DuelWaitingScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              CloseHeader(title: AppStrings.duelWaitingTitle, onClose: () => _cancel(context)),
+              CloseHeader(title: context.t.duelWaiting.title, onClose: () => _cancel(context)),
               AppSpacing.xl.vGap,
               Center(
                 child: Container(
@@ -78,10 +78,10 @@ class DuelWaitingScreen extends StatelessWidget {
               AppSpacing.lg.vGap,
               Center(child: DuelCategoryChip(category: match.category)),
               AppSpacing.xl.vGap,
-              const LobbyWaitingIndicator(label: AppStrings.waitingForAnswerLabel),
+              LobbyWaitingIndicator(label: context.t.duelWaiting.waitingForAnswer),
               AppSpacing.xl.vGap,
               AppButton.primary(
-                label: AppStrings.startDemoButton,
+                label: context.t.duelWaiting.startDemo,
                 icon: const Icon(TablerIcons.playerPlay, color: Colors.white, size: 18),
                 onPressed: () => context.push(AppRoutes.quizIntro, extra: match.category),
               ),

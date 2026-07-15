@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../../../core/audio/app_sound.dart';
+import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -61,16 +64,19 @@ class SettingsRowData {
   final bool isDanger;
 }
 
-class _SettingsRow extends StatelessWidget {
+class _SettingsRow extends ConsumerWidget {
   const _SettingsRow({required this.data});
 
   final SettingsRowData data;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final Color? dangerColor = data.isDanger ? context.colors.coralDeep : null;
     return InkWell(
-      onTap: data.onTap,
+      onTap: () {
+        ref.playSound(AppSound.tap);
+        data.onTap();
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
         child: Row(

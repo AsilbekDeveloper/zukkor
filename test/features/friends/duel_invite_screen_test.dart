@@ -1,16 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
+import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_invite_screen.dart';
 import 'package:zukkor/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_category.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_intro_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 Future<GoRouter> _pumpDuelInvite(WidgetTester tester, {Size size = const Size(390, 844)}) async {
   tester.view.physicalSize = size;
@@ -30,7 +34,17 @@ Future<GoRouter> _pumpDuelInvite(WidgetTester tester, {Size size = const Size(39
     ],
   );
 
-  await tester.pumpWidget(MaterialApp.router(theme: AppTheme.light(), routerConfig: router));
+  SharedPreferences.setMockInitialValues(<String, Object>{});
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      child: TranslationProvider(
+        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      ),
+    ),
+  );
   unawaited(router.push(AppRoutes.duelInvite));
   await tester.pumpAndSettle();
   return router;

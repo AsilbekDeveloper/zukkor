@@ -1,0 +1,308 @@
+{
+  "common": {
+    "appName": "Zukkor",
+    "appTagline": "Knowledge competition",
+    "ok": "OK",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "loading": "Loading...",
+    "dayUnit(param=count)": { "one": "day", "other": "days" },
+    "friendsOnline(param=count)": { "one": "$count friend online", "other": "$count friends online" },
+    "questionCount(param=count)": { "one": "$count question", "other": "$count questions" }
+  },
+  "home": {
+    "greeting": "Good morning",
+    "duelHeroTitle": "Who's strong today?",
+    "duelHeroSubtitle": "Challenge a friend or a random opponent",
+    "startDuel": "Start a duel",
+    "totalXpLabel": "Total XP",
+    "rankLabel": "Rank",
+    "levelLabel": "Level",
+    "createRoom": "Create a room",
+    "joinWithCode": "Join with a code",
+    "categoriesTitle": "Categories",
+    "seeAll": "See all",
+    "challengeToDuel": "Challenge to a duel"
+  },
+  "categories": {
+    "title": "Choose a category"
+  },
+  "leaderboard": {
+    "greeting": "Leaderboard",
+    "title": "Who's the best?",
+    "segmentWeekly": "Weekly",
+    "segmentAllTime": "All-time",
+    "segmentFriends": "Friends",
+    "you": "You",
+    "seeFullRanking": "See full ranking",
+    "xpValue": "$xp XP",
+    "greetingFiltered": "Leaderboard · $category"
+  },
+  "fullLeaderboard": {
+    "title": "Full ranking"
+  },
+  "playerDetail": {
+    "title": "Profile",
+    "streakLabel": "Streak",
+    "addToFriends": "Add to friends",
+    "requestSent": "Sent",
+    "rankedLabel": "Ranked #$rank · $xp XP"
+  },
+  "rankFilter": {
+    "title": "By category",
+    "allCategories": "All categories"
+  },
+  "friends": {
+    "addFriend": "Add friend",
+    "searchPlaceholder": "Search friends",
+    "onlineSection": "Online",
+    "allSection": "All friends",
+    "noneFound": "No friends found"
+  },
+  "addFriend": {
+    "searchByUsername": "Search by username",
+    "orViaInviteLink": "Or via invite link",
+    "yourInviteCode": "Your invite code",
+    "shareLink": "Share the link",
+    "addButton": "Add",
+    "noUsersFound": "No users found"
+  },
+  "duelPick": {
+    "title": "1v1 Duel",
+    "chooseYourFriend": "Choose your friend"
+  },
+  "profile": {
+    "editProfile": "Edit profile",
+    "settings": "Settings",
+    "statTotalGames": "Total games",
+    "statWinRate": "Win rate",
+    "statLongestStreak": "Longest streak",
+    "gameHistory": "Game history",
+    "settingsAndHelp": "Settings & help",
+    "levelWithTitle": "Level $level · $title",
+    "xpProgressLabel": "$current / $target XP · $remaining to next level"
+  },
+  "settings": {
+    "groupGeneral": "General",
+    "language": "Language",
+    "notifications": "Notifications",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "soundEffects": "Sound effects",
+    "groupAccount": "Account",
+    "privacy": "Privacy",
+    "helpCenter": "Help center",
+    "termsOfUse": "Terms of use",
+    "logOut": "Log out"
+  },
+  "history": {
+    "segmentAll": "All",
+    "segmentSolo": "Solo",
+    "segmentDuel": "Duel",
+    "segmentLobby": "Lobby",
+    "winBadge": "Win",
+    "lossBadge": "Loss"
+  },
+  "quizIntro": {
+    "startLabel": "Start!"
+  },
+  "quiz": {
+    "questionProgress": "Question $current/$total"
+  },
+  "result": {
+    "label": "Result",
+    "summary": "$correct out of $total correct",
+    "xpEarned": "+$xp XP",
+    "playAgain": "Play again",
+    "challengeAFriend": "Challenge a friend",
+    "backToHome": "Back to home"
+  },
+  "joinCode": {
+    "hint": "Enter the 6-digit room code your friend sent you",
+    "joinButton": "Join",
+    "codeDigitLabel": "Code digit $position"
+  },
+  "lobby": {
+    "title": "Multiplayer room",
+    "roomCode": "Room code",
+    "players": "Players",
+    "hostRole": "Host",
+    "guestRole": "Guest",
+    "startGame": "Start the game",
+    "waitingForHost": "Waiting for the host to start…",
+    "playerCount": "$current/$max"
+  },
+  "lobbyResult": {
+    "title": "Room results",
+    "subtitle": "Here's how everyone in the room did",
+    "playAgain": "Play again"
+  },
+  "duelWaiting": {
+    "title": "Duel",
+    "waitingForAnswer": "Waiting for their answer…",
+    "startDemo": "Start (demo)"
+  },
+  "duelInvite": {
+    "title": "Duel invite",
+    "challengesYou": "is challenging you to a duel",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "duelChallenge": "Malika challenged you to a duel",
+    "streakReminder": "Don't lose your 5-day streak — play today!",
+    "top50": "You made it into the weekly Top 50",
+    "friendRequest": "Bekzod Xolmatov sent you a friend request",
+    "welcome": "Welcome to Zukkor! Start your first quiz"
+  },
+  "editProfile": {
+    "save": "Save",
+    "updated": "Profile updated"
+  },
+  "notificationSettings": {
+    "title": "Notification preferences",
+    "duelInvites": "Duel invites",
+    "streakReminders": "Streak reminders",
+    "leaderboardUpdates": "Leaderboard updates",
+    "friendRequests": "Friend requests",
+    "productUpdates": "Product updates"
+  },
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "collectionTitle": "Information we collect",
+    "collectionBody": "We collect your name, username, and quiz activity — scores, categories played, and streaks — to run the game and show your progress.",
+    "useTitle": "How we use it",
+    "useBody": "Your data is used to operate Zukkor: matching you in duels and lobbies, computing XP and rankings, and showing your stats back to you.",
+    "sharingTitle": "Sharing",
+    "sharingBody": "We do not sell your data. Your name, avatar, and public stats are visible to other players as part of normal gameplay, such as the leaderboard, friends list, and duels.",
+    "contactTitle": "Contact",
+    "contactBody": "Questions about your data? Reach out through the Help Center and we will get back to you."
+  },
+  "termsOfUse": {
+    "title": "Terms of Use",
+    "accountTitle": "Your account",
+    "accountBody": "You are responsible for keeping your account secure and for the activity that happens under it.",
+    "conductTitle": "Fair play",
+    "conductBody": "Cheating, exploiting bugs for XP, or harassing other players can result in a suspension.",
+    "contentTitle": "Content",
+    "contentBody": "Quiz questions and app content belong to Zukkor. Do not copy or redistribute them without permission.",
+    "changesTitle": "Changes",
+    "changesBody": "We may update these terms as Zukkor grows. We will let you know about any major changes."
+  },
+  "helpCenter": {
+    "duelQuestion": "How do I start a duel?",
+    "duelAnswer": "Go to Friends, pick an online friend, then choose a category. Your opponent gets an invite.",
+    "xpQuestion": "How is XP calculated?",
+    "xpAnswer": "You earn XP for each correct answer, plus a bonus for finishing a solo quiz or winning a duel.",
+    "streakQuestion": "What happens if I miss a day?",
+    "streakAnswer": "Your streak resets to zero if you skip a full day without playing at least one quiz.",
+    "lobbyQuestion": "How many players can join a room?",
+    "lobbyAnswer": "Rooms currently support up to 10 players.",
+    "reportQuestion": "How do I report a bug or a bad question?",
+    "reportAnswer": "Reach out to us through this Help Center. We are a small team and every report helps us improve Zukkor."
+  },
+  "bottomNav": {
+    "home": "Home",
+    "leaderboard": "Leaderboard",
+    "friends": "Friends",
+    "profile": "Profile",
+    "comingSoon": "Coming soon"
+  },
+  "onboarding": {
+    "stepCount": "Step",
+    "continueButton": "Continue",
+    "start": "Start",
+    "avatarTitle": "Pick an avatar that suits you",
+    "avatarSubtitle": "You can change it anytime later",
+    "uploadPhoto": "Upload photo",
+    "profileTitle": "Let's get to know you",
+    "profileSubtitle": "This info will be visible on your profile and to your friends",
+    "firstNameLabel": "First name",
+    "firstNameHint": "Aziz",
+    "lastNameLabel": "Last name",
+    "lastNameHint": "Karimov",
+    "usernameLabel": "Username",
+    "usernameHint": "aziz_karimov",
+    "directionTitle": "Why are you using Zukkor?",
+    "directionSubtitle": "We'll recommend content and categories that fit you",
+    "directionRequired": "Please choose one to continue",
+    "studentUniTitle": "Student",
+    "studentUniSubtitle": "I study at university or college",
+    "studentSchoolTitle": "Pupil",
+    "studentSchoolSubtitle": "I study at school",
+    "examPrepTitle": "Exam prep",
+    "examPrepSubtitle": "I'm preparing for an exam (e.g. IELTS)",
+    "casualTitle": "Just for fun",
+    "casualSubtitle": "Playing and passing the time"
+  },
+  "introduction": {
+    "skip": "Skip",
+    "getStarted": "Get started",
+    "welcomeTitle": "Welcome to Zukkor!",
+    "welcomeSubtitle": "The knowledge competition app where learning feels like a game",
+    "languageLabel": "Choose your language",
+    "soloTitle": "Test yourself",
+    "soloSubtitle": "Pick a category and answer questions solo — earn XP and beat your own best score",
+    "duelTitle": "Challenge your friends",
+    "duelSubtitle": "Duel a friend head-to-head, or create a room and play with a whole group in real time",
+    "leaderboardTitle": "Climb the leaderboard",
+    "leaderboardSubtitle": "Every correct answer earns XP — track your rank among friends and everyone else",
+    "interestsTitle": "What are you into?",
+    "interestsSubtitle": "Pick a few — we'll use these to recommend categories",
+    "studyTitle": "Almost done!",
+    "studySubtitle": "A couple more quick questions",
+    "studyPlaceLabel": "Where do you study?",
+    "quizLikingLabel": "Do you enjoy solving quizzes and puzzles?",
+    "studyPlaceSchool": "School",
+    "studyPlaceUniversity": "University",
+    "studyPlaceExamPrep": "Exam prep",
+    "quizLikingLoveIt": "Love it",
+    "quizLikingItsOk": "It's ok",
+    "quizLikingNotReally": "Not really",
+    "otherOption": "Other",
+    "otherFieldLabel": "Tell us more",
+    "otherFieldHint": "Type here..."
+  },
+  "auth": {
+    "loginTitle": "Welcome back!",
+    "loginSubtitle": "Sign in and continue the game",
+    "registerTitle": "Create an account",
+    "registerSubtitle": "Sign up in a minute and get started",
+    "emailLabel": "Email",
+    "emailHint": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordHint": "At least 8 characters",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordHint": "Re-enter your password",
+    "loginButton": "Sign in",
+    "registerButton": "Sign up",
+    "orDivider": "or",
+    "continueWithGoogle": "Continue with Google",
+    "noAccountPrompt": "Don't have an account?",
+    "haveAccountPrompt": "Already have an account?",
+    "switchToRegister": "Sign up",
+    "switchToLogin": "Sign in"
+  },
+  "authValidation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordMismatch": "Passwords don't match",
+    "usernameRequired": "Username is required",
+    "usernameInvalid": "Username may only contain letters, numbers and underscores (3–30 characters)",
+    "nameRequired": "This field is required",
+    "nameTooLong": "Too long (maximum 50 characters)"
+  },
+  "errors": {
+    "noConnection": "No internet connection. Please check your connection and try again.",
+    "timeout": "The server is not responding. Please try again shortly.",
+    "server": "A server error occurred. Please try again shortly.",
+    "unknown": "An unexpected error occurred.",
+    "invalidCredentials": "Incorrect email or password.",
+    "sessionExpired": "Your session has expired. Please sign in again.",
+    "googleCancelled": "Google sign-in was cancelled."
+  }
+}

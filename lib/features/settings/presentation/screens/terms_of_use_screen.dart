@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../widgets/policy_content.dart';
 
 /// Static Terms of Use copy.
 class TermsOfUseScreen extends StatelessWidget {
   const TermsOfUseScreen({super.key});
 
-  static const List<PolicySection> _sections = [
-    PolicySection(title: AppStrings.termsSectionAccountTitle, body: AppStrings.termsSectionAccountBody),
-    PolicySection(title: AppStrings.termsSectionConductTitle, body: AppStrings.termsSectionConductBody),
-    PolicySection(title: AppStrings.termsSectionContentTitle, body: AppStrings.termsSectionContentBody),
-    PolicySection(title: AppStrings.termsSectionChangesTitle, body: AppStrings.termsSectionChangesBody),
-  ];
+  List<PolicySection> _sections(BuildContext context) => [
+        PolicySection(title: context.t.termsOfUse.accountTitle, body: context.t.termsOfUse.accountBody),
+        PolicySection(title: context.t.termsOfUse.conductTitle, body: context.t.termsOfUse.conductBody),
+        PolicySection(title: context.t.termsOfUse.contentTitle, body: context.t.termsOfUse.contentBody),
+        PolicySection(title: context.t.termsOfUse.changesTitle, body: context.t.termsOfUse.changesBody),
+      ];
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -37,9 +37,9 @@ class TermsOfUseScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.termsOfUseTitle, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.termsOfUse.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
-              const PolicyContent(sections: _sections),
+              PolicyContent(sections: _sections(context)),
             ],
           ),
         ),

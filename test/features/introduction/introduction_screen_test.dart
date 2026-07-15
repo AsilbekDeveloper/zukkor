@@ -70,7 +70,7 @@ void main() {
     expect(find.text(AppStrings.languageRussian), findsOneWidget);
 
     await tester.tap(find.text(AppStrings.languageUzbek));
-    await tester.pump();
+    await _settle(tester);
 
     expect(tester.takeException(), isNull);
   });

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/step_header.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Onboarding step 2 — first name, last name, username
 /// (Zukkor_Profil_Yaratish.docx: all three required).
@@ -29,10 +29,10 @@ class ProfileInfoStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const StepHeader(
+        StepHeader(
           icon: TablerIcons.user,
-          title: AppStrings.profileStepTitle,
-          subtitle: AppStrings.profileStepSubtitle,
+          title: context.t.onboarding.profileTitle,
+          subtitle: context.t.onboarding.profileSubtitle,
         ),
         AppSpacing.xxl.vGap,
         Form(
@@ -41,8 +41,8 @@ class ProfileInfoStep extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppTextField(
-                label: AppStrings.firstNameLabel,
-                hint: AppStrings.firstNameHint,
+                label: context.t.onboarding.firstNameLabel,
+                hint: context.t.onboarding.firstNameHint,
                 controller: firstNameController,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.givenName],
@@ -50,8 +50,8 @@ class ProfileInfoStep extends StatelessWidget {
               ),
               AppSpacing.md.vGap,
               AppTextField(
-                label: AppStrings.lastNameLabel,
-                hint: AppStrings.lastNameHint,
+                label: context.t.onboarding.lastNameLabel,
+                hint: context.t.onboarding.lastNameHint,
                 controller: lastNameController,
                 textInputAction: TextInputAction.next,
                 autofillHints: const [AutofillHints.familyName],
@@ -59,8 +59,8 @@ class ProfileInfoStep extends StatelessWidget {
               ),
               AppSpacing.md.vGap,
               AppTextField(
-                label: AppStrings.usernameLabel,
-                hint: AppStrings.usernameHint,
+                label: context.t.onboarding.usernameLabel,
+                hint: context.t.onboarding.usernameHint,
                 controller: usernameController,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.newUsername],

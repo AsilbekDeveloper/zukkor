@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../audio/app_sound.dart';
+import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../extensions/num_x.dart';
 import '../theme/app_spacing.dart';
@@ -52,15 +55,18 @@ class CheckmarkOptionList extends StatelessWidget {
   }
 }
 
-class _CheckmarkOptionRow extends StatelessWidget {
+class _CheckmarkOptionRow extends ConsumerWidget {
   const _CheckmarkOptionRow({required this.option});
 
   final CheckmarkOption option;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: option.onTap,
+      onTap: () {
+        ref.playSound(AppSound.tap);
+        option.onTap();
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
         child: Row(

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/formatters.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Level ring + "Level N · Title" / XP-to-next-level text — mirrors the
 /// prototype's `.level-card` / `.mini-ring`.
@@ -73,7 +74,7 @@ class LevelCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  AppStrings.levelWithTitle(level, levelTitle),
+                  context.t.profile.levelWithTitle(level: level, title: levelTitle),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textStyles.bodySmall?.copyWith(
@@ -83,7 +84,11 @@ class LevelCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  AppStrings.xpProgressLabel(currentXp, targetXp, targetXp - currentXp),
+                  context.t.profile.xpProgressLabel(
+                    current: formatThousands(currentXp),
+                    target: formatThousands(targetXp),
+                    remaining: targetXp - currentXp,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textStyles.labelSmall,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
@@ -10,6 +9,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Edit the current user's first name, last name and username — reuses
 /// the same fields/validators as the onboarding profile-info step.
@@ -50,7 +50,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _save(BuildContext context) {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    context.showSnack(AppStrings.profileUpdatedMessage);
+    context.showSnack(context.t.editProfile.updated);
     _goBack(context);
   }
 
@@ -64,7 +64,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.editProfile, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.profile.editProfile, onBack: () => _goBack(context)),
               AppSpacing.xl.vGap,
               Form(
                 key: _formKey,
@@ -72,8 +72,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     AppTextField(
-                      label: AppStrings.firstNameLabel,
-                      hint: AppStrings.firstNameHint,
+                      label: context.t.onboarding.firstNameLabel,
+                      hint: context.t.onboarding.firstNameHint,
                       controller: _firstNameController,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.givenName],
@@ -81,8 +81,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     AppSpacing.md.vGap,
                     AppTextField(
-                      label: AppStrings.lastNameLabel,
-                      hint: AppStrings.lastNameHint,
+                      label: context.t.onboarding.lastNameLabel,
+                      hint: context.t.onboarding.lastNameHint,
                       controller: _lastNameController,
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.familyName],
@@ -90,8 +90,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     AppSpacing.md.vGap,
                     AppTextField(
-                      label: AppStrings.usernameLabel,
-                      hint: AppStrings.usernameHint,
+                      label: context.t.onboarding.usernameLabel,
+                      hint: context.t.onboarding.usernameHint,
                       controller: _usernameController,
                       textInputAction: TextInputAction.done,
                       autofillHints: const [AutofillHints.newUsername],
@@ -102,7 +102,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               AppSpacing.xl.vGap,
               AppButton.primary(
-                label: AppStrings.saveButton,
+                label: context.t.editProfile.save,
                 onPressed: () => _save(context),
               ),
             ],

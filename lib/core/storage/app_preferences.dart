@@ -11,6 +11,8 @@ class AppPreferences {
 
   static const String _themeModeKey = 'zukkor.theme_mode';
   static const String _hasSeenIntroductionKey = 'zukkor.has_seen_introduction';
+  static const String _soundEffectsEnabledKey = 'zukkor.sound_effects_enabled';
+  static const String _localeCodeKey = 'zukkor.locale_code';
 
   ThemeMode get themeMode {
     return switch (_prefs.getString(_themeModeKey)) {
@@ -27,6 +29,22 @@ class AppPreferences {
 
   Future<void> saveHasSeenIntroduction(bool value) =>
       _prefs.setBool(_hasSeenIntroductionKey, value);
+
+  // Defaults to off — the current sound set is a placeholder (synthesized
+  // tones) and coverage across the app isn't finished yet. Flip this back
+  // to `true` once real SFX are dropped into assets/sounds/ and coverage
+  // is complete; the Settings toggle already works either way.
+  bool get soundEffectsEnabled => _prefs.getBool(_soundEffectsEnabledKey) ?? false;
+
+  Future<void> saveSoundEffectsEnabled(bool value) =>
+      _prefs.setBool(_soundEffectsEnabledKey, value);
+
+  /// Saqlangan til kodi ('en'/'uz'/'ru'). `null` bo'lsa hali tanlanmagan —
+  /// bu holda qurilma tiliga tayaniladi.
+  String? get localeCode => _prefs.getString(_localeCodeKey);
+
+  Future<void> saveLocaleCode(String code) =>
+      _prefs.setString(_localeCodeKey, code);
 }
 
 /// main() da SharedPreferences yuklangach override qilinadi —

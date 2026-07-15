@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
+import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/leaderboard_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/rank_filter_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 /// Returns the router plus the `Future` the screen's own `push` resolves
 /// with — the direct, unambiguous way to assert what a screen popped
@@ -32,7 +36,17 @@ Future<(GoRouter, Future<String?>)> _pumpRankFilter(
     ],
   );
 
-  await tester.pumpWidget(MaterialApp.router(theme: AppTheme.light(), routerConfig: router));
+  SharedPreferences.setMockInitialValues(<String, Object>{});
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      child: TranslationProvider(
+        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      ),
+    ),
+  );
   final Future<String?> resultFuture = router.push<String?>(AppRoutes.rankFilter, extra: currentFilter);
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 300));

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/game_history_entry.dart';
 import '../widgets/history_list.dart';
 
@@ -48,12 +48,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.gameHistory, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.profile.gameHistory, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               PillSegmentControl<GameMode?>(
                 values: const [null, GameMode.solo, GameMode.duel, GameMode.lobby],
                 selected: _selectedMode,
-                labelBuilder: (mode) => mode?.label ?? AppStrings.historySegmentAll,
+                labelBuilder: (mode) => mode?.label(context) ?? context.t.history.segmentAll,
                 onChanged: (mode) => setState(() => _selectedMode = mode),
               ),
               AppSpacing.lg.vGap,

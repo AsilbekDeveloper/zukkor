@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/discoverable_user.dart';
 
 /// Search results on the Add Friend screen — one row per matching user,
@@ -122,7 +122,7 @@ class _AddButton extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            isSent ? AppStrings.friendRequestSentLabel : AppStrings.addButton,
+            isSent ? context.t.playerDetail.requestSent : context.t.addFriend.addButton,
             style: context.textStyles.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: isSent ? context.colors.muted : Colors.white,

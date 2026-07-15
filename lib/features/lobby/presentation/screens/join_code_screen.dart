@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../widgets/code_input_row.dart';
 import 'lobby_screen.dart';
 
@@ -39,13 +39,13 @@ class JoinCodeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.joinWithCode, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.home.joinWithCode, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 260),
                   child: Text(
-                    AppStrings.joinCodeHint,
+                    context.t.joinCode.hint,
                     textAlign: TextAlign.center,
                     style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                   ),
@@ -55,7 +55,7 @@ class JoinCodeScreen extends StatelessWidget {
               const CodeInputRow(),
               AppSpacing.xl.vGap,
               AppButton.primary(
-                label: AppStrings.joinButton,
+                label: context.t.joinCode.joinButton,
                 icon: const Icon(TablerIcons.arrowRight, color: Colors.white, size: 18),
                 onPressed: () => context.push(AppRoutes.lobby, extra: LobbyRole.guest),
               ),

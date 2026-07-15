@@ -4,14 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../../../core/audio/app_sound.dart';
+import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/constants/app_durations.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/study_survey.dart';
 import '../widgets/confetti_burst.dart';
 import '../widgets/interests_step.dart';
@@ -28,9 +30,9 @@ import '../widgets/welcome_step.dart';
 /// false — see [AppRoutes.introduction] in the router.
 ///
 /// Each page carries its own accent color (background wash + icon badge)
-/// and finishing the last page plays a short confetti burst before
-/// handing off to Login. Haptics accompany navigation and selections —
-/// sound effects are a planned follow-up, not wired up yet.
+/// and finishing the last page plays a short confetti burst plus
+/// [AppSound.success] before handing off to Login. Haptics and
+/// [AppSound.tap] accompany navigation and selections.
 ///
 /// CURRENT STATE: presentation only — survey answers aren't sent anywhere
 /// yet (no backend call), they just live in local widget state for now.
@@ -46,8 +48,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   int _step = 1;
   bool _isFinishing = false;
-
-  String _selectedLanguage = AppStrings.languageEnglish;
 
   final Set<String> _selectedInterests = {};
   bool _otherInterestSelected = false;
@@ -77,6 +77,7 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   void _toggleInterest(String label) {
     HapticFeedback.selectionClick();
+    ref.playSound(AppSound.tap);
     setState(() {
       if (!_selectedInterests.remove(label)) {
         _selectedInterests.add(label);
@@ -86,6 +87,7 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   void _toggleOtherInterest() {
     HapticFeedback.selectionClick();
+    ref.playSound(AppSound.tap);
     setState(() => _otherInterestSelected = !_otherInterestSelected);
   }
 
@@ -102,6 +104,7 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
   void _back() {
     context.hideKeyboard();
     HapticFeedback.selectionClick();
+    ref.playSound(AppSound.tap);
     if (_step > 1) {
       setState(() => _step--);
     }
@@ -109,6 +112,7 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   void _skip() {
     HapticFeedback.selectionClick();
+    ref.playSound(AppSound.tap);
     _finish();
   }
 
@@ -116,6 +120,7 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
   /// handing off (see [_finish]), unlike [_skip] which leaves right away.
   void _complete() {
     HapticFeedback.mediumImpact();
+    ref.playSound(AppSound.success);
     setState(() => _isFinishing = true);
   }
 
@@ -185,7 +190,9 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
                     AppSpacing.md.vGap,
                     PressableScale(
                       child: AppButton.primary(
-                        label: _step == _totalSteps ? AppStrings.introGetStarted : AppStrings.onboardingContinue,
+                        label: _step == _totalSteps
+                            ? context.t.introduction.getStarted
+                            : context.t.onboarding.continueButton,
                         onPressed: _isFinishing ? null : _next,
                       ),
                     ),
@@ -215,30 +222,24 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   Widget _buildStep(BuildContext context, Color accent) {
     return switch (_step) {
-      1 => WelcomeStep(
-          selectedLanguage: _selectedLanguage,
-          onLanguageChanged: (value) {
-            HapticFeedback.selectionClick();
-            setState(() => _selectedLanguage = value);
-          },
-        ),
+      1 => const WelcomeStep(),
       2 => IntroExplainerPage(
           icon: TablerIcons.bulb,
           iconColor: accent,
-          title: AppStrings.introSoloTitle,
-          subtitle: AppStrings.introSoloSubtitle,
+          title: context.t.introduction.soloTitle,
+          subtitle: context.t.introduction.soloSubtitle,
         ),
       3 => IntroExplainerPage(
           icon: TablerIcons.swords,
           iconColor: accent,
-          title: AppStrings.introDuelTitle,
-          subtitle: AppStrings.introDuelSubtitle,
+          title: context.t.introduction.duelTitle,
+          subtitle: context.t.introduction.duelSubtitle,
         ),
       4 => IntroExplainerPage(
           icon: TablerIcons.trophy,
           iconColor: accent,
-          title: AppStrings.introLeaderboardTitle,
-          subtitle: AppStrings.introLeaderboardSubtitle,
+          title: context.t.introduction.leaderboardTitle,
+          subtitle: context.t.introduction.leaderboardSubtitle,
         ),
       5 => InterestsStep(
           selected: _selectedInterests,

@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../constants/app_strings.dart';
+import '../../i18n/strings.g.dart';
 import '../error/failures.dart';
 
 /// [DioException] → [Failure] tarjimoni. Backend'ning umumiy xatolik
@@ -16,10 +16,10 @@ abstract final class FailureMapper {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
       DioExceptionType.receiveTimeout =>
-        const NetworkFailure(AppStrings.errorTimeout),
-      DioExceptionType.connectionError => const NetworkFailure(),
+        NetworkFailure(t.errors.timeout),
+      DioExceptionType.connectionError => NetworkFailure(),
       DioExceptionType.badResponse => _fromResponse(e.response),
-      _ => const UnknownFailure(),
+      _ => UnknownFailure(),
     };
   }
 
@@ -31,14 +31,14 @@ abstract final class FailureMapper {
 
     return switch (status) {
       400 => ValidationFailure(
-          detailMessage ?? AppStrings.errorUnknown,
+          detailMessage ?? t.errors.unknown,
           fieldErrors: _extractFieldErrors(data),
         ),
-      401 => AuthFailure(detailMessage ?? AppStrings.errorInvalidCredentials),
-      403 => AuthFailure(detailMessage ?? AppStrings.errorSessionExpired),
-      404 => NotFoundFailure(detailMessage ?? AppStrings.errorUnknown),
-      >= 500 => const ServerFailure(),
-      _ => const UnknownFailure(),
+      401 => AuthFailure(detailMessage ?? t.errors.invalidCredentials),
+      403 => AuthFailure(detailMessage ?? t.errors.sessionExpired),
+      404 => NotFoundFailure(detailMessage ?? t.errors.unknown),
+      >= 500 => ServerFailure(),
+      _ => UnknownFailure(),
     };
   }
 

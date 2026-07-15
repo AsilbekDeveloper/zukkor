@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../widgets/policy_content.dart';
 
 /// Static Privacy Policy copy.
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
-  static const List<PolicySection> _sections = [
-    PolicySection(
-      title: AppStrings.privacySectionCollectionTitle,
-      body: AppStrings.privacySectionCollectionBody,
-    ),
-    PolicySection(title: AppStrings.privacySectionUseTitle, body: AppStrings.privacySectionUseBody),
-    PolicySection(
-      title: AppStrings.privacySectionSharingTitle,
-      body: AppStrings.privacySectionSharingBody,
-    ),
-    PolicySection(
-      title: AppStrings.privacySectionContactTitle,
-      body: AppStrings.privacySectionContactBody,
-    ),
-  ];
+  List<PolicySection> _sections(BuildContext context) => [
+        PolicySection(
+          title: context.t.privacyPolicy.collectionTitle,
+          body: context.t.privacyPolicy.collectionBody,
+        ),
+        PolicySection(title: context.t.privacyPolicy.useTitle, body: context.t.privacyPolicy.useBody),
+        PolicySection(
+          title: context.t.privacyPolicy.sharingTitle,
+          body: context.t.privacyPolicy.sharingBody,
+        ),
+        PolicySection(
+          title: context.t.privacyPolicy.contactTitle,
+          body: context.t.privacyPolicy.contactBody,
+        ),
+      ];
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -46,9 +46,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.privacyPolicyTitle, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.privacyPolicy.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
-              const PolicyContent(sections: _sections),
+              PolicyContent(sections: _sections(context)),
             ],
           ),
         ),

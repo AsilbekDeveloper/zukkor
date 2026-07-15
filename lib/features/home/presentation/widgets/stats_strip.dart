@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// The 3-stat strip (Total XP with progress bar, Rank, Level) — mirrors
 /// the prototype's `.stats`.
@@ -40,14 +40,14 @@ class StatsStrip extends StatelessWidget {
           Expanded(
             child: _Stat(
               value: formatThousands(totalXp),
-              label: AppStrings.totalXpLabel,
+              label: context.t.home.totalXpLabel,
               progress: xpProgress,
             ),
           ),
           _divider(context),
-          Expanded(child: _Stat(value: '#$rank', label: AppStrings.rankLabel)),
+          Expanded(child: _Stat(value: '#$rank', label: context.t.home.rankLabel)),
           _divider(context),
-          Expanded(child: _Stat(value: '$level', label: AppStrings.levelLabel)),
+          Expanded(child: _Stat(value: '$level', label: context.t.home.levelLabel)),
         ],
       ),
     );

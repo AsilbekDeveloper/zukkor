@@ -1,5 +1,7 @@
-import '../../../../core/constants/app_strings.dart';
+import 'package:flutter/widgets.dart';
+
 import '../../../../core/models/avatar_color_option.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// One row on the leaderboard — mirrors the prototype's `.rank-row` /
 /// `.pod` data (rank, avatar, name, XP). This is placeholder sample
@@ -72,7 +74,7 @@ class LeaderboardEntry {
     ),
     LeaderboardEntry(
       rank: 312,
-      name: AppStrings.currentUserName,
+      name: 'You',
       initials: 'AZ',
       xp: 2140,
       avatarColor: AvatarColorOption.coral,
@@ -107,11 +109,19 @@ class LeaderboardEntry {
     LeaderboardEntry(rank: 10, name: 'Sevinch Aliyeva', initials: 'SA', xp: 3105, avatarColor: AvatarColorOption.terra),
     LeaderboardEntry(
       rank: 312,
-      name: AppStrings.currentUserName,
+      name: 'You',
       initials: 'AZ',
       xp: 2140,
       avatarColor: AvatarColorOption.coral,
       isCurrentUser: true,
     ),
   ];
+}
+
+extension LeaderboardEntryDisplayName on LeaderboardEntry {
+  /// The current user's own row always shows the translated "You" —
+  /// [name] itself stays a plain English placeholder since it's sample
+  /// data (a real backend would send the user's actual name instead).
+  String displayName(BuildContext context) =>
+      isCurrentUser ? context.t.leaderboard.you : name;
 }

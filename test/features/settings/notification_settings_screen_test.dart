@@ -12,6 +12,7 @@ import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/settings/presentation/screens/notification_settings_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 // SettingsScreen is the initial route (mounted underneath) and reads
 // themeControllerProvider — needs a real ProviderScope (mocked
@@ -39,7 +40,9 @@ Future<GoRouter> _pumpNotificationSettings(WidgetTester tester, {Size size = con
   await tester.pumpWidget(
     ProviderScope(
       overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
-      child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      child: TranslationProvider(
+        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      ),
     ),
   );
   unawaited(router.push(AppRoutes.notificationSettings));

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// 3 pulsing dots + a status text, shown while waiting on someone else —
 /// mirrors the prototype's `.lobby-waiting` / `.waiting-dot` (`dot-pulse`
@@ -11,9 +11,12 @@ import '../../../../core/theme/app_spacing.dart';
 /// for the host) and Duel Waiting (waiting for the opponent's answer)
 /// screens, with a different [label] for each.
 class LobbyWaitingIndicator extends StatefulWidget {
-  const LobbyWaitingIndicator({this.label = AppStrings.waitingForHostLabel, super.key});
+  const LobbyWaitingIndicator({this.label, super.key});
 
-  final String label;
+  /// Defaults to the translated "waiting for the host" text when null —
+  /// not a const default value, since it needs to re-translate with the
+  /// locale.
+  final String? label;
 
   @override
   State<LobbyWaitingIndicator> createState() => _LobbyWaitingIndicatorState();
@@ -45,7 +48,7 @@ class _LobbyWaitingIndicatorState extends State<LobbyWaitingIndicator>
         ),
         const SizedBox(height: 4),
         Text(
-          widget.label,
+          widget.label ?? context.t.lobby.waitingForHost,
           style: context.textStyles.bodySmall?.copyWith(
             color: context.colors.muted,
             fontWeight: FontWeight.w600,

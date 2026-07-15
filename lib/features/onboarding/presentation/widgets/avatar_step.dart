@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/step_header.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Onboarding step 1 — pick an avatar background color (photo upload is a
 /// stub for now, see [onUploadPhoto]).
@@ -27,10 +27,10 @@ class AvatarStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const StepHeader(
+        StepHeader(
           icon: TablerIcons.sparkles,
-          title: AppStrings.avatarStepTitle,
-          subtitle: AppStrings.avatarStepSubtitle,
+          title: context.t.onboarding.avatarTitle,
+          subtitle: context.t.onboarding.avatarSubtitle,
         ),
         AppSpacing.xxl.vGap,
         Center(
@@ -89,7 +89,7 @@ class _UploadButton extends StatelessWidget {
             TablerIcons.camera,
             size: 20,
             color: context.colors.ink,
-            semanticLabel: AppStrings.uploadPhoto,
+            semanticLabel: context.t.onboarding.uploadPhoto,
           ),
         ),
       ),

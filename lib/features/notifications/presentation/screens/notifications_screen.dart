@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/notification_entry.dart';
 import '../widgets/notification_list.dart';
 
@@ -29,7 +29,7 @@ class NotificationsScreen extends StatelessWidget {
     if (entry.opensDuelInvite) {
       context.push(AppRoutes.duelInvite);
     } else {
-      context.showSnack(AppStrings.comingSoon);
+      context.showSnack(context.t.bottomNav.comingSoon);
     }
   }
 
@@ -43,7 +43,7 @@ class NotificationsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.notificationsTitle, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.notifications.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               Expanded(
                 child: SingleChildScrollView(

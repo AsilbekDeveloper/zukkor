@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/step_header.dart';
+import '../../../../i18n/strings.g.dart';
 import 'intro_interest_chips.dart';
 
 /// Introduction page 5 — the "what are you into?" survey.
@@ -33,8 +33,8 @@ class InterestsStep extends StatelessWidget {
       children: [
         StepHeader(
           icon: TablerIcons.heart,
-          title: AppStrings.introInterestsTitle,
-          subtitle: AppStrings.introInterestsSubtitle,
+          title: context.t.introduction.interestsTitle,
+          subtitle: context.t.introduction.interestsSubtitle,
           badgeColor: accentColor,
         ),
         AppSpacing.xl.vGap,

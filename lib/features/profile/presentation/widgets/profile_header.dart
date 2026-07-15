@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// "Profile" title + settings icon button — mirrors the prototype's
 /// `view-profile` `.header`.
@@ -18,7 +18,7 @@ class ProfileHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            AppStrings.navProfile,
+            context.t.bottomNav.profile,
             style: context.textStyles.titleLarge,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -40,7 +40,7 @@ class ProfileHeader extends StatelessWidget {
                 TablerIcons.settings,
                 color: context.colors.ink,
                 size: 20,
-                semanticLabel: AppStrings.settings,
+                semanticLabel: context.t.profile.settings,
               ),
             ),
           ),

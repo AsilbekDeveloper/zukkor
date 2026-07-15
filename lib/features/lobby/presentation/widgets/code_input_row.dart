@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// 6 single-digit boxes for entering a room code — mirrors the
 /// prototype's `.code-input-row` / `.code-box`, including its
@@ -70,7 +70,7 @@ class _CodeInputRowState extends State<CodeInputRow> {
                 child: _CodeBox(
                   controller: _controllers[i],
                   focusNode: _focusNodes[i],
-                  semanticLabel: AppStrings.codeDigitLabel(i + 1),
+                  semanticLabel: context.t.joinCode.codeDigitLabel(position: i + 1),
                   onChanged: (value) => _onChanged(i, value),
                   onKey: (event) => _onKey(i, event),
                 ),

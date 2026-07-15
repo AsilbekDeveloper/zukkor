@@ -1,16 +1,20 @@
-import '../../../../core/constants/app_strings.dart';
+import 'package:flutter/widgets.dart';
+
+import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 
 /// Which play mode a past game was — mirrors the prototype's
 /// `data-seg="all|solo|duel|lobby"` filter on the history screen.
-enum GameMode {
-  solo(AppStrings.historySegmentSolo),
-  duel(AppStrings.historySegmentDuel),
-  lobby(AppStrings.historySegmentLobby);
+enum GameMode { solo, duel, lobby }
 
-  const GameMode(this.label);
-
-  final String label;
+extension GameModeLabel on GameMode {
+  /// Needs [context] (not a const field) so the label re-translates when
+  /// the locale changes.
+  String label(BuildContext context) => switch (this) {
+        GameMode.solo => context.t.history.segmentSolo,
+        GameMode.duel => context.t.history.segmentDuel,
+        GameMode.lobby => context.t.history.segmentLobby,
+      };
 }
 
 /// A single row on the Game History screen (`view-history`'s
@@ -30,7 +34,8 @@ class GameHistoryEntry {
   final String subtitle;
 
   /// The score/placement text ("8/10", "2nd place") when [isWinBadge] is
-  /// null, or the badge label ("Win"/"Loss") when it isn't.
+  /// null. Ignored (win/loss label is derived from [isWinBadge] at render
+  /// time instead, see [HistoryList]) when [isWinBadge] isn't null.
   final String resultText;
 
   /// null = plain score/placement text (`.history-score`); true/false =
@@ -48,7 +53,7 @@ class GameHistoryEntry {
       category: QuizCategory.sample[1], // History
       mode: GameMode.duel,
       subtitle: 'Duel vs Malika · Today, 10:15',
-      resultText: AppStrings.historyWinBadge,
+      resultText: 'Win',
       isWinBadge: true,
     ),
     GameHistoryEntry(
@@ -67,7 +72,7 @@ class GameHistoryEntry {
       category: QuizCategory.sample[3], // Movies
       mode: GameMode.duel,
       subtitle: 'Duel vs Shohruh · 2 days ago',
-      resultText: AppStrings.historyLossBadge,
+      resultText: 'Loss',
       isWinBadge: false,
     ),
     GameHistoryEntry(

@@ -1,0 +1,323 @@
+{
+  "common": {
+    "appName": "Zukkor",
+    "appTagline": "Соревнование знаний",
+    "ok": "ОК",
+    "cancel": "Отмена",
+    "retry": "Повторить",
+    "loading": "Загрузка...",
+    "dayUnit(param=count)": {
+      "one": "день",
+      "few": "дня",
+      "many": "дней",
+      "other": "дня"
+    },
+    "friendsOnline(param=count)": {
+      "one": "$count друг онлайн",
+      "few": "$count друга онлайн",
+      "many": "$count друзей онлайн",
+      "other": "$count друга онлайн"
+    },
+    "questionCount(param=count)": {
+      "one": "$count вопрос",
+      "few": "$count вопроса",
+      "many": "$count вопросов",
+      "other": "$count вопроса"
+    }
+  },
+  "home": {
+    "greeting": "Доброе утро",
+    "duelHeroTitle": "Кто сильнее сегодня?",
+    "duelHeroSubtitle": "Бросьте вызов другу или случайному сопернику",
+    "startDuel": "Начать дуэль",
+    "totalXpLabel": "Всего XP",
+    "rankLabel": "Ранг",
+    "levelLabel": "Уровень",
+    "createRoom": "Создать комнату",
+    "joinWithCode": "Присоединиться по коду",
+    "categoriesTitle": "Категории",
+    "seeAll": "Все",
+    "challengeToDuel": "Вызвать на дуэль"
+  },
+  "categories": {
+    "title": "Выберите категорию"
+  },
+  "leaderboard": {
+    "greeting": "Рейтинг",
+    "title": "Кто лучший?",
+    "segmentWeekly": "За неделю",
+    "segmentAllTime": "За всё время",
+    "segmentFriends": "Друзья",
+    "you": "Вы",
+    "seeFullRanking": "Смотреть полный рейтинг",
+    "xpValue": "$xp XP",
+    "greetingFiltered": "Рейтинг · $category"
+  },
+  "fullLeaderboard": {
+    "title": "Полный рейтинг"
+  },
+  "playerDetail": {
+    "title": "Профиль",
+    "streakLabel": "Серия",
+    "addToFriends": "Добавить в друзья",
+    "requestSent": "Отправлено",
+    "rankedLabel": "#$rank место · $xp XP"
+  },
+  "rankFilter": {
+    "title": "По категориям",
+    "allCategories": "Все категории"
+  },
+  "friends": {
+    "addFriend": "Добавить друга",
+    "searchPlaceholder": "Поиск друзей",
+    "onlineSection": "Онлайн",
+    "allSection": "Все друзья",
+    "noneFound": "Друзья не найдены"
+  },
+  "addFriend": {
+    "searchByUsername": "Поиск по имени пользователя",
+    "orViaInviteLink": "Или по пригласительной ссылке",
+    "yourInviteCode": "Ваш код приглашения",
+    "shareLink": "Поделиться ссылкой",
+    "addButton": "Добавить",
+    "noUsersFound": "Пользователи не найдены"
+  },
+  "duelPick": {
+    "title": "Дуэль 1×1",
+    "chooseYourFriend": "Выберите друга"
+  },
+  "profile": {
+    "editProfile": "Редактировать профиль",
+    "settings": "Настройки",
+    "statTotalGames": "Всего игр",
+    "statWinRate": "Процент побед",
+    "statLongestStreak": "Самая длинная серия",
+    "gameHistory": "История игр",
+    "settingsAndHelp": "Настройки и помощь",
+    "levelWithTitle": "Уровень $level · $title",
+    "xpProgressLabel": "$current / $target XP · до следующего уровня $remaining"
+  },
+  "settings": {
+    "groupGeneral": "Общее",
+    "language": "Язык",
+    "notifications": "Уведомления",
+    "theme": "Тема",
+    "themeLight": "Светлая",
+    "themeDark": "Тёмная",
+    "soundEffects": "Звуковые эффекты",
+    "groupAccount": "Аккаунт",
+    "privacy": "Конфиденциальность",
+    "helpCenter": "Центр помощи",
+    "termsOfUse": "Условия использования",
+    "logOut": "Выйти"
+  },
+  "history": {
+    "segmentAll": "Все",
+    "segmentSolo": "Соло",
+    "segmentDuel": "Дуэль",
+    "segmentLobby": "Комната",
+    "winBadge": "Победа",
+    "lossBadge": "Поражение"
+  },
+  "quizIntro": {
+    "startLabel": "Старт!"
+  },
+  "quiz": {
+    "questionProgress": "Вопрос $current из $total"
+  },
+  "result": {
+    "label": "Результат",
+    "summary": "$correct из $total правильно",
+    "xpEarned": "+$xp XP",
+    "playAgain": "Играть снова",
+    "challengeAFriend": "Вызвать друга",
+    "backToHome": "На главную"
+  },
+  "joinCode": {
+    "hint": "Введите 6-значный код комнаты, который прислал друг",
+    "joinButton": "Присоединиться",
+    "codeDigitLabel": "Цифра кода $position"
+  },
+  "lobby": {
+    "title": "Комната для нескольких игроков",
+    "roomCode": "Код комнаты",
+    "players": "Игроки",
+    "hostRole": "Хост",
+    "guestRole": "Гость",
+    "startGame": "Начать игру",
+    "waitingForHost": "Ожидание, пока хост начнёт игру…",
+    "playerCount": "$current/$max"
+  },
+  "lobbyResult": {
+    "title": "Результаты комнаты",
+    "subtitle": "Вот как сыграли все в комнате",
+    "playAgain": "Играть снова"
+  },
+  "duelWaiting": {
+    "title": "Дуэль",
+    "waitingForAnswer": "Ожидание его ответа…",
+    "startDemo": "Начать (демо)"
+  },
+  "duelInvite": {
+    "title": "Приглашение на дуэль",
+    "challengesYou": "вызывает вас на дуэль",
+    "accept": "Принять",
+    "decline": "Отклонить"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "duelChallenge": "Малика вызвала вас на дуэль",
+    "streakReminder": "Не теряйте серию из 5 дней — играйте сегодня!",
+    "top50": "Вы попали в топ-50 недели",
+    "friendRequest": "Бекзод Холматов отправил вам запрос в друзья",
+    "welcome": "Добро пожаловать в Zukkor! Начните свою первую викторину"
+  },
+  "editProfile": {
+    "save": "Сохранить",
+    "updated": "Профиль обновлён"
+  },
+  "notificationSettings": {
+    "title": "Настройки уведомлений",
+    "duelInvites": "Приглашения на дуэль",
+    "streakReminders": "Напоминания о серии",
+    "leaderboardUpdates": "Обновления рейтинга",
+    "friendRequests": "Запросы в друзья",
+    "productUpdates": "Новости о продукте"
+  },
+  "privacyPolicy": {
+    "title": "Политика конфиденциальности",
+    "collectionTitle": "Какие данные мы собираем",
+    "collectionBody": "Мы собираем ваше имя, имя пользователя и активность в викторинах — очки, сыгранные категории и серии — чтобы обеспечивать работу игры и показывать ваш прогресс.",
+    "useTitle": "Как мы их используем",
+    "useBody": "Ваши данные используются для работы Zukkor: подбора соперников в дуэлях и комнатах, расчёта XP и рейтингов, а также отображения вашей статистики.",
+    "sharingTitle": "Передача данных",
+    "sharingBody": "Мы не продаём ваши данные. Ваше имя, аватар и публичная статистика видны другим игрокам как часть обычного игрового процесса — например, в рейтинге, списке друзей и дуэлях.",
+    "contactTitle": "Контакты",
+    "contactBody": "Есть вопросы о своих данных? Обратитесь через Центр помощи, и мы свяжемся с вами."
+  },
+  "termsOfUse": {
+    "title": "Условия использования",
+    "accountTitle": "Ваш аккаунт",
+    "accountBody": "Вы несёте ответственность за безопасность своего аккаунта и за действия, совершённые под ним.",
+    "conductTitle": "Честная игра",
+    "conductBody": "Обман, использование багов ради XP или преследование других игроков может привести к блокировке.",
+    "contentTitle": "Контент",
+    "contentBody": "Вопросы викторины и контент приложения принадлежат Zukkor. Их нельзя копировать или распространять без разрешения.",
+    "changesTitle": "Изменения",
+    "changesBody": "Мы можем обновлять эти условия по мере развития Zukkor. О любых важных изменениях мы вас уведомим."
+  },
+  "helpCenter": {
+    "duelQuestion": "Как начать дуэль?",
+    "duelAnswer": "Перейдите в раздел «Друзья», выберите друга онлайн, затем категорию. Сопернику придёт приглашение.",
+    "xpQuestion": "Как начисляется XP?",
+    "xpAnswer": "Вы получаете XP за каждый правильный ответ, а также бонус за завершение соло-викторины или победу в дуэли.",
+    "streakQuestion": "Что будет, если я пропущу день?",
+    "streakAnswer": "Ваша серия обнуляется, если вы пропустите целый день без хотя бы одной сыгранной викторины.",
+    "lobbyQuestion": "Сколько игроков может присоединиться к комнате?",
+    "lobbyAnswer": "Сейчас комнаты поддерживают до 10 игроков.",
+    "reportQuestion": "Как сообщить об ошибке или некорректном вопросе?",
+    "reportAnswer": "Свяжитесь с нами через этот Центр помощи. Мы небольшая команда, и каждое сообщение помогает нам улучшать Zukkor."
+  },
+  "bottomNav": {
+    "home": "Главная",
+    "leaderboard": "Рейтинг",
+    "friends": "Друзья",
+    "profile": "Профиль",
+    "comingSoon": "Скоро"
+  },
+  "onboarding": {
+    "stepCount": "Шаг",
+    "continueButton": "Продолжить",
+    "start": "Начать",
+    "avatarTitle": "Выберите подходящий аватар",
+    "avatarSubtitle": "Вы всегда сможете изменить его позже",
+    "uploadPhoto": "Загрузить фото",
+    "profileTitle": "Давайте познакомимся",
+    "profileSubtitle": "Эта информация будет видна в вашем профиле и вашим друзьям",
+    "firstNameLabel": "Имя",
+    "firstNameHint": "Азиз",
+    "lastNameLabel": "Фамилия",
+    "lastNameHint": "Каримов",
+    "usernameLabel": "Имя пользователя",
+    "usernameHint": "aziz_karimov",
+    "directionTitle": "Зачем вы используете Zukkor?",
+    "directionSubtitle": "Мы порекомендуем подходящий контент и категории",
+    "directionRequired": "Выберите один вариант, чтобы продолжить",
+    "studentUniTitle": "Студент",
+    "studentUniSubtitle": "Учусь в университете или колледже",
+    "studentSchoolTitle": "Школьник",
+    "studentSchoolSubtitle": "Учусь в школе",
+    "examPrepTitle": "Подготовка к экзамену",
+    "examPrepSubtitle": "Готовлюсь к экзамену (например, IELTS)",
+    "casualTitle": "Просто для удовольствия",
+    "casualSubtitle": "Играю, провожу время"
+  },
+  "introduction": {
+    "skip": "Пропустить",
+    "getStarted": "Начать",
+    "welcomeTitle": "Добро пожаловать в Zukkor!",
+    "welcomeSubtitle": "Приложение-соревнование знаний, где обучение похоже на игру",
+    "languageLabel": "Выберите язык",
+    "soloTitle": "Проверьте себя",
+    "soloSubtitle": "Выберите категорию и отвечайте на вопросы соло — зарабатывайте XP и побеждайте свой лучший результат",
+    "duelTitle": "Бросьте вызов друзьям",
+    "duelSubtitle": "Сразитесь с другом один на один или создайте комнату и играйте с целой группой в реальном времени",
+    "leaderboardTitle": "Поднимайтесь в рейтинге",
+    "leaderboardSubtitle": "Каждый правильный ответ приносит XP — следите за своим местом среди друзей и всех остальных",
+    "interestsTitle": "Что вам интересно?",
+    "interestsSubtitle": "Выберите несколько вариантов — мы используем их для рекомендации категорий",
+    "studyTitle": "Почти готово!",
+    "studySubtitle": "Ещё пара быстрых вопросов",
+    "studyPlaceLabel": "Где вы учитесь?",
+    "quizLikingLabel": "Вам нравится решать викторины и головоломки?",
+    "studyPlaceSchool": "Школа",
+    "studyPlaceUniversity": "Университет",
+    "studyPlaceExamPrep": "Подготовка к экзамену",
+    "quizLikingLoveIt": "Очень нравится",
+    "quizLikingItsOk": "Нормально",
+    "quizLikingNotReally": "Не особо",
+    "otherOption": "Другое",
+    "otherFieldLabel": "Расскажите подробнее",
+    "otherFieldHint": "Введите здесь..."
+  },
+  "auth": {
+    "loginTitle": "С возвращением!",
+    "loginSubtitle": "Войдите и продолжите игру",
+    "registerTitle": "Создать аккаунт",
+    "registerSubtitle": "Зарегистрируйтесь за минуту и начните",
+    "emailLabel": "Email",
+    "emailHint": "you@example.com",
+    "passwordLabel": "Пароль",
+    "passwordHint": "Минимум 8 символов",
+    "confirmPasswordLabel": "Подтвердите пароль",
+    "confirmPasswordHint": "Введите пароль ещё раз",
+    "loginButton": "Войти",
+    "registerButton": "Зарегистрироваться",
+    "orDivider": "или",
+    "continueWithGoogle": "Продолжить через Google",
+    "noAccountPrompt": "Нет аккаунта?",
+    "haveAccountPrompt": "Уже есть аккаунт?",
+    "switchToRegister": "Зарегистрироваться",
+    "switchToLogin": "Войти"
+  },
+  "authValidation": {
+    "emailRequired": "Введите email",
+    "emailInvalid": "Неверный формат email",
+    "passwordRequired": "Введите пароль",
+    "passwordTooShort": "Пароль должен содержать минимум 8 символов",
+    "passwordMismatch": "Пароли не совпадают",
+    "usernameRequired": "Введите имя пользователя",
+    "usernameInvalid": "Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)",
+    "nameRequired": "Это поле обязательно",
+    "nameTooLong": "Слишком длинно (максимум 50 символов)"
+  },
+  "errors": {
+    "noConnection": "Нет подключения к интернету. Проверьте соединение и попробуйте снова.",
+    "timeout": "Сервер не отвечает. Попробуйте ещё раз чуть позже.",
+    "server": "Произошла ошибка сервера. Попробуйте ещё раз чуть позже.",
+    "unknown": "Произошла непредвиденная ошибка.",
+    "invalidCredentials": "Неверный email или пароль.",
+    "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова.",
+    "googleCancelled": "Вход через Google отменён."
+  }
+}

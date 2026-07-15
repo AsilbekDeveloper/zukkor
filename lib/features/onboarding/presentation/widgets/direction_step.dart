@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/step_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/onboarding_direction.dart';
 
 /// Onboarding step 3 — single-select "why are you using Zukkor" cards
@@ -25,10 +25,10 @@ class DirectionStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const StepHeader(
+        StepHeader(
           icon: TablerIcons.compass,
-          title: AppStrings.directionStepTitle,
-          subtitle: AppStrings.directionStepSubtitle,
+          title: context.t.onboarding.directionTitle,
+          subtitle: context.t.onboarding.directionSubtitle,
         ),
         AppSpacing.xl.vGap,
         for (final OnboardingDirection direction in OnboardingDirection.values)
@@ -90,8 +90,8 @@ class _DirectionCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(direction.title, style: context.textStyles.titleMedium),
-                    Text(direction.subtitle, style: context.textStyles.bodySmall),
+                    Text(direction.title(context), style: context.textStyles.titleMedium),
+                    Text(direction.subtitle(context), style: context.textStyles.bodySmall),
                   ],
                 ),
               ),

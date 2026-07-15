@@ -69,7 +69,7 @@ class _PlayerRow extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    player.name,
+                    player.displayName(context),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: context.textStyles.bodySmall?.copyWith(

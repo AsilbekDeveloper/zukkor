@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// "Create a room" (solid dark) / "Join with a code" (outlined) —
 /// mirrors the prototype's `.mp-row`.
@@ -25,7 +25,7 @@ class MultiplayerRow extends StatelessWidget {
         Expanded(
           child: _MpButton(
             icon: TablerIcons.plus,
-            label: AppStrings.createRoom,
+            label: context.t.home.createRoom,
             background: context.colors.surfaceDark,
             foreground: Colors.white,
             iconColor: Colors.white,
@@ -37,7 +37,7 @@ class MultiplayerRow extends StatelessWidget {
         Expanded(
           child: _MpButton(
             icon: TablerIcons.keyboard,
-            label: AppStrings.joinWithCode,
+            label: context.t.home.joinWithCode,
             background: context.colors.card,
             foreground: context.colors.ink,
             iconColor: context.colors.coralDeep,

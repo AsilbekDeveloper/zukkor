@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// "Leaderboard / Who's the best?" title + filter icon button — mirrors
 /// the prototype's leaderboard `.header`. [greeting] reflects the active
@@ -29,7 +29,7 @@ class LeaderboardHeader extends StatelessWidget {
                 style: context.textStyles.bodySmall,
               ),
               Text(
-                AppStrings.leaderboardTitle,
+                context.t.leaderboard.title,
                 style: context.textStyles.titleLarge,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

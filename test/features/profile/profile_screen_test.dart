@@ -15,6 +15,7 @@ import 'package:zukkor/features/leaderboard/presentation/screens/leaderboard_scr
 import 'package:zukkor/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:zukkor/features/profile/presentation/screens/profile_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 // Profile pushes to SettingsScreen, which reads themeControllerProvider —
 // needs a real ProviderScope (mocked SharedPreferences) rather than a
@@ -46,7 +47,9 @@ Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 
   await tester.pumpWidget(
     ProviderScope(
       overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
-      child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      child: TranslationProvider(
+        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      ),
     ),
   );
   await tester.pumpAndSettle();

@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/close_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/leaderboard_entry.dart';
 
 /// A read-only profile card for someone else's leaderboard row — mirrors
@@ -56,7 +57,7 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              CloseHeader(title: AppStrings.playerDetailTitle, onClose: () => _close(context)),
+              CloseHeader(title: context.t.playerDetail.title, onClose: () => _close(context)),
               AppSpacing.xl.vGap,
               Center(
                 child: Container(
@@ -81,7 +82,7 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
               AppSpacing.md.vGap,
               Center(
                 child: Text(
-                  entry.name,
+                  entry.displayName(context),
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -91,7 +92,7 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
               const SizedBox(height: 4),
               Center(
                 child: Text(
-                  AppStrings.rankedLabel(entry.rank, entry.xp),
+                  context.t.playerDetail.rankedLabel(rank: entry.rank, xp: formatThousands(entry.xp)),
                   style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                 ),
               ),
@@ -99,7 +100,7 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
               _PlayerStatsRow(level: _level, winRatePercent: _winRate, streak: _streak),
               AppSpacing.xl.vGap,
               AppButton.primary(
-                label: _requestSent ? AppStrings.friendRequestSentLabel : AppStrings.addToFriendsButton,
+                label: _requestSent ? context.t.playerDetail.requestSent : context.t.playerDetail.addToFriends,
                 icon: Icon(
                   _requestSent ? TablerIcons.check : TablerIcons.userPlus,
                   color: Colors.white,
@@ -134,11 +135,11 @@ class _PlayerStatsRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: _Stat(value: '$level', label: AppStrings.levelLabel)),
+          Expanded(child: _Stat(value: '$level', label: context.t.home.levelLabel)),
           _divider(context),
-          Expanded(child: _Stat(value: '$winRatePercent%', label: AppStrings.statWinRate)),
+          Expanded(child: _Stat(value: '$winRatePercent%', label: context.t.profile.statWinRate)),
           _divider(context),
-          Expanded(child: _Stat(value: '$streak', label: AppStrings.streakLabel)),
+          Expanded(child: _Stat(value: '$streak', label: context.t.playerDetail.streakLabel)),
         ],
       ),
     );

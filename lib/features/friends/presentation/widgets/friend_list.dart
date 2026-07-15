@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/friend_entry.dart';
 
 /// Friend rows with a duel-challenge button — mirrors the prototype's
@@ -133,10 +133,10 @@ class _DuelButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(11),
-        child: const SizedBox(
+        child: SizedBox(
           width: 36,
           height: 36,
-          child: Icon(TablerIcons.swords, color: Colors.white, size: 16, semanticLabel: AppStrings.challengeToDuel),
+          child: Icon(TablerIcons.swords, color: Colors.white, size: 16, semanticLabel: context.t.home.challengeToDuel),
         ),
       ),
     );

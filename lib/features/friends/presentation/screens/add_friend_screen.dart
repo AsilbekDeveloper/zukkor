@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/invite_code_card.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/discoverable_user.dart';
 import '../widgets/discoverable_user_list.dart';
 import '../widgets/friends_search_bar.dart';
@@ -41,7 +41,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     super.dispose();
   }
 
-  void _comingSoon(BuildContext context) => context.showSnack(AppStrings.comingSoon);
+  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -71,10 +71,10 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.addFriend, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.friends.addFriend, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               FriendsSearchBar(
-                placeholder: AppStrings.searchByUsername,
+                placeholder: context.t.addFriend.searchByUsername,
                 controller: _searchController,
                 onChanged: (value) => setState(() => _query = value),
               ),
@@ -85,7 +85,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     child: Center(
                       child: Text(
-                        AppStrings.noUsersFound,
+                        context.t.addFriend.noUsersFound,
                         style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                       ),
                     ),
@@ -98,9 +98,9 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   ),
               ] else ...[
                 AppSpacing.lg.vGap,
-                Text(AppStrings.orViaInviteLink, style: context.textStyles.titleLarge),
+                Text(context.t.addFriend.orViaInviteLink, style: context.textStyles.titleLarge),
                 AppSpacing.sm.vGap,
-                const InviteCodeCard(label: AppStrings.yourInviteCode, code: _mockInviteCode),
+                InviteCodeCard(label: context.t.addFriend.yourInviteCode, code: _mockInviteCode),
                 AppSpacing.lg.vGap,
                 _ShareLinkButton(onTap: () => _comingSoon(context)),
               ],
@@ -139,7 +139,7 @@ class _ShareLinkButton extends StatelessWidget {
               const Icon(TablerIcons.share3, size: 17, color: Colors.white),
               const SizedBox(width: 6),
               Text(
-                AppStrings.shareLink,
+                context.t.addFriend.shareLink,
                 style: context.textStyles.bodySmall?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// "Friends" title + add-friend icon button — mirrors the prototype's
 /// `view-friends` `.header`.
@@ -18,7 +18,7 @@ class FriendsHeader extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            AppStrings.navFriends,
+            context.t.bottomNav.friends,
             style: context.textStyles.titleLarge,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

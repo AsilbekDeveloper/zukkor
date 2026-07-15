@@ -1,0 +1,308 @@
+{
+  "common": {
+    "appName": "Zukkor",
+    "appTagline": "Bilim musobaqasi",
+    "ok": "OK",
+    "cancel": "Bekor qilish",
+    "retry": "Qayta urinish",
+    "loading": "Yuklanmoqda...",
+    "dayUnit(param=count)": { "one": "kun", "other": "kun" },
+    "friendsOnline(param=count)": { "one": "$count do'st onlayn", "other": "$count do'st onlayn" },
+    "questionCount(param=count)": { "one": "$count savol", "other": "$count savol" }
+  },
+  "home": {
+    "greeting": "Xayrli tong",
+    "duelHeroTitle": "Bugun kim kuchli?",
+    "duelHeroSubtitle": "Do'stingizga yoki tasodifiy raqibga chaqiruv tashlang",
+    "startDuel": "Duel boshlash",
+    "totalXpLabel": "Jami XP",
+    "rankLabel": "O'rin",
+    "levelLabel": "Daraja",
+    "createRoom": "Xona yaratish",
+    "joinWithCode": "Kod bilan qo'shilish",
+    "categoriesTitle": "Kategoriyalar",
+    "seeAll": "Barchasi",
+    "challengeToDuel": "Duelga chaqirish"
+  },
+  "categories": {
+    "title": "Kategoriya tanlang"
+  },
+  "leaderboard": {
+    "greeting": "Reyting",
+    "title": "Kim eng zo'r?",
+    "segmentWeekly": "Haftalik",
+    "segmentAllTime": "Barcha vaqt",
+    "segmentFriends": "Do'stlar",
+    "you": "Siz",
+    "seeFullRanking": "To'liq reytingni ko'rish",
+    "xpValue": "$xp XP",
+    "greetingFiltered": "Reyting · $category"
+  },
+  "fullLeaderboard": {
+    "title": "To'liq reyting"
+  },
+  "playerDetail": {
+    "title": "Profil",
+    "streakLabel": "Seriya",
+    "addToFriends": "Do'stlikka qo'shish",
+    "requestSent": "Yuborildi",
+    "rankedLabel": "#$rank o'rin · $xp XP"
+  },
+  "rankFilter": {
+    "title": "Kategoriya bo'yicha",
+    "allCategories": "Barcha kategoriyalar"
+  },
+  "friends": {
+    "addFriend": "Do'st qo'shish",
+    "searchPlaceholder": "Do'stlarni qidirish",
+    "onlineSection": "Onlayn",
+    "allSection": "Barcha do'stlar",
+    "noneFound": "Do'stlar topilmadi"
+  },
+  "addFriend": {
+    "searchByUsername": "Foydalanuvchi nomi bo'yicha qidirish",
+    "orViaInviteLink": "Yoki taklif havolasi orqali",
+    "yourInviteCode": "Sizning taklif kodingiz",
+    "shareLink": "Havolani ulashish",
+    "addButton": "Qo'shish",
+    "noUsersFound": "Foydalanuvchilar topilmadi"
+  },
+  "duelPick": {
+    "title": "1v1 Duel",
+    "chooseYourFriend": "Do'stingizni tanlang"
+  },
+  "profile": {
+    "editProfile": "Profilni tahrirlash",
+    "settings": "Sozlamalar",
+    "statTotalGames": "Jami o'yinlar",
+    "statWinRate": "G'alaba foizi",
+    "statLongestStreak": "Eng uzun seriya",
+    "gameHistory": "O'yinlar tarixi",
+    "settingsAndHelp": "Sozlamalar va yordam",
+    "levelWithTitle": "$level-daraja · $title",
+    "xpProgressLabel": "$current / $target XP · keyingi darajagacha $remaining"
+  },
+  "settings": {
+    "groupGeneral": "Umumiy",
+    "language": "Til",
+    "notifications": "Bildirishnomalar",
+    "theme": "Mavzu",
+    "themeLight": "Yorug'",
+    "themeDark": "Qorong'i",
+    "soundEffects": "Ovoz effektlari",
+    "groupAccount": "Hisob",
+    "privacy": "Maxfiylik",
+    "helpCenter": "Yordam markazi",
+    "termsOfUse": "Foydalanish shartlari",
+    "logOut": "Chiqish"
+  },
+  "history": {
+    "segmentAll": "Barchasi",
+    "segmentSolo": "Yakka",
+    "segmentDuel": "Duel",
+    "segmentLobby": "Xona",
+    "winBadge": "G'alaba",
+    "lossBadge": "Mag'lubiyat"
+  },
+  "quizIntro": {
+    "startLabel": "Boshlash!"
+  },
+  "quiz": {
+    "questionProgress": "$current/$total-savol"
+  },
+  "result": {
+    "label": "Natija",
+    "summary": "$total tadan $correct tasi to'g'ri",
+    "xpEarned": "+$xp XP",
+    "playAgain": "Yana o'ynash",
+    "challengeAFriend": "Do'stni chaqirish",
+    "backToHome": "Bosh sahifaga"
+  },
+  "joinCode": {
+    "hint": "Do'stingiz yuborgan 6 xonali xona kodini kiriting",
+    "joinButton": "Qo'shilish",
+    "codeDigitLabel": "$position-raqam"
+  },
+  "lobby": {
+    "title": "Ko'p o'yinchili xona",
+    "roomCode": "Xona kodi",
+    "players": "O'yinchilar",
+    "hostRole": "Xost",
+    "guestRole": "Mehmon",
+    "startGame": "O'yinni boshlash",
+    "waitingForHost": "Xost o'yinni boshlashini kutmoqda…",
+    "playerCount": "$current/$max"
+  },
+  "lobbyResult": {
+    "title": "Xona natijalari",
+    "subtitle": "Xonadagi hammaning natijasi shunday",
+    "playAgain": "Yana o'ynash"
+  },
+  "duelWaiting": {
+    "title": "Duel",
+    "waitingForAnswer": "Uning javobini kutmoqda…",
+    "startDemo": "Boshlash (demo)"
+  },
+  "duelInvite": {
+    "title": "Duelga taklif",
+    "challengesYou": "sizni duelga chaqirmoqda",
+    "accept": "Qabul qilish",
+    "decline": "Rad etish"
+  },
+  "notifications": {
+    "title": "Bildirishnomalar",
+    "duelChallenge": "Malika sizni duelga chaqirdi",
+    "streakReminder": "5 kunlik seriyangizni yo'qotmang — bugun o'ynang!",
+    "top50": "Siz haftalik Top 50ga kirdingiz",
+    "friendRequest": "Bekzod Xolmatov sizga do'stlik so'rovi yubordi",
+    "welcome": "Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang"
+  },
+  "editProfile": {
+    "save": "Saqlash",
+    "updated": "Profil yangilandi"
+  },
+  "notificationSettings": {
+    "title": "Bildirishnoma sozlamalari",
+    "duelInvites": "Duel takliflari",
+    "streakReminders": "Seriya eslatmalari",
+    "leaderboardUpdates": "Reyting yangilanishlari",
+    "friendRequests": "Do'stlik so'rovlari",
+    "productUpdates": "Yangilanishlar haqida"
+  },
+  "privacyPolicy": {
+    "title": "Maxfiylik siyosati",
+    "collectionTitle": "Biz to'playdigan ma'lumotlar",
+    "collectionBody": "O'yinni ishga tushirish va rivojlanishingizni ko'rsatish uchun ismingiz, foydalanuvchi nomingiz va viktorina faoliyatingizni — ballar, o'ynalgan kategoriyalar va seriyalarni — to'playmiz.",
+    "useTitle": "Ulardan qanday foydalanamiz",
+    "useBody": "Ma'lumotlaringiz Zukkorni ishga tushirish uchun ishlatiladi: sizni dueller va xonalarda moslashtirish, XP va reytinglarni hisoblash, hamda statistikangizni sizga ko'rsatish.",
+    "sharingTitle": "Ulashish",
+    "sharingBody": "Biz ma'lumotlaringizni sotmaymiz. Ismingiz, avataringiz va ochiq statistikangiz oddiy o'yin jarayonining bir qismi sifatida boshqa o'yinchilarga ko'rinadi — masalan, reyting, do'stlar ro'yxati va duellarda.",
+    "contactTitle": "Aloqa",
+    "contactBody": "Ma'lumotlaringiz haqida savollaringiz bormi? Yordam markazi orqali murojaat qiling, biz siz bilan bog'lanamiz."
+  },
+  "termsOfUse": {
+    "title": "Foydalanish shartlari",
+    "accountTitle": "Hisobingiz",
+    "accountBody": "Hisobingiz xavfsizligini saqlash va u orqali sodir bo'ladigan faoliyat uchun siz javobgarsiz.",
+    "conductTitle": "Halol o'yin",
+    "conductBody": "Aldash, XP uchun xatolardan foydalanish yoki boshqa o'yinchilarni bezovta qilish hisobingizning to'xtatib qo'yilishiga olib kelishi mumkin.",
+    "contentTitle": "Kontent",
+    "contentBody": "Viktorina savollari va ilova kontenti Zukkorga tegishli. Ularni ruxsatsiz nusxalash yoki tarqatish mumkin emas.",
+    "changesTitle": "O'zgarishlar",
+    "changesBody": "Zukkor rivojlanishi bilan ushbu shartlarni yangilashimiz mumkin. Har qanday muhim o'zgarish haqida sizga xabar beramiz."
+  },
+  "helpCenter": {
+    "duelQuestion": "Duelni qanday boshlayman?",
+    "duelAnswer": "Do'stlar bo'limiga o'ting, onlayn do'stni tanlang, so'ng kategoriyani tanlang. Raqibingizga taklif yuboriladi.",
+    "xpQuestion": "XP qanday hisoblanadi?",
+    "xpAnswer": "Har bir to'g'ri javob uchun XP olasiz, shuningdek yakka viktorinani tugatgan yoki duelda g'alaba qozongan uchun bonus beriladi.",
+    "streakQuestion": "Bir kun o'tkazib yuborsam nima bo'ladi?",
+    "streakAnswer": "Agar butun kun davomida kamida bitta viktorina o'ynamasangiz, seriyangiz nolga tushadi.",
+    "lobbyQuestion": "Xonaga nechta o'yinchi qo'shilishi mumkin?",
+    "lobbyAnswer": "Hozircha xonalar 10 tagacha o'yinchini qo'llab-quvvatlaydi.",
+    "reportQuestion": "Xato yoki noto'g'ri savol haqida qanday xabar beraman?",
+    "reportAnswer": "Shu Yordam markazi orqali biz bilan bog'laning. Biz kichik jamoamiz va har bir xabar Zukkorni yaxshilashga yordam beradi."
+  },
+  "bottomNav": {
+    "home": "Bosh sahifa",
+    "leaderboard": "Reyting",
+    "friends": "Do'stlar",
+    "profile": "Profil",
+    "comingSoon": "Tez orada"
+  },
+  "onboarding": {
+    "stepCount": "Bosqich",
+    "continueButton": "Davom etish",
+    "start": "Boshlash",
+    "avatarTitle": "O'zingizga mos avatar tanlang",
+    "avatarSubtitle": "Uni istalgan vaqtda o'zgartirishingiz mumkin",
+    "uploadPhoto": "Rasm yuklash",
+    "profileTitle": "Siz bilan tanishib olaylik",
+    "profileSubtitle": "Bu ma'lumot profilingizda va do'stlaringizga ko'rinadi",
+    "firstNameLabel": "Ism",
+    "firstNameHint": "Aziz",
+    "lastNameLabel": "Familiya",
+    "lastNameHint": "Karimov",
+    "usernameLabel": "Foydalanuvchi nomi",
+    "usernameHint": "aziz_karimov",
+    "directionTitle": "Zukkordan nima uchun foydalanyapsiz?",
+    "directionSubtitle": "Sizga mos kontent va kategoriyalarni tavsiya qilamiz",
+    "directionRequired": "Davom etish uchun birini tanlang",
+    "studentUniTitle": "Talaba",
+    "studentUniSubtitle": "Universitet yoki kollejda o'qiyman",
+    "studentSchoolTitle": "O'quvchi",
+    "studentSchoolSubtitle": "Maktabda o'qiyman",
+    "examPrepTitle": "Imtihonga tayyorgarlik",
+    "examPrepSubtitle": "Imtihonga tayyorlanyapman (masalan, IELTS)",
+    "casualTitle": "Shunchaki qiziqib",
+    "casualSubtitle": "O'ynab, vaqt o'tkazyapman"
+  },
+  "introduction": {
+    "skip": "O'tkazib yuborish",
+    "getStarted": "Boshlash",
+    "welcomeTitle": "Zukkorga xush kelibsiz!",
+    "welcomeSubtitle": "O'rganish o'yinga aylangan bilim musobaqasi ilovasi",
+    "languageLabel": "Tilingizni tanlang",
+    "soloTitle": "O'zingizni sinang",
+    "soloSubtitle": "Kategoriya tanlang va yakka savollarga javob bering — XP to'plang va o'z rekordingizni yenging",
+    "duelTitle": "Do'stlaringizga qarshi chiqing",
+    "duelSubtitle": "Do'st bilan yakkama-yakka duel qiling yoki xona yaratib, butun guruh bilan real vaqtda o'ynang",
+    "leaderboardTitle": "Reytingda ko'tariling",
+    "leaderboardSubtitle": "Har bir to'g'ri javob XP beradi — do'stlaringiz va boshqalar orasidagi o'rningizni kuzating",
+    "interestsTitle": "Nimalarga qiziqasiz?",
+    "interestsSubtitle": "Bir nechtasini tanlang — ulardan kategoriyalarni tavsiya qilishda foydalanamiz",
+    "studyTitle": "Deyarli tayyor!",
+    "studySubtitle": "Yana bir nechta qisqa savol",
+    "studyPlaceLabel": "Qayerda o'qiysiz?",
+    "quizLikingLabel": "Viktorina va topishmoqlarni yechishni yoqtirasizmi?",
+    "studyPlaceSchool": "Maktab",
+    "studyPlaceUniversity": "Universitet",
+    "studyPlaceExamPrep": "Imtihonga tayyorgarlik",
+    "quizLikingLoveIt": "Juda yoqtiraman",
+    "quizLikingItsOk": "Yomon emas",
+    "quizLikingNotReally": "Unchalik emas",
+    "otherOption": "Boshqa",
+    "otherFieldLabel": "Batafsilroq ayting",
+    "otherFieldHint": "Shu yerga yozing..."
+  },
+  "auth": {
+    "loginTitle": "Xush kelibsiz!",
+    "loginSubtitle": "Tizimga kiring va o'yinni davom ettiring",
+    "registerTitle": "Hisob yaratish",
+    "registerSubtitle": "Bir daqiqada ro'yxatdan o'ting va boshlang",
+    "emailLabel": "Email",
+    "emailHint": "siz@misol.com",
+    "passwordLabel": "Parol",
+    "passwordHint": "Kamida 8 ta belgi",
+    "confirmPasswordLabel": "Parolni tasdiqlang",
+    "confirmPasswordHint": "Parolingizni qayta kiriting",
+    "loginButton": "Kirish",
+    "registerButton": "Ro'yxatdan o'tish",
+    "orDivider": "yoki",
+    "continueWithGoogle": "Google orqali davom etish",
+    "noAccountPrompt": "Hisobingiz yo'qmi?",
+    "haveAccountPrompt": "Hisobingiz bormi?",
+    "switchToRegister": "Ro'yxatdan o'tish",
+    "switchToLogin": "Kirish"
+  },
+  "authValidation": {
+    "emailRequired": "Email kiritilishi shart",
+    "emailInvalid": "Email formati noto'g'ri",
+    "passwordRequired": "Parol kiritilishi shart",
+    "passwordTooShort": "Parol kamida 8 ta belgidan iborat bo'lishi kerak",
+    "passwordMismatch": "Parollar mos kelmadi",
+    "usernameRequired": "Foydalanuvchi nomi kiritilishi shart",
+    "usernameInvalid": "Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo'lishi mumkin (3–30 belgi)",
+    "nameRequired": "Bu maydon to'ldirilishi shart",
+    "nameTooLong": "Juda uzun (maksimal 50 belgi)"
+  },
+  "errors": {
+    "noConnection": "Internet aloqasi yo'q. Ulanishingizni tekshirib, qayta urinib ko'ring.",
+    "timeout": "Server javob bermayapti. Birozdan so'ng qayta urinib ko'ring.",
+    "server": "Server xatoligi yuz berdi. Birozdan so'ng qayta urinib ko'ring.",
+    "unknown": "Kutilmagan xatolik yuz berdi.",
+    "invalidCredentials": "Email yoki parol noto'g'ri.",
+    "sessionExpired": "Sessiyangiz muddati tugadi. Qaytadan tizimga kiring.",
+    "googleCancelled": "Google orqali kirish bekor qilindi."
+  }
+}

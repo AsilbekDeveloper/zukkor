@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/game_history_entry.dart';
 
 /// A column of past-game rows — mirrors the prototype's `.history-list` /
@@ -81,7 +82,7 @@ class _HistoryRow extends StatelessWidget {
               style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w700),
             )
           else
-            _ResultBadge(isWin: entry.isWinBadge!, label: entry.resultText),
+            _ResultBadge(isWin: entry.isWinBadge!),
         ],
       ),
     );
@@ -89,10 +90,9 @@ class _HistoryRow extends StatelessWidget {
 }
 
 class _ResultBadge extends StatelessWidget {
-  const _ResultBadge({required this.isWin, required this.label});
+  const _ResultBadge({required this.isWin});
 
   final bool isWin;
-  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,7 @@ class _ResultBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        label,
+        isWin ? context.t.history.winBadge : context.t.history.lossBadge,
         style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
       ),
     );

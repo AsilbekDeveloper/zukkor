@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/checkmark_option_list.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 
 /// Single-select "filter the leaderboard by category" — mirrors the
@@ -37,13 +37,13 @@ class RankFilterScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.rankFilterScreenTitle, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.rankFilter.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               CheckmarkOptionList(
                 options: [
                   CheckmarkOption(
                     icon: TablerIcons.list,
-                    label: AppStrings.allCategories,
+                    label: context.t.rankFilter.allCategories,
                     isActive: currentFilter == null,
                     onTap: () => context.pop(null),
                   ),

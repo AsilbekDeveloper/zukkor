@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/leaderboard_entry.dart';
 import '../widgets/leaderboard_header.dart';
 import '../widgets/leaderboard_podium.dart';
@@ -37,7 +37,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   LeaderboardSegment _segment = LeaderboardSegment.weekly;
   String? _categoryFilter;
 
-  void _comingSoon() => context.showSnack(AppStrings.comingSoon);
+  void _comingSoon() => context.showSnack(context.t.bottomNav.comingSoon);
 
   Future<void> _openFilter() async {
     final String? result = await context.push<String?>(
@@ -83,8 +83,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
     final String greeting = _categoryFilter == null
-        ? AppStrings.leaderboardGreeting
-        : AppStrings.leaderboardGreetingFiltered(_categoryFilter!);
+        ? context.t.leaderboard.greeting
+        : context.t.leaderboard.greetingFiltered(category: _categoryFilter!);
 
     return Scaffold(
       body: SafeArea(
@@ -125,7 +125,7 @@ class _SeeFullRankingButton extends StatelessWidget {
       child: TextButton.icon(
         onPressed: onTap,
         icon: const Icon(TablerIcons.chevronRight, size: 16),
-        label: const Text(AppStrings.seeFullRanking),
+        label: Text(context.t.leaderboard.seeFullRanking),
         iconAlignment: IconAlignment.end,
       ),
     );

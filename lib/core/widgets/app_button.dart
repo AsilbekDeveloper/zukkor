@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../audio/app_sound.dart';
+import '../audio/sound_controller.dart';
 import '../constants/app_durations.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
@@ -12,7 +15,9 @@ enum AppButtonVariant { primary, secondary }
 ///  - [isLoading] paytida tugma bosilmaydi va spinner ko'rsatiladi,
 ///    LEKIN o'lchami o'zgarmaydi (layout sakramaydi).
 ///  - Primary variantda prototipdagi coral soya bor.
-class AppButton extends StatelessWidget {
+///  - Har bir bosilishda [AppSound.tap] eshittiriladi (Sozlamalar'dagi
+///    sound effects o'chirilgan bo'lsa — yo'q).
+class AppButton extends ConsumerWidget {
   const AppButton.primary({
     super.key,
     required this.label,
@@ -38,8 +43,14 @@ class AppButton extends StatelessWidget {
   bool get _isPrimary => variant == AppButtonVariant.primary;
 
   @override
-  Widget build(BuildContext context) {
-    final VoidCallback? effectiveOnPressed = isLoading ? null : onPressed;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final VoidCallback? onPressedCallback = onPressed;
+    final VoidCallback? effectiveOnPressed = isLoading || onPressedCallback == null
+        ? null
+        : () {
+            ref.playSound(AppSound.tap);
+            onPressedCallback();
+          };
 
     final Widget child = AnimatedSwitcher(
       duration: AppDurations.fast,

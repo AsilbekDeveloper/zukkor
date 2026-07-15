@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/constants/app_durations.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/intro_interest.dart';
 
 /// Multi-select chip grid for "what are you into?" — plus an "Other" chip
@@ -45,7 +45,7 @@ class IntroInterestChips extends StatelessWidget {
                 onTap: () => onToggle(interest.label),
               ),
             _InterestChip(
-              label: AppStrings.introOtherOption,
+              label: context.t.introduction.otherOption,
               icon: TablerIcons.dots,
               color: context.colors.muted,
               isSelected: otherSelected,
@@ -56,8 +56,8 @@ class IntroInterestChips extends StatelessWidget {
         if (otherSelected) ...[
           AppSpacing.md.vGap,
           AppTextField(
-            label: AppStrings.introOtherFieldLabel,
-            hint: AppStrings.introOtherFieldHint,
+            label: context.t.introduction.otherFieldLabel,
+            hint: context.t.introduction.otherFieldHint,
             controller: otherController,
             textInputAction: TextInputAction.done,
           ),

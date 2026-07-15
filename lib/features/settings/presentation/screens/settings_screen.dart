@@ -3,14 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
+import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
+import '../../../../core/locale/locale_controller.dart';
+import '../../../../core/locale/locale_display.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../profile/presentation/widgets/settings_list.dart';
 
 /// The Settings screen — mirrors the prototype's `view-settings`: a
@@ -19,11 +22,13 @@ import '../../../profile/presentation/widgets/settings_list.dart';
 /// row.
 ///
 /// CURRENT STATE: the theme switch is real — it drives [themeControllerProvider],
-/// which persists the choice and re-themes the whole app. Language only
-/// changes the selection shown here — no i18n mechanism exists yet.
-/// Notification toggles and the Log out row are otherwise real; Log out
-/// clears back to the Login screen, matching the prototype's
-/// `data-nav="login"`.
+/// which persists the choice and re-themes the whole app. The sound
+/// effects switch is likewise real — it drives [soundControllerProvider],
+/// which every [AppSound] call site checks before playing. Language is
+/// also real — it drives [localeControllerProvider], which persists the
+/// choice and retranslates the app. Notification toggles and the Log out
+/// row are otherwise real; Log out clears back to the Login screen,
+/// matching the prototype's `data-nav="login"`.
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
@@ -32,35 +37,26 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  String _language = AppStrings.languageEnglish;
-
-  Future<void> _openLanguage(BuildContext context) async {
-    final String? result =
-        await context.push<String>(AppRoutes.languageSettings, extra: _language);
-    if (!mounted || result == null) return;
-    setState(() => _language = result);
-  }
-
-  List<Widget> _generalGroup(BuildContext context, bool isDark) => [
-        const _GroupLabel(AppStrings.settingsGroupGeneral),
+  List<Widget> _generalGroup(BuildContext context, bool isDark, bool soundEnabled, String language) => [
+        _GroupLabel(context.t.settings.groupGeneral),
         AppSpacing.xs.vGap,
         SettingsList(
           rows: [
             SettingsRowData(
               icon: TablerIcons.world,
-              label: AppStrings.settingsLanguage,
-              trailingLabel: _language,
-              onTap: () => _openLanguage(context),
+              label: context.t.settings.language,
+              trailingLabel: language,
+              onTap: () => context.push(AppRoutes.languageSettings),
             ),
             SettingsRowData(
               icon: TablerIcons.bell,
-              label: AppStrings.settingsNotifications,
+              label: context.t.settings.notifications,
               onTap: () => context.push(AppRoutes.notificationSettings),
             ),
             SettingsRowData(
               icon: TablerIcons.moon,
-              label: AppStrings.settingsTheme,
-              trailingLabel: isDark ? AppStrings.settingsThemeDark : AppStrings.settingsThemeLight,
+              label: context.t.settings.theme,
+              trailingLabel: isDark ? context.t.settings.themeDark : context.t.settings.themeLight,
               trailingWidget: Switch(
                 value: isDark,
                 onChanged: (value) => ref.read(themeControllerProvider.notifier).toggleDark(value),
@@ -68,28 +64,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
               onTap: () => ref.read(themeControllerProvider.notifier).toggleDark(!isDark),
             ),
+            SettingsRowData(
+              icon: TablerIcons.volume2,
+              label: context.t.settings.soundEffects,
+              trailingWidget: Switch(
+                value: soundEnabled,
+                onChanged: (value) => ref.read(soundControllerProvider.notifier).setEnabled(value),
+                activeThumbColor: context.colors.coral,
+              ),
+              onTap: () => ref.read(soundControllerProvider.notifier).setEnabled(!soundEnabled),
+            ),
           ],
         ),
       ];
 
   List<Widget> _accountGroup(BuildContext context) => [
-        const _GroupLabel(AppStrings.settingsGroupAccount),
+        _GroupLabel(context.t.settings.groupAccount),
         AppSpacing.xs.vGap,
         SettingsList(
           rows: [
             SettingsRowData(
               icon: TablerIcons.lock,
-              label: AppStrings.settingsPrivacy,
+              label: context.t.settings.privacy,
               onTap: () => context.push(AppRoutes.privacyPolicy),
             ),
             SettingsRowData(
               icon: TablerIcons.helpCircle,
-              label: AppStrings.settingsHelpCenter,
+              label: context.t.settings.helpCenter,
               onTap: () => context.push(AppRoutes.helpCenter),
             ),
             SettingsRowData(
               icon: TablerIcons.fileText,
-              label: AppStrings.settingsTermsOfUse,
+              label: context.t.settings.termsOfUse,
               onTap: () => context.push(AppRoutes.termsOfUse),
             ),
           ],
@@ -100,7 +106,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         rows: [
           SettingsRowData(
             icon: TablerIcons.logout,
-            label: AppStrings.settingsLogOut,
+            label: context.t.settings.logOut,
             isDanger: true,
             trailingWidget: const SizedBox.shrink(),
             onTap: () => context.go(AppRoutes.login),
@@ -112,6 +118,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
     final bool isDark = ref.watch(themeControllerProvider) == ThemeMode.dark;
+    final bool soundEnabled = ref.watch(soundControllerProvider);
+    final String language = ref.watch(localeControllerProvider).displayName;
 
     return Scaffold(
       body: SafeArea(
@@ -119,9 +127,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         child: ListView(
           padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
           children: [
-            BackHeader(title: AppStrings.settings, onBack: () => context.pop()),
+            BackHeader(title: context.t.profile.settings, onBack: () => context.pop()),
             AppSpacing.lg.vGap,
-            ..._generalGroup(context, isDark),
+            ..._generalGroup(context, isDark, soundEnabled, language),
             AppSpacing.md.vGap,
             ..._accountGroup(context),
             AppSpacing.md.vGap,

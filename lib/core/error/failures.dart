@@ -1,4 +1,4 @@
-import '../constants/app_strings.dart';
+import '../../i18n/strings.g.dart';
 
 /// Ilova bo'ylab yagona xatolik tili. Data qatlami qanday xato bo'lishidan
 /// qat'i nazar (Dio, parsing, storage) — presentation qatlamiga faqat
@@ -9,7 +9,7 @@ import '../constants/app_strings.dart';
 sealed class Failure implements Exception {
   const Failure(this.message);
 
-  /// Foydalanuvchiga ko'rsatishga tayyor (o'zbekcha) xabar.
+  /// Foydalanuvchiga ko'rsatishga tayyor xabar.
   final String message;
 
   @override
@@ -17,18 +17,21 @@ sealed class Failure implements Exception {
 }
 
 /// Internet yo'q yoki server javob bermadi (timeout).
+///
+/// Default xabar `context.t` emas global `t`dan olinadi — konstruktor
+/// `const` bo'la olmaydi, chunki tarjima joriy tilga qarab o'zgaradi.
 final class NetworkFailure extends Failure {
-  const NetworkFailure([super.message = AppStrings.errorNoConnection]);
+  NetworkFailure([String? message]) : super(message ?? t.errors.noConnection);
 }
 
 /// Server xatosi (5xx) yoki kutilmagan javob.
 final class ServerFailure extends Failure {
-  const ServerFailure([super.message = AppStrings.errorServer]);
+  ServerFailure([String? message]) : super(message ?? t.errors.server);
 }
 
 /// Kirish ma'lumotlari noto'g'ri yoki sessiya tugagan (401).
 final class AuthFailure extends Failure {
-  const AuthFailure([super.message = AppStrings.errorInvalidCredentials]);
+  AuthFailure([String? message]) : super(message ?? t.errors.invalidCredentials);
 }
 
 /// Backend validatsiya xatosi (400) — maydon-darajadagi xabarlar bilan.
@@ -49,10 +52,10 @@ final class ValidationFailure extends Failure {
 
 /// So'ralgan resurs topilmadi (404).
 final class NotFoundFailure extends Failure {
-  const NotFoundFailure([super.message = AppStrings.errorUnknown]);
+  NotFoundFailure([String? message]) : super(message ?? t.errors.unknown);
 }
 
 /// Tasniflab bo'lmagan xatolik.
 final class UnknownFailure extends Failure {
-  const UnknownFailure([super.message = AppStrings.errorUnknown]);
+  UnknownFailure([String? message]) : super(message ?? t.errors.unknown);
 }

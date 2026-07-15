@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../constants/app_strings.dart';
+import '../../i18n/strings.g.dart';
+import '../audio/app_sound.dart';
+import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
 
@@ -12,7 +15,7 @@ enum AppTab { home, leaderboard, friends, profile }
 
 /// Bottom navigation bar shared by every top-level screen — mirrors the
 /// prototype's `.tabbar` (5 items, elevated center "play" button).
-class AppBottomNavBar extends StatelessWidget {
+class AppBottomNavBar extends ConsumerWidget {
   const AppBottomNavBar({
     super.key,
     required this.current,
@@ -32,7 +35,12 @@ class AppBottomNavBar extends StatelessWidget {
   final VoidCallback onPlayTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    void tap(VoidCallback action) {
+      ref.playSound(AppSound.tap);
+      action();
+    }
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.colors.card,
@@ -61,34 +69,36 @@ class AppBottomNavBar extends StatelessWidget {
                 Expanded(
                   child: _TabItem(
                     icon: TablerIcons.home,
-                    label: AppStrings.navHome,
+                    label: context.t.bottomNav.home,
                     isActive: current == AppTab.home,
-                    onTap: current == AppTab.home ? null : () => onTabTap(AppTab.home),
+                    onTap: current == AppTab.home ? null : () => tap(() => onTabTap(AppTab.home)),
                   ),
                 ),
                 Expanded(
                   child: _TabItem(
                     icon: TablerIcons.trophy,
-                    label: AppStrings.navLeaderboard,
+                    label: context.t.bottomNav.leaderboard,
                     isActive: current == AppTab.leaderboard,
-                    onTap: current == AppTab.leaderboard ? null : () => onTabTap(AppTab.leaderboard),
+                    onTap: current == AppTab.leaderboard
+                        ? null
+                        : () => tap(() => onTabTap(AppTab.leaderboard)),
                   ),
                 ),
-                _CenterPlayButton(onTap: onPlayTap),
+                _CenterPlayButton(onTap: () => tap(onPlayTap)),
                 Expanded(
                   child: _TabItem(
                     icon: TablerIcons.users,
-                    label: AppStrings.navFriends,
+                    label: context.t.bottomNav.friends,
                     isActive: current == AppTab.friends,
-                    onTap: current == AppTab.friends ? null : () => onTabTap(AppTab.friends),
+                    onTap: current == AppTab.friends ? null : () => tap(() => onTabTap(AppTab.friends)),
                   ),
                 ),
                 Expanded(
                   child: _TabItem(
                     icon: TablerIcons.user,
-                    label: AppStrings.navProfile,
+                    label: context.t.bottomNav.profile,
                     isActive: current == AppTab.profile,
-                    onTap: current == AppTab.profile ? null : () => onTabTap(AppTab.profile),
+                    onTap: current == AppTab.profile ? null : () => tap(() => onTabTap(AppTab.profile)),
                   ),
                 ),
               ],

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/formatters.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/leaderboard_entry.dart';
 
 /// Top-3 podium (2nd, 1st, 3rd) — mirrors the prototype's `.podium`.
@@ -108,7 +109,7 @@ class _PodiumColumn extends StatelessWidget {
             ],
           ),
           Text(
-            entry.name,
+            entry.displayName(context),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: context.textStyles.bodySmall?.copyWith(
@@ -118,7 +119,7 @@ class _PodiumColumn extends StatelessWidget {
             ),
           ),
           Text(
-            AppStrings.xpValue(entry.xp),
+            context.t.leaderboard.xpValue(xp: formatThousands(entry.xp)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: context.textStyles.labelSmall,

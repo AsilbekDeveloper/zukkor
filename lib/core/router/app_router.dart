@@ -39,7 +39,6 @@ import '../../features/settings/presentation/screens/privacy_policy_screen.dart'
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/settings/presentation/screens/terms_of_use_screen.dart';
 import '../../features/splash/splash_screen.dart';
-import '../constants/app_strings.dart';
 import '../storage/app_preferences.dart';
 import 'app_routes.dart';
 
@@ -184,8 +183,7 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.languageSettings,
-        builder: (context, state) =>
-            LanguageScreen(currentLanguage: (state.extra as String?) ?? AppStrings.languageEnglish),
+        builder: (context, state) => const LanguageScreen(),
       ),
       GoRoute(
         path: AppRoutes.notificationSettings,

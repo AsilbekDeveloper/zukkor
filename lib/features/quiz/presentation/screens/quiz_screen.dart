@@ -1,8 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/audio/app_sound.dart';
+import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
@@ -23,10 +26,11 @@ import '../widgets/quiz_progress_header.dart';
 /// duel/lobby state. Each question gets 15 seconds; running out of time
 /// locks in a wrong answer automatically, same as picking one. No
 /// countdown is shown to the player — it only drives scoring in the
-/// background (see [_startSpeedTimer]). The back button abandons the
+/// background (see [_startSpeedTimer]). Locking in an answer plays
+/// [AppSound.correct] or [AppSound.wrong]. The back button abandons the
 /// quiz and returns straight to Home (matches the prototype's
 /// `data-nav="home"` — no confirmation dialog).
-class QuizScreen extends StatefulWidget {
+class QuizScreen extends ConsumerStatefulWidget {
   const QuizScreen({required this.category, this.isLobbyGame = false, super.key});
 
   final QuizCategory category;
@@ -37,10 +41,10 @@ class QuizScreen extends StatefulWidget {
   final bool isLobbyGame;
 
   @override
-  State<QuizScreen> createState() => _QuizScreenState();
+  ConsumerState<QuizScreen> createState() => _QuizScreenState();
 }
 
-class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateMixin {
+class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProviderStateMixin {
   static const Duration _perQuestionDuration = Duration(seconds: 15);
   static const Duration _feedbackDelay = Duration(milliseconds: 900);
   static const int _xpPerCorrectAnswer = 15;
@@ -118,6 +122,7 @@ class _QuizScreenState extends State<QuizScreen> with SingleTickerProviderStateM
     // last-moment one about half.
     final int earnedXp =
         isCorrect ? (_kahootPoints() / _pointsMax * _xpPerCorrectAnswer).round() : 0;
+    ref.playSound(isCorrect ? AppSound.correct : AppSound.wrong);
 
     setState(() {
       _answered = true;

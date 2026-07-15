@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Zukkor brend belgisi — prototipdagi coral kvadrat ichida chaqmoq
 /// ikonkasi + ilova nomi.
@@ -38,7 +38,7 @@ class BrandLogo extends StatelessWidget {
         // overflowing the Row.
         Flexible(
           child: Text(
-            AppStrings.appName,
+            context.t.common.appName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: (compact

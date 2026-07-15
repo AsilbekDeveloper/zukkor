@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../i18n/strings.g.dart';
 import '../widgets/level_card.dart';
 import '../widgets/profile_banner.dart';
 import '../widgets/profile_header.dart';
@@ -27,7 +27,7 @@ import '../widgets/settings_list.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  void _comingSoon(BuildContext context) => context.showSnack(AppStrings.comingSoon);
+  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
   /// Level ring + 3-stat strip.
   List<Widget> _progressSection(BuildContext context) {
@@ -44,12 +44,12 @@ class ProfileScreen extends StatelessWidget {
       rows: [
         SettingsRowData(
           icon: TablerIcons.history,
-          label: AppStrings.gameHistory,
+          label: context.t.profile.gameHistory,
           onTap: () => context.push(AppRoutes.history),
         ),
         SettingsRowData(
           icon: TablerIcons.settings,
-          label: AppStrings.settingsAndHelp,
+          label: context.t.profile.settingsAndHelp,
           onTap: () => context.push(AppRoutes.settings),
         ),
       ],

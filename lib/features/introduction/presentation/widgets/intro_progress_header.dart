@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/constants/app_durations.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// Introduction-only progress bar: back button, a row of pill segments
 /// (one per page, filled as the player advances) and a Skip button — a
@@ -55,7 +55,7 @@ class IntroProgressHeader extends StatelessWidget {
           ),
         ),
         AppSpacing.xs.hGap,
-        TextButton(onPressed: onSkip, child: const Text(AppStrings.introSkip)),
+        TextButton(onPressed: onSkip, child: Text(context.t.introduction.skip)),
       ],
     );
   }

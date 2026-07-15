@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/invite_code_card.dart';
 import '../../../../core/widgets/section_head.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../models/lobby_player.dart';
@@ -64,11 +64,14 @@ class LobbyScreen extends StatelessWidget {
               AppSpacing.xs.vGap,
               _LobbyHeader(isHost: _isHost, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
-              const InviteCodeCard(label: AppStrings.roomCodeLabel, code: _mockRoomCode),
+              InviteCodeCard(label: context.t.lobby.roomCode, code: _mockRoomCode),
               AppSpacing.lg.vGap,
               SectionHead(
-                title: AppStrings.playersLabel,
-                trailing: AppStrings.playerCount(_players.length, LobbyPlayer.maxPlayers),
+                title: context.t.lobby.players,
+                trailing: context.t.lobby.playerCount(
+                  current: _players.length,
+                  max: LobbyPlayer.maxPlayers,
+                ),
               ),
               AppSpacing.sm.vGap,
               PlayerList(players: _players),
@@ -115,7 +118,7 @@ class _LobbyHeader extends StatelessWidget {
         ),
         Expanded(
           child: Text(
-            AppStrings.lobbyScreenTitle,
+            context.t.lobby.title,
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -143,7 +146,7 @@ class _RoleTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        (isHost ? AppStrings.hostRoleLabel : AppStrings.guestRoleLabel).toUpperCase(),
+        (isHost ? context.t.lobby.hostRole : context.t.lobby.guestRole).toUpperCase(),
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w700,
@@ -178,7 +181,7 @@ class _StartGameButton extends StatelessWidget {
               AppSpacing.xs.hGap,
               Flexible(
                 child: Text(
-                  AppStrings.startGameButton,
+                  context.t.lobby.startGame,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textStyles.bodySmall?.copyWith(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/widgets/category_grid_view.dart';
 
@@ -30,13 +30,13 @@ class CategoryGrid extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                AppStrings.categoriesTitle,
+                context.t.home.categoriesTitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.textStyles.titleLarge,
               ),
             ),
-            TextButton(onPressed: onSeeAll, child: const Text(AppStrings.seeAll)),
+            TextButton(onPressed: onSeeAll, child: Text(context.t.home.seeAll)),
           ],
         ),
         CategoryGridView(categories: categories, onCategoryTap: onCategoryTap),

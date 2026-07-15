@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/close_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../models/friend_entry.dart';
 import '../widgets/duel_category_chip.dart';
@@ -44,7 +44,7 @@ class DuelInviteScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              CloseHeader(title: AppStrings.duelInviteTitle, onClose: () => _decline(context)),
+              CloseHeader(title: context.t.duelInvite.title, onClose: () => _decline(context)),
               AppSpacing.xl.vGap,
               Center(
                 child: Container(
@@ -79,7 +79,7 @@ class DuelInviteScreen extends StatelessWidget {
               const SizedBox(height: 2),
               Center(
                 child: Text(
-                  AppStrings.challengesYouLabel,
+                  context.t.duelInvite.challengesYou,
                   style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                 ),
               ),
@@ -87,14 +87,14 @@ class DuelInviteScreen extends StatelessWidget {
               Center(child: DuelCategoryChip(category: _category)),
               AppSpacing.xl.vGap,
               AppButton.primary(
-                label: AppStrings.acceptButton,
+                label: context.t.duelInvite.accept,
                 icon: const Icon(TablerIcons.check, color: Colors.white, size: 18),
                 onPressed: () => context.push(AppRoutes.quizIntro, extra: _category),
               ),
               Center(
                 child: TextButton(
                   onPressed: () => _decline(context),
-                  child: const Text(AppStrings.declineButton),
+                  child: Text(context.t.duelInvite.decline),
                 ),
               ),
             ],

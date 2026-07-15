@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// "Google bilan davom etish" tugmasi — ikkilamchi (karta fonli) uslubda,
 /// rangli "G" belgisi bilan.
@@ -15,7 +15,7 @@ class GoogleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppButton.secondary(
-      label: AppStrings.continueWithGoogle,
+      label: context.t.auth.continueWithGoogle,
       onPressed: enabled ? onPressed : null,
       icon: _GoogleGlyph(color: context.colors.blue),
     );

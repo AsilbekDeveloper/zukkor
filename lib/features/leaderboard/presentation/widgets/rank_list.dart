@@ -90,7 +90,7 @@ class _RankRow extends StatelessWidget {
               AppSpacing.sm.hGap,
               Expanded(
                 child: Text(
-                  entry.name,
+                  entry.displayName(context),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: context.textStyles.bodySmall?.copyWith(

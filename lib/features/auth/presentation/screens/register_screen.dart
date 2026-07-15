@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
@@ -9,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../i18n/strings.g.dart';
 import '../widgets/auth_divider.dart';
 import '../widgets/auth_switch_prompt.dart';
 import '../widgets/brand_logo.dart';
@@ -107,12 +107,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const Center(child: BrandLogo()),
                   AppSpacing.xxl.vGap,
                   Text(
-                    AppStrings.registerTitle,
+                    context.t.auth.registerTitle,
                     style: context.textStyles.headlineMedium,
                   ),
                   AppSpacing.xs.vGap,
                   Text(
-                    AppStrings.registerSubtitle,
+                    context.t.auth.registerSubtitle,
                     style: context.textStyles.bodyMedium,
                   ),
                   AppSpacing.xl.vGap,
@@ -123,8 +123,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           AppTextField(
-                            label: AppStrings.emailLabel,
-                            hint: AppStrings.emailHint,
+                            label: context.t.auth.emailLabel,
+                            hint: context.t.auth.emailHint,
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
@@ -133,8 +133,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           AppSpacing.md.vGap,
                           AppTextField(
-                            label: AppStrings.passwordLabel,
-                            hint: AppStrings.passwordHint,
+                            label: context.t.auth.passwordLabel,
+                            hint: context.t.auth.passwordHint,
                             controller: _passwordController,
                             obscure: true,
                             textInputAction: TextInputAction.next,
@@ -143,8 +143,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           AppSpacing.md.vGap,
                           AppTextField(
-                            label: AppStrings.confirmPasswordLabel,
-                            hint: AppStrings.confirmPasswordHint,
+                            label: context.t.auth.confirmPasswordLabel,
+                            hint: context.t.auth.confirmPasswordHint,
                             controller: _confirmPasswordController,
                             obscure: true,
                             textInputAction: TextInputAction.done,
@@ -161,7 +161,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   AppSpacing.xl.vGap,
                   AppButton.primary(
-                    label: AppStrings.registerButton,
+                    label: context.t.auth.registerButton,
                     onPressed: _submit,
                   ),
                   AppSpacing.lg.vGap,
@@ -170,8 +170,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   GoogleButton(onPressed: _signInWithGoogle),
                   AppSpacing.xxl.vGap,
                   AuthSwitchPrompt(
-                    promptText: AppStrings.haveAccountPrompt,
-                    actionText: AppStrings.switchToLogin,
+                    promptText: context.t.auth.haveAccountPrompt,
+                    actionText: context.t.auth.switchToLogin,
                     onTap: _goToLogin,
                   ),
                   AppSpacing.lg.vGap,

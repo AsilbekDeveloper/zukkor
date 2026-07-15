@@ -4,6 +4,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/core/widgets/app_bottom_nav_bar.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
 Future<void> _pump(WidgetTester tester, Size size) async {
   tester.view.physicalSize = size;
@@ -11,17 +12,19 @@ Future<void> _pump(WidgetTester tester, Size size) async {
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
 
-  await tester.pumpWidget(MaterialApp(
-    theme: AppTheme.light(),
-    home: Scaffold(
-      // A tall, recognizable body — this is what a regression that
-      // starves the body of height (by letting the nav bar's width
-      // limiter expand to fill the whole screen's height) would hide.
-      body: const Center(child: Text('BODY CONTENT')),
-      bottomNavigationBar: AppBottomNavBar(
-        current: AppTab.home,
-        onTabTap: (_) {},
-        onPlayTap: () {},
+  await tester.pumpWidget(TranslationProvider(
+    child: MaterialApp(
+      theme: AppTheme.light(),
+      home: Scaffold(
+        // A tall, recognizable body — this is what a regression that
+        // starves the body of height (by letting the nav bar's width
+        // limiter expand to fill the whole screen's height) would hide.
+        body: const Center(child: Text('BODY CONTENT')),
+        bottomNavigationBar: AppBottomNavBar(
+          current: AppTab.home,
+          onTabTap: (_) {},
+          onPlayTap: () {},
+        ),
       ),
     ),
   ));

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
+import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
@@ -11,15 +14,19 @@ import 'package:zukkor/features/lobby/presentation/screens/join_code_screen.dart
 import 'package:zukkor/features/lobby/presentation/screens/lobby_screen.dart';
 import 'package:zukkor/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:zukkor/features/quiz/presentation/screens/categories_screen.dart';
+import 'package:zukkor/i18n/strings.g.dart';
 
-/// [HomeScreen] doesn't depend on Riverpod, so it's tested without the
-/// full app/ProviderScope — but "See all" and the center Play tab do use
-/// go_router now, so a real (if minimal) router is still required.
+/// "See all" and the center Play tab use go_router, so a real (if
+/// minimal) router is still required — and the shared bottom-nav/button
+/// widgets play a tap sound via Riverpod, so a `ProviderScope` is too.
 Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
+
+  SharedPreferences.setMockInitialValues(<String, Object>{});
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
@@ -40,7 +47,12 @@ Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) 
   );
 
   await tester.pumpWidget(
-    MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+    ProviderScope(
+      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      child: TranslationProvider(
+        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+      ),
+    ),
   );
   await tester.pumpAndSettle();
 }

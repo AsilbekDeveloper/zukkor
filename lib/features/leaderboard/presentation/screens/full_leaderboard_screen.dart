@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../i18n/strings.g.dart';
 import '../models/leaderboard_entry.dart';
 import '../widgets/rank_list.dart';
 
@@ -39,7 +39,7 @@ class FullLeaderboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: AppStrings.fullLeaderboardTitle, onBack: () => _goBack(context)),
+              BackHeader(title: context.t.fullLeaderboard.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               Expanded(
                 child: SingleChildScrollView(
