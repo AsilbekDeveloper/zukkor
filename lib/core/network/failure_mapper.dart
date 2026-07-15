@@ -3,12 +3,12 @@ import 'package:dio/dio.dart';
 import '../../i18n/strings.g.dart';
 import '../error/failures.dart';
 
-/// [DioException] → [Failure] tarjimoni. Backend'ning umumiy xatolik
-/// formatini (Zukkor_Umumiy_Arxitektura.docx, 5-bo'lim) parse qiladi:
+/// [DioException] → [Failure] tarjimoni. Backend'ning xatolik formatini
+/// parse qiladi (ikki ko'rinishi bor):
 ///
 /// ```json
-/// { "error": "validation_error", "detail": { "email": ["..."] } }
-/// { "error": "invalid_credentials", "detail": "Email yoki parol noto'g'ri." }
+/// { "detail": "Email yoki parol noto'g'ri" }
+/// { "detail": [{ "type": "value_error", "loc": ["body", "password"], "msg": "..." }] }
 /// ```
 abstract final class FailureMapper {
   static Failure fromDio(DioException e) {
@@ -30,45 +30,52 @@ abstract final class FailureMapper {
     final String? detailMessage = _extractDetailMessage(data);
 
     return switch (status) {
-      400 => ValidationFailure(
-          detailMessage ?? t.errors.unknown,
-          fieldErrors: _extractFieldErrors(data),
-        ),
+      400 => ValidationFailure(detailMessage ?? t.errors.unknown),
       401 => AuthFailure(detailMessage ?? t.errors.invalidCredentials),
       403 => AuthFailure(detailMessage ?? t.errors.sessionExpired),
       404 => NotFoundFailure(detailMessage ?? t.errors.unknown),
+      422 => ValidationFailure(
+          detailMessage ?? t.errors.unknown,
+          fieldErrors: _extractFieldErrors(data),
+        ),
       >= 500 => ServerFailure(),
       _ => UnknownFailure(),
     };
   }
 
-  /// `detail` string bo'lsa — o'zi xabar; map bo'lsa — birinchi maydonning
-  /// birinchi xabari (umumiy fallback sifatida).
+  /// `detail` oddiy matn bo'lsa — o'zi xabar; ro'yxat (422 validatsiya
+  /// formati) bo'lsa — birinchi elementning `msg`i.
   static String? _extractDetailMessage(dynamic data) {
     if (data is! Map<String, dynamic>) return null;
     final dynamic detail = data['detail'];
     if (detail is String && detail.isNotEmpty) return detail;
-    if (detail is Map<String, dynamic>) {
-      for (final dynamic messages in detail.values) {
-        if (messages is List && messages.isNotEmpty) {
-          return messages.first.toString();
-        }
+    if (detail is List && detail.isNotEmpty) {
+      final dynamic first = detail.first;
+      if (first is Map<String, dynamic>) {
+        final dynamic msg = first['msg'];
+        if (msg is String && msg.isNotEmpty) return msg;
       }
     }
     return null;
   }
 
+  /// 422 validatsiya ro'yxatini maydon nomi → xabarlar map'iga aylantiradi.
+  /// Har elementning `loc`i masalan `["body", "password"]` — oxirgi element
+  /// maydon nomi.
   static Map<String, List<String>> _extractFieldErrors(dynamic data) {
     if (data is! Map<String, dynamic>) return const {};
     final dynamic detail = data['detail'];
-    if (detail is! Map<String, dynamic>) return const {};
-    return detail.map(
-      (String field, dynamic messages) => MapEntry(
-        field,
-        messages is List
-            ? messages.map((dynamic m) => m.toString()).toList()
-            : <String>[messages.toString()],
-      ),
-    );
+    if (detail is! List) return const {};
+
+    final Map<String, List<String>> fieldErrors = {};
+    for (final dynamic item in detail) {
+      if (item is! Map<String, dynamic>) continue;
+      final dynamic loc = item['loc'];
+      final dynamic msg = item['msg'];
+      if (loc is! List || loc.isEmpty || msg is! String) continue;
+      final String field = loc.last.toString();
+      (fieldErrors[field] ??= []).add(msg);
+    }
+    return fieldErrors;
   }
 }

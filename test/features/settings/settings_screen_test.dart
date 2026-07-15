@@ -10,6 +10,9 @@ import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
+import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:zukkor/features/auth/domain/entities/user.dart';
+import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
 import 'package:zukkor/features/auth/presentation/screens/login_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/help_center_screen.dart';
@@ -19,6 +22,32 @@ import 'package:zukkor/features/settings/presentation/screens/privacy_policy_scr
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/terms_of_use_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
+
+/// Backendga murojaat qilmaydigan soxta auth repository — Log out testi
+/// haqiqiy tarmoqqa bog'liq bo'lmasligi kerak.
+class _FakeAuthRepository implements AuthRepository {
+  @override
+  Future<void> register({
+    required String email,
+    required String username,
+    required String password,
+  }) async {}
+
+  @override
+  Future<void> login({required String email, required String password}) async {}
+
+  @override
+  Future<User> getCurrentUser() async => User(
+        id: '1',
+        email: 'aziz@example.com',
+        username: 'aziz',
+        isActive: true,
+        createdAt: DateTime(2026),
+      );
+
+  @override
+  Future<void> logout() async {}
+}
 
 // SettingsScreen's theme switch reads/writes themeControllerProvider,
 // which depends on appPreferencesProvider — needs a real ProviderScope
@@ -55,7 +84,10 @@ Future<GoRouter> _pumpSettings(WidgetTester tester, {Size size = const Size(390,
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+      ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       ),

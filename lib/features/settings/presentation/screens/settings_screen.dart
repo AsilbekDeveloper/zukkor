@@ -14,6 +14,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../profile/presentation/widgets/settings_list.dart';
 
 /// The Settings screen — mirrors the prototype's `view-settings`: a
@@ -102,6 +103,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       ];
 
+  Future<void> _logOut() async {
+    // Tokenlar lokal xotiradan har doim tozalanadi (repository'ning
+    // `finally` blokida) — server so'rovi (refresh token'ni bekor qilish)
+    // muvaffaqiyatsiz bo'lsa ham, foydalanuvchi qurilmada baribir chiqishi
+    // kerak, shuning uchun xatolik e'tiborsiz qoldiriladi.
+    await ref.read(authControllerProvider.notifier).logout();
+    if (!mounted) return;
+    context.go(AppRoutes.login);
+  }
+
   Widget _logOutGroup(BuildContext context) => SettingsList(
         rows: [
           SettingsRowData(
@@ -109,7 +120,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             label: context.t.settings.logOut,
             isDanger: true,
             trailingWidget: const SizedBox.shrink(),
-            onTap: () => context.go(AppRoutes.login),
+            onTap: _logOut,
           ),
         ],
       );

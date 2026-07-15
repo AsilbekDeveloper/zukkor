@@ -289,7 +289,7 @@
     "emailRequired": "Email is required",
     "emailInvalid": "Invalid email format",
     "passwordRequired": "Password is required",
-    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordTooShort": "Password must be at least 8 characters, with 1 uppercase letter and 1 number",
     "passwordMismatch": "Passwords don't match",
     "usernameRequired": "Username is required",
     "usernameInvalid": "Username may only contain letters, numbers and underscores (3–30 characters)",

@@ -83,11 +83,12 @@ class AuthInterceptor extends QueuedInterceptor {
     try {
       final Response<dynamic> response = await _refreshDio.post(
         ApiEndpoints.tokenRefresh,
-        data: {'refresh': refresh},
+        data: {'refresh_token': refresh},
       );
-      final String newAccess = response.data['access'] as String;
-      // ROTATE_REFRESH_TOKENS: backend yangi refresh ham qaytarishi mumkin.
-      final String? newRefresh = response.data['refresh'] as String?;
+      final String newAccess = response.data['access_token'] as String;
+      // Backend eski refresh tokenni shu zahoti bekor qiladi — yangisi
+      // HAR DOIM qaytariladi, shuning uchun ikkalasini ham qayta saqlaymiz.
+      final String newRefresh = response.data['refresh_token'] as String;
       await _tokenStorage.saveTokens(access: newAccess, refresh: newRefresh);
 
       // Asl so'rovni yangi token bilan takrorlaymiz.

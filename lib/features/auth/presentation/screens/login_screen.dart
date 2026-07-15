@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
@@ -9,6 +11,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../i18n/strings.g.dart';
+import '../controllers/auth_controller.dart';
 import '../widgets/auth_divider.dart';
 import '../widgets/auth_switch_prompt.dart';
 import '../widgets/brand_logo.dart';
@@ -16,19 +19,14 @@ import '../widgets/google_button.dart';
 
 /// Kirish ekrani. Ro'yxatdan o'tish alohida sahifada — [RegisterScreen]
 /// (pastdagi havola shu sahifaga o'tkazadi).
-///
-/// HOZIRGI HOLAT: faqat presentation (UI) qatlami — forma validatsiyasi
-/// mahalliy ishlaydi, lekin tugmalar hech qanday tarmoq so'rovi
-/// yubormaydi (auth data/domain qatlami hali qurilmagan). `_submit` va
-/// `_signInWithGoogle` ichidagi TODO'lar keyingi bosqichda ulanadi.
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -40,20 +38,28 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     context.hideKeyboard();
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    // TODO(auth): auth qatlami qurilganda haqiqiy so'rov shu yerdan
-    // chaqiriladi; hozircha "kirish muvaffaqiyatli" deb hisoblab, mavjud
-    // (allaqachon profili tayyor) foydalanuvchini Home'ga o'tkazamiz.
-    context.go(AppRoutes.home);
+    await ref.read(authControllerProvider.notifier).login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+    if (!mounted) return;
+
+    ref.read(authControllerProvider).when(
+          data: (_) => context.go(AppRoutes.home),
+          loading: () {},
+          error: (error, _) => context.showSnack(
+            error is Failure ? error.message : t.errors.unknown,
+          ),
+        );
   }
 
   void _signInWithGoogle() {
-    // TODO(auth): auth qatlami qurilganda Google Sign-In shu yerdan
-    // chaqiriladi; hozircha xuddi oddiy kirishdek Home'ga o'tkazamiz.
-    context.go(AppRoutes.home);
+    // Backend hali Google Sign-In'ni qo'llab-quvvatlamaydi.
+    context.showSnack(t.bottomNav.comingSoon);
   }
 
   void _goToRegister() {
@@ -68,6 +74,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLoading = ref.watch(authControllerProvider).isLoading;
+
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -124,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   AppSpacing.xl.vGap,
                   AppButton.primary(
                     label: context.t.auth.loginButton,
+                    isLoading: isLoading,
                     onPressed: _submit,
                   ),
                   AppSpacing.lg.vGap,

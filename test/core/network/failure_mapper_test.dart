@@ -36,30 +36,41 @@ void main() {
   });
 
   group('FailureMapper — backend xatolik formati', () {
-    test('400 validation_error: maydon xatolari ajratiladi', () {
-      final Failure failure = FailureMapper.fromDio(_badResponse(400, {
-        'error': 'validation_error',
-        'detail': {
-          'email': ["Bu email allaqachon ro'yxatdan o'tgan."],
-        },
+    test('422 validatsiya: maydon xatolari loc/msg dan ajratiladi', () {
+      final Failure failure = FailureMapper.fromDio(_badResponse(422, {
+        'detail': [
+          {
+            'type': 'value_error',
+            'loc': ['body', 'password'],
+            'msg': "Parolda kamida 1 ta katta harf bo'lishi kerak",
+          },
+        ],
       }));
 
       expect(failure, isA<ValidationFailure>());
       final ValidationFailure v = failure as ValidationFailure;
-      expect(v.forField('email'), "Bu email allaqachon ro'yxatdan o'tgan.");
-      expect(v.forField('password'), isNull);
+      expect(v.forField('password'), "Parolda kamida 1 ta katta harf bo'lishi kerak");
+      expect(v.forField('email'), isNull);
       // Umumiy xabar ham birinchi maydon xatosidan olinadi.
-      expect(v.message, "Bu email allaqachon ro'yxatdan o'tgan.");
+      expect(v.message, "Parolda kamida 1 ta katta harf bo'lishi kerak");
+    });
+
+    test('400 oddiy detail matn: umumiy ValidationFailure (maydonsiz)', () {
+      final Failure failure = FailureMapper.fromDio(_badResponse(400, {
+        'detail': "Bu email allaqachon ro'yxatdan o'tgan",
+      }));
+
+      expect(failure, isA<ValidationFailure>());
+      expect(failure.message, "Bu email allaqachon ro'yxatdan o'tgan");
     });
 
     test('401 invalid_credentials: string detail xabar bo\'ladi', () {
       final Failure failure = FailureMapper.fromDio(_badResponse(401, {
-        'error': 'invalid_credentials',
-        'detail': "Email yoki parol noto'g'ri.",
+        'detail': "Email yoki parol noto'g'ri",
       }));
 
       expect(failure, isA<AuthFailure>());
-      expect(failure.message, "Email yoki parol noto'g'ri.");
+      expect(failure.message, "Email yoki parol noto'g'ri");
     });
 
     test('500 → ServerFailure', () {

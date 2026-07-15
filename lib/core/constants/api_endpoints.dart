@@ -1,13 +1,12 @@
-/// Backend endpoint'lari — Zukkor backend hujjatlariga 1:1 mos:
-///  - Zukkor_Login.docx
-///  - Zukkor_Profil_Yaratish.docx
-///  - Zukkor_Ball_XP_Tizimi.docx
+/// Backend endpoint'lari.
 abstract final class ApiEndpoints {
-  // Auth (Zukkor_Login.docx)
-  static const String register = '/api/auth/register/';
-  static const String login = '/api/auth/login/';
-  static const String google = '/api/auth/google/';
-  static const String tokenRefresh = '/api/auth/token/refresh/';
+  // Auth — FastAPI backendga 1:1 mos (2026-07-15 holatiga ko'ra tayyor).
+  static const String register = '/auth/register';
+  static const String login = '/auth/login';
+  static const String google = '/auth/google'; // hali backendda yo'q, TODO
+  static const String tokenRefresh = '/auth/refresh';
+  static const String logout = '/auth/logout';
+  static const String me = '/auth/me';
 
   // Profil (Zukkor_Profil_Yaratish.docx)
   static const String profileSetup = '/api/profile/setup/';

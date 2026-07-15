@@ -9,6 +9,36 @@ import 'package:zukkor/app.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
+import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:zukkor/features/auth/domain/entities/user.dart';
+import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
+
+/// Backendga murojaat qilmaydigan soxta auth repository — bu smoke testlar
+/// faqat forma va navigatsiyani tekshiradi, haqiqiy tarmoqqa bog'liq
+/// bo'lmasligi kerak.
+class _FakeAuthRepository implements AuthRepository {
+  @override
+  Future<void> register({
+    required String email,
+    required String username,
+    required String password,
+  }) async {}
+
+  @override
+  Future<void> login({required String email, required String password}) async {}
+
+  @override
+  Future<User> getCurrentUser() async => User(
+        id: '1',
+        email: 'aziz@example.com',
+        username: 'aziz',
+        isActive: true,
+        createdAt: DateTime(2026),
+      );
+
+  @override
+  Future<void> logout() async {}
+}
 
 /// Butun ilova ulanishining smoke testi: ProviderScope + tema + router
 /// birgalikda ishga tushadi, ilova to'g'ridan-to'g'ri Login ekranida ochiladi
@@ -77,7 +107,7 @@ void main() {
     // Parollar mos kelmasa xato ko'rsatiladi.
     await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.passwordHint),
-      'parol12345',
+      'Parol12345',
     );
     await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.confirmPasswordHint),
@@ -115,6 +145,7 @@ void main() {
       ProviderScope(
         overrides: [
           appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
         ],
         child: const ZukkorApp(),
       ),
@@ -132,12 +163,16 @@ void main() {
       'aziz@example.com',
     );
     await tester.enterText(
+      find.widgetWithText(TextFormField, AppStrings.usernameHint),
+      'aziz_karimov',
+    );
+    await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.passwordHint),
-      'parol12345',
+      'Parol12345',
     );
     await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.confirmPasswordHint),
-      'parol12345',
+      'Parol12345',
     );
     await tester.tap(find.text(AppStrings.registerButton));
     await tester.pumpAndSettle();
@@ -161,6 +196,7 @@ void main() {
       ProviderScope(
         overrides: [
           appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
         ],
         child: const ZukkorApp(),
       ),
@@ -177,7 +213,7 @@ void main() {
     );
     await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.passwordHint),
-      'parol12345',
+      'Parol12345',
     );
     await tester.tap(find.text(AppStrings.loginButton).first);
     await tester.pumpAndSettle();

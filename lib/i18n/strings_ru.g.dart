@@ -600,7 +600,7 @@ class _Translations$authValidation$ru implements Translations$authValidation$en 
 	@override String get emailRequired => 'Введите email';
 	@override String get emailInvalid => 'Неверный формат email';
 	@override String get passwordRequired => 'Введите пароль';
-	@override String get passwordTooShort => 'Пароль должен содержать минимум 8 символов';
+	@override String get passwordTooShort => 'Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру';
 	@override String get passwordMismatch => 'Пароли не совпадают';
 	@override String get usernameRequired => 'Введите имя пользователя';
 	@override String get usernameInvalid => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)';
@@ -859,7 +859,7 @@ extension on TranslationsRu {
 			'authValidation.emailRequired' => 'Введите email',
 			'authValidation.emailInvalid' => 'Неверный формат email',
 			'authValidation.passwordRequired' => 'Введите пароль',
-			'authValidation.passwordTooShort' => 'Пароль должен содержать минимум 8 символов',
+			'authValidation.passwordTooShort' => 'Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру',
 			'authValidation.passwordMismatch' => 'Пароли не совпадают',
 			'authValidation.usernameRequired' => 'Введите имя пользователя',
 			'authValidation.usernameInvalid' => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)',

@@ -289,7 +289,7 @@
     "emailRequired": "Email kiritilishi shart",
     "emailInvalid": "Email formati noto'g'ri",
     "passwordRequired": "Parol kiritilishi shart",
-    "passwordTooShort": "Parol kamida 8 ta belgidan iborat bo'lishi kerak",
+    "passwordTooShort": "Parol kamida 8 ta belgi, 1 ta katta harf va 1 ta raqamdan iborat bo'lishi kerak",
     "passwordMismatch": "Parollar mos kelmadi",
     "usernameRequired": "Foydalanuvchi nomi kiritilishi shart",
     "usernameInvalid": "Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo'lishi mumkin (3–30 belgi)",

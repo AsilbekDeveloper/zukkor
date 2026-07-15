@@ -25,15 +25,23 @@ void main() {
     });
   });
 
-  group('Validators.password (backend: kamida 8 belgi)', () {
+  group('Validators.password (backend: 8+ belgi, 1 katta harf, 1 raqam)', () {
     test('bo\'sh — xato', () {
       expect(Validators.password(null), isNotNull);
       expect(Validators.password(''), isNotNull);
     });
 
-    test('7 belgi — xato, 8 belgi — o\'tadi (chegara)', () {
-      expect(Validators.password('1234567'), isNotNull);
-      expect(Validators.password('12345678'), isNull);
+    test('7 belgi — xato, 8 belgi (katta harf + raqam bilan) — o\'tadi', () {
+      expect(Validators.password('Parol12'), isNotNull);
+      expect(Validators.password('Parol123'), isNull);
+    });
+
+    test('katta harf yo\'q — xato', () {
+      expect(Validators.password('parol123'), isNotNull);
+    });
+
+    test('raqam yo\'q — xato', () {
+      expect(Validators.password('Parolparol'), isNotNull);
     });
   });
 

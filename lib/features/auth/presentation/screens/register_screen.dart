@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
@@ -9,28 +11,27 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../i18n/strings.g.dart';
+import '../controllers/auth_controller.dart';
 import '../widgets/auth_divider.dart';
 import '../widgets/auth_switch_prompt.dart';
 import '../widgets/brand_logo.dart';
 import '../widgets/google_button.dart';
 
 /// Ro'yxatdan o'tish ekrani — alohida sahifa (Login ustiga push qilinadi).
-///
-/// Faqat email + parol so'raladi (Zukkor_Login.docx, 2-bo'lim) — ism,
-/// familiya va username keyinroq Profil yaratish oqimida to'ldiriladi.
-///
-/// HOZIRGI HOLAT: faqat presentation (UI) qatlami — auth data/domain
-/// qurilganda `_submit`/`_signInWithGoogle` haqiqiy so'rovga ulanadi.
-class RegisterScreen extends StatefulWidget {
+/// Ism, familiya keyinroq Profil yaratish (Onboarding) oqimida to'ldiriladi
+/// — lekin `username` backend `/auth/register`da SHART bo'lgani uchun shu
+/// yerda so'raladi.
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -53,28 +54,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _passwordController.removeListener(_revalidateConfirmPassword);
     _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     context.hideKeyboard();
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    // TODO(auth): auth qatlami qurilganda haqiqiy so'rov shu yerdan
-    // chaqiriladi; hozircha "ro'yxatdan o'tish muvaffaqiyatli" deb
-    // hisoblab, yangi foydalanuvchini profil sozlashga (Onboarding)
-    // yo'naltiramiz — Register/Login'ga qaytmasin uchun `go` bilan.
-    context.go(AppRoutes.onboarding);
+    await ref.read(authControllerProvider.notifier).register(
+          email: _emailController.text.trim(),
+          username: _usernameController.text.trim(),
+          password: _passwordController.text,
+        );
+    if (!mounted) return;
+
+    ref.read(authControllerProvider).when(
+          // Ro'yxatdan o'tgach profil sozlashga (Onboarding) yo'naltiramiz —
+          // Register/Login'ga qaytmasin uchun `go` bilan.
+          data: (_) => context.go(AppRoutes.onboarding),
+          loading: () {},
+          error: (error, _) => context.showSnack(
+            error is Failure ? error.message : t.errors.unknown,
+          ),
+        );
   }
 
   void _signInWithGoogle() {
-    // TODO(auth): auth qatlami qurilganda Google Sign-In shu yerdan
-    // chaqiriladi; hozircha xuddi ro'yxatdan o'tishdek Onboarding'ga
-    // o'tkazamiz (Google orqali kirgan yangi foydalanuvchi ham profil
-    // sozlashi kerak).
-    context.go(AppRoutes.onboarding);
+    // Backend hali Google Sign-In'ni qo'llab-quvvatlamaydi.
+    context.showSnack(t.bottomNav.comingSoon);
   }
 
   void _goToLogin() {
@@ -93,6 +103,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLoading = ref.watch(authControllerProvider).isLoading;
+
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -133,6 +145,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           AppSpacing.md.vGap,
                           AppTextField(
+                            label: context.t.onboarding.usernameLabel,
+                            hint: context.t.onboarding.usernameHint,
+                            controller: _usernameController,
+                            textInputAction: TextInputAction.next,
+                            autofillHints: const [AutofillHints.newUsername],
+                            validator: Validators.username,
+                          ),
+                          AppSpacing.md.vGap,
+                          AppTextField(
                             label: context.t.auth.passwordLabel,
                             hint: context.t.auth.passwordHint,
                             controller: _passwordController,
@@ -162,6 +183,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   AppSpacing.xl.vGap,
                   AppButton.primary(
                     label: context.t.auth.registerButton,
+                    isLoading: isLoading,
                     onPressed: _submit,
                   ),
                   AppSpacing.lg.vGap,

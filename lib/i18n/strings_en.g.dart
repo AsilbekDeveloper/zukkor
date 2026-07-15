@@ -1052,8 +1052,8 @@ class Translations$authValidation$en {
 	/// en: 'Password is required'
 	String get passwordRequired => 'Password is required';
 
-	/// en: 'Password must be at least 8 characters'
-	String get passwordTooShort => 'Password must be at least 8 characters';
+	/// en: 'Password must be at least 8 characters, with 1 uppercase letter and 1 number'
+	String get passwordTooShort => 'Password must be at least 8 characters, with 1 uppercase letter and 1 number';
 
 	/// en: 'Passwords don't match'
 	String get passwordMismatch => 'Passwords don\'t match';
@@ -1336,7 +1336,7 @@ extension on Translations {
 			'authValidation.emailRequired' => 'Email is required',
 			'authValidation.emailInvalid' => 'Invalid email format',
 			'authValidation.passwordRequired' => 'Password is required',
-			'authValidation.passwordTooShort' => 'Password must be at least 8 characters',
+			'authValidation.passwordTooShort' => 'Password must be at least 8 characters, with 1 uppercase letter and 1 number',
 			'authValidation.passwordMismatch' => 'Passwords don\'t match',
 			'authValidation.usernameRequired' => 'Username is required',
 			'authValidation.usernameInvalid' => 'Username may only contain letters, numbers and underscores (3–30 characters)',

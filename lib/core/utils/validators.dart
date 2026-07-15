@@ -1,10 +1,10 @@
 import '../../i18n/strings.g.dart';
 
 /// Forma validatorlari — SOF funksiyalar (holatga bog'liq emas, to'liq
-/// testlanadi). Qoidalar backend hujjatlaridagi bilan AYNAN bir xil,
-/// shunda client o'tkazgan qiymatni server ham o'tkazadi:
+/// testlanadi). Qoidalar backend bilan AYNAN bir xil, shunda client
+/// o'tkazgan qiymatni server ham o'tkazadi:
 ///
-///  - parol: kamida 8 belgi                (Zukkor_Login.docx, 2-bo'lim)
+///  - parol: kamida 8 belgi + 1 katta harf + 1 raqam (auth backend, 2026-07-15)
 ///  - username: ^[a-zA-Z0-9_]{3,30}$       (Zukkor_Profil_Yaratish.docx)
 ///  - ism/familiya: 1-50 belgi             (Zukkor_Profil_Yaratish.docx)
 ///
@@ -17,6 +17,8 @@ abstract final class Validators {
       RegExp(r'^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
 
   static final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,30}$');
+  static final RegExp _uppercaseRegex = RegExp(r'[A-Z]');
+  static final RegExp _digitRegex = RegExp(r'[0-9]');
 
   static String? email(String? value) {
     final String v = value?.trim() ?? '';
@@ -28,7 +30,11 @@ abstract final class Validators {
   static String? password(String? value) {
     final String v = value ?? '';
     if (v.isEmpty) return t.authValidation.passwordRequired;
-    if (v.length < 8) return t.authValidation.passwordTooShort;
+    if (v.length < 8 ||
+        !_uppercaseRegex.hasMatch(v) ||
+        !_digitRegex.hasMatch(v)) {
+      return t.authValidation.passwordTooShort;
+    }
     return null;
   }
 

@@ -594,7 +594,7 @@ class _Translations$authValidation$uz implements Translations$authValidation$en 
 	@override String get emailRequired => 'Email kiritilishi shart';
 	@override String get emailInvalid => 'Email formati noto\'g\'ri';
 	@override String get passwordRequired => 'Parol kiritilishi shart';
-	@override String get passwordTooShort => 'Parol kamida 8 ta belgidan iborat bo\'lishi kerak';
+	@override String get passwordTooShort => 'Parol kamida 8 ta belgi, 1 ta katta harf va 1 ta raqamdan iborat bo\'lishi kerak';
 	@override String get passwordMismatch => 'Parollar mos kelmadi';
 	@override String get usernameRequired => 'Foydalanuvchi nomi kiritilishi shart';
 	@override String get usernameInvalid => 'Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo\'lishi mumkin (3–30 belgi)';
@@ -853,7 +853,7 @@ extension on TranslationsUz {
 			'authValidation.emailRequired' => 'Email kiritilishi shart',
 			'authValidation.emailInvalid' => 'Email formati noto\'g\'ri',
 			'authValidation.passwordRequired' => 'Parol kiritilishi shart',
-			'authValidation.passwordTooShort' => 'Parol kamida 8 ta belgidan iborat bo\'lishi kerak',
+			'authValidation.passwordTooShort' => 'Parol kamida 8 ta belgi, 1 ta katta harf va 1 ta raqamdan iborat bo\'lishi kerak',
 			'authValidation.passwordMismatch' => 'Parollar mos kelmadi',
 			'authValidation.usernameRequired' => 'Foydalanuvchi nomi kiritilishi shart',
 			'authValidation.usernameInvalid' => 'Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo\'lishi mumkin (3–30 belgi)',
