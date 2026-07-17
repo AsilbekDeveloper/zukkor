@@ -293,6 +293,7 @@
     "passwordMismatch": "Passwords don't match",
     "usernameRequired": "Username is required",
     "usernameInvalid": "Username may only contain letters, numbers and underscores (3–30 characters)",
+    "usernameTaken": "This username is already taken",
     "nameRequired": "This field is required",
     "nameTooLong": "Too long (maximum 50 characters)"
   },

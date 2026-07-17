@@ -1064,6 +1064,9 @@ class Translations$authValidation$en {
 	/// en: 'Username may only contain letters, numbers and underscores (3–30 characters)'
 	String get usernameInvalid => 'Username may only contain letters, numbers and underscores (3–30 characters)';
 
+	/// en: 'This username is already taken'
+	String get usernameTaken => 'This username is already taken';
+
 	/// en: 'This field is required'
 	String get nameRequired => 'This field is required';
 
@@ -1340,6 +1343,7 @@ extension on Translations {
 			'authValidation.passwordMismatch' => 'Passwords don\'t match',
 			'authValidation.usernameRequired' => 'Username is required',
 			'authValidation.usernameInvalid' => 'Username may only contain letters, numbers and underscores (3–30 characters)',
+			'authValidation.usernameTaken' => 'This username is already taken',
 			'authValidation.nameRequired' => 'This field is required',
 			'authValidation.nameTooLong' => 'Too long (maximum 50 characters)',
 			'errors.noConnection' => 'No internet connection. Please check your connection and try again.',

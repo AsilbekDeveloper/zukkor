@@ -293,6 +293,7 @@
     "passwordMismatch": "Parollar mos kelmadi",
     "usernameRequired": "Foydalanuvchi nomi kiritilishi shart",
     "usernameInvalid": "Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo'lishi mumkin (3–30 belgi)",
+    "usernameTaken": "Bu foydalanuvchi nomi band",
     "nameRequired": "Bu maydon to'ldirilishi shart",
     "nameTooLong": "Juda uzun (maksimal 50 belgi)"
   },

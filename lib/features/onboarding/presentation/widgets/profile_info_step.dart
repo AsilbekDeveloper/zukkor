@@ -17,12 +17,18 @@ class ProfileInfoStep extends StatelessWidget {
     required this.firstNameController,
     required this.lastNameController,
     required this.usernameController,
+    this.usernameTaken = false,
   });
 
   final GlobalKey<FormState> formKey;
   final TextEditingController firstNameController;
   final TextEditingController lastNameController;
   final TextEditingController usernameController;
+
+  /// `true` — oxirgi tekshiruvda shu username band chiqqan
+  /// (`GET /users/username-available`). Foydalanuvchi matnni
+  /// o'zgartirganda tashqarida `false`ga qaytariladi.
+  final bool usernameTaken;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +70,9 @@ class ProfileInfoStep extends StatelessWidget {
                 controller: usernameController,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [AutofillHints.newUsername],
-                validator: Validators.username,
+                validator: (value) =>
+                    Validators.username(value) ??
+                    (usernameTaken ? t.authValidation.usernameTaken : null),
               ),
             ],
           ),

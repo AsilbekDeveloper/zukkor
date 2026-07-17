@@ -604,6 +604,7 @@ class _Translations$authValidation$ru implements Translations$authValidation$en 
 	@override String get passwordMismatch => 'Пароли не совпадают';
 	@override String get usernameRequired => 'Введите имя пользователя';
 	@override String get usernameInvalid => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)';
+	@override String get usernameTaken => 'Это имя пользователя уже занято';
 	@override String get nameRequired => 'Это поле обязательно';
 	@override String get nameTooLong => 'Слишком длинно (максимум 50 символов)';
 }
@@ -863,6 +864,7 @@ extension on TranslationsRu {
 			'authValidation.passwordMismatch' => 'Пароли не совпадают',
 			'authValidation.usernameRequired' => 'Введите имя пользователя',
 			'authValidation.usernameInvalid' => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)',
+			'authValidation.usernameTaken' => 'Это имя пользователя уже занято',
 			'authValidation.nameRequired' => 'Это поле обязательно',
 			'authValidation.nameTooLong' => 'Слишком длинно (максимум 50 символов)',
 			'errors.noConnection' => 'Нет подключения к интернету. Проверьте соединение и попробуйте снова.',

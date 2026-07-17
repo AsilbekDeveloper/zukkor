@@ -42,19 +42,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     context.hideKeyboard();
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    await ref.read(authControllerProvider.notifier).login(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
-    if (!mounted) return;
-
-    ref.read(authControllerProvider).when(
-          data: (_) => context.go(AppRoutes.home),
-          loading: () {},
-          error: (error, _) => context.showSnack(
-            error is Failure ? error.message : t.errors.unknown,
-          ),
-        );
+    try {
+      await ref.read(authControllerProvider.notifier).login(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+      if (!mounted) return;
+      context.go(AppRoutes.home);
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+    } catch (_) {
+      if (mounted) context.showSnack(t.errors.unknown);
+    }
   }
 
   void _signInWithGoogle() {
@@ -74,7 +73,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoading = ref.watch(authControllerProvider).isLoading;
+    final bool isLoading = ref.watch(authControllerProvider);
 
     return Scaffold(
       body: SafeArea(

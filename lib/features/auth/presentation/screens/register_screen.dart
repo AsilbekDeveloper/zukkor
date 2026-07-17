@@ -18,9 +18,8 @@ import '../widgets/brand_logo.dart';
 import '../widgets/google_button.dart';
 
 /// Ro'yxatdan o'tish ekrani — alohida sahifa (Login ustiga push qilinadi).
-/// Ism, familiya keyinroq Profil yaratish (Onboarding) oqimida to'ldiriladi
-/// — lekin `username` backend `/auth/register`da SHART bo'lgani uchun shu
-/// yerda so'raladi.
+/// Faqat email + parol so'raladi — ism, familiya, username Profil
+/// yaratish (Onboarding) oqimida to'ldiriladi.
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -31,7 +30,6 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -54,7 +52,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void dispose() {
     _passwordController.removeListener(_revalidateConfirmPassword);
     _emailController.dispose();
-    _usernameController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -64,22 +61,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     context.hideKeyboard();
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    await ref.read(authControllerProvider.notifier).register(
-          email: _emailController.text.trim(),
-          username: _usernameController.text.trim(),
-          password: _passwordController.text,
-        );
-    if (!mounted) return;
-
-    ref.read(authControllerProvider).when(
-          // Ro'yxatdan o'tgach profil sozlashga (Onboarding) yo'naltiramiz —
-          // Register/Login'ga qaytmasin uchun `go` bilan.
-          data: (_) => context.go(AppRoutes.onboarding),
-          loading: () {},
-          error: (error, _) => context.showSnack(
-            error is Failure ? error.message : t.errors.unknown,
-          ),
-        );
+    try {
+      await ref.read(authControllerProvider.notifier).register(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
+      if (!mounted) return;
+      // Ro'yxatdan o'tgach profil sozlashga (Onboarding) yo'naltiramiz —
+      // Register/Login'ga qaytmasin uchun `go` bilan.
+      context.go(AppRoutes.onboarding);
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+    } catch (_) {
+      if (mounted) context.showSnack(t.errors.unknown);
+    }
   }
 
   void _signInWithGoogle() {
@@ -103,7 +98,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoading = ref.watch(authControllerProvider).isLoading;
+    final bool isLoading = ref.watch(authControllerProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -142,15 +137,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             textInputAction: TextInputAction.next,
                             autofillHints: const [AutofillHints.email],
                             validator: Validators.email,
-                          ),
-                          AppSpacing.md.vGap,
-                          AppTextField(
-                            label: context.t.onboarding.usernameLabel,
-                            hint: context.t.onboarding.usernameHint,
-                            controller: _usernameController,
-                            textInputAction: TextInputAction.next,
-                            autofillHints: const [AutofillHints.newUsername],
-                            validator: Validators.username,
                           ),
                           AppSpacing.md.vGap,
                           AppTextField(

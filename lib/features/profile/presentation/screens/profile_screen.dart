@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -9,6 +10,8 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/domain/entities/user.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../widgets/level_card.dart';
 import '../widgets/profile_banner.dart';
 import '../widgets/profile_header.dart';
@@ -20,14 +23,40 @@ import '../widgets/settings_list.dart';
 /// settings shortcut, coral banner with an overlapping avatar, name
 /// block, level ring card, a 3-stat strip, and a settings shortcut list.
 ///
-/// CURRENT STATE: presentation only, placeholder user data (matches the
-/// mock user used on Home: 2 140/3 000 XP, level 12). Every action here
-/// now opens a real screen — the settings gear, the banner's edit
-/// pencil, and "Game history"/"Settings & help".
-class ProfileScreen extends StatelessWidget {
+/// Name/username/avatar initials come from the real backend user
+/// (`GET /auth/me`, fetched on open). Level/XP/game stats are still
+/// placeholder — the backend doesn't expose that data yet.
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
+  @override
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Har safar ekran ochilganda yangilanadi — masalan Profilni tahrirlash
+    // ekranidan qaytgach ma'lumot eskirmasin.
+    Future.microtask(() => ref.read(currentUserControllerProvider.notifier).load());
+  }
+
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
+
+  String _initials(User? user) {
+    final String first = (user?.firstName?.isNotEmpty ?? false) ? user!.firstName![0] : '';
+    final String last = (user?.lastName?.isNotEmpty ?? false) ? user!.lastName![0] : '';
+    final String combined = '$first$last'.toUpperCase();
+    return combined.isNotEmpty ? combined : '?';
+  }
+
+  String _displayName(User? user) {
+    final String name = [user?.firstName, user?.lastName]
+        .where((part) => part != null && part.isNotEmpty)
+        .join(' ');
+    return name.isNotEmpty ? name : (user?.username ?? '');
+  }
 
   /// Level ring + 3-stat strip.
   List<Widget> _progressSection(BuildContext context) {
@@ -59,6 +88,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
+    final User? user = ref.watch(currentUserControllerProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -68,8 +98,11 @@ class ProfileScreen extends StatelessWidget {
           children: [
             ProfileHeader(onSettingsTap: () => context.push(AppRoutes.settings)),
             AppSpacing.lg.vGap,
-            ProfileBanner(initials: 'AZ', onEditTap: () => context.push(AppRoutes.editProfile)),
-            const ProfileNameBlock(name: 'Aziz Karimov', username: 'aziz_karimov'),
+            ProfileBanner(
+              initials: _initials(user),
+              onEditTap: () => context.push(AppRoutes.editProfile),
+            ),
+            ProfileNameBlock(name: _displayName(user), username: user?.username ?? ''),
             AppSpacing.lg.vGap,
             ..._progressSection(context),
             AppSpacing.lg.vGap,

@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_durations.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
@@ -10,6 +14,8 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/onboarding_progress_header.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/data/repositories/auth_repository_impl.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../models/onboarding_direction.dart';
 import '../widgets/avatar_step.dart';
 import '../widgets/direction_step.dart';
@@ -17,27 +23,26 @@ import '../widgets/profile_info_step.dart';
 
 /// 3-step profile setup wizard: Avatar → Name/Username → Direction
 /// (Zukkor_Profil_Yaratish.docx). All the data collected here is sent in a
-/// single request on the last step — there is no per-step network call
-/// (matches the prototype's client-side-only wizard state).
-///
-/// CURRENT STATE: presentation only — `_finish` doesn't call the backend
-/// yet (auth data/domain hasn't been rebuilt). Photo upload is a stub too
-/// (`_uploadPhoto`) since it needs image_picker + native permissions, a
-/// separate concern from the wizard UI itself.
-class OnboardingScreen extends StatefulWidget {
+/// single request on the last step (`PATCH /users/me/profile`) — there is
+/// no per-step network call, EXCEPT step 2, which does a lightweight
+/// `GET /users/username-available` check before advancing so a taken
+/// username is caught immediately rather than only after step 3.
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   static const int _totalSteps = 3;
 
   int _step = 1;
   AvatarColorOption _avatarColor = AvatarColorOption.fallback;
   OnboardingDirection? _direction;
   bool _directionTouched = false;
+  bool _usernameTaken = false;
+  bool _checkingUsername = false;
 
   final _profileFormKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
@@ -45,7 +50,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _usernameController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Foydalanuvchi username'ni tuzatgach, eski "band" xatosi ekranda
+    // osilib qolmasin.
+    _usernameController.addListener(_clearUsernameTakenError);
+  }
+
+  void _clearUsernameTakenError() {
+    if (_usernameTaken) {
+      setState(() => _usernameTaken = false);
+    }
+  }
+
+  @override
   void dispose() {
+    _usernameController.removeListener(_clearUsernameTakenError);
     _firstNameController.dispose();
     _lastNameController.dispose();
     _usernameController.dispose();
@@ -54,13 +74,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _uploadPhoto() {
     // TODO(onboarding): wire image_picker once native permissions are set up.
+    // Backend hozircha faqat avatar_color'ni qo'llab-quvvatlaydi, rasm
+    // yuklash uchun alohida endpoint yo'q.
   }
 
-  void _next() {
+  Future<void> _next() async {
     context.hideKeyboard();
 
-    if (_step == 2 && !(_profileFormKey.currentState?.validate() ?? false)) {
-      return;
+    if (_step == 2) {
+      if (!(_profileFormKey.currentState?.validate() ?? false)) return;
+      final bool? available = await _checkUsernameAvailable();
+      if (available == null) return; // xatolik — o'sha yerda ko'rsatildi
+      if (!available) {
+        setState(() => _usernameTaken = true);
+        _profileFormKey.currentState?.validate();
+        return;
+      }
     }
     if (_step == 3 && _direction == null) {
       setState(() => _directionTouched = true);
@@ -70,15 +99,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (_step < _totalSteps) {
       setState(() => _step++);
     } else {
-      _finish();
+      unawaited(_finish());
     }
   }
 
-  void _finish() {
-    // TODO(onboarding): auth data/domain qurilganda PATCH /api/profile/setup/
-    // shu yerdan chaqiriladi (first/last name, username, avatar_color,
-    // direction). Hozircha to'g'ridan-to'g'ri Home'ga o'tadi.
-    context.go(AppRoutes.home);
+  /// `null` — so'rov xatolik bilan tugadi (snackbar ko'rsatildi, joriy
+  /// bosqichda qoladi). `true`/`false` — muvaffaqiyatli tekshiruv natijasi.
+  Future<bool?> _checkUsernameAvailable() async {
+    setState(() => _checkingUsername = true);
+    try {
+      return await ref
+          .read(checkUsernameAvailableUseCaseProvider)
+          .call(_usernameController.text.trim());
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+      return null;
+    } finally {
+      if (mounted) setState(() => _checkingUsername = false);
+    }
+  }
+
+  Future<void> _finish() async {
+    try {
+      await ref.read(authControllerProvider.notifier).completeOnboarding(
+            username: _usernameController.text.trim(),
+            firstName: _firstNameController.text.trim(),
+            lastName: _lastNameController.text.trim(),
+            avatarColor: _avatarColor.apiValue,
+            direction: _direction!.apiValue,
+          );
+      if (!mounted) return;
+      context.go(AppRoutes.home);
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+      // Eng ehtimoliy xato sababi (username band) shu bosqichda tuzatiladi.
+      setState(() => _step = 2);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+      setState(() => _step = 2);
+    }
   }
 
   void _back() {
@@ -94,6 +155,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isLoading = _checkingUsername || ref.watch(authControllerProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -135,6 +198,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 label: _step == _totalSteps
                     ? context.t.onboarding.start
                     : context.t.onboarding.continueButton,
+                isLoading: isLoading,
                 onPressed: _next,
               ),
               AppSpacing.lg.vGap,
@@ -157,6 +221,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           firstNameController: _firstNameController,
           lastNameController: _lastNameController,
           usernameController: _usernameController,
+          usernameTaken: _usernameTaken,
         ),
       _ => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

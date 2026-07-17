@@ -16,12 +16,11 @@ class AuthRemoteDataSource {
 
   Future<AuthTokensModel> register({
     required String email,
-    required String username,
     required String password,
   }) async {
     final Response<dynamic> response = await _dio.post(
       ApiEndpoints.register,
-      data: {'email': email, 'username': username, 'password': password},
+      data: {'email': email, 'password': password},
     );
     return AuthTokensModel.fromJson(response.data as Map<String, dynamic>);
   }
@@ -40,6 +39,34 @@ class AuthRemoteDataSource {
   Future<UserModel> getCurrentUser() async {
     final Response<dynamic> response = await _dio.get(ApiEndpoints.me);
     return UserModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<UserModel> completeOnboarding({
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String avatarColor,
+    required String direction,
+  }) async {
+    final Response<dynamic> response = await _dio.patch(
+      ApiEndpoints.profileSetup,
+      data: {
+        'username': username,
+        'first_name': firstName,
+        'last_name': lastName,
+        'avatar_color': avatarColor,
+        'direction': direction,
+      },
+    );
+    return UserModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<bool> isUsernameAvailable(String username) async {
+    final Response<dynamic> response = await _dio.get(
+      ApiEndpoints.usernameAvailable,
+      queryParameters: {'username': username},
+    );
+    return (response.data as Map<String, dynamic>)['available'] as bool;
   }
 
   Future<void> logout(String refreshToken) async {

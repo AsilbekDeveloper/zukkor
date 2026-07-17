@@ -346,6 +346,7 @@ abstract final class AppStrings {
   static const String usernameRequired = 'Username is required';
   static const String usernameInvalid =
       'Username may only contain letters, numbers and underscores (3–30 characters)';
+  static const String usernameTaken = 'This username is already taken';
   static const String nameRequired = 'This field is required';
   static const String nameTooLong = 'Too long (maximum 50 characters)';
 

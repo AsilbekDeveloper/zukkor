@@ -5,6 +5,8 @@ import '../../../../core/network/failure_mapper.dart';
 import '../../../../core/storage/token_storage.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/check_username_available_use_case.dart';
+import '../../domain/usecases/complete_onboarding_use_case.dart';
 import '../../domain/usecases/get_current_user_use_case.dart';
 import '../../domain/usecases/login_use_case.dart';
 import '../../domain/usecases/logout_use_case.dart';
@@ -25,13 +27,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> register({
     required String email,
-    required String username,
     required String password,
   }) async {
     try {
       final AuthTokensModel tokens = await _remoteDataSource.register(
         email: email,
-        username: username,
         password: password,
       );
       await _saveTokens(tokens);
@@ -57,6 +57,37 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<User> getCurrentUser() async {
     try {
       return (await _remoteDataSource.getCurrentUser()).toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<User> completeOnboarding({
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String avatarColor,
+    required String direction,
+  }) async {
+    try {
+      return (await _remoteDataSource.completeOnboarding(
+        username: username,
+        firstName: firstName,
+        lastName: lastName,
+        avatarColor: avatarColor,
+        direction: direction,
+      ))
+          .toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<bool> isUsernameAvailable(String username) async {
+    try {
+      return await _remoteDataSource.isUsernameAvailable(username);
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -108,4 +139,14 @@ final Provider<GetCurrentUserUseCase> getCurrentUserUseCaseProvider =
 
 final Provider<LogoutUseCase> logoutUseCaseProvider = Provider<LogoutUseCase>(
   (ref) => LogoutUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<CompleteOnboardingUseCase> completeOnboardingUseCaseProvider =
+    Provider<CompleteOnboardingUseCase>(
+  (ref) => CompleteOnboardingUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<CheckUsernameAvailableUseCase> checkUsernameAvailableUseCaseProvider =
+    Provider<CheckUsernameAvailableUseCase>(
+  (ref) => CheckUsernameAvailableUseCase(ref.watch(authRepositoryProvider)),
 );

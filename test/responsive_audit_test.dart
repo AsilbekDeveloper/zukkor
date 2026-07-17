@@ -6,6 +6,9 @@ import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/models/avatar_color_option.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
+import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:zukkor/features/auth/domain/entities/user.dart';
+import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
 import 'package:zukkor/features/auth/presentation/screens/login_screen.dart';
 import 'package:zukkor/features/auth/presentation/screens/register_screen.dart';
 import 'package:zukkor/features/friends/presentation/models/duel_match.dart';
@@ -142,11 +145,59 @@ final List<_ScreenCase> _screens = [
   (name: 'TermsOfUse', builder: (_) => const TermsOfUseScreen()),
 ];
 
+/// Backendga murojaat qilmaydigan soxta auth repository — Onboarding
+/// wizard'ini to'liq bosib o'tadigan audit testlar haqiqiy tarmoqqa
+/// bog'liq bo'lmasligi kerak.
+class _FakeAuthRepository implements AuthRepository {
+  @override
+  Future<void> register({required String email, required String password}) async {}
+
+  @override
+  Future<void> login({required String email, required String password}) async {}
+
+  @override
+  Future<User> getCurrentUser() async => User(
+        id: '1',
+        email: 'aziz@example.com',
+        isActive: true,
+        createdAt: DateTime(2026),
+        onboardingCompleted: false,
+      );
+
+  @override
+  Future<User> completeOnboarding({
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String avatarColor,
+    required String direction,
+  }) async =>
+      User(
+        id: '1',
+        email: 'aziz@example.com',
+        username: username,
+        firstName: firstName,
+        lastName: lastName,
+        avatarColor: avatarColor,
+        direction: direction,
+        isActive: true,
+        createdAt: DateTime(2026),
+        onboardingCompleted: true,
+      );
+
+  @override
+  Future<bool> isUsernameAvailable(String username) async => true;
+
+  @override
+  Future<void> logout() async {}
+}
+
 Future<void> _pumpAt(
   WidgetTester tester,
   Size size,
   WidgetBuilder builder, {
   double textScale = 1.0,
+  bool useFakeAuthRepository = false,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
@@ -160,7 +211,11 @@ Future<void> _pumpAt(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        if (useFakeAuthRepository)
+          authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+      ],
       child: TranslationProvider(
         child: MaterialApp(
           theme: AppTheme.light(),
@@ -212,7 +267,12 @@ void main() {
 
     for (final Size size in walkSizes) {
       testWidgets('all 3 steps @ ${size.width.toInt()}x${size.height.toInt()}', (tester) async {
-        await _pumpAt(tester, size, (_) => const OnboardingScreen());
+        await _pumpAt(
+          tester,
+          size,
+          (_) => const OnboardingScreen(),
+          useFakeAuthRepository: true,
+        );
         expect(tester.takeException(), isNull, reason: 'step 1 overflowed');
 
         // Step 1 → 2.

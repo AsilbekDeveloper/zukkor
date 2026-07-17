@@ -8,6 +8,9 @@ import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
+import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:zukkor/features/auth/domain/entities/user.dart';
+import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
 import 'package:zukkor/features/friends/presentation/screens/friends_screen.dart';
 import 'package:zukkor/features/history/presentation/screens/history_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
@@ -16,6 +19,45 @@ import 'package:zukkor/features/profile/presentation/screens/edit_profile_screen
 import 'package:zukkor/features/profile/presentation/screens/profile_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
+
+/// Backendga murojaat qilmaydigan soxta auth repository — Profile ekrani
+/// ochilganda `GET /auth/me`ni chaqiradi, haqiqiy tarmoqqa bog'liq
+/// bo'lmasligi kerak.
+class _FakeAuthRepository implements AuthRepository {
+  @override
+  Future<void> register({required String email, required String password}) async {}
+
+  @override
+  Future<void> login({required String email, required String password}) async {}
+
+  @override
+  Future<User> getCurrentUser() async => User(
+        id: '1',
+        email: 'aziz@example.com',
+        username: 'aziz_karimov',
+        firstName: 'Aziz',
+        lastName: 'Karimov',
+        isActive: true,
+        createdAt: DateTime(2026),
+        onboardingCompleted: true,
+      );
+
+  @override
+  Future<User> completeOnboarding({
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String avatarColor,
+    required String direction,
+  }) async =>
+      getCurrentUser();
+
+  @override
+  Future<bool> isUsernameAvailable(String username) async => true;
+
+  @override
+  Future<void> logout() async {}
+}
 
 // Profile pushes to SettingsScreen, which reads themeControllerProvider —
 // needs a real ProviderScope (mocked SharedPreferences) rather than a
@@ -46,7 +88,10 @@ Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+      ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       ),

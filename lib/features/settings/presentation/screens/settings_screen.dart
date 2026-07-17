@@ -108,7 +108,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // `finally` blokida) — server so'rovi (refresh token'ni bekor qilish)
     // muvaffaqiyatsiz bo'lsa ham, foydalanuvchi qurilmada baribir chiqishi
     // kerak, shuning uchun xatolik e'tiborsiz qoldiriladi.
-    await ref.read(authControllerProvider.notifier).logout();
+    try {
+      await ref.read(authControllerProvider.notifier).logout();
+    } catch (_) {
+      // e'tiborsiz qoldiriladi — pastga qarang.
+    }
     if (!mounted) return;
     context.go(AppRoutes.login);
   }

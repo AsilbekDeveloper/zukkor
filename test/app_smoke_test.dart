@@ -18,11 +18,7 @@ import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
 /// bo'lmasligi kerak.
 class _FakeAuthRepository implements AuthRepository {
   @override
-  Future<void> register({
-    required String email,
-    required String username,
-    required String password,
-  }) async {}
+  Future<void> register({required String email, required String password}) async {}
 
   @override
   Future<void> login({required String email, required String password}) async {}
@@ -34,7 +30,32 @@ class _FakeAuthRepository implements AuthRepository {
         username: 'aziz',
         isActive: true,
         createdAt: DateTime(2026),
+        onboardingCompleted: false,
       );
+
+  @override
+  Future<User> completeOnboarding({
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String avatarColor,
+    required String direction,
+  }) async =>
+      User(
+        id: '1',
+        email: 'aziz@example.com',
+        username: username,
+        firstName: firstName,
+        lastName: lastName,
+        avatarColor: avatarColor,
+        direction: direction,
+        isActive: true,
+        createdAt: DateTime(2026),
+        onboardingCompleted: true,
+      );
+
+  @override
+  Future<bool> isUsernameAvailable(String username) async => true;
 
   @override
   Future<void> logout() async {}
@@ -161,10 +182,6 @@ void main() {
     await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.emailHint),
       'aziz@example.com',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.usernameHint),
-      'aziz_karimov',
     );
     await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.passwordHint),

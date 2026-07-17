@@ -8,9 +8,9 @@ abstract final class ApiEndpoints {
   static const String logout = '/auth/logout';
   static const String me = '/auth/me';
 
-  // Profil (Zukkor_Profil_Yaratish.docx)
-  static const String profileSetup = '/api/profile/setup/';
-  static const String profileMe = '/api/profile/me/';
+  // Profil (Zukkor_Profil_Yaratish.docx) — Onboarding wizard'ini yakunlash.
+  static const String profileSetup = '/users/me/profile';
+  static const String usernameAvailable = '/users/username-available';
 
   // Quiz (Zukkor_Ball_XP_Tizimi.docx)
   static const String categories = '/api/categories/';

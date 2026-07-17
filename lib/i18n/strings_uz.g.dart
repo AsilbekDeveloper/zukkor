@@ -598,6 +598,7 @@ class _Translations$authValidation$uz implements Translations$authValidation$en 
 	@override String get passwordMismatch => 'Parollar mos kelmadi';
 	@override String get usernameRequired => 'Foydalanuvchi nomi kiritilishi shart';
 	@override String get usernameInvalid => 'Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo\'lishi mumkin (3–30 belgi)';
+	@override String get usernameTaken => 'Bu foydalanuvchi nomi band';
 	@override String get nameRequired => 'Bu maydon to\'ldirilishi shart';
 	@override String get nameTooLong => 'Juda uzun (maksimal 50 belgi)';
 }
@@ -857,6 +858,7 @@ extension on TranslationsUz {
 			'authValidation.passwordMismatch' => 'Parollar mos kelmadi',
 			'authValidation.usernameRequired' => 'Foydalanuvchi nomi kiritilishi shart',
 			'authValidation.usernameInvalid' => 'Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo\'lishi mumkin (3–30 belgi)',
+			'authValidation.usernameTaken' => 'Bu foydalanuvchi nomi band',
 			'authValidation.nameRequired' => 'Bu maydon to\'ldirilishi shart',
 			'authValidation.nameTooLong' => 'Juda uzun (maksimal 50 belgi)',
 			'errors.noConnection' => 'Internet aloqasi yo\'q. Ulanishingizni tekshirib, qayta urinib ko\'ring.',
