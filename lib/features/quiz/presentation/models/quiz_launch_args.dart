@@ -1,13 +1,13 @@
 import 'quiz_category.dart';
 
-/// [QuizScreen]'s route `extra` — a category, plus whether this is a
-/// Lobby (multiplayer room) game. [isLobbyGame] changes what happens once
-/// every question is answered: solo/duel games land on the plain
-/// [ResultScreen], lobby games land on [LobbyResultScreen] (a room
-/// leaderboard) instead.
+/// [QuizIntroScreen] and [QuizScreen]'s route `extra` — a category plus
+/// how many questions to ask.
 class QuizLaunchArgs {
-  const QuizLaunchArgs({required this.category, this.isLobbyGame = false});
+  const QuizLaunchArgs({
+    required this.category,
+    this.questionCount = 10,
+  });
 
   final QuizCategory category;
-  final bool isLobbyGame;
+  final int questionCount;
 }

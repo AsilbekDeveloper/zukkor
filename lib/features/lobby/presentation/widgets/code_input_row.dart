@@ -10,7 +10,11 @@ import '../../../../i18n/strings.g.dart';
 /// prototype's `.code-input-row` / `.code-box`, including its
 /// auto-advance-on-type / auto-back-on-backspace behavior.
 class CodeInputRow extends StatefulWidget {
-  const CodeInputRow({super.key});
+  const CodeInputRow({required this.onCodeChanged, super.key});
+
+  /// Fired with the concatenated digits (may be shorter than
+  /// [digitCount]) after every keystroke.
+  final ValueChanged<String> onCodeChanged;
 
   static const int digitCount = 6;
 
@@ -43,6 +47,7 @@ class _CodeInputRowState extends State<CodeInputRow> {
     if (value.isNotEmpty && index < CodeInputRow.digitCount - 1) {
       _focusNodes[index + 1].requestFocus();
     }
+    widget.onCodeChanged(_controllers.map((c) => c.text).join());
   }
 
   KeyEventResult _onKey(int index, KeyEvent event) {

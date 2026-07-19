@@ -13,6 +13,7 @@ class User {
     this.firstName,
     this.lastName,
     this.avatarColor,
+    this.avatarImagePath,
     this.direction,
   });
 
@@ -24,6 +25,9 @@ class User {
   final String? username;
   final String? firstName;
   final String? lastName;
+  // avatarColor va avatarImagePath bir-birini istisno qiladi — biri
+  // o'rnatilsa, ikkinchisi backend tomonidan tozalanadi.
   final String? avatarColor;
+  final String? avatarImagePath;
   final String? direction;
 }

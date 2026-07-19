@@ -14,6 +14,7 @@ class UserModel {
     this.firstName,
     this.lastName,
     this.avatarColor,
+    this.avatarImagePath,
     this.direction,
   });
 
@@ -27,6 +28,7 @@ class UserModel {
         firstName: json['first_name'] as String?,
         lastName: json['last_name'] as String?,
         avatarColor: json['avatar_color'] as String?,
+        avatarImagePath: json['avatar_image_path'] as String?,
         direction: json['direction'] as String?,
       );
 
@@ -39,6 +41,7 @@ class UserModel {
   final String? firstName;
   final String? lastName;
   final String? avatarColor;
+  final String? avatarImagePath;
   final String? direction;
 
   User toEntity() => User(
@@ -51,6 +54,7 @@ class UserModel {
         firstName: firstName,
         lastName: lastName,
         avatarColor: avatarColor,
+        avatarImagePath: avatarImagePath,
         direction: direction,
       );
 }

@@ -13,6 +13,9 @@ class AppPreferences {
   static const String _hasSeenIntroductionKey = 'zukkor.has_seen_introduction';
   static const String _soundEffectsEnabledKey = 'zukkor.sound_effects_enabled';
   static const String _localeCodeKey = 'zukkor.locale_code';
+  static const String _introInterestsKey = 'zukkor.intro_interests';
+  static const String _introStudyPlaceKey = 'zukkor.intro_study_place';
+  static const String _introQuizLikingKey = 'zukkor.intro_quiz_liking';
 
   ThemeMode get themeMode {
     return switch (_prefs.getString(_themeModeKey)) {
@@ -45,6 +48,30 @@ class AppPreferences {
 
   Future<void> saveLocaleCode(String code) =>
       _prefs.setString(_localeCodeKey, code);
+
+  // Introduction so'rovnomasi javoblari — ro'yxatdan o'tishdan OLDIN
+  // to'planadi (hali foydalanuvchi hisobi yo'q), shuning uchun bu yerda
+  // vaqtincha saqlanadi va Onboarding'ni yakunlash so'rovi bilan birga
+  // yuboriladi (keyin [clearIntroSurvey] bilan tozalanadi).
+  List<String>? get introInterests => _prefs.getStringList(_introInterestsKey);
+  String? get introStudyPlace => _prefs.getString(_introStudyPlaceKey);
+  String? get introQuizLiking => _prefs.getString(_introQuizLikingKey);
+
+  Future<void> saveIntroSurvey({
+    required List<String> interests,
+    required String studyPlace,
+    required String quizLiking,
+  }) async {
+    await _prefs.setStringList(_introInterestsKey, interests);
+    await _prefs.setString(_introStudyPlaceKey, studyPlace);
+    await _prefs.setString(_introQuizLikingKey, quizLiking);
+  }
+
+  Future<void> clearIntroSurvey() async {
+    await _prefs.remove(_introInterestsKey);
+    await _prefs.remove(_introStudyPlaceKey);
+    await _prefs.remove(_introQuizLikingKey);
+  }
 }
 
 /// main() da SharedPreferences yuklangach override qilinadi —

@@ -4,6 +4,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/user_avatar.dart';
 import '../models/leaderboard_entry.dart';
 
 /// A column of leaderboard rows — mirrors the prototype's `.rank-list` /
@@ -69,23 +70,12 @@ class _RankRow extends StatelessWidget {
                 ),
               ),
               AppSpacing.sm.hGap,
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: entry.avatarColor.resolve(context),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  entry.initials,
-                  style: const TextStyle(
-                    fontFamily: 'PlusJakartaSans',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 11.5,
-                    color: Colors.white,
-                  ),
-                ),
+              UserAvatar(
+                size: 36,
+                initials: entry.initials,
+                avatarImagePath: entry.avatarImagePath,
+                backgroundColor: entry.avatarColor.resolve(context),
+                fontSize: 11.5,
               ),
               AppSpacing.sm.hGap,
               Expanded(

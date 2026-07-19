@@ -76,13 +76,13 @@ class _HistoryRow extends StatelessWidget {
             ),
           ),
           AppSpacing.sm.hGap,
-          if (entry.isWinBadge == null)
+          if (entry.badge == null)
             Text(
               entry.resultText,
               style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w700),
             )
           else
-            _ResultBadge(isWin: entry.isWinBadge!),
+            _ResultBadge(kind: entry.badge!),
         ],
       ),
     );
@@ -90,22 +90,26 @@ class _HistoryRow extends StatelessWidget {
 }
 
 class _ResultBadge extends StatelessWidget {
-  const _ResultBadge({required this.isWin});
+  const _ResultBadge({required this.kind});
 
-  final bool isWin;
+  final HistoryBadgeKind kind;
 
   @override
   Widget build(BuildContext context) {
+    final Color color = switch (kind) {
+      HistoryBadgeKind.win => context.colors.green,
+      HistoryBadgeKind.loss => context.colors.coral,
+      HistoryBadgeKind.draw => context.colors.muted,
+    };
+    final String label = switch (kind) {
+      HistoryBadgeKind.win => context.t.history.winBadge,
+      HistoryBadgeKind.loss => context.t.history.lossBadge,
+      HistoryBadgeKind.draw => context.t.history.drawBadge,
+    };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm - 2, vertical: AppSpacing.xxs + 1),
-      decoration: BoxDecoration(
-        color: isWin ? context.colors.green : context.colors.coral,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        isWin ? context.t.history.winBadge : context.t.history.lossBadge,
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white),
-      ),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(999)),
+      child: Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
@@ -9,33 +11,56 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/close_header.dart';
+import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../friends/presentation/controllers/send_friend_request_controller.dart';
+import '../../domain/entities/player_stats.dart';
+import '../controllers/player_stats_controller.dart';
 import '../models/leaderboard_entry.dart';
 
 /// A read-only profile card for someone else's leaderboard row — mirrors
 /// the prototype's `view-player-detail` / `openPlayerDetail()`.
 ///
-/// CURRENT STATE: presentation only. Level/win-rate/streak aren't real
-/// stats — they're derived from the player's name length, exactly
-/// mirroring the prototype's `seed = name.length` demo formula, so they
-/// vary per person without a backend. "Add to friends" is a local mock
-/// toggle (no real request is sent).
-class PlayerDetailScreen extends StatefulWidget {
+/// [entry] (rank/name/xp/avatar, already known from the list that was
+/// tapped) paints instantly; level/streak/games/win-rate come from
+/// `GET /leaderboard/{user_id}`, fetched on open. "Add to friends" sends
+/// a real `POST /friends/requests` (same flow as Add Friend's search
+/// results).
+class PlayerDetailScreen extends ConsumerStatefulWidget {
   const PlayerDetailScreen({required this.entry, super.key});
 
   final LeaderboardEntry entry;
 
   @override
-  State<PlayerDetailScreen> createState() => _PlayerDetailScreenState();
+  ConsumerState<PlayerDetailScreen> createState() => _PlayerDetailScreenState();
 }
 
-class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
+class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
   bool _requestSent = false;
+  PlayerStats? _stats;
 
-  int get _seed => widget.entry.name.length;
-  int get _level => 8 + (_seed % 10);
-  int get _winRate => 55 + (_seed % 35);
-  int get _streak => 1 + (_seed % 15);
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(_loadStats);
+  }
+
+  Future<void> _loadStats() async {
+    try {
+      final PlayerStats stats =
+          await ref.read(playerStatsControllerProvider.notifier).getPlayerStats(widget.entry.id!);
+      if (!mounted) return;
+      setState(() => _stats = stats);
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+      _close(context);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+      _close(context);
+    }
+  }
 
   void _close(BuildContext context) {
     if (context.canPop()) {
@@ -45,9 +70,24 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
     }
   }
 
+  Future<void> _addToFriends() async {
+    try {
+      await ref.read(sendFriendRequestControllerProvider.notifier).sendRequest(widget.entry.id!);
+      if (!mounted) return;
+      setState(() => _requestSent = true);
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final LeaderboardEntry entry = widget.entry;
+    final PlayerStats? stats = _stats;
 
     return Scaffold(
       body: SafeArea(
@@ -60,23 +100,12 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
               CloseHeader(title: context.t.playerDetail.title, onClose: () => _close(context)),
               AppSpacing.xl.vGap,
               Center(
-                child: Container(
-                  width: 76,
-                  height: 76,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: entry.avatarColor.resolve(context),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    entry.initials,
-                    style: const TextStyle(
-                      fontFamily: 'PlusJakartaSans',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 24,
-                      color: Colors.white,
-                    ),
-                  ),
+                child: UserAvatar(
+                  size: 76,
+                  initials: entry.initials,
+                  avatarImagePath: entry.avatarImagePath,
+                  backgroundColor: entry.avatarColor.resolve(context),
+                  fontSize: 24,
                 ),
               ),
               AppSpacing.md.vGap,
@@ -97,7 +126,14 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
                 ),
               ),
               AppSpacing.lg.vGap,
-              _PlayerStatsRow(level: _level, winRatePercent: _winRate, streak: _streak),
+              if (stats == null)
+                const Center(child: CircularProgressIndicator())
+              else
+                _PlayerStatsRow(
+                  level: stats.level,
+                  winRatePercent: stats.winRatePercent,
+                  streak: stats.currentStreak,
+                ),
               AppSpacing.xl.vGap,
               AppButton.primary(
                 label: _requestSent ? context.t.playerDetail.requestSent : context.t.playerDetail.addToFriends,
@@ -106,7 +142,7 @@ class _PlayerDetailScreenState extends State<PlayerDetailScreen> {
                   color: Colors.white,
                   size: 18,
                 ),
-                onPressed: _requestSent ? null : () => setState(() => _requestSent = true),
+                onPressed: _requestSent ? null : _addToFriends,
               ),
             ],
           ),

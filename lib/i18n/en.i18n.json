@@ -7,7 +7,7 @@
     "retry": "Retry",
     "loading": "Loading...",
     "dayUnit(param=count)": { "one": "day", "other": "days" },
-    "friendsOnline(param=count)": { "one": "$count friend online", "other": "$count friends online" },
+    "friendsCount(param=count)": { "one": "$count friend", "other": "$count friends" },
     "questionCount(param=count)": { "one": "$count question", "other": "$count questions" }
   },
   "home": {
@@ -36,7 +36,7 @@
     "you": "You",
     "seeFullRanking": "See full ranking",
     "xpValue": "$xp XP",
-    "greetingFiltered": "Leaderboard · $category"
+    "anonymousPlayer": "Player"
   },
   "fullLeaderboard": {
     "title": "Full ranking"
@@ -48,14 +48,9 @@
     "requestSent": "Sent",
     "rankedLabel": "Ranked #$rank · $xp XP"
   },
-  "rankFilter": {
-    "title": "By category",
-    "allCategories": "All categories"
-  },
   "friends": {
     "addFriend": "Add friend",
     "searchPlaceholder": "Search friends",
-    "onlineSection": "Online",
     "allSection": "All friends",
     "noneFound": "No friends found"
   },
@@ -65,7 +60,12 @@
     "yourInviteCode": "Your invite code",
     "shareLink": "Share the link",
     "addButton": "Add",
+    "requestedLabel": "Requested",
     "noUsersFound": "No users found"
+  },
+  "friendRequests": {
+    "title": "Friend requests",
+    "emptyState": "No requests yet"
   },
   "duelPick": {
     "title": "1v1 Duel",
@@ -94,7 +94,26 @@
     "privacy": "Privacy",
     "helpCenter": "Help center",
     "termsOfUse": "Terms of use",
-    "logOut": "Log out"
+    "changePassword": "Change password",
+    "logOut": "Log out",
+    "groupDangerZone": "Danger zone",
+    "deleteAccount": "Delete account"
+  },
+  "changePassword": {
+    "title": "Change password",
+    "currentPasswordLabel": "Current password",
+    "currentPasswordHint": "Enter your current password",
+    "newPasswordLabel": "New password",
+    "newPasswordHint": "At least 8 characters",
+    "confirmNewPasswordLabel": "Confirm new password",
+    "confirmNewPasswordHint": "Re-enter your new password",
+    "saveButton": "Save",
+    "updated": "Password changed successfully"
+  },
+  "deleteAccount": {
+    "confirmTitle": "Delete account",
+    "confirmMessage": "This can't be undone. All your data — friends, history, ball — will be permanently deleted. Enter your password to continue.",
+    "confirmButton": "Yes, delete"
   },
   "history": {
     "segmentAll": "All",
@@ -102,7 +121,20 @@
     "segmentDuel": "Duel",
     "segmentLobby": "Lobby",
     "winBadge": "Win",
-    "lossBadge": "Loss"
+    "lossBadge": "Loss",
+    "drawBadge": "Draw",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "$days days ago",
+    "emptyState": "Games of this type aren't saved yet",
+    "noGamesYet": "No games played yet",
+    "lobbyPlayerCount": "$count players"
+  },
+  "quizSetup": {
+    "title": "How many questions?",
+    "subtitle": "Pick a quick option or choose your own",
+    "customLabel": "Custom",
+    "startButton": "Start quiz"
   },
   "quizIntro": {
     "startLabel": "Start!"
@@ -110,9 +142,14 @@
   "quiz": {
     "questionProgress": "Question $current/$total"
   },
+  "ballReveal": {
+    "title": "Your points",
+    "ballLabel": "points"
+  },
   "result": {
     "label": "Result",
     "summary": "$correct out of $total correct",
+    "totalBall": "$ball points",
     "xpEarned": "+$xp XP",
     "playAgain": "Play again",
     "challengeAFriend": "Challenge a friend",
@@ -121,7 +158,9 @@
   "joinCode": {
     "hint": "Enter the 6-digit room code your friend sent you",
     "joinButton": "Join",
-    "codeDigitLabel": "Code digit $position"
+    "codeDigitLabel": "Code digit $position",
+    "roomNotFound": "No room found with that code",
+    "roomFull": "That room is full"
   },
   "lobby": {
     "title": "Multiplayer room",
@@ -131,7 +170,11 @@
     "guestRole": "Guest",
     "startGame": "Start the game",
     "waitingForHost": "Waiting for the host to start…",
-    "playerCount": "$current/$max"
+    "playerCount": "$current/$max",
+    "closedMessage": "The host left, the room closed"
+  },
+  "lobbyGame": {
+    "answeredProgress": "$answered/$total answered"
   },
   "lobbyResult": {
     "title": "Room results",
@@ -140,8 +183,10 @@
   },
   "duelWaiting": {
     "title": "Duel",
-    "waitingForAnswer": "Waiting for their answer…",
-    "startDemo": "Start (demo)"
+    "waitingForAccept": "Invite sent, waiting for a response…",
+    "declined": "Invite declined",
+    "expired": "Invite expired",
+    "backToHome": "Back to home"
   },
   "duelInvite": {
     "title": "Duel invite",
@@ -149,13 +194,26 @@
     "accept": "Accept",
     "decline": "Decline"
   },
+  "duelGame": {
+    "title": "Duel",
+    "waitingForQuestion": "Preparing the question…",
+    "opponentAnswered": "Opponent answered"
+  },
+  "duelResult": {
+    "won": "You won!",
+    "lost": "You lost",
+    "draw": "It's a draw!",
+    "yourScoreLabel": "You",
+    "opponentScoreLabel": "Opponent"
+  },
   "notifications": {
     "title": "Notifications",
     "duelChallenge": "Malika challenged you to a duel",
     "streakReminder": "Don't lose your 5-day streak — play today!",
     "top50": "You made it into the weekly Top 50",
     "friendRequest": "Bekzod Xolmatov sent you a friend request",
-    "welcome": "Welcome to Zukkor! Start your first quiz"
+    "welcome": "Welcome to Zukkor! Start your first quiz",
+    "emptyState": "No notifications yet"
   },
   "editProfile": {
     "save": "Save",

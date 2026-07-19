@@ -3,11 +3,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
-
-/// Which notification message a row shows — the actual text is resolved
-/// via [NotificationKindTitle.title] at render time (not a const field)
-/// so it re-translates when the locale changes.
-enum NotificationKind { duelChallenge, streakReminder, top50, friendRequest, welcome }
+import '../../domain/entities/notification_record.dart';
 
 extension NotificationKindTitle on NotificationKind {
   String title(BuildContext context) => switch (this) {
@@ -30,8 +26,27 @@ class NotificationEntry {
     required this.kind,
     required this.timeLabel,
     required this.isUnread,
-    this.opensDuelInvite = false,
   });
+
+  /// Builds a row from a real `GET /notifications` entry — icon/color are
+  /// derived client-side from [NotificationRecord.kind] (the server only
+  /// sends the discriminator, not display styling).
+  factory NotificationEntry.fromEntity(NotificationRecord record) {
+    final (IconData icon, CategoryColorKey colorKey) = switch (record.kind) {
+      NotificationKind.duelChallenge => (TablerIcons.swords, CategoryColorKey.coral),
+      NotificationKind.streakReminder => (TablerIcons.flame, CategoryColorKey.terra),
+      NotificationKind.top50 => (TablerIcons.trophy, CategoryColorKey.teal),
+      NotificationKind.friendRequest => (TablerIcons.userPlus, CategoryColorKey.blue),
+      NotificationKind.welcome => (TablerIcons.sparkles, CategoryColorKey.pink),
+    };
+    return NotificationEntry(
+      icon: icon,
+      colorKey: colorKey,
+      kind: record.kind,
+      timeLabel: _formatTimeLabel(record.createdAt),
+      isUnread: !record.isRead,
+    );
+  }
 
   final IconData icon;
   final CategoryColorKey colorKey;
@@ -39,47 +54,17 @@ class NotificationEntry {
   final String timeLabel;
   final bool isUnread;
 
-  /// Only the duel-challenge notification opens a real screen right now
-  /// — the rest have no destination yet (matches the prototype: only
-  /// that row carries a `data-nav`).
-  final bool opensDuelInvite;
+  static String _formatTimeLabel(DateTime createdAt) {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime day = DateTime(createdAt.year, createdAt.month, createdAt.day);
+    final int diffDays = today.difference(day).inDays;
 
-  static const List<NotificationEntry> sample = [
-    NotificationEntry(
-      icon: TablerIcons.swords,
-      colorKey: CategoryColorKey.coral,
-      kind: NotificationKind.duelChallenge,
-      timeLabel: '2 minutes ago',
-      isUnread: true,
-      opensDuelInvite: true,
-    ),
-    NotificationEntry(
-      icon: TablerIcons.flame,
-      colorKey: CategoryColorKey.terra,
-      kind: NotificationKind.streakReminder,
-      timeLabel: '3 hours ago',
-      isUnread: true,
-    ),
-    NotificationEntry(
-      icon: TablerIcons.trophy,
-      colorKey: CategoryColorKey.teal,
-      kind: NotificationKind.top50,
-      timeLabel: 'Yesterday',
-      isUnread: true,
-    ),
-    NotificationEntry(
-      icon: TablerIcons.userPlus,
-      colorKey: CategoryColorKey.blue,
-      kind: NotificationKind.friendRequest,
-      timeLabel: '2 days ago',
-      isUnread: false,
-    ),
-    NotificationEntry(
-      icon: TablerIcons.sparkles,
-      colorKey: CategoryColorKey.pink,
-      kind: NotificationKind.welcome,
-      timeLabel: '5 days ago',
-      isUnread: false,
-    ),
-  ];
+    if (diffDays == 0) return t.history.today;
+    if (diffDays == 1) return t.history.yesterday;
+    if (diffDays > 1 && diffDays < 7) return t.history.daysAgo(days: diffDays);
+    final String dd = createdAt.day.toString().padLeft(2, '0');
+    final String mm = createdAt.month.toString().padLeft(2, '0');
+    return '$dd.$mm.${createdAt.year}';
+  }
 }

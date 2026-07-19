@@ -23,6 +23,11 @@ enum AvatarColorOption {
   /// already has a valid selection.
   static const AvatarColorOption fallback = AvatarColorOption.coral;
 
+  /// Maps a backend `avatar_color` value back to the enum — used to
+  /// preselect the current color when editing an existing profile.
+  static AvatarColorOption fromApiValue(String? value) => AvatarColorOption.values
+      .firstWhere((color) => color.apiValue == value, orElse: () => fallback);
+
   Color resolve(BuildContext context) {
     final AppColors colors = context.colors;
     return switch (this) {

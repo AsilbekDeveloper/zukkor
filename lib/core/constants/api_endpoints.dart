@@ -12,12 +12,44 @@ abstract final class ApiEndpoints {
   static const String profileSetup = '/users/me/profile';
   static const String usernameAvailable = '/users/username-available';
 
-  // Quiz (Zukkor_Ball_XP_Tizimi.docx)
-  static const String categories = '/api/categories/';
-  static const String quizStart = '/api/quiz/start/';
+  // Avatar rasm yuklash (2026-07-18'da qo'shildi, hali backend'da yo'q).
+  static const String avatarUpload = '/users/me/avatar';
 
-  static String categoryQuestions(int categoryId, {int count = 10}) =>
-      '/api/categories/$categoryId/questions/random/?count=$count';
+  // Parol o'zgartirish / akkaunt o'chirish (2026-07-18'da qo'shildi, hali
+  // backend'da yo'q).
+  static const String changePassword = '/auth/change-password';
+  static const String deleteAccount = '/auth/me';
 
-  static String quizAnswer(int sessionId) => '/api/quiz/$sessionId/answer/';
+  // Bildirishnoma sozlamalari (2026-07-18'da qo'shildi, hali backend'da yo'q).
+  static const String notificationPreferences = '/users/me/notification-preferences';
+
+  // Quiz (Zukkor_Ball_XP_Tizimi.docx, ball formulasi 2026-07-17'da yangilangan)
+  static const String categories = '/categories';
+  static const String quizStart = '/quiz/start';
+
+  static String quizAnswer(String sessionId) => '/quiz/$sessionId/answer';
+
+  // Leaderboard (2026-07-17'da qo'shildi; scope 2026-07-19'da qo'shildi —
+  // weekly/all_time/friends kesimlari).
+  static String leaderboard({int limit = 50, String scope = 'all_time'}) =>
+      '/leaderboard?limit=$limit&scope=$scope';
+  static String playerStats(String userId) => '/leaderboard/$userId';
+
+  // Game history (2026-07-18'da qo'shildi).
+  static String history({int limit = 50}) => '/history?limit=$limit';
+
+  // Friends (2026-07-18'da qo'shildi).
+  static const String friends = '/friends';
+  static String friendsSearch(String query) => '/friends/search?q=${Uri.encodeQueryComponent(query)}';
+
+  // Friend requests (2026-07-19'da qo'shildi, hali backend'da yo'q — instant
+  // mutual add o'rniga request/accept oqimiga o'tildi).
+  static const String friendRequests = '/friends/requests';
+  static const String incomingFriendRequests = '/friends/requests/incoming';
+  static String acceptFriendRequest(String requestId) => '/friends/requests/$requestId/accept';
+  static String declineFriendRequest(String requestId) => '/friends/requests/$requestId/decline';
+
+  // Notifications (2026-07-19'da qo'shildi, hali backend'da yo'q).
+  static const String notifications = '/notifications';
+  static const String notificationsMarkAllRead = '/notifications/mark-all-read';
 }

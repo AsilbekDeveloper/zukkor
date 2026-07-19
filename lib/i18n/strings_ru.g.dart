@@ -43,21 +43,28 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$leaderboard$ru leaderboard = _Translations$leaderboard$ru._(_root);
 	@override late final _Translations$fullLeaderboard$ru fullLeaderboard = _Translations$fullLeaderboard$ru._(_root);
 	@override late final _Translations$playerDetail$ru playerDetail = _Translations$playerDetail$ru._(_root);
-	@override late final _Translations$rankFilter$ru rankFilter = _Translations$rankFilter$ru._(_root);
 	@override late final _Translations$friends$ru friends = _Translations$friends$ru._(_root);
 	@override late final _Translations$addFriend$ru addFriend = _Translations$addFriend$ru._(_root);
+	@override late final _Translations$friendRequests$ru friendRequests = _Translations$friendRequests$ru._(_root);
 	@override late final _Translations$duelPick$ru duelPick = _Translations$duelPick$ru._(_root);
 	@override late final _Translations$profile$ru profile = _Translations$profile$ru._(_root);
 	@override late final _Translations$settings$ru settings = _Translations$settings$ru._(_root);
+	@override late final _Translations$changePassword$ru changePassword = _Translations$changePassword$ru._(_root);
+	@override late final _Translations$deleteAccount$ru deleteAccount = _Translations$deleteAccount$ru._(_root);
 	@override late final _Translations$history$ru history = _Translations$history$ru._(_root);
+	@override late final _Translations$quizSetup$ru quizSetup = _Translations$quizSetup$ru._(_root);
 	@override late final _Translations$quizIntro$ru quizIntro = _Translations$quizIntro$ru._(_root);
 	@override late final _Translations$quiz$ru quiz = _Translations$quiz$ru._(_root);
+	@override late final _Translations$ballReveal$ru ballReveal = _Translations$ballReveal$ru._(_root);
 	@override late final _Translations$result$ru result = _Translations$result$ru._(_root);
 	@override late final _Translations$joinCode$ru joinCode = _Translations$joinCode$ru._(_root);
 	@override late final _Translations$lobby$ru lobby = _Translations$lobby$ru._(_root);
+	@override late final _Translations$lobbyGame$ru lobbyGame = _Translations$lobbyGame$ru._(_root);
 	@override late final _Translations$lobbyResult$ru lobbyResult = _Translations$lobbyResult$ru._(_root);
 	@override late final _Translations$duelWaiting$ru duelWaiting = _Translations$duelWaiting$ru._(_root);
 	@override late final _Translations$duelInvite$ru duelInvite = _Translations$duelInvite$ru._(_root);
+	@override late final _Translations$duelGame$ru duelGame = _Translations$duelGame$ru._(_root);
+	@override late final _Translations$duelResult$ru duelResult = _Translations$duelResult$ru._(_root);
 	@override late final _Translations$notifications$ru notifications = _Translations$notifications$ru._(_root);
 	@override late final _Translations$editProfile$ru editProfile = _Translations$editProfile$ru._(_root);
 	@override late final _Translations$notificationSettings$ru notificationSettings = _Translations$notificationSettings$ru._(_root);
@@ -91,11 +98,11 @@ class _Translations$common$ru implements Translations$common$en {
 		many: 'дней',
 		other: 'дня',
 	);
-	@override String friendsOnline({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count,
-		one: '${count} друг онлайн',
-		few: '${count} друга онлайн',
-		many: '${count} друзей онлайн',
-		other: '${count} друга онлайн',
+	@override String friendsCount({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count,
+		one: '${count} друг',
+		few: '${count} друга',
+		many: '${count} друзей',
+		other: '${count} друга',
 	);
 	@override String questionCount({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count,
 		one: '${count} вопрос',
@@ -151,7 +158,7 @@ class _Translations$leaderboard$ru implements Translations$leaderboard$en {
 	@override String get you => 'Вы';
 	@override String get seeFullRanking => 'Смотреть полный рейтинг';
 	@override String xpValue({required Object xp}) => '${xp} XP';
-	@override String greetingFiltered({required Object category}) => 'Рейтинг · ${category}';
+	@override String get anonymousPlayer => 'Игрок';
 }
 
 // Path: fullLeaderboard
@@ -178,17 +185,6 @@ class _Translations$playerDetail$ru implements Translations$playerDetail$en {
 	@override String rankedLabel({required Object rank, required Object xp}) => '#${rank} место · ${xp} XP';
 }
 
-// Path: rankFilter
-class _Translations$rankFilter$ru implements Translations$rankFilter$en {
-	_Translations$rankFilter$ru._(this._root);
-
-	final TranslationsRu _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'По категориям';
-	@override String get allCategories => 'Все категории';
-}
-
 // Path: friends
 class _Translations$friends$ru implements Translations$friends$en {
 	_Translations$friends$ru._(this._root);
@@ -198,7 +194,6 @@ class _Translations$friends$ru implements Translations$friends$en {
 	// Translations
 	@override String get addFriend => 'Добавить друга';
 	@override String get searchPlaceholder => 'Поиск друзей';
-	@override String get onlineSection => 'Онлайн';
 	@override String get allSection => 'Все друзья';
 	@override String get noneFound => 'Друзья не найдены';
 }
@@ -215,7 +210,19 @@ class _Translations$addFriend$ru implements Translations$addFriend$en {
 	@override String get yourInviteCode => 'Ваш код приглашения';
 	@override String get shareLink => 'Поделиться ссылкой';
 	@override String get addButton => 'Добавить';
+	@override String get requestedLabel => 'Запрос отправлен';
 	@override String get noUsersFound => 'Пользователи не найдены';
+}
+
+// Path: friendRequests
+class _Translations$friendRequests$ru implements Translations$friendRequests$en {
+	_Translations$friendRequests$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Запросы в друзья';
+	@override String get emptyState => 'Пока нет запросов';
 }
 
 // Path: duelPick
@@ -265,7 +272,40 @@ class _Translations$settings$ru implements Translations$settings$en {
 	@override String get privacy => 'Конфиденциальность';
 	@override String get helpCenter => 'Центр помощи';
 	@override String get termsOfUse => 'Условия использования';
+	@override String get changePassword => 'Изменить пароль';
 	@override String get logOut => 'Выйти';
+	@override String get groupDangerZone => 'Опасная зона';
+	@override String get deleteAccount => 'Удалить аккаунт';
+}
+
+// Path: changePassword
+class _Translations$changePassword$ru implements Translations$changePassword$en {
+	_Translations$changePassword$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Изменить пароль';
+	@override String get currentPasswordLabel => 'Текущий пароль';
+	@override String get currentPasswordHint => 'Введите текущий пароль';
+	@override String get newPasswordLabel => 'Новый пароль';
+	@override String get newPasswordHint => 'Минимум 8 символов';
+	@override String get confirmNewPasswordLabel => 'Подтвердите новый пароль';
+	@override String get confirmNewPasswordHint => 'Введите новый пароль ещё раз';
+	@override String get saveButton => 'Сохранить';
+	@override String get updated => 'Пароль успешно изменён';
+}
+
+// Path: deleteAccount
+class _Translations$deleteAccount$ru implements Translations$deleteAccount$en {
+	_Translations$deleteAccount$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get confirmTitle => 'Удалить аккаунт';
+	@override String get confirmMessage => 'Это действие нельзя отменить. Все ваши данные — друзья, история, баллы — будут безвозвратно удалены. Введите пароль, чтобы продолжить.';
+	@override String get confirmButton => 'Да, удалить';
 }
 
 // Path: history
@@ -281,6 +321,26 @@ class _Translations$history$ru implements Translations$history$en {
 	@override String get segmentLobby => 'Комната';
 	@override String get winBadge => 'Победа';
 	@override String get lossBadge => 'Поражение';
+	@override String get drawBadge => 'Ничья';
+	@override String get today => 'Сегодня';
+	@override String get yesterday => 'Вчера';
+	@override String daysAgo({required Object days}) => '${days} дней назад';
+	@override String get emptyState => 'Игры этого типа пока не сохраняются';
+	@override String get noGamesYet => 'Пока нет сыгранных игр';
+	@override String lobbyPlayerCount({required Object count}) => '${count} игроков';
+}
+
+// Path: quizSetup
+class _Translations$quizSetup$ru implements Translations$quizSetup$en {
+	_Translations$quizSetup$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Сколько вопросов?';
+	@override String get subtitle => 'Выберите готовый вариант или укажите своё число';
+	@override String get customLabel => 'Свой вариант';
+	@override String get startButton => 'Начать викторину';
 }
 
 // Path: quizIntro
@@ -303,6 +363,17 @@ class _Translations$quiz$ru implements Translations$quiz$en {
 	@override String questionProgress({required Object current, required Object total}) => 'Вопрос ${current} из ${total}';
 }
 
+// Path: ballReveal
+class _Translations$ballReveal$ru implements Translations$ballReveal$en {
+	_Translations$ballReveal$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Ваши баллы';
+	@override String get ballLabel => 'баллов';
+}
+
 // Path: result
 class _Translations$result$ru implements Translations$result$en {
 	_Translations$result$ru._(this._root);
@@ -312,6 +383,7 @@ class _Translations$result$ru implements Translations$result$en {
 	// Translations
 	@override String get label => 'Результат';
 	@override String summary({required Object correct, required Object total}) => '${correct} из ${total} правильно';
+	@override String totalBall({required Object ball}) => '${ball} баллов';
 	@override String xpEarned({required Object xp}) => '+${xp} XP';
 	@override String get playAgain => 'Играть снова';
 	@override String get challengeAFriend => 'Вызвать друга';
@@ -328,6 +400,8 @@ class _Translations$joinCode$ru implements Translations$joinCode$en {
 	@override String get hint => 'Введите 6-значный код комнаты, который прислал друг';
 	@override String get joinButton => 'Присоединиться';
 	@override String codeDigitLabel({required Object position}) => 'Цифра кода ${position}';
+	@override String get roomNotFound => 'Комната с таким кодом не найдена';
+	@override String get roomFull => 'Эта комната заполнена';
 }
 
 // Path: lobby
@@ -345,6 +419,17 @@ class _Translations$lobby$ru implements Translations$lobby$en {
 	@override String get startGame => 'Начать игру';
 	@override String get waitingForHost => 'Ожидание, пока хост начнёт игру…';
 	@override String playerCount({required Object current, required Object max}) => '${current}/${max}';
+	@override String get closedMessage => 'Хост покинул комнату, комната закрыта';
+}
+
+// Path: lobbyGame
+class _Translations$lobbyGame$ru implements Translations$lobbyGame$en {
+	_Translations$lobbyGame$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String answeredProgress({required Object answered, required Object total}) => '${answered}/${total} ответили';
 }
 
 // Path: lobbyResult
@@ -367,8 +452,10 @@ class _Translations$duelWaiting$ru implements Translations$duelWaiting$en {
 
 	// Translations
 	@override String get title => 'Дуэль';
-	@override String get waitingForAnswer => 'Ожидание его ответа…';
-	@override String get startDemo => 'Начать (демо)';
+	@override String get waitingForAccept => 'Приглашение отправлено, ожидание ответа…';
+	@override String get declined => 'Приглашение отклонено';
+	@override String get expired => 'Срок приглашения истёк';
+	@override String get backToHome => 'На главную';
 }
 
 // Path: duelInvite
@@ -384,6 +471,32 @@ class _Translations$duelInvite$ru implements Translations$duelInvite$en {
 	@override String get decline => 'Отклонить';
 }
 
+// Path: duelGame
+class _Translations$duelGame$ru implements Translations$duelGame$en {
+	_Translations$duelGame$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Дуэль';
+	@override String get waitingForQuestion => 'Подготовка вопроса…';
+	@override String get opponentAnswered => 'Соперник ответил';
+}
+
+// Path: duelResult
+class _Translations$duelResult$ru implements Translations$duelResult$en {
+	_Translations$duelResult$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get won => 'Вы победили!';
+	@override String get lost => 'Вы проиграли';
+	@override String get draw => 'Ничья!';
+	@override String get yourScoreLabel => 'Вы';
+	@override String get opponentScoreLabel => 'Соперник';
+}
+
 // Path: notifications
 class _Translations$notifications$ru implements Translations$notifications$en {
 	_Translations$notifications$ru._(this._root);
@@ -397,6 +510,7 @@ class _Translations$notifications$ru implements Translations$notifications$en {
 	@override String get top50 => 'Вы попали в топ-50 недели';
 	@override String get friendRequest => 'Бекзод Холматов отправил вам запрос в друзья';
 	@override String get welcome => 'Добро пожаловать в Zukkor! Начните свою первую викторину';
+	@override String get emptyState => 'Пока нет уведомлений';
 }
 
 // Path: editProfile
@@ -640,7 +754,7 @@ extension on TranslationsRu {
 			'common.retry' => 'Повторить',
 			'common.loading' => 'Загрузка...',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: 'день', few: 'дня', many: 'дней', other: 'дня', ), 
-			'common.friendsOnline' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} друг онлайн', few: '${count} друга онлайн', many: '${count} друзей онлайн', other: '${count} друга онлайн', ), 
+			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} друг', few: '${count} друга', many: '${count} друзей', other: '${count} друга', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} вопрос', few: '${count} вопроса', many: '${count} вопросов', other: '${count} вопроса', ), 
 			'home.greeting' => 'Доброе утро',
 			'home.duelHeroTitle' => 'Кто сильнее сегодня?',
@@ -663,18 +777,15 @@ extension on TranslationsRu {
 			'leaderboard.you' => 'Вы',
 			'leaderboard.seeFullRanking' => 'Смотреть полный рейтинг',
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
-			'leaderboard.greetingFiltered' => ({required Object category}) => 'Рейтинг · ${category}',
+			'leaderboard.anonymousPlayer' => 'Игрок',
 			'fullLeaderboard.title' => 'Полный рейтинг',
 			'playerDetail.title' => 'Профиль',
 			'playerDetail.streakLabel' => 'Серия',
 			'playerDetail.addToFriends' => 'Добавить в друзья',
 			'playerDetail.requestSent' => 'Отправлено',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => '#${rank} место · ${xp} XP',
-			'rankFilter.title' => 'По категориям',
-			'rankFilter.allCategories' => 'Все категории',
 			'friends.addFriend' => 'Добавить друга',
 			'friends.searchPlaceholder' => 'Поиск друзей',
-			'friends.onlineSection' => 'Онлайн',
 			'friends.allSection' => 'Все друзья',
 			'friends.noneFound' => 'Друзья не найдены',
 			'addFriend.searchByUsername' => 'Поиск по имени пользователя',
@@ -682,7 +793,10 @@ extension on TranslationsRu {
 			'addFriend.yourInviteCode' => 'Ваш код приглашения',
 			'addFriend.shareLink' => 'Поделиться ссылкой',
 			'addFriend.addButton' => 'Добавить',
+			'addFriend.requestedLabel' => 'Запрос отправлен',
 			'addFriend.noUsersFound' => 'Пользователи не найдены',
+			'friendRequests.title' => 'Запросы в друзья',
+			'friendRequests.emptyState' => 'Пока нет запросов',
 			'duelPick.title' => 'Дуэль 1×1',
 			'duelPick.chooseYourFriend' => 'Выберите друга',
 			'profile.editProfile' => 'Редактировать профиль',
@@ -705,17 +819,46 @@ extension on TranslationsRu {
 			'settings.privacy' => 'Конфиденциальность',
 			'settings.helpCenter' => 'Центр помощи',
 			'settings.termsOfUse' => 'Условия использования',
+			'settings.changePassword' => 'Изменить пароль',
 			'settings.logOut' => 'Выйти',
+			'settings.groupDangerZone' => 'Опасная зона',
+			'settings.deleteAccount' => 'Удалить аккаунт',
+			'changePassword.title' => 'Изменить пароль',
+			'changePassword.currentPasswordLabel' => 'Текущий пароль',
+			'changePassword.currentPasswordHint' => 'Введите текущий пароль',
+			'changePassword.newPasswordLabel' => 'Новый пароль',
+			'changePassword.newPasswordHint' => 'Минимум 8 символов',
+			'changePassword.confirmNewPasswordLabel' => 'Подтвердите новый пароль',
+			'changePassword.confirmNewPasswordHint' => 'Введите новый пароль ещё раз',
+			'changePassword.saveButton' => 'Сохранить',
+			'changePassword.updated' => 'Пароль успешно изменён',
+			'deleteAccount.confirmTitle' => 'Удалить аккаунт',
+			'deleteAccount.confirmMessage' => 'Это действие нельзя отменить. Все ваши данные — друзья, история, баллы — будут безвозвратно удалены. Введите пароль, чтобы продолжить.',
+			'deleteAccount.confirmButton' => 'Да, удалить',
 			'history.segmentAll' => 'Все',
 			'history.segmentSolo' => 'Соло',
 			'history.segmentDuel' => 'Дуэль',
 			'history.segmentLobby' => 'Комната',
 			'history.winBadge' => 'Победа',
 			'history.lossBadge' => 'Поражение',
+			'history.drawBadge' => 'Ничья',
+			'history.today' => 'Сегодня',
+			'history.yesterday' => 'Вчера',
+			'history.daysAgo' => ({required Object days}) => '${days} дней назад',
+			'history.emptyState' => 'Игры этого типа пока не сохраняются',
+			'history.noGamesYet' => 'Пока нет сыгранных игр',
+			'history.lobbyPlayerCount' => ({required Object count}) => '${count} игроков',
+			'quizSetup.title' => 'Сколько вопросов?',
+			'quizSetup.subtitle' => 'Выберите готовый вариант или укажите своё число',
+			'quizSetup.customLabel' => 'Свой вариант',
+			'quizSetup.startButton' => 'Начать викторину',
 			'quizIntro.startLabel' => 'Старт!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Вопрос ${current} из ${total}',
+			'ballReveal.title' => 'Ваши баллы',
+			'ballReveal.ballLabel' => 'баллов',
 			'result.label' => 'Результат',
 			'result.summary' => ({required Object correct, required Object total}) => '${correct} из ${total} правильно',
+			'result.totalBall' => ({required Object ball}) => '${ball} баллов',
 			'result.xpEarned' => ({required Object xp}) => '+${xp} XP',
 			'result.playAgain' => 'Играть снова',
 			'result.challengeAFriend' => 'Вызвать друга',
@@ -723,6 +866,8 @@ extension on TranslationsRu {
 			'joinCode.hint' => 'Введите 6-значный код комнаты, который прислал друг',
 			'joinCode.joinButton' => 'Присоединиться',
 			'joinCode.codeDigitLabel' => ({required Object position}) => 'Цифра кода ${position}',
+			'joinCode.roomNotFound' => 'Комната с таким кодом не найдена',
+			'joinCode.roomFull' => 'Эта комната заполнена',
 			'lobby.title' => 'Комната для нескольких игроков',
 			'lobby.roomCode' => 'Код комнаты',
 			'lobby.players' => 'Игроки',
@@ -731,22 +876,35 @@ extension on TranslationsRu {
 			'lobby.startGame' => 'Начать игру',
 			'lobby.waitingForHost' => 'Ожидание, пока хост начнёт игру…',
 			'lobby.playerCount' => ({required Object current, required Object max}) => '${current}/${max}',
+			'lobby.closedMessage' => 'Хост покинул комнату, комната закрыта',
+			'lobbyGame.answeredProgress' => ({required Object answered, required Object total}) => '${answered}/${total} ответили',
 			'lobbyResult.title' => 'Результаты комнаты',
 			'lobbyResult.subtitle' => 'Вот как сыграли все в комнате',
 			'lobbyResult.playAgain' => 'Играть снова',
 			'duelWaiting.title' => 'Дуэль',
-			'duelWaiting.waitingForAnswer' => 'Ожидание его ответа…',
-			'duelWaiting.startDemo' => 'Начать (демо)',
+			'duelWaiting.waitingForAccept' => 'Приглашение отправлено, ожидание ответа…',
+			'duelWaiting.declined' => 'Приглашение отклонено',
+			'duelWaiting.expired' => 'Срок приглашения истёк',
+			'duelWaiting.backToHome' => 'На главную',
 			'duelInvite.title' => 'Приглашение на дуэль',
 			'duelInvite.challengesYou' => 'вызывает вас на дуэль',
 			'duelInvite.accept' => 'Принять',
 			'duelInvite.decline' => 'Отклонить',
+			'duelGame.title' => 'Дуэль',
+			'duelGame.waitingForQuestion' => 'Подготовка вопроса…',
+			'duelGame.opponentAnswered' => 'Соперник ответил',
+			'duelResult.won' => 'Вы победили!',
+			'duelResult.lost' => 'Вы проиграли',
+			'duelResult.draw' => 'Ничья!',
+			'duelResult.yourScoreLabel' => 'Вы',
+			'duelResult.opponentScoreLabel' => 'Соперник',
 			'notifications.title' => 'Уведомления',
 			'notifications.duelChallenge' => 'Малика вызвала вас на дуэль',
 			'notifications.streakReminder' => 'Не теряйте серию из 5 дней — играйте сегодня!',
 			'notifications.top50' => 'Вы попали в топ-50 недели',
 			'notifications.friendRequest' => 'Бекзод Холматов отправил вам запрос в друзья',
 			'notifications.welcome' => 'Добро пожаловать в Zukkor! Начните свою первую викторину',
+			'notifications.emptyState' => 'Пока нет уведомлений',
 			'editProfile.save' => 'Сохранить',
 			'editProfile.updated' => 'Профиль обновлён',
 			'notificationSettings.title' => 'Настройки уведомлений',

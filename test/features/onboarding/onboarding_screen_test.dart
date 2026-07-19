@@ -21,6 +21,9 @@ class _FakeAuthRepository implements AuthRepository {
   _FakeAuthRepository({this.usernameAvailable = true});
 
   final bool usernameAvailable;
+  List<String>? receivedInterests;
+  String? receivedStudyPlace;
+  String? receivedQuizLiking;
 
   @override
   Future<void> register({required String email, required String password}) async {}
@@ -38,37 +41,58 @@ class _FakeAuthRepository implements AuthRepository {
       );
 
   @override
-  Future<User> completeOnboarding({
+  Future<User> updateProfile({
     required String username,
     required String firstName,
     required String lastName,
     required String avatarColor,
     required String direction,
-  }) async =>
-      User(
-        id: '1',
-        email: 'aziz@example.com',
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        avatarColor: avatarColor,
-        direction: direction,
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: true,
-      );
+    List<String>? interests,
+    String? studyPlace,
+    String? quizLiking,
+  }) async {
+    receivedInterests = interests;
+    receivedStudyPlace = studyPlace;
+    receivedQuizLiking = quizLiking;
+    return User(
+      id: '1',
+      email: 'aziz@example.com',
+      username: username,
+      firstName: firstName,
+      lastName: lastName,
+      avatarColor: avatarColor,
+      direction: direction,
+      isActive: true,
+      createdAt: DateTime(2026),
+      onboardingCompleted: true,
+    );
+  }
 
   @override
   Future<bool> isUsernameAvailable(String username) async => usernameAvailable;
 
   @override
   Future<void> logout() async {}
+
+  @override
+  Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
+
+  @override
+  Future<void> changePassword({required String currentPassword, required String newPassword}) =>
+      throw UnimplementedError();
+
+  @override
+  Future<void> deleteAccount(String password) => throw UnimplementedError();
 }
 
 /// The onboarding wizard has no entry point wired up yet (login/register
 /// submit are still TODO stubs), so tests reach it the same way a future
 /// "registration succeeded" redirect will: by pushing the route directly.
-Future<void> _pumpAppOnOnboarding(WidgetTester tester, {AuthRepository? authRepository}) async {
+Future<SharedPreferences> _pumpAppOnOnboarding(
+  WidgetTester tester, {
+  AuthRepository? authRepository,
+  Map<String, Object>? extraPrefs,
+}) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -77,7 +101,10 @@ Future<void> _pumpAppOnOnboarding(WidgetTester tester, {AuthRepository? authRepo
   // Skips the Introduction walkthrough (its explainer pages run a
   // continuous animation that would make the pumpAndSettle below hang) —
   // this file only cares about the Onboarding wizard itself.
-  SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
+  SharedPreferences.setMockInitialValues(<String, Object>{
+    'zukkor.has_seen_introduction': true,
+    ...?extraPrefs,
+  });
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   await tester.pumpWidget(
@@ -94,6 +121,7 @@ Future<void> _pumpAppOnOnboarding(WidgetTester tester, {AuthRepository? authRepo
   final BuildContext context = tester.element(find.byType(Scaffold).first);
   unawaited(context.push(AppRoutes.onboarding));
   await tester.pumpAndSettle();
+  return prefs;
 }
 
 void main() {
@@ -214,6 +242,46 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
+  });
+
+  testWidgets('folds in Introduction survey answers saved before registration, then clears them',
+      (tester) async {
+    final _FakeAuthRepository repository = _FakeAuthRepository();
+    final SharedPreferences prefs = await _pumpAppOnOnboarding(
+      tester,
+      authRepository: repository,
+      extraPrefs: {
+        'zukkor.intro_interests': ['Math', 'Movies'],
+        'zukkor.intro_study_place': 'school',
+        'zukkor.intro_quiz_liking': 'love_it',
+      },
+    );
+
+    // Step 1 → 2.
+    await tester.tap(find.text(AppStrings.onboardingContinue));
+    await tester.pumpAndSettle();
+
+    // Step 2 → 3.
+    await tester.enterText(find.widgetWithText(TextFormField, AppStrings.firstNameHint), 'Aziz');
+    await tester.enterText(find.widgetWithText(TextFormField, AppStrings.lastNameHint), 'Karimov');
+    await tester.enterText(find.widgetWithText(TextFormField, AppStrings.usernameHint), 'aziz_karimov');
+    await tester.tap(find.text(AppStrings.onboardingContinue));
+    await tester.pumpAndSettle();
+
+    // Step 3: pick a direction, then Start.
+    await tester.tap(find.text(AppStrings.directionStudentUniTitle));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppStrings.onboardingStart));
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
+    expect(repository.receivedInterests, ['Math', 'Movies']);
+    expect(repository.receivedStudyPlace, 'school');
+    expect(repository.receivedQuizLiking, 'love_it');
+    // Cleared afterward — never resent on a future profile update.
+    expect(prefs.getStringList('zukkor.intro_interests'), isNull);
+    expect(prefs.getString('zukkor.intro_study_place'), isNull);
+    expect(prefs.getString('zukkor.intro_quiz_liking'), isNull);
   });
 
   testWidgets('back button steps back through the wizard', (tester) async {

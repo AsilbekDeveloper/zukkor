@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -9,6 +10,9 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/leaderboard_data.dart';
+import '../../domain/entities/leaderboard_scope.dart';
+import '../controllers/leaderboard_controller.dart';
 import '../models/leaderboard_entry.dart';
 import '../widgets/leaderboard_header.dart';
 import '../widgets/leaderboard_podium.dart';
@@ -16,65 +20,70 @@ import '../widgets/leaderboard_segment_control.dart';
 import '../widgets/rank_list.dart';
 
 /// The Leaderboard tab — mirrors the prototype's `view-leaderboard`:
-/// header + filter button, weekly/all-time/friends segment control, top-3
-/// podium, then the rest of the ranked list with the current user's own
-/// (much lower) rank pinned at the bottom.
+/// header, weekly/all-time/friends segment control, top-3 podium, then
+/// the rest of the ranked list with the current user's own (much lower)
+/// rank pinned at the bottom.
 ///
-/// CURRENT STATE: presentation only, [LeaderboardEntry.sample] placeholder
-/// data. Segments other than "Weekly" show the same sample data for now
-/// (there's no backend yet to slice by time range), and the category
-/// filter only relabels the header — it doesn't actually re-slice the
-/// sample data either. Tapping anyone but yourself opens their
-/// [PlayerDetailScreen]; "See full ranking" opens [FullLeaderboardScreen].
-class LeaderboardScreen extends StatefulWidget {
+/// CURRENT STATE: all 3 segments are real — `GET /leaderboard?scope=...`
+/// returns a different ranked slice for weekly/all-time/friends.
+/// Switching segments re-fetches (not cached). Tapping anyone but
+/// yourself opens their [PlayerDetailScreen]; "See full ranking" opens
+/// [FullLeaderboardScreen] (which shows whichever segment was last
+/// loaded here, via the shared [leaderboardControllerProvider]).
+class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
 
   @override
-  State<LeaderboardScreen> createState() => _LeaderboardScreenState();
+  ConsumerState<LeaderboardScreen> createState() => _LeaderboardScreenState();
 }
 
-class _LeaderboardScreenState extends State<LeaderboardScreen> {
-  LeaderboardSegment _segment = LeaderboardSegment.weekly;
-  String? _categoryFilter;
+class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
+  LeaderboardScope _scope = LeaderboardScope.allTime;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope));
+  }
+
+  void _onScopeChanged(LeaderboardScope scope) {
+    setState(() => _scope = scope);
+    ref.read(leaderboardControllerProvider.notifier).load(scope: scope);
+  }
 
   void _comingSoon() => context.showSnack(context.t.bottomNav.comingSoon);
 
-  Future<void> _openFilter() async {
-    final String? result = await context.push<String?>(
-      AppRoutes.rankFilter,
-      extra: _categoryFilter,
-    );
-    if (!mounted) return;
-    setState(() => _categoryFilter = result);
-  }
-
   void _openPlayerDetail(LeaderboardEntry entry) {
-    if (entry.isCurrentUser) return;
+    if (entry.isCurrentUser || entry.id == null) return;
     context.push(AppRoutes.playerDetail, extra: entry);
   }
 
-  /// Segment control + top-3 podium.
-  List<Widget> _podiumSection(BuildContext context) {
-    return [
+  /// Segment control + top-3 podium + the rest of the ranked list. Falls
+  /// back to a plain list (no podium) if there aren't at least 3 ranked
+  /// players yet.
+  List<Widget> _bodySections(BuildContext context, LeaderboardData data) {
+    final List<LeaderboardEntry> withMe = data.rankedWithMe;
+    final List<Widget> segmentControl = [
       LeaderboardSegmentControl(
-        selected: _segment,
-        onChanged: (segment) => setState(() => _segment = segment),
+        selected: _scope,
+        onChanged: _onScopeChanged,
       ),
       AppSpacing.lg.vGap,
-      LeaderboardPodium(
-        entries: LeaderboardEntry.samplePodium,
-        onEntryTap: _openPlayerDetail,
-      ),
     ];
-  }
 
-  /// The ranked list + "see full ranking".
-  List<Widget> _listSection(BuildContext context) {
+    if (data.entries.length < 3) {
+      return [
+        ...segmentControl,
+        RankList(entries: withMe, onEntryTap: _openPlayerDetail),
+        _SeeFullRankingButton(onTap: () => context.push(AppRoutes.fullLeaderboard)),
+      ];
+    }
+
     return [
-      RankList(
-        entries: LeaderboardEntry.sampleRestOfList,
-        onEntryTap: _openPlayerDetail,
-      ),
+      ...segmentControl,
+      LeaderboardPodium(entries: [withMe[1], withMe[0], withMe[2]], onEntryTap: _openPlayerDetail),
+      AppSpacing.lg.vGap,
+      RankList(entries: withMe.sublist(3), onEntryTap: _openPlayerDetail),
       _SeeFullRankingButton(onTap: () => context.push(AppRoutes.fullLeaderboard)),
     ];
   }
@@ -82,23 +91,21 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
-    final String greeting = _categoryFilter == null
-        ? context.t.leaderboard.greeting
-        : context.t.leaderboard.greetingFiltered(category: _categoryFilter!);
+    final LeaderboardData? data = ref.watch(leaderboardControllerProvider);
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
-          children: [
-            LeaderboardHeader(greeting: greeting, onFilterTap: _openFilter),
-            AppSpacing.lg.vGap,
-            ..._podiumSection(context),
-            AppSpacing.lg.vGap,
-            ..._listSection(context),
-          ],
-        ),
+        child: data == null
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+                children: [
+                  LeaderboardHeader(greeting: context.t.leaderboard.greeting),
+                  AppSpacing.lg.vGap,
+                  ..._bodySections(context, data),
+                ],
+              ),
       ),
       bottomNavigationBar: AppBottomNavBar(
         current: AppTab.leaderboard,

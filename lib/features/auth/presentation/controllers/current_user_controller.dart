@@ -18,6 +18,11 @@ class CurrentUserController extends Notifier<User?> {
       // e'tiborsiz qoldiriladi — pastga qarang.
     }
   }
+
+  /// Boshqa bir so'rov (masalan `updateProfile`) allaqachon yangilangan
+  /// foydalanuvchini qaytargan bo'lsa, qayta tarmoqqa murojaat qilmasdan
+  /// darhol shu bilan almashtirish uchun.
+  void setUser(User user) => state = user;
 }
 
 final NotifierProvider<CurrentUserController, User?> currentUserControllerProvider =

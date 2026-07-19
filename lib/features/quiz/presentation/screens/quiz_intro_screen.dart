@@ -9,17 +9,17 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
-import '../models/quiz_category.dart';
 import '../models/quiz_launch_args.dart';
 
 /// Short "5, 4, 3, 2, 1, Start!" countdown shown right after a category
-/// is picked — mirrors the prototype's `view-quiz-intro` /
-/// `startQuizIntro()`. Purely transitional: it isn't meant to be
-/// interacted with, it just auto-advances to [QuizScreen].
+/// (and, for solo games, a question count) is picked — mirrors the
+/// prototype's `view-quiz-intro` / `startQuizIntro()`. Purely
+/// transitional: it isn't meant to be interacted with, it just
+/// auto-advances to [QuizScreen].
 class QuizIntroScreen extends StatefulWidget {
-  const QuizIntroScreen({required this.category, super.key});
+  const QuizIntroScreen({required this.args, super.key});
 
-  final QuizCategory category;
+  final QuizLaunchArgs args;
 
   @override
   State<QuizIntroScreen> createState() => _QuizIntroScreenState();
@@ -47,7 +47,7 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
       timer.cancel();
       _navigateTimer = Timer(_startHoldDuration, () {
         if (!mounted) return;
-        context.pushReplacement(AppRoutes.quiz, extra: QuizLaunchArgs(category: widget.category));
+        context.pushReplacement(AppRoutes.quiz, extra: widget.args);
       });
     }
   }
@@ -75,15 +75,15 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                   width: 64,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: widget.category.color(context),
+                    color: widget.args.category.color(context),
                     borderRadius: AppRadius.mdAll,
                   ),
                   alignment: Alignment.center,
-                  child: Icon(widget.category.icon, color: Colors.white, size: 28),
+                  child: Icon(widget.args.category.icon, color: Colors.white, size: 28),
                 ),
                 AppSpacing.md.vGap,
                 Text(
-                  widget.category.name,
+                  widget.args.category.name,
                   style: context.textStyles.bodyMedium?.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,

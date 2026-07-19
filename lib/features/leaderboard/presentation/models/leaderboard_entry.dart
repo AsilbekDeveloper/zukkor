@@ -2,11 +2,15 @@ import 'package:flutter/widgets.dart';
 
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/leaderboard_data.dart';
+import '../../domain/entities/rank_entry.dart';
 
 /// One row on the leaderboard — mirrors the prototype's `.rank-row` /
-/// `.pod` data (rank, avatar, name, XP). This is placeholder sample
-/// data — once the `quiz`/`accounts` data layers exist, this comes from
-/// a real leaderboard endpoint instead.
+/// `.pod` data (rank, avatar, name, XP). Built from the real
+/// `GET /leaderboard` entities via [LeaderboardEntry.fromEntity]. [id] is
+/// the backend user id — null only for [LobbyResultScreen]'s mock room
+/// standings, which aren't real users and so can't open a
+/// [PlayerDetailScreen].
 class LeaderboardEntry {
   const LeaderboardEntry({
     required this.rank,
@@ -14,114 +18,73 @@ class LeaderboardEntry {
     required this.initials,
     required this.xp,
     required this.avatarColor,
+    this.avatarImagePath,
+    this.id,
     this.isCurrentUser = false,
   });
 
+  factory LeaderboardEntry.fromEntity(RankEntry entity) => LeaderboardEntry(
+        id: entity.userId,
+        rank: entity.rank,
+        name: _displayName(
+          firstName: entity.firstName,
+          lastName: entity.lastName,
+          username: entity.username,
+        ),
+        initials: _initials(firstName: entity.firstName, lastName: entity.lastName),
+        xp: entity.totalXp,
+        avatarColor: AvatarColorOption.fromApiValue(entity.avatarColor),
+        avatarImagePath: entity.avatarImagePath,
+        isCurrentUser: entity.isMe,
+      );
+
+  final String? id;
   final int rank;
   final String name;
   final String initials;
   final int xp;
   final AvatarColorOption avatarColor;
+  final String? avatarImagePath;
 
   /// Drives the "me" row styling (dark background) — matches the
   /// prototype's `.rank-row.me`.
   final bool isCurrentUser;
 
-  /// Top 6 + the current user's own (much lower) rank — matches the
-  /// prototype's leaderboard view exactly.
-  static const List<LeaderboardEntry> sample = [
-    LeaderboardEntry(
-      rank: 1,
-      name: 'Aziz K.',
-      initials: 'AZ',
-      xp: 4820,
-      avatarColor: AvatarColorOption.coral,
-    ),
-    LeaderboardEntry(
-      rank: 2,
-      name: 'Malika',
-      initials: 'MR',
-      xp: 4510,
-      avatarColor: AvatarColorOption.teal,
-    ),
-    LeaderboardEntry(
-      rank: 3,
-      name: 'Shohruh',
-      initials: 'SH',
-      xp: 4290,
-      avatarColor: AvatarColorOption.terra,
-    ),
-    LeaderboardEntry(
-      rank: 4,
-      name: 'Dilnoza Rustamova',
-      initials: 'DI',
-      xp: 3980,
-      avatarColor: AvatarColorOption.teal,
-    ),
-    LeaderboardEntry(
-      rank: 5,
-      name: 'Bekzod Xolmatov',
-      initials: 'BX',
-      xp: 3840,
-      avatarColor: AvatarColorOption.terra,
-    ),
-    LeaderboardEntry(
-      rank: 6,
-      name: 'Nilufar Yoqubova',
-      initials: 'NY',
-      xp: 3710,
-      avatarColor: AvatarColorOption.pink,
-    ),
-    LeaderboardEntry(
-      rank: 312,
-      name: 'You',
-      initials: 'AZ',
-      xp: 2140,
-      avatarColor: AvatarColorOption.coral,
-      isCurrentUser: true,
-    ),
-  ];
+  static String _displayName({
+    required String? firstName,
+    required String? lastName,
+    required String? username,
+  }) {
+    final String name =
+        [firstName, lastName].where((part) => part != null && part.isNotEmpty).join(' ');
+    if (name.isNotEmpty) return name;
+    if (username != null && username.isNotEmpty) return username;
+    // No first/last name and no username yet — earned XP before ever
+    // completing onboarding.
+    return t.leaderboard.anonymousPlayer;
+  }
 
-  /// [sample] without the top 3 (they're shown on the podium instead).
-  static List<LeaderboardEntry> get sampleRestOfList =>
-      sample.where((e) => e.rank > 3).toList();
-
-  /// [sample]'s top 3, in podium display order: 2nd, 1st, 3rd.
-  static List<LeaderboardEntry> get samplePodium => [
-        sample[1],
-        sample[0],
-        sample[2],
-      ];
-
-  /// The Full Leaderboard screen's data: top 10 + the current user's own
-  /// rank — a separate (longer, full-name) list from [sample], matching
-  /// the prototype's `view-full-leaderboard` 1:1.
-  static const List<LeaderboardEntry> sampleFull = [
-    LeaderboardEntry(rank: 1, name: 'Aziz K.', initials: 'AZ', xp: 4820, avatarColor: AvatarColorOption.coral),
-    LeaderboardEntry(rank: 2, name: 'Malika Yusupova', initials: 'MR', xp: 4510, avatarColor: AvatarColorOption.teal),
-    LeaderboardEntry(rank: 3, name: 'Shohruh Toshpulatov', initials: 'SH', xp: 4290, avatarColor: AvatarColorOption.terra),
-    LeaderboardEntry(rank: 4, name: 'Dilnoza Rustamova', initials: 'DI', xp: 3980, avatarColor: AvatarColorOption.teal),
-    LeaderboardEntry(rank: 5, name: 'Bekzod Xolmatov', initials: 'BX', xp: 3840, avatarColor: AvatarColorOption.terra),
-    LeaderboardEntry(rank: 6, name: 'Nilufar Yoqubova', initials: 'NY', xp: 3710, avatarColor: AvatarColorOption.pink),
-    LeaderboardEntry(rank: 7, name: 'Javlon Mirzayev', initials: 'JM', xp: 3540, avatarColor: AvatarColorOption.blue),
-    LeaderboardEntry(rank: 8, name: 'Kamola Tursunova', initials: 'KT', xp: 3410, avatarColor: AvatarColorOption.coral),
-    LeaderboardEntry(rank: 9, name: 'Otabek Rahimov', initials: 'OR', xp: 3260, avatarColor: AvatarColorOption.teal),
-    LeaderboardEntry(rank: 10, name: 'Sevinch Aliyeva', initials: 'SA', xp: 3105, avatarColor: AvatarColorOption.terra),
-    LeaderboardEntry(
-      rank: 312,
-      name: 'You',
-      initials: 'AZ',
-      xp: 2140,
-      avatarColor: AvatarColorOption.coral,
-      isCurrentUser: true,
-    ),
-  ];
+  static String _initials({required String? firstName, required String? lastName}) {
+    final String first = (firstName?.isNotEmpty ?? false) ? firstName![0] : '';
+    final String last = (lastName?.isNotEmpty ?? false) ? lastName![0] : '';
+    final String combined = '$first$last'.toUpperCase();
+    return combined.isNotEmpty ? combined : '?';
+  }
 }
 
 extension LeaderboardEntryDisplayName on LeaderboardEntry {
-  /// The current user's own row always shows the translated "You" —
-  /// [name] itself stays a plain English placeholder since it's sample
-  /// data (a real backend would send the user's actual name instead).
+  /// The current user's own row always shows the translated "You".
   String displayName(BuildContext context) =>
       isCurrentUser ? context.t.leaderboard.you : name;
+}
+
+extension LeaderboardDataRankedWithMe on LeaderboardData {
+  /// [entries] converted, plus the caller's own entry appended at the
+  /// end — unless they're already ranked highly enough to be in
+  /// [entries], in which case it isn't duplicated.
+  List<LeaderboardEntry> get rankedWithMe {
+    final List<LeaderboardEntry> ranked = entries.map(LeaderboardEntry.fromEntity).toList();
+    if (ranked.any((entry) => entry.isCurrentUser)) return ranked;
+    return [...ranked, LeaderboardEntry.fromEntity(me)];
+  }
 }

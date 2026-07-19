@@ -13,6 +13,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../profile/presentation/widgets/settings_list.dart';
@@ -99,6 +100,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               label: context.t.settings.termsOfUse,
               onTap: () => context.push(AppRoutes.termsOfUse),
             ),
+            SettingsRowData(
+              icon: TablerIcons.key,
+              label: context.t.settings.changePassword,
+              onTap: () => context.push(AppRoutes.changePassword),
+            ),
           ],
         ),
       ];
@@ -129,6 +135,37 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       );
 
+  Future<void> _deleteAccount() async {
+    final bool? deleted = await ConfirmDialog.show(
+      context,
+      title: context.t.deleteAccount.confirmTitle,
+      message: context.t.deleteAccount.confirmMessage,
+      confirmLabel: context.t.deleteAccount.confirmButton,
+      isDanger: true,
+      passwordLabel: context.t.auth.passwordLabel,
+      passwordHint: context.t.auth.passwordHint,
+      onConfirm: (password) => ref.read(authControllerProvider.notifier).deleteAccount(password!),
+    );
+    if (deleted != true || !mounted) return;
+    context.go(AppRoutes.login);
+  }
+
+  List<Widget> _dangerZoneGroup(BuildContext context) => [
+        _GroupLabel(context.t.settings.groupDangerZone),
+        AppSpacing.xs.vGap,
+        SettingsList(
+          rows: [
+            SettingsRowData(
+              icon: TablerIcons.userX,
+              label: context.t.settings.deleteAccount,
+              isDanger: true,
+              trailingWidget: const SizedBox.shrink(),
+              onTap: _deleteAccount,
+            ),
+          ],
+        ),
+      ];
+
   @override
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
@@ -149,6 +186,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ..._accountGroup(context),
             AppSpacing.md.vGap,
             _logOutGroup(context),
+            AppSpacing.md.vGap,
+            ..._dangerZoneGroup(context),
           ],
         ),
       ),

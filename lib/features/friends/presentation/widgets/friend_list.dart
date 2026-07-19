@@ -4,6 +4,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/friend_entry.dart';
 
@@ -69,23 +70,12 @@ class _FriendRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: entry.avatarColor.resolve(context),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              entry.initials,
-              style: const TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontWeight: FontWeight.w700,
-                fontSize: 11.5,
-                color: Colors.white,
-              ),
-            ),
+          UserAvatar(
+            size: 36,
+            initials: entry.initials,
+            avatarImagePath: entry.avatarImagePath,
+            backgroundColor: entry.avatarColor.resolve(context),
+            fontSize: 11.5,
           ),
           AppSpacing.sm.hGap,
           Expanded(
@@ -103,12 +93,13 @@ class _FriendRow extends StatelessWidget {
                     color: context.colors.ink,
                   ),
                 ),
-                Text(
-                  entry.statusLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                ),
+                if (entry.handle != null)
+                  Text(
+                    entry.handle!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                  ),
               ],
             ),
           ),

@@ -11,14 +11,80 @@ import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
+import 'package:zukkor/features/quiz/data/repositories/quiz_repository_impl.dart';
+import 'package:zukkor/features/quiz/domain/entities/answer_result.dart';
+import 'package:zukkor/features/quiz/domain/entities/category.dart';
+import 'package:zukkor/features/quiz/domain/entities/quiz_question_data.dart';
+import 'package:zukkor/features/quiz/domain/entities/quiz_start_result.dart';
+import 'package:zukkor/features/quiz/domain/entities/quiz_summary.dart';
+import 'package:zukkor/features/quiz/domain/repositories/quiz_repository.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_category.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_result.dart';
+import 'package:zukkor/features/quiz/presentation/screens/ball_reveal_screen.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:zukkor/features/quiz/presentation/screens/result_screen.dart';
 import 'package:zukkor/features/quiz/presentation/widgets/answer_button.dart';
 import 'package:zukkor/i18n/strings.g.dart';
 
-final QuizCategory _math = QuizCategory.sample.first;
+const QuizCategory _math = QuizCategory(
+  id: 1,
+  name: 'Math',
+  questionCount: 120,
+  icon: TablerIcons.mathSymbols,
+  colorKey: CategoryColorKey.coral,
+);
+
+/// Backendga murojaat qilmaydigan soxta quiz repository — real
+/// `POST /quiz/start` / `POST /quiz/{session_id}/answer` javobiga mos,
+/// 5 ta savoldan iborat sessiya. Har doim option 0'ni to'g'ri deb
+/// belgilaydi — testlar qaysi variant bosilishidan qat'i nazar to'g'ri
+/// javob doim oshkor qilinishini tekshiradi.
+class _FakeQuizRepository implements QuizRepository {
+  @override
+  Future<List<Category>> getCategories() => throw UnimplementedError();
+
+  @override
+  Future<QuizStartResult> startQuiz({required int categoryId, required int questionCount}) async =>
+      QuizStartResult(sessionId: 'session-1', question: _questionFor(1));
+
+  @override
+  Future<AnswerResult> submitAnswer({
+    required String sessionId,
+    required int sessionQuestionId,
+    required int? selectedOption,
+  }) async {
+    final bool isCorrect = selectedOption == 0;
+    if (sessionQuestionId >= 5) {
+      return AnswerResult(
+        isCorrect: isCorrect,
+        correctOptionIndex: 0,
+        ballEarned: isCorrect ? 900 : 0,
+        summary: const QuizSummary(
+          totalBall: 4200,
+          correctCount: 4,
+          totalQuestions: 5,
+          xpEarned: 60,
+          newTotalXp: 2200,
+        ),
+      );
+    }
+    return AnswerResult(
+      isCorrect: isCorrect,
+      correctOptionIndex: 0,
+      ballEarned: isCorrect ? 900 : 0,
+      nextQuestion: _questionFor(sessionQuestionId + 1),
+    );
+  }
+
+  QuizQuestionData _questionFor(int order) => QuizQuestionData(
+        sessionQuestionId: order,
+        questionText: 'Question $order',
+        options: const ['A', 'B', 'C', 'D'],
+        order: order,
+        total: 5,
+        timeLimitMs: 15000,
+      );
+}
 
 Future<GoRouter> _pumpQuiz(WidgetTester tester, {Size size = const Size(390, 844)}) async {
   tester.view.physicalSize = size;
@@ -35,6 +101,10 @@ Future<GoRouter> _pumpQuiz(WidgetTester tester, {Size size = const Size(390, 844
         builder: (context, state) => QuizScreen(category: state.extra! as QuizCategory),
       ),
       GoRoute(
+        path: AppRoutes.ballReveal,
+        builder: (context, state) => BallRevealScreen(result: state.extra! as QuizResult),
+      ),
+      GoRoute(
         path: AppRoutes.result,
         builder: (context, state) => ResultScreen(result: state.extra! as QuizResult),
       ),
@@ -46,7 +116,10 @@ Future<GoRouter> _pumpQuiz(WidgetTester tester, {Size size = const Size(390, 844
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
+      ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       ),
@@ -79,21 +152,22 @@ void main() {
 
     await tester.tap(find.byType(AnswerButton).first);
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
-    // Tapping a locked question does nothing further (still only 4
-    // options, no crash) and the correct answer is always revealed —
-    // regardless of which option was tapped or how the bank shuffled.
+    // The tapped option is index 0 — always correct in the fake — so it's
+    // shown as picked-correct (a check icon).
     expect(find.byIcon(TablerIcons.check), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('answering all 5 questions navigates to the Result screen', (tester) async {
+  testWidgets('answering all 5 questions navigates to the Ball Reveal, then Result screen', (tester) async {
     await _pumpQuiz(tester);
 
     for (int question = 1; question <= 5; question++) {
       expect(find.text(AppStrings.questionProgress(question, 5)), findsOneWidget);
 
       await tester.tap(find.byType(AnswerButton).first);
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 900));
 
       if (question < 5) {
@@ -101,9 +175,19 @@ void main() {
       }
     }
 
-    // The 5th answer's feedback delay pushReplaces straight to Result.
+    // The 5th answer's feedback delay pushReplaces to the ball-count-up
+    // reveal first, not straight to Result.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.byType(BallRevealScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    // Not pumpAndSettle: the count-up + confetti animations complete on
+    // their own timers — advance past both to reach Result.
+    await tester.pump(const Duration(milliseconds: 1500));
+    await tester.pump(const Duration(milliseconds: 1000));
+    await tester.pump();
 
     expect(find.byType(ResultScreen), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -114,6 +198,8 @@ void main() {
 
     // No tap — let the 15s per-question timer run out.
     await tester.pump(const Duration(seconds: 15));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.byIcon(TablerIcons.check), findsWidgets);
     expect(tester.takeException(), isNull);

@@ -6,104 +6,96 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/audio/app_sound.dart';
 import '../../../../core/audio/sound_controller.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/answer_result.dart';
+import '../../domain/entities/quiz_question_data.dart';
+import '../controllers/quiz_controller.dart';
 import '../models/quiz_category.dart';
-import '../models/quiz_question.dart';
-import '../models/quiz_question_bank.dart';
 import '../models/quiz_result.dart';
 import '../widgets/answer_button.dart';
 import '../widgets/question_card.dart';
 import '../widgets/quiz_progress_header.dart';
 
-/// The question-answer loop — mirrors the prototype's `view-quiz`.
-///
-/// CURRENT STATE: presentation only, [QuizQuestionBank] placeholder
-/// questions (5 per category, shuffled each attempt) — once the quiz
-/// data layer exists these come from the backend along with real-time
-/// duel/lobby state. Each question gets 15 seconds; running out of time
-/// locks in a wrong answer automatically, same as picking one. No
-/// countdown is shown to the player — it only drives scoring in the
-/// background (see [_startSpeedTimer]). Locking in an answer plays
-/// [AppSound.correct] or [AppSound.wrong]. The back button abandons the
-/// quiz and returns straight to Home (matches the prototype's
-/// `data-nav="home"` — no confirmation dialog).
+/// The question-answer loop — mirrors the prototype's `view-quiz`. Runs the
+/// real `POST /quiz/start` / `POST /quiz/{session_id}/answer` session loop
+/// for [category] (Categories/Home → Setup → Intro, and Duel all pick from
+/// the same real category grid) — scoring is server-authoritative.
 class QuizScreen extends ConsumerStatefulWidget {
-  const QuizScreen({required this.category, this.isLobbyGame = false, super.key});
+  const QuizScreen({
+    required this.category,
+    this.questionCount = 10,
+    super.key,
+  });
 
   final QuizCategory category;
-
-  /// Set when reached from the Lobby (multiplayer room) — changes the
-  /// destination once every question is answered from the plain
-  /// [ResultScreen] to [LobbyResultScreen] (a room leaderboard).
-  final bool isLobbyGame;
+  final int questionCount;
 
   @override
   ConsumerState<QuizScreen> createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProviderStateMixin {
-  static const Duration _perQuestionDuration = Duration(seconds: 15);
   static const Duration _feedbackDelay = Duration(milliseconds: 900);
-  static const int _xpPerCorrectAnswer = 15;
+  static const Duration _fallbackTimeLimit = Duration(seconds: 15);
 
-  // Kahoot-style hidden per-question score: never shown to the player,
-  // just ticked down every 10ms and used to scale the XP a correct
-  // answer earns (see [_lockInAnswer]).
-  static const int _pointsMax = 1000;
-  static const Duration _speedTick = Duration(milliseconds: 10);
-  static const int _speedTicksPerQuestion = 1500; // _perQuestionDuration ÷ _speedTick
-  static const double _pointsDecrementPerTick = _pointsMax / _speedTicksPerQuestion;
-
-  late final List<QuizQuestion> _questions;
   late final AnimationController _timerController;
   Timer? _feedbackTimer;
-  Timer? _speedTimer;
-  double _pointsRemaining = _pointsMax.toDouble();
 
-  int _index = 0;
-  int _correctCount = 0;
-  int _totalXp = 0;
-  int? _selectedIndex;
   bool _answered = false;
+  int? _selectedIndex;
+
+  bool _starting = true;
+  String? _sessionId;
+  QuizQuestionData? _currentQuestion;
+  int? _lastCorrectIndex;
+  AnswerResult? _pendingAnswerResult;
+  int _totalBall = 0;
 
   @override
   void initState() {
     super.initState();
-    _questions = List.of(QuizQuestionBank.forCategory(widget.category.name))..shuffle();
-    _timerController = AnimationController(vsync: this, duration: _perQuestionDuration)
-      ..addStatusListener(_onTimerStatusChanged)
-      ..forward();
-    _startSpeedTimer();
+    _timerController = AnimationController(vsync: this, duration: _fallbackTimeLimit)
+      ..addStatusListener(_onTimerStatusChanged);
+    Future.microtask(_startSession);
   }
 
   @override
   void dispose() {
     _feedbackTimer?.cancel();
-    _speedTimer?.cancel();
     _timerController.dispose();
     super.dispose();
   }
 
-  QuizQuestion get _current => _questions[_index];
-
-  /// Resets the hidden 1000 → 0 point countdown for a fresh question. It
-  /// isn't rendered anywhere, so this deliberately skips `setState` —
-  /// there's nothing on screen for it to invalidate.
-  void _startSpeedTimer() {
-    _pointsRemaining = _pointsMax.toDouble();
-    _speedTimer?.cancel();
-    _speedTimer = Timer.periodic(_speedTick, (_) {
-      _pointsRemaining = (_pointsRemaining - _pointsDecrementPerTick).clamp(0, _pointsMax.toDouble());
-    });
+  Future<void> _startSession() async {
+    try {
+      final result = await ref.read(quizControllerProvider.notifier).startQuiz(
+            categoryId: widget.category.id,
+            questionCount: widget.questionCount,
+          );
+      if (!mounted) return;
+      setState(() {
+        _sessionId = result.sessionId;
+        _currentQuestion = result.question;
+        _starting = false;
+      });
+      _timerController.duration = Duration(milliseconds: _currentQuestion!.timeLimitMs);
+      unawaited(_timerController.forward());
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+      context.go(AppRoutes.home);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+      context.go(AppRoutes.home);
+    }
   }
-
-  /// Kahoot's own formula: a correct answer earns between 500 (right at
-  /// the buzzer) and 1000 (instant) points, scaled by how much of the
-  /// hidden countdown is left when it's answered.
-  int _kahootPoints() => (_pointsMax * (0.5 + (_pointsRemaining / _pointsMax) * 0.5)).round();
 
   void _onTimerStatusChanged(AnimationStatus status) {
     if (status == AnimationStatus.completed && !_answered) {
@@ -112,69 +104,94 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
   }
 
   void _lockInAnswer(int? pickedIndex) {
-    if (_answered) return;
+    if (_answered || _starting) return;
+    unawaited(_lockInAnswerReal(pickedIndex));
+  }
+
+  Future<void> _lockInAnswerReal(int? pickedIndex) async {
     _timerController.stop();
-    _speedTimer?.cancel();
-
-    final bool isCorrect = pickedIndex == _current.correctIndex;
-    // Points convert 1:1 into the app's XP economy at _xpPerCorrectAnswer
-    // per full 1000 — an instant correct answer earns the full 15 XP, a
-    // last-moment one about half.
-    final int earnedXp =
-        isCorrect ? (_kahootPoints() / _pointsMax * _xpPerCorrectAnswer).round() : 0;
-    ref.playSound(isCorrect ? AppSound.correct : AppSound.wrong);
-
     setState(() {
       _answered = true;
       _selectedIndex = pickedIndex;
-      if (isCorrect) {
-        _correctCount++;
-        _totalXp += earnedXp;
-      }
     });
-    _feedbackTimer = Timer(_feedbackDelay, _advance);
+
+    try {
+      final AnswerResult result = await ref.read(quizControllerProvider.notifier).submitAnswer(
+            sessionId: _sessionId!,
+            sessionQuestionId: _currentQuestion!.sessionQuestionId,
+            selectedOption: pickedIndex,
+          );
+      if (!mounted) return;
+      ref.playSound(result.isCorrect ? AppSound.correct : AppSound.wrong);
+      setState(() {
+        _lastCorrectIndex = result.correctOptionIndex;
+        _totalBall += result.ballEarned;
+        _pendingAnswerResult = result;
+      });
+      _feedbackTimer = Timer(_feedbackDelay, _advanceReal);
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+      context.go(AppRoutes.home);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+      context.go(AppRoutes.home);
+    }
   }
 
-  void _advance() {
+  void _advanceReal() {
     if (!mounted) return;
+    final AnswerResult result = _pendingAnswerResult!;
 
-    if (_index + 1 >= _questions.length) {
-      final QuizResult result = QuizResult(
+    if (result.isSessionComplete) {
+      final summary = result.summary!;
+      final QuizResult quizResult = QuizResult(
         category: widget.category,
-        correctCount: _correctCount,
-        totalCount: _questions.length,
-        xpEarned: _totalXp,
+        correctCount: summary.correctCount,
+        totalCount: summary.totalQuestions,
+        xpEarned: summary.xpEarned,
+        totalBall: summary.totalBall,
       );
-      final String destination = widget.isLobbyGame ? AppRoutes.lobbyResult : AppRoutes.result;
-      context.pushReplacement(destination, extra: result);
+      context.pushReplacement(AppRoutes.ballReveal, extra: quizResult);
       return;
     }
 
     setState(() {
-      _index++;
+      _currentQuestion = result.nextQuestion;
       _answered = false;
       _selectedIndex = null;
+      _lastCorrectIndex = null;
+      _pendingAnswerResult = null;
     });
     _timerController
+      ..duration = Duration(milliseconds: _currentQuestion!.timeLimitMs)
       ..reset()
       ..forward();
-    _startSpeedTimer();
   }
 
-  AnswerVisualState _stateFor(int optionIndex) {
-    if (!_answered) return AnswerVisualState.idle;
+  AnswerVisualState _stateFor(int optionIndex, int? correctIndex) {
+    if (!_answered || correctIndex == null) return AnswerVisualState.idle;
     if (optionIndex == _selectedIndex) {
-      return optionIndex == _current.correctIndex
-          ? AnswerVisualState.pickedCorrect
-          : AnswerVisualState.pickedWrong;
+      return optionIndex == correctIndex ? AnswerVisualState.pickedCorrect : AnswerVisualState.pickedWrong;
     }
-    if (optionIndex == _current.correctIndex) return AnswerVisualState.revealCorrect;
+    if (optionIndex == correctIndex) return AnswerVisualState.revealCorrect;
     return AnswerVisualState.idle;
   }
 
   @override
   Widget build(BuildContext context) {
-    final QuizQuestion question = _current;
+    if (_starting) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final QuizQuestionData question = _currentQuestion!;
+    final int questionNumber = question.order;
+    final int totalQuestions = question.total;
+    final String questionText = question.questionText;
+    final List<String> options = question.options;
+    final int score = _totalBall;
+    final int? correctIndexForDisplay = _lastCorrectIndex;
 
     return Scaffold(
       body: SafeArea(
@@ -184,22 +201,22 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               QuizProgressHeader(
-                questionNumber: _index + 1,
-                totalQuestions: _questions.length,
-                score: _totalXp,
+                questionNumber: questionNumber,
+                totalQuestions: totalQuestions,
+                score: score,
                 onBack: () => context.go(AppRoutes.home),
               ),
               AppSpacing.lg.vGap,
-              QuestionCard(categoryName: widget.category.name, question: question.text),
+              QuestionCard(categoryName: widget.category.name, question: questionText),
               AppSpacing.lg.vGap,
-              for (int i = 0; i < question.options.length; i++) ...[
+              for (int i = 0; i < options.length; i++) ...[
                 AnswerButton(
                   letter: String.fromCharCode(65 + i),
-                  text: question.options[i],
-                  state: _stateFor(i),
+                  text: options[i],
+                  state: _stateFor(i, correctIndexForDisplay),
                   onTap: _answered ? null : () => _lockInAnswer(i),
                 ),
-                if (i < question.options.length - 1) AppSpacing.sm.vGap,
+                if (i < options.length - 1) AppSpacing.sm.vGap,
               ],
             ],
           ),

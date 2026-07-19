@@ -27,8 +27,7 @@ abstract final class AppStrings {
   static const String challengeToDuel = 'Challenge to a duel';
 
   static String dayUnit(int count) => count == 1 ? 'day' : 'days';
-  static String friendsOnline(int count) =>
-      '$count friend${count == 1 ? '' : 's'} online';
+  static String friendsCount(int count) => '$count friend${count == 1 ? '' : 's'}';
   static String questionCount(int count) => '$count questions';
 
   // Categories screen
@@ -44,7 +43,6 @@ abstract final class AppStrings {
   static const String seeFullRanking = 'See full ranking';
 
   static String xpValue(int xp) => '${formatThousands(xp)} XP';
-  static String leaderboardGreetingFiltered(String category) => 'Leaderboard · $category';
 
   // Full leaderboard screen
   static const String fullLeaderboardTitle = 'Full ranking';
@@ -56,14 +54,9 @@ abstract final class AppStrings {
   static const String friendRequestSentLabel = 'Sent';
   static String rankedLabel(int rank, int xp) => 'Ranked #$rank · ${formatThousands(xp)} XP';
 
-  // Rank filter screen
-  static const String rankFilterScreenTitle = 'By category';
-  static const String allCategories = 'All categories';
-
   // Friends
   static const String addFriend = 'Add friend';
   static const String searchFriendsPlaceholder = 'Search friends';
-  static const String onlineSectionTitle = 'Online';
   static const String allFriendsSectionTitle = 'All friends';
   static const String noFriendsFound = 'No friends found';
 
@@ -73,7 +66,12 @@ abstract final class AppStrings {
   static const String yourInviteCode = 'Your invite code';
   static const String shareLink = 'Share the link';
   static const String addButton = 'Add';
+  static const String requestedLabel = 'Requested';
   static const String noUsersFound = 'No users found';
+
+  // Friend requests screen
+  static const String friendRequestsTitle = 'Friend requests';
+  static const String friendRequestsEmptyState = 'No requests yet';
 
   // Duel (choose a friend) screen
   static const String duelScreenTitle = '1v1 Duel';
@@ -105,7 +103,22 @@ abstract final class AppStrings {
   static const String settingsPrivacy = 'Privacy';
   static const String settingsHelpCenter = 'Help center';
   static const String settingsTermsOfUse = 'Terms of use';
+  static const String settingsChangePassword = 'Change password';
   static const String settingsLogOut = 'Log out';
+  static const String settingsGroupDangerZone = 'Danger zone';
+  static const String settingsDeleteAccount = 'Delete account';
+
+  // Change password screen
+  static const String changePasswordTitle = 'Change password';
+  static const String changePasswordCurrentLabel = 'Current password';
+  static const String changePasswordNewLabel = 'New password';
+  static const String changePasswordConfirmLabel = 'Confirm new password';
+  static const String changePasswordSaveButton = 'Save';
+  static const String changePasswordUpdated = 'Password changed successfully';
+
+  // Delete account confirmation dialog
+  static const String deleteAccountConfirmTitle = 'Delete account';
+  static const String deleteAccountConfirmButton = 'Yes, delete';
 
   // Game history screen
   static const String historySegmentAll = 'All';
@@ -114,6 +127,10 @@ abstract final class AppStrings {
   static const String historySegmentLobby = 'Lobby';
   static const String historyWinBadge = 'Win';
   static const String historyLossBadge = 'Loss';
+  static const String historyDrawBadge = 'Draw';
+  static const String historyEmptyState = "Games of this type aren't saved yet";
+  static const String historyNoGamesYet = 'No games played yet';
+  static String historyLobbyPlayerCount(int count) => '$count players';
 
   // Quiz intro (countdown)
   static const String quizStartLabel = 'Start!';
@@ -121,9 +138,14 @@ abstract final class AppStrings {
   // Quiz (question) screen
   static String questionProgress(int current, int total) => 'Question $current/$total';
 
+  // Ball reveal screen
+  static const String ballRevealTitle = 'Your points';
+  static const String ballRevealBallLabel = 'points';
+
   // Result screen
   static const String resultLabel = 'Result';
   static String resultSummary(int correct, int total) => '$correct out of $total correct';
+  static String totalBallLabel(int ball) => '$ball points';
   static String xpEarnedLabel(int xp) => '+$xp XP';
   static const String playAgain = 'Play again';
   static const String challengeAFriendButton = 'Challenge a friend';
@@ -133,6 +155,8 @@ abstract final class AppStrings {
   static const String joinCodeHint = 'Enter the 6-digit room code your friend sent you';
   static const String joinButton = 'Join';
   static String codeDigitLabel(int position) => 'Code digit $position';
+  static const String roomNotFound = 'No room found with that code';
+  static const String roomFull = 'That room is full';
 
   // Lobby (multiplayer room) screen
   static const String lobbyScreenTitle = 'Multiplayer room';
@@ -142,8 +166,12 @@ abstract final class AppStrings {
   static const String guestRoleLabel = 'Guest';
   static const String startGameButton = 'Start the game';
   static const String waitingForHostLabel = 'Waiting for the host to start…';
+  static const String lobbyClosedMessage = 'The host left, the room closed';
 
   static String playerCount(int current, int max) => '$current/$max';
+
+  // Lobby game screen
+  static String lobbyAnsweredProgress(int answered, int total) => '$answered/$total answered';
 
   // Lobby result (room leaderboard) screen
   static const String lobbyResultTitle = 'Room results';
@@ -152,14 +180,28 @@ abstract final class AppStrings {
 
   // Duel waiting screen
   static const String duelWaitingTitle = 'Duel';
-  static const String waitingForAnswerLabel = 'Waiting for their answer…';
-  static const String startDemoButton = 'Start (demo)';
+  static const String waitingForAcceptLabel = 'Invite sent, waiting for a response…';
+  static const String duelDeclinedLabel = 'Invite declined';
+  static const String duelExpiredLabel = 'Invite expired';
+  static const String duelWaitingBackToHome = 'Back to home';
 
   // Duel invite screen
   static const String duelInviteTitle = 'Duel invite';
   static const String challengesYouLabel = 'is challenging you to a duel';
   static const String acceptButton = 'Accept';
   static const String declineButton = 'Decline';
+
+  // Duel game screen
+  static const String duelGameTitle = 'Duel';
+  static const String duelWaitingForQuestion = 'Preparing the question…';
+  static const String duelOpponentAnsweredLabel = 'Opponent answered';
+
+  // Duel result screen
+  static const String duelResultWon = 'You won!';
+  static const String duelResultLost = 'You lost';
+  static const String duelResultDraw = "It's a draw!";
+  static const String duelYourScoreLabel = 'You';
+  static const String duelOpponentScoreLabel = 'Opponent';
 
   // Notifications screen
   static const String notificationsTitle = 'Notifications';
@@ -168,6 +210,7 @@ abstract final class AppStrings {
   static const String notifTop50 = 'You made it into the weekly Top 50';
   static const String notifFriendRequest = 'Bekzod Xolmatov sent you a friend request';
   static const String notifWelcome = 'Welcome to Zukkor! Start your first quiz';
+  static const String notifEmptyState = 'No notifications yet';
 
   // Edit Profile screen
   static const String saveButton = 'Save';

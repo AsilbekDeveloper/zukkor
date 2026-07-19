@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
-import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -12,67 +13,63 @@ import '../../../../i18n/strings.g.dart';
 import '../../../leaderboard/presentation/models/leaderboard_entry.dart';
 import '../../../leaderboard/presentation/widgets/leaderboard_podium.dart';
 import '../../../leaderboard/presentation/widgets/rank_list.dart';
-import '../../../quiz/presentation/models/quiz_result.dart';
+import '../../domain/entities/lobby_participant.dart';
+import '../../domain/entities/lobby_player_score.dart';
+import '../../domain/entities/lobby_room_state.dart';
+import '../controllers/lobby_controller.dart';
 import '../models/lobby_player.dart';
+import '../models/lobby_result_args.dart';
 import 'lobby_screen.dart';
 
-/// Shown instead of the plain solo [ResultScreen] when a quiz was started
-/// from the Lobby ([QuizLaunchArgs.isLobbyGame]) — the whole room's
-/// standing, not just your own score, reusing the same podium/rank-list
-/// widgets as the main Leaderboard tab.
+/// Shown once a synchronized room game finishes — the whole room's
+/// standing (server-ranked by correct answers, then time), reusing the
+/// same podium/rank-list widgets as the main Leaderboard tab.
 ///
-/// CURRENT STATE: presentation only — the other players' scores are
-/// [LobbyPlayer.sampleHostAndGuests] placeholder numbers (there's no
-/// realtime room-state to pull real scores from yet); only "You" reflects
-/// the quiz [result] that was actually just played.
-class LobbyResultScreen extends StatelessWidget {
-  const LobbyResultScreen({required this.result, super.key});
+/// Takes an immutable [args] snapshot rather than reading live
+/// [LobbyController] state — that state gets cleared (`clearGame()`) once
+/// this screen mounts, and a widget that kept `ref.watch`-ing it would
+/// flash back to a loading spinner the instant that happened. Clearing
+/// happens once this builds, not from `dispose()` — mutating provider
+/// state there is unsafe, see [LobbyController].
+class LobbyResultScreen extends ConsumerWidget {
+  const LobbyResultScreen({required this.args, super.key});
 
-  final QuizResult result;
+  final LobbyResultArgs args;
 
-  /// Mock scores for the room's other players, one per
-  /// [LobbyPlayer.sampleHostAndGuests] entry (same order) — roughly
-  /// spread around a typical 5-question game's XP range.
-  static const List<int> _mockScores = [62, 54, 47, 38];
-
-  List<LeaderboardEntry> get _ranked {
-    final List<({String name, String initials, AvatarColorOption avatarColor, int xp, bool isCurrentUser})>
-        contestants = [
-      for (int i = 0; i < LobbyPlayer.sampleHostAndGuests.length; i++)
-        (
-          name: LobbyPlayer.sampleHostAndGuests[i].name,
-          initials: LobbyPlayer.sampleHostAndGuests[i].initials,
-          avatarColor: LobbyPlayer.sampleHostAndGuests[i].avatarColor,
-          xp: _mockScores[i],
-          isCurrentUser: false,
-        ),
-      (
-        name: 'You',
-        initials: LobbyPlayer.you.initials,
-        avatarColor: LobbyPlayer.you.avatarColor,
-        xp: result.xpEarned,
-        isCurrentUser: true,
-      ),
-    ]..sort((a, b) => b.xp.compareTo(a.xp));
-
+  List<LeaderboardEntry> _ranked(LobbyRoomState room) {
+    final Map<String, LobbyParticipant> byId = {for (final p in room.participants) p.id: p};
     return [
-      for (int i = 0; i < contestants.length; i++)
-        LeaderboardEntry(
-          rank: i + 1,
-          name: contestants[i].name,
-          initials: contestants[i].initials,
-          xp: contestants[i].xp,
-          avatarColor: contestants[i].avatarColor,
-          isCurrentUser: contestants[i].isCurrentUser,
-        ),
+      for (int i = 0; i < args.result.standings.length; i++)
+        if (byId[args.result.standings[i].participantId] case final LobbyParticipant participant)
+          _entryFor(participant, args.result.standings[i], room.youParticipantId, i + 1),
     ];
   }
 
+  LeaderboardEntry _entryFor(LobbyParticipant participant, LobbyPlayerScore score, String youId, int rank) {
+    final LobbyPlayer player = LobbyPlayer.fromEntity(participant, isYou: participant.id == youId);
+    return LeaderboardEntry(
+      rank: rank,
+      name: player.name,
+      initials: player.initials,
+      xp: score.correct,
+      avatarColor: player.avatarColor,
+      isCurrentUser: player.isYou,
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
-    final List<LeaderboardEntry> ranked = _ranked;
-    final List<LeaderboardEntry> podium = [ranked[1], ranked[0], ranked[2]];
-    final List<LeaderboardEntry> rest = ranked.sublist(3);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LobbyRoomState room = args.room;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(lobbyControllerProvider.notifier).clearGame();
+    });
+
+    final bool isHost = room.participants.firstWhere((p) => p.id == room.youParticipantId).isHost;
+    final List<LeaderboardEntry> ranked = _ranked(room);
+    final bool hasPodium = ranked.length >= 3;
+    final List<LeaderboardEntry> podium = hasPodium ? [ranked[1], ranked[0], ranked[2]] : const [];
+    final List<LeaderboardEntry> rest = hasPodium ? ranked.sublist(3) : ranked;
 
     return Scaffold(
       body: SafeArea(
@@ -94,18 +91,67 @@ class LobbyResultScreen extends StatelessWidget {
                 ),
               ),
               AppSpacing.xl.vGap,
-              LeaderboardPodium(entries: podium, onEntryTap: (_) {}),
-              AppSpacing.lg.vGap,
+              if (hasPodium) ...[
+                LeaderboardPodium(entries: podium, onEntryTap: (_) {}),
+                AppSpacing.lg.vGap,
+              ],
               RankList(entries: rest, onEntryTap: (_) {}),
-              AppSpacing.xxl.vGap,
-              AppButton.primary(
-                label: context.t.lobbyResult.playAgain,
-                onPressed: () => context.pushReplacement(AppRoutes.lobby, extra: LobbyRole.host),
+              AppSpacing.lg.vGap,
+              Center(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(TablerIcons.target, size: 16, color: context.colors.ink),
+                        const SizedBox(width: 6),
+                        Text(
+                          context.t.result.totalBall(ball: args.result.ballEarned),
+                          style: context.textStyles.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: context.colors.ink,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Icon(TablerIcons.arrowRight, size: 14, color: context.colors.muted),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(TablerIcons.bolt, size: 16, color: context.colors.coralDeep),
+                        const SizedBox(width: 6),
+                        Text(
+                          context.t.result.xpEarned(xp: args.result.xpEarned),
+                          style: context.textStyles.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            color: context.colors.coralDeep,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              AppSpacing.sm.vGap,
+              AppSpacing.xxl.vGap,
+              if (isHost) ...[
+                AppButton.primary(
+                  label: context.t.lobbyResult.playAgain,
+                  onPressed: () => context.pushReplacement(AppRoutes.lobby, extra: LobbyRole.host),
+                ),
+                AppSpacing.sm.vGap,
+              ],
               Center(
                 child: TextButton(
-                  onPressed: () => context.go(AppRoutes.home),
+                  onPressed: () {
+                    ref.read(lobbyControllerProvider.notifier).leaveRoom();
+                    context.go(AppRoutes.home);
+                  },
                   child: Text(context.t.result.backToHome),
                 ),
               ),

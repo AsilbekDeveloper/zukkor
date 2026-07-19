@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -9,42 +10,43 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/invite_code_card.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../../i18n/strings.g.dart';
-import '../../../quiz/presentation/models/quiz_category.dart';
-import '../../../quiz/presentation/models/quiz_launch_args.dart';
+import '../../domain/entities/lobby_room_state.dart';
+import '../controllers/lobby_controller.dart';
 import '../models/lobby_player.dart';
 import '../widgets/lobby_waiting_indicator.dart';
 import '../widgets/player_list.dart';
 
-/// Whether the current device created the room (and can start the game)
-/// or joined it via a code (and waits for the host instead).
+/// Whether this device created the room (and should send `lobby_create`
+/// on open) or already joined it via [JoinCodeScreen] (and just watches
+/// the live roster [LobbyController] already has).
 enum LobbyRole { host, guest }
 
 /// A multiplayer room, before the quiz starts — mirrors the prototype's
-/// `view-lobby`. Hosts see the full mock roster and a "Start the game"
-/// button; guests additionally see themselves added to the roster and a
-/// pulsing "waiting for the host" indicator instead of that button.
-///
-/// CURRENT STATE: presentation only, [LobbyPlayer] placeholder roster —
-/// once realtime multiplayer exists this comes from a room-state
-/// WebSocket instead. The host's "Start the game" jumps straight to the
-/// Quiz screen with a fixed category, matching the prototype (which has
-/// no category-selection step inside the lobby itself). Marked as a
-/// lobby game ([QuizLaunchArgs.isLobbyGame]), so it ends on a room
-/// leaderboard (`LobbyResultScreen`) instead of the plain solo result.
-class LobbyScreen extends StatelessWidget {
+/// `view-lobby`. Hosts see the live roster and a "Start the game"
+/// button (which opens the category picker, then sends `lobby_start`);
+/// guests additionally see a pulsing "waiting for the host" indicator
+/// instead of that button. Everyone in the room — host included — is
+/// pushed into [LobbyGameScreen] once `lobby_game_started` arrives.
+class LobbyScreen extends ConsumerStatefulWidget {
   const LobbyScreen({required this.role, super.key});
 
   final LobbyRole role;
 
-  static const String _mockRoomCode = '482913';
+  @override
+  ConsumerState<LobbyScreen> createState() => _LobbyScreenState();
+}
 
-  bool get _isHost => role == LobbyRole.host;
+class _LobbyScreenState extends ConsumerState<LobbyScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.role == LobbyRole.host) {
+      Future.microtask(() => ref.read(lobbyControllerProvider.notifier).createRoom());
+    }
+  }
 
-  List<LobbyPlayer> get _players => _isHost
-      ? LobbyPlayer.sampleHostAndGuests
-      : [...LobbyPlayer.sampleHostAndGuests, LobbyPlayer.you];
-
-  void _goBack(BuildContext context) {
+  void _leaveAndGoBack(BuildContext context) {
+    ref.read(lobbyControllerProvider.notifier).leaveRoom();
     if (context.canPop()) {
       context.pop();
     } else {
@@ -52,8 +54,31 @@ class LobbyScreen extends StatelessWidget {
     }
   }
 
+  void _startGame(BuildContext context, String roomId) => context.push(AppRoutes.categories, extra: roomId);
+
   @override
   Widget build(BuildContext context) {
+    ref.listen(lobbyControllerProvider, (previous, next) {
+      if (next.closed && !(previous?.closed ?? false)) {
+        ref.read(lobbyControllerProvider.notifier).clearClosed();
+        context.showSnack(context.t.lobby.closedMessage);
+        context.go(AppRoutes.home);
+      } else if (next.game != null && previous?.game == null) {
+        context.pushReplacement(AppRoutes.lobbyGame);
+      }
+    });
+
+    final LobbyRoomState? room = ref.watch(lobbyControllerProvider).room;
+
+    if (room == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final List<LobbyPlayer> players = room.participants
+        .map((p) => LobbyPlayer.fromEntity(p, isYou: p.id == room.youParticipantId))
+        .toList();
+    final bool isHost = room.participants.firstWhere((p) => p.id == room.youParticipantId).isHost;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -62,32 +87,27 @@ class LobbyScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              _LobbyHeader(isHost: _isHost, onBack: () => _goBack(context)),
+              _LobbyHeader(isHost: isHost, onBack: () => _leaveAndGoBack(context)),
               AppSpacing.lg.vGap,
-              InviteCodeCard(label: context.t.lobby.roomCode, code: _mockRoomCode),
+              InviteCodeCard(label: context.t.lobby.roomCode, code: room.roomCode),
               AppSpacing.lg.vGap,
               SectionHead(
                 title: context.t.lobby.players,
-                trailing: context.t.lobby.playerCount(
-                  current: _players.length,
-                  max: LobbyPlayer.maxPlayers,
-                ),
+                trailing: context.t.lobby.playerCount(current: players.length, max: LobbyPlayer.maxPlayers),
               ),
               AppSpacing.sm.vGap,
-              PlayerList(players: _players),
+              PlayerList(players: players),
               AppSpacing.lg.vGap,
-              if (_isHost) _StartGameButton(onTap: () => _startGame(context)) else const LobbyWaitingIndicator(),
+              if (isHost)
+                _StartGameButton(onTap: () => _startGame(context, room.roomId))
+              else
+                const LobbyWaitingIndicator(),
             ],
           ),
         ),
       ),
     );
   }
-
-  void _startGame(BuildContext context) => context.push(
-        AppRoutes.quiz,
-        extra: QuizLaunchArgs(category: QuizCategory.sample.first, isLobbyGame: true),
-      );
 }
 
 class _LobbyHeader extends StatelessWidget {

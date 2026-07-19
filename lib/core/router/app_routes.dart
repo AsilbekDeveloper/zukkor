@@ -10,17 +10,19 @@ abstract final class AppRoutes {
   static const String leaderboard = '/leaderboard';
   static const String friends = '/friends';
   static const String addFriend = '/friends/add';
+  static const String friendRequests = '/friends/requests';
   static const String duel = '/duel';
   static const String profile = '/profile';
+  static const String quizSetup = '/quiz-setup';
   static const String quizIntro = '/quiz-intro';
   static const String quiz = '/quiz';
+  static const String ballReveal = '/ball-reveal';
   static const String result = '/result';
   static const String joinCode = '/join-code';
   static const String lobby = '/lobby';
   static const String lobbyResult = '/lobby-result';
   static const String fullLeaderboard = '/leaderboard/full';
   static const String playerDetail = '/leaderboard/player';
-  static const String rankFilter = '/leaderboard/filter';
   static const String settings = '/profile/settings';
   static const String history = '/profile/history';
   static const String duelWaiting = '/duel-waiting';
@@ -32,4 +34,8 @@ abstract final class AppRoutes {
   static const String privacyPolicy = '/profile/settings/privacy';
   static const String helpCenter = '/profile/settings/help';
   static const String termsOfUse = '/profile/settings/terms';
+  static const String changePassword = '/profile/settings/change-password';
+  static const String duelGame = '/duel-game';
+  static const String duelResult = '/duel-result';
+  static const String lobbyGame = '/lobby-game';
 }

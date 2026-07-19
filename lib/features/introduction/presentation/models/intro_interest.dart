@@ -4,8 +4,8 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 
 /// One selectable chip on the Introduction interests survey page. Labels
-/// mostly line up with [QuizCategory.sample] so the pick actually maps to
-/// something the app can recommend later.
+/// mostly line up with real backend category names so the pick actually
+/// maps to something the app can recommend later.
 class IntroInterest {
   const IntroInterest({required this.label, required this.icon, required this.colorKey});
 

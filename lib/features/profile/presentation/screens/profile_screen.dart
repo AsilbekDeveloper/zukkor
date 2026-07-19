@@ -5,6 +5,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
+import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -12,6 +13,8 @@ import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
+import '../../../leaderboard/domain/entities/player_stats.dart';
+import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../widgets/level_card.dart';
 import '../widgets/profile_banner.dart';
 import '../widgets/profile_header.dart';
@@ -24,8 +27,9 @@ import '../widgets/settings_list.dart';
 /// block, level ring card, a 3-stat strip, and a settings shortcut list.
 ///
 /// Name/username/avatar initials come from the real backend user
-/// (`GET /auth/me`, fetched on open). Level/XP/game stats are still
-/// placeholder — the backend doesn't expose that data yet.
+/// (`GET /auth/me`, fetched on open). Level/XP/game stats are real too,
+/// from `GET /leaderboard/{my_user_id}` via [MyStatsController] (shared
+/// with [HomeScreen]).
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
@@ -39,7 +43,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.initState();
     // Har safar ekran ochilganda yangilanadi — masalan Profilni tahrirlash
     // ekranidan qaytgach ma'lumot eskirmasin.
-    Future.microtask(() => ref.read(currentUserControllerProvider.notifier).load());
+    Future.microtask(() async {
+      await ref.read(currentUserControllerProvider.notifier).load();
+      final String? userId = ref.read(currentUserControllerProvider)?.id;
+      if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
+    });
   }
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
@@ -60,10 +68,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   /// Level ring + 3-stat strip.
   List<Widget> _progressSection(BuildContext context) {
+    final PlayerStats? stats = ref.watch(myStatsControllerProvider);
     return [
-      const LevelCard(level: 12, levelTitle: 'Scholar', currentXp: 2140, targetXp: 3000),
+      LevelCard(
+        level: stats?.level ?? 0,
+        levelTitle: stats?.levelTitle ?? '',
+        currentXp: stats?.totalXp ?? 0,
+        targetXp: stats?.nextLevelXp ?? 0,
+      ),
       AppSpacing.sm.vGap,
-      const ProfileStatsRow(totalGames: 184, winRatePercent: 68, longestStreak: 12),
+      ProfileStatsRow(
+        totalGames: stats?.gamesPlayed ?? 0,
+        winRatePercent: stats?.winRatePercent ?? 0,
+        longestStreak: stats?.longestStreak ?? 0,
+      ),
     ];
   }
 
@@ -100,6 +118,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             AppSpacing.lg.vGap,
             ProfileBanner(
               initials: _initials(user),
+              avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
+              avatarImagePath: user?.avatarImagePath,
               onEditTap: () => context.push(AppRoutes.editProfile),
             ),
             ProfileNameBlock(name: _displayName(user), username: user?.username ?? ''),

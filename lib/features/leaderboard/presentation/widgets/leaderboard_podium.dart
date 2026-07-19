@@ -5,6 +5,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/leaderboard_entry.dart';
 
@@ -72,12 +73,16 @@ class _PodiumColumn extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               Container(
-                width: avatarSize,
-                height: avatarSize,
                 margin: const EdgeInsets.only(bottom: 4),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: _isFirst ? null : context.colors.surfaceDark,
+                  boxShadow: _isFirst ? context.colors.shadowCoral : null,
+                ),
+                child: UserAvatar(
+                  size: avatarSize,
+                  initials: entry.initials,
+                  avatarImagePath: entry.avatarImagePath,
+                  backgroundColor: _isFirst ? null : context.colors.surfaceDark,
                   gradient: _isFirst
                       ? LinearGradient(
                           begin: Alignment.topLeft,
@@ -85,17 +90,7 @@ class _PodiumColumn extends StatelessWidget {
                           colors: [context.colors.coral, context.colors.coralDeep],
                         )
                       : null,
-                  boxShadow: _isFirst ? context.colors.shadowCoral : null,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  entry.initials,
-                  style: TextStyle(
-                    fontFamily: 'PlusJakartaSans',
-                    fontWeight: FontWeight.w700,
-                    fontSize: _isFirst ? 17 : 14,
-                    color: Colors.white,
-                  ),
+                  fontSize: _isFirst ? 17 : 14,
                 ),
               ),
               Positioned(

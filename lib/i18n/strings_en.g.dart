@@ -46,21 +46,28 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$leaderboard$en leaderboard = Translations$leaderboard$en._(_root);
 	late final Translations$fullLeaderboard$en fullLeaderboard = Translations$fullLeaderboard$en._(_root);
 	late final Translations$playerDetail$en playerDetail = Translations$playerDetail$en._(_root);
-	late final Translations$rankFilter$en rankFilter = Translations$rankFilter$en._(_root);
 	late final Translations$friends$en friends = Translations$friends$en._(_root);
 	late final Translations$addFriend$en addFriend = Translations$addFriend$en._(_root);
+	late final Translations$friendRequests$en friendRequests = Translations$friendRequests$en._(_root);
 	late final Translations$duelPick$en duelPick = Translations$duelPick$en._(_root);
 	late final Translations$profile$en profile = Translations$profile$en._(_root);
 	late final Translations$settings$en settings = Translations$settings$en._(_root);
+	late final Translations$changePassword$en changePassword = Translations$changePassword$en._(_root);
+	late final Translations$deleteAccount$en deleteAccount = Translations$deleteAccount$en._(_root);
 	late final Translations$history$en history = Translations$history$en._(_root);
+	late final Translations$quizSetup$en quizSetup = Translations$quizSetup$en._(_root);
 	late final Translations$quizIntro$en quizIntro = Translations$quizIntro$en._(_root);
 	late final Translations$quiz$en quiz = Translations$quiz$en._(_root);
+	late final Translations$ballReveal$en ballReveal = Translations$ballReveal$en._(_root);
 	late final Translations$result$en result = Translations$result$en._(_root);
 	late final Translations$joinCode$en joinCode = Translations$joinCode$en._(_root);
 	late final Translations$lobby$en lobby = Translations$lobby$en._(_root);
+	late final Translations$lobbyGame$en lobbyGame = Translations$lobbyGame$en._(_root);
 	late final Translations$lobbyResult$en lobbyResult = Translations$lobbyResult$en._(_root);
 	late final Translations$duelWaiting$en duelWaiting = Translations$duelWaiting$en._(_root);
 	late final Translations$duelInvite$en duelInvite = Translations$duelInvite$en._(_root);
+	late final Translations$duelGame$en duelGame = Translations$duelGame$en._(_root);
+	late final Translations$duelResult$en duelResult = Translations$duelResult$en._(_root);
 	late final Translations$notifications$en notifications = Translations$notifications$en._(_root);
 	late final Translations$editProfile$en editProfile = Translations$editProfile$en._(_root);
 	late final Translations$notificationSettings$en notificationSettings = Translations$notificationSettings$en._(_root);
@@ -107,10 +114,10 @@ class Translations$common$en {
 		other: 'days',
 	);
 
-	/// en: '(one) {$count friend online} (other) {$count friends online}'
-	String friendsOnline({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count,
-		one: '${count} friend online',
-		other: '${count} friends online',
+	/// en: '(one) {$count friend} (other) {$count friends}'
+	String friendsCount({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count,
+		one: '${count} friend',
+		other: '${count} friends',
 	);
 
 	/// en: '(one) {$count question} (other) {$count questions}'
@@ -209,8 +216,8 @@ class Translations$leaderboard$en {
 	/// en: '$xp XP'
 	String xpValue({required Object xp}) => '${xp} XP';
 
-	/// en: 'Leaderboard · $category'
-	String greetingFiltered({required Object category}) => 'Leaderboard · ${category}';
+	/// en: 'Player'
+	String get anonymousPlayer => 'Player';
 }
 
 // Path: fullLeaderboard
@@ -249,21 +256,6 @@ class Translations$playerDetail$en {
 	String rankedLabel({required Object rank, required Object xp}) => 'Ranked #${rank} · ${xp} XP';
 }
 
-// Path: rankFilter
-class Translations$rankFilter$en {
-	Translations$rankFilter$en._(this._root);
-
-	final Translations _root; // ignore: unused_field
-
-	// Translations
-
-	/// en: 'By category'
-	String get title => 'By category';
-
-	/// en: 'All categories'
-	String get allCategories => 'All categories';
-}
-
 // Path: friends
 class Translations$friends$en {
 	Translations$friends$en._(this._root);
@@ -277,9 +269,6 @@ class Translations$friends$en {
 
 	/// en: 'Search friends'
 	String get searchPlaceholder => 'Search friends';
-
-	/// en: 'Online'
-	String get onlineSection => 'Online';
 
 	/// en: 'All friends'
 	String get allSection => 'All friends';
@@ -311,8 +300,26 @@ class Translations$addFriend$en {
 	/// en: 'Add'
 	String get addButton => 'Add';
 
+	/// en: 'Requested'
+	String get requestedLabel => 'Requested';
+
 	/// en: 'No users found'
 	String get noUsersFound => 'No users found';
+}
+
+// Path: friendRequests
+class Translations$friendRequests$en {
+	Translations$friendRequests$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Friend requests'
+	String get title => 'Friend requests';
+
+	/// en: 'No requests yet'
+	String get emptyState => 'No requests yet';
 }
 
 // Path: duelPick
@@ -407,8 +414,71 @@ class Translations$settings$en {
 	/// en: 'Terms of use'
 	String get termsOfUse => 'Terms of use';
 
+	/// en: 'Change password'
+	String get changePassword => 'Change password';
+
 	/// en: 'Log out'
 	String get logOut => 'Log out';
+
+	/// en: 'Danger zone'
+	String get groupDangerZone => 'Danger zone';
+
+	/// en: 'Delete account'
+	String get deleteAccount => 'Delete account';
+}
+
+// Path: changePassword
+class Translations$changePassword$en {
+	Translations$changePassword$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Change password'
+	String get title => 'Change password';
+
+	/// en: 'Current password'
+	String get currentPasswordLabel => 'Current password';
+
+	/// en: 'Enter your current password'
+	String get currentPasswordHint => 'Enter your current password';
+
+	/// en: 'New password'
+	String get newPasswordLabel => 'New password';
+
+	/// en: 'At least 8 characters'
+	String get newPasswordHint => 'At least 8 characters';
+
+	/// en: 'Confirm new password'
+	String get confirmNewPasswordLabel => 'Confirm new password';
+
+	/// en: 'Re-enter your new password'
+	String get confirmNewPasswordHint => 'Re-enter your new password';
+
+	/// en: 'Save'
+	String get saveButton => 'Save';
+
+	/// en: 'Password changed successfully'
+	String get updated => 'Password changed successfully';
+}
+
+// Path: deleteAccount
+class Translations$deleteAccount$en {
+	Translations$deleteAccount$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Delete account'
+	String get confirmTitle => 'Delete account';
+
+	/// en: 'This can't be undone. All your data — friends, history, ball — will be permanently deleted. Enter your password to continue.'
+	String get confirmMessage => 'This can\'t be undone. All your data — friends, history, ball — will be permanently deleted. Enter your password to continue.';
+
+	/// en: 'Yes, delete'
+	String get confirmButton => 'Yes, delete';
 }
 
 // Path: history
@@ -436,6 +506,48 @@ class Translations$history$en {
 
 	/// en: 'Loss'
 	String get lossBadge => 'Loss';
+
+	/// en: 'Draw'
+	String get drawBadge => 'Draw';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'Yesterday'
+	String get yesterday => 'Yesterday';
+
+	/// en: '$days days ago'
+	String daysAgo({required Object days}) => '${days} days ago';
+
+	/// en: 'Games of this type aren't saved yet'
+	String get emptyState => 'Games of this type aren\'t saved yet';
+
+	/// en: 'No games played yet'
+	String get noGamesYet => 'No games played yet';
+
+	/// en: '$count players'
+	String lobbyPlayerCount({required Object count}) => '${count} players';
+}
+
+// Path: quizSetup
+class Translations$quizSetup$en {
+	Translations$quizSetup$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'How many questions?'
+	String get title => 'How many questions?';
+
+	/// en: 'Pick a quick option or choose your own'
+	String get subtitle => 'Pick a quick option or choose your own';
+
+	/// en: 'Custom'
+	String get customLabel => 'Custom';
+
+	/// en: 'Start quiz'
+	String get startButton => 'Start quiz';
 }
 
 // Path: quizIntro
@@ -462,6 +574,21 @@ class Translations$quiz$en {
 	String questionProgress({required Object current, required Object total}) => 'Question ${current}/${total}';
 }
 
+// Path: ballReveal
+class Translations$ballReveal$en {
+	Translations$ballReveal$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Your points'
+	String get title => 'Your points';
+
+	/// en: 'points'
+	String get ballLabel => 'points';
+}
+
 // Path: result
 class Translations$result$en {
 	Translations$result$en._(this._root);
@@ -475,6 +602,9 @@ class Translations$result$en {
 
 	/// en: '$correct out of $total correct'
 	String summary({required Object correct, required Object total}) => '${correct} out of ${total} correct';
+
+	/// en: '$ball points'
+	String totalBall({required Object ball}) => '${ball} points';
 
 	/// en: '+$xp XP'
 	String xpEarned({required Object xp}) => '+${xp} XP';
@@ -505,6 +635,12 @@ class Translations$joinCode$en {
 
 	/// en: 'Code digit $position'
 	String codeDigitLabel({required Object position}) => 'Code digit ${position}';
+
+	/// en: 'No room found with that code'
+	String get roomNotFound => 'No room found with that code';
+
+	/// en: 'That room is full'
+	String get roomFull => 'That room is full';
 }
 
 // Path: lobby
@@ -538,6 +674,21 @@ class Translations$lobby$en {
 
 	/// en: '$current/$max'
 	String playerCount({required Object current, required Object max}) => '${current}/${max}';
+
+	/// en: 'The host left, the room closed'
+	String get closedMessage => 'The host left, the room closed';
+}
+
+// Path: lobbyGame
+class Translations$lobbyGame$en {
+	Translations$lobbyGame$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: '$answered/$total answered'
+	String answeredProgress({required Object answered, required Object total}) => '${answered}/${total} answered';
 }
 
 // Path: lobbyResult
@@ -569,11 +720,17 @@ class Translations$duelWaiting$en {
 	/// en: 'Duel'
 	String get title => 'Duel';
 
-	/// en: 'Waiting for their answer…'
-	String get waitingForAnswer => 'Waiting for their answer…';
+	/// en: 'Invite sent, waiting for a response…'
+	String get waitingForAccept => 'Invite sent, waiting for a response…';
 
-	/// en: 'Start (demo)'
-	String get startDemo => 'Start (demo)';
+	/// en: 'Invite declined'
+	String get declined => 'Invite declined';
+
+	/// en: 'Invite expired'
+	String get expired => 'Invite expired';
+
+	/// en: 'Back to home'
+	String get backToHome => 'Back to home';
 }
 
 // Path: duelInvite
@@ -595,6 +752,48 @@ class Translations$duelInvite$en {
 
 	/// en: 'Decline'
 	String get decline => 'Decline';
+}
+
+// Path: duelGame
+class Translations$duelGame$en {
+	Translations$duelGame$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Duel'
+	String get title => 'Duel';
+
+	/// en: 'Preparing the question…'
+	String get waitingForQuestion => 'Preparing the question…';
+
+	/// en: 'Opponent answered'
+	String get opponentAnswered => 'Opponent answered';
+}
+
+// Path: duelResult
+class Translations$duelResult$en {
+	Translations$duelResult$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'You won!'
+	String get won => 'You won!';
+
+	/// en: 'You lost'
+	String get lost => 'You lost';
+
+	/// en: 'It's a draw!'
+	String get draw => 'It\'s a draw!';
+
+	/// en: 'You'
+	String get yourScoreLabel => 'You';
+
+	/// en: 'Opponent'
+	String get opponentScoreLabel => 'Opponent';
 }
 
 // Path: notifications
@@ -622,6 +821,9 @@ class Translations$notifications$en {
 
 	/// en: 'Welcome to Zukkor! Start your first quiz'
 	String get welcome => 'Welcome to Zukkor! Start your first quiz';
+
+	/// en: 'No notifications yet'
+	String get emptyState => 'No notifications yet';
 }
 
 // Path: editProfile
@@ -1119,7 +1321,7 @@ extension on Translations {
 			'common.retry' => 'Retry',
 			'common.loading' => 'Loading...',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: 'day', other: 'days', ), 
-			'common.friendsOnline' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} friend online', other: '${count} friends online', ), 
+			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} friend', other: '${count} friends', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} question', other: '${count} questions', ), 
 			'home.greeting' => 'Good morning',
 			'home.duelHeroTitle' => 'Who\'s strong today?',
@@ -1142,18 +1344,15 @@ extension on Translations {
 			'leaderboard.you' => 'You',
 			'leaderboard.seeFullRanking' => 'See full ranking',
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
-			'leaderboard.greetingFiltered' => ({required Object category}) => 'Leaderboard · ${category}',
+			'leaderboard.anonymousPlayer' => 'Player',
 			'fullLeaderboard.title' => 'Full ranking',
 			'playerDetail.title' => 'Profile',
 			'playerDetail.streakLabel' => 'Streak',
 			'playerDetail.addToFriends' => 'Add to friends',
 			'playerDetail.requestSent' => 'Sent',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => 'Ranked #${rank} · ${xp} XP',
-			'rankFilter.title' => 'By category',
-			'rankFilter.allCategories' => 'All categories',
 			'friends.addFriend' => 'Add friend',
 			'friends.searchPlaceholder' => 'Search friends',
-			'friends.onlineSection' => 'Online',
 			'friends.allSection' => 'All friends',
 			'friends.noneFound' => 'No friends found',
 			'addFriend.searchByUsername' => 'Search by username',
@@ -1161,7 +1360,10 @@ extension on Translations {
 			'addFriend.yourInviteCode' => 'Your invite code',
 			'addFriend.shareLink' => 'Share the link',
 			'addFriend.addButton' => 'Add',
+			'addFriend.requestedLabel' => 'Requested',
 			'addFriend.noUsersFound' => 'No users found',
+			'friendRequests.title' => 'Friend requests',
+			'friendRequests.emptyState' => 'No requests yet',
 			'duelPick.title' => '1v1 Duel',
 			'duelPick.chooseYourFriend' => 'Choose your friend',
 			'profile.editProfile' => 'Edit profile',
@@ -1184,17 +1386,46 @@ extension on Translations {
 			'settings.privacy' => 'Privacy',
 			'settings.helpCenter' => 'Help center',
 			'settings.termsOfUse' => 'Terms of use',
+			'settings.changePassword' => 'Change password',
 			'settings.logOut' => 'Log out',
+			'settings.groupDangerZone' => 'Danger zone',
+			'settings.deleteAccount' => 'Delete account',
+			'changePassword.title' => 'Change password',
+			'changePassword.currentPasswordLabel' => 'Current password',
+			'changePassword.currentPasswordHint' => 'Enter your current password',
+			'changePassword.newPasswordLabel' => 'New password',
+			'changePassword.newPasswordHint' => 'At least 8 characters',
+			'changePassword.confirmNewPasswordLabel' => 'Confirm new password',
+			'changePassword.confirmNewPasswordHint' => 'Re-enter your new password',
+			'changePassword.saveButton' => 'Save',
+			'changePassword.updated' => 'Password changed successfully',
+			'deleteAccount.confirmTitle' => 'Delete account',
+			'deleteAccount.confirmMessage' => 'This can\'t be undone. All your data — friends, history, ball — will be permanently deleted. Enter your password to continue.',
+			'deleteAccount.confirmButton' => 'Yes, delete',
 			'history.segmentAll' => 'All',
 			'history.segmentSolo' => 'Solo',
 			'history.segmentDuel' => 'Duel',
 			'history.segmentLobby' => 'Lobby',
 			'history.winBadge' => 'Win',
 			'history.lossBadge' => 'Loss',
+			'history.drawBadge' => 'Draw',
+			'history.today' => 'Today',
+			'history.yesterday' => 'Yesterday',
+			'history.daysAgo' => ({required Object days}) => '${days} days ago',
+			'history.emptyState' => 'Games of this type aren\'t saved yet',
+			'history.noGamesYet' => 'No games played yet',
+			'history.lobbyPlayerCount' => ({required Object count}) => '${count} players',
+			'quizSetup.title' => 'How many questions?',
+			'quizSetup.subtitle' => 'Pick a quick option or choose your own',
+			'quizSetup.customLabel' => 'Custom',
+			'quizSetup.startButton' => 'Start quiz',
 			'quizIntro.startLabel' => 'Start!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Question ${current}/${total}',
+			'ballReveal.title' => 'Your points',
+			'ballReveal.ballLabel' => 'points',
 			'result.label' => 'Result',
 			'result.summary' => ({required Object correct, required Object total}) => '${correct} out of ${total} correct',
+			'result.totalBall' => ({required Object ball}) => '${ball} points',
 			'result.xpEarned' => ({required Object xp}) => '+${xp} XP',
 			'result.playAgain' => 'Play again',
 			'result.challengeAFriend' => 'Challenge a friend',
@@ -1202,6 +1433,8 @@ extension on Translations {
 			'joinCode.hint' => 'Enter the 6-digit room code your friend sent you',
 			'joinCode.joinButton' => 'Join',
 			'joinCode.codeDigitLabel' => ({required Object position}) => 'Code digit ${position}',
+			'joinCode.roomNotFound' => 'No room found with that code',
+			'joinCode.roomFull' => 'That room is full',
 			'lobby.title' => 'Multiplayer room',
 			'lobby.roomCode' => 'Room code',
 			'lobby.players' => 'Players',
@@ -1210,22 +1443,35 @@ extension on Translations {
 			'lobby.startGame' => 'Start the game',
 			'lobby.waitingForHost' => 'Waiting for the host to start…',
 			'lobby.playerCount' => ({required Object current, required Object max}) => '${current}/${max}',
+			'lobby.closedMessage' => 'The host left, the room closed',
+			'lobbyGame.answeredProgress' => ({required Object answered, required Object total}) => '${answered}/${total} answered',
 			'lobbyResult.title' => 'Room results',
 			'lobbyResult.subtitle' => 'Here\'s how everyone in the room did',
 			'lobbyResult.playAgain' => 'Play again',
 			'duelWaiting.title' => 'Duel',
-			'duelWaiting.waitingForAnswer' => 'Waiting for their answer…',
-			'duelWaiting.startDemo' => 'Start (demo)',
+			'duelWaiting.waitingForAccept' => 'Invite sent, waiting for a response…',
+			'duelWaiting.declined' => 'Invite declined',
+			'duelWaiting.expired' => 'Invite expired',
+			'duelWaiting.backToHome' => 'Back to home',
 			'duelInvite.title' => 'Duel invite',
 			'duelInvite.challengesYou' => 'is challenging you to a duel',
 			'duelInvite.accept' => 'Accept',
 			'duelInvite.decline' => 'Decline',
+			'duelGame.title' => 'Duel',
+			'duelGame.waitingForQuestion' => 'Preparing the question…',
+			'duelGame.opponentAnswered' => 'Opponent answered',
+			'duelResult.won' => 'You won!',
+			'duelResult.lost' => 'You lost',
+			'duelResult.draw' => 'It\'s a draw!',
+			'duelResult.yourScoreLabel' => 'You',
+			'duelResult.opponentScoreLabel' => 'Opponent',
 			'notifications.title' => 'Notifications',
 			'notifications.duelChallenge' => 'Malika challenged you to a duel',
 			'notifications.streakReminder' => 'Don\'t lose your 5-day streak — play today!',
 			'notifications.top50' => 'You made it into the weekly Top 50',
 			'notifications.friendRequest' => 'Bekzod Xolmatov sent you a friend request',
 			'notifications.welcome' => 'Welcome to Zukkor! Start your first quiz',
+			'notifications.emptyState' => 'No notifications yet',
 			'editProfile.save' => 'Save',
 			'editProfile.updated' => 'Profile updated',
 			'notificationSettings.title' => 'Notification preferences',

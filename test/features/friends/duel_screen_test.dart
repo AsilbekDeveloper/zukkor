@@ -10,11 +10,92 @@ import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
+import 'package:zukkor/features/friends/data/repositories/friends_repository_impl.dart';
+import 'package:zukkor/features/friends/domain/entities/discovered_user.dart';
+import 'package:zukkor/features/friends/domain/entities/friend.dart';
+import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
+import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
 import 'package:zukkor/features/friends/presentation/models/friend_entry.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
+import 'package:zukkor/features/quiz/data/repositories/quiz_repository_impl.dart';
+import 'package:zukkor/features/quiz/domain/entities/answer_result.dart';
+import 'package:zukkor/features/quiz/domain/entities/category.dart';
+import 'package:zukkor/features/quiz/domain/entities/quiz_start_result.dart';
+import 'package:zukkor/features/quiz/domain/repositories/quiz_repository.dart';
 import 'package:zukkor/features/quiz/presentation/screens/categories_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
+
+/// Backendga murojaat qilmaydigan soxta quiz repository — Categories
+/// ekrani (Duel'ning kategoriya tanlagichi) `GET /categories`ni chaqiradi,
+/// haqiqiy tarmoqqa bog'liq bo'lmasligi kerak.
+class _FakeQuizRepository implements QuizRepository {
+  @override
+  Future<List<Category>> getCategories() async => const [
+        Category(id: 1, name: 'Math', iconName: 'math-symbols', colorKey: 'coral', questionCount: 120),
+        Category(id: 2, name: 'History', iconName: 'book', colorKey: 'terra', questionCount: 98),
+      ];
+
+  @override
+  Future<QuizStartResult> startQuiz({required int categoryId, required int questionCount}) =>
+      throw UnimplementedError();
+
+  @override
+  Future<AnswerResult> submitAnswer({
+    required String sessionId,
+    required int sessionQuestionId,
+    required int? selectedOption,
+  }) =>
+      throw UnimplementedError();
+}
+
+/// Backendga murojaat qilmaydigan soxta friends repository — real
+/// `GET /friends` javobiga mos (endi onlayn/oflayn cheklovi yo'q,
+/// istalgan do'stni tanlash mumkin).
+class _FakeFriendsRepository implements FriendsRepository {
+  @override
+  Future<List<Friend>> getFriends() async => const [
+        Friend(
+          id: '1',
+          username: 'malika_yusupova',
+          firstName: 'Malika',
+          lastName: 'Yusupova',
+          avatarColor: 'a-teal',
+          avatarImagePath: null,
+        ),
+        Friend(
+          id: '2',
+          username: 'shohruh_toshpulatov',
+          firstName: 'Shohruh',
+          lastName: 'Toshpulatov',
+          avatarColor: 'a-terra',
+          avatarImagePath: null,
+        ),
+        Friend(
+          id: '3',
+          username: 'dilnoza_rustamova',
+          firstName: 'Dilnoza',
+          lastName: 'Rustamova',
+          avatarColor: 'a-pink',
+          avatarImagePath: null,
+        ),
+      ];
+
+  @override
+  Future<List<DiscoveredUser>> searchUsers(String query) => throw UnimplementedError();
+
+  @override
+  Future<void> sendFriendRequest(String userId) => throw UnimplementedError();
+
+  @override
+  Future<List<FriendRequest>> getIncomingRequests() async => const [];
+
+  @override
+  Future<void> acceptFriendRequest(String requestId) => throw UnimplementedError();
+
+  @override
+  Future<void> declineFriendRequest(String requestId) => throw UnimplementedError();
+}
 
 Future<GoRouter> _pumpDuel(WidgetTester tester, {Size size = const Size(390, 844)}) async {
   tester.view.physicalSize = size;
@@ -39,7 +120,11 @@ Future<GoRouter> _pumpDuel(WidgetTester tester, {Size size = const Size(390, 844
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
+        friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
+      ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       ),
@@ -50,7 +135,7 @@ Future<GoRouter> _pumpDuel(WidgetTester tester, {Size size = const Size(390, 844
 }
 
 void main() {
-  testWidgets('renders title and only online friends with no overflow', (tester) async {
+  testWidgets('renders title and every friend, no overflow', (tester) async {
     await _pumpDuel(tester);
 
     expect(find.text(AppStrings.duelScreenTitle), findsOneWidget);
@@ -59,10 +144,6 @@ void main() {
     expect(find.text('Malika Yusupova'), findsOneWidget);
     expect(find.text('Shohruh Toshpulatov'), findsOneWidget);
     expect(find.text('Dilnoza Rustamova'), findsOneWidget);
-
-    // Offline friends aren't eligible to be challenged right now.
-    expect(find.text('Bekzod Xolmatov'), findsNothing);
-    expect(find.text('Nilufar Yoqubova'), findsNothing);
 
     expect(tester.takeException(), isNull);
   });

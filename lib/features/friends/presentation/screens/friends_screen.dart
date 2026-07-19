@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_x.dart';
@@ -9,35 +10,38 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../../i18n/strings.g.dart';
+import '../controllers/friend_requests_controller.dart';
+import '../controllers/friends_controller.dart';
 import '../models/friend_entry.dart';
 import '../widgets/friend_list.dart';
 import '../widgets/friends_header.dart';
 import '../widgets/friends_search_bar.dart';
-import '../widgets/online_friends_row.dart';
 
-/// The Friends tab — mirrors the prototype's `view-friends` 1:1: header +
-/// add-friend button, search bar, an "Online" avatar row, then the full
-/// "All friends" list with a per-friend duel-challenge button.
+/// The Friends tab — mirrors the prototype's `view-friends`: header +
+/// add-friend button, search bar, then the full "All friends" list with
+/// a per-friend duel-challenge button.
 ///
-/// CURRENT STATE: presentation only, [FriendEntry] placeholder data.
-/// "Add friend" pushes the real Add Friend screen. Search filters
-/// [FriendEntry.sampleAll] by name client-side (hides the Online row
-/// while searching). Tapping an online friend's avatar, or the duel
-/// button on any friend row, both start a duel with that friend directly
-/// (same category-picker flow as the Duel screen) — the "All friends"
-/// list has no online/offline restriction here since it's a direct
-/// challenge to a specific person, not the "who's around right now"
-/// picker.
-class FriendsScreen extends StatefulWidget {
+/// CURRENT STATE: real `GET /friends` data. Search filters the fetched
+/// list by name or username client-side. Tapping the duel button on any
+/// friend row starts a duel with that friend directly (same
+/// category-picker flow as the Duel screen).
+class FriendsScreen extends ConsumerStatefulWidget {
   const FriendsScreen({super.key});
 
   @override
-  State<FriendsScreen> createState() => _FriendsScreenState();
+  ConsumerState<FriendsScreen> createState() => _FriendsScreenState();
 }
 
-class _FriendsScreenState extends State<FriendsScreen> {
+class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+    Future.microtask(() => ref.read(friendRequestsControllerProvider.notifier).load());
+  }
 
   @override
   void dispose() {
@@ -47,63 +51,67 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
-  List<FriendEntry> get _filteredFriends {
-    if (_query.isEmpty) return FriendEntry.sampleAll;
+  List<FriendEntry> _filteredFriends(List<FriendEntry> friends) {
+    if (_query.isEmpty) return friends;
     final String needle = _query.toLowerCase();
-    return FriendEntry.sampleAll.where((f) => f.name.toLowerCase().contains(needle)).toList();
+    return friends
+        .where((f) =>
+            f.name.toLowerCase().contains(needle) ||
+            (f.username?.toLowerCase().contains(needle) ?? false))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
     final bool isSearching = _query.isNotEmpty;
-    final List<FriendEntry> results = _filteredFriends;
+    final List<FriendEntry>? allFriends =
+        ref.watch(friendsControllerProvider)?.map(FriendEntry.fromEntity).toList();
+    final List<FriendEntry> results = allFriends == null ? const [] : _filteredFriends(allFriends);
+    final int pendingRequestCount = ref.watch(friendRequestsControllerProvider)?.length ?? 0;
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
-          children: [
-            FriendsHeader(onAddFriendTap: () => context.push(AppRoutes.addFriend)),
-            AppSpacing.lg.vGap,
-            FriendsSearchBar(
-              placeholder: context.t.friends.searchPlaceholder,
-              controller: _searchController,
-              onChanged: (value) => setState(() => _query = value),
-            ),
-            AppSpacing.lg.vGap,
-            if (!isSearching) ...[
-              SectionHead(title: context.t.friends.onlineSection),
-              AppSpacing.sm.vGap,
-              OnlineFriendsRow(
-                entries: FriendEntry.sampleOnline,
-                onEntryTap: (friend) => context.push(AppRoutes.categories, extra: friend),
-              ),
-              AppSpacing.lg.vGap,
-            ],
-            SectionHead(
-              title: context.t.friends.allSection,
-              trailing: isSearching ? null : '${FriendEntry.totalFriendCount}',
-            ),
-            AppSpacing.sm.vGap,
-            if (results.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                child: Center(
-                  child: Text(
-                    context.t.friends.noneFound,
-                    style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+        child: allFriends == null
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+                children: [
+                  FriendsHeader(
+                    onAddFriendTap: () => context.push(AppRoutes.addFriend),
+                    onRequestsTap: () => context.push(AppRoutes.friendRequests),
+                    pendingRequestCount: pendingRequestCount,
                   ),
-                ),
-              )
-            else
-              FriendList(
-                entries: results,
-                onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
+                  AppSpacing.lg.vGap,
+                  FriendsSearchBar(
+                    placeholder: context.t.friends.searchPlaceholder,
+                    controller: _searchController,
+                    onChanged: (value) => setState(() => _query = value),
+                  ),
+                  AppSpacing.lg.vGap,
+                  SectionHead(
+                    title: context.t.friends.allSection,
+                    trailing: isSearching ? null : '${allFriends.length}',
+                  ),
+                  AppSpacing.sm.vGap,
+                  if (results.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                      child: Center(
+                        child: Text(
+                          context.t.friends.noneFound,
+                          style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                        ),
+                      ),
+                    )
+                  else
+                    FriendList(
+                      entries: results,
+                      onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
+                    ),
+                ],
               ),
-          ],
-        ),
       ),
       bottomNavigationBar: AppBottomNavBar(
         current: AppTab.friends,

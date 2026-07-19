@@ -16,4 +16,8 @@ abstract final class AppConfig {
   /// Tarmoq so'rovlari uchun umumiy timeout.
   static const Duration connectTimeout = Duration(seconds: 10);
   static const Duration receiveTimeout = Duration(seconds: 20);
+
+  /// [apiBaseUrl]dan hosil qilingan WebSocket manzili (`http`→`ws`,
+  /// `https`→`wss`) — Duel real vaqtli ulanishi uchun.
+  static String get wsBaseUrl => apiBaseUrl.replaceFirst('http', 'ws');
 }

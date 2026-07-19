@@ -38,6 +38,15 @@ abstract final class Validators {
     return null;
   }
 
+  /// Mavjud parolni qayta so'rashda ishlatiladi (joriy parolni o'zgartirish
+  /// / akkauntni o'chirishni tasdiqlash) — faqat bo'shligini tekshiradi,
+  /// [password]dagi kabi format qoidalarini emas, chunki bu eski parol.
+  static String? currentPassword(String? value) {
+    final String v = value ?? '';
+    if (v.isEmpty) return t.authValidation.passwordRequired;
+    return null;
+  }
+
   /// [original] — asosiy parol maydonining joriy qiymati. Register
   /// ekranida ishlatiladi: foydalanuvchi ikkinchi marta kiritgan parol
   /// birinchisi bilan mos kelishini tekshiradi.

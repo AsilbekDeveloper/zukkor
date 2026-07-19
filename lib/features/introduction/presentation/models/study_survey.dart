@@ -16,6 +16,15 @@ extension StudyPlaceLabel on StudyPlace {
         StudyPlace.examPrep => context.t.introduction.studyPlaceExamPrep,
         StudyPlace.other => context.t.introduction.otherOption,
       };
+
+  /// Backend's `study_place` choices — [StudyPlace.other]'s actual value
+  /// is the free-text answer, resolved by the caller, not this tag.
+  String get apiValue => switch (this) {
+        StudyPlace.school => 'school',
+        StudyPlace.university => 'university',
+        StudyPlace.examPrep => 'exam_prep',
+        StudyPlace.other => 'other',
+      };
 }
 
 /// "Do you enjoy solving quizzes and puzzles?" — a light-touch sentiment
@@ -27,5 +36,12 @@ extension QuizLikingLabel on QuizLiking {
         QuizLiking.loveIt => context.t.introduction.quizLikingLoveIt,
         QuizLiking.itsOk => context.t.introduction.quizLikingItsOk,
         QuizLiking.notReally => context.t.introduction.quizLikingNotReally,
+      };
+
+  /// Backend's `quiz_liking` choices.
+  String get apiValue => switch (this) {
+        QuizLiking.loveIt => 'love_it',
+        QuizLiking.itsOk => 'its_ok',
+        QuizLiking.notReally => 'not_really',
       };
 }

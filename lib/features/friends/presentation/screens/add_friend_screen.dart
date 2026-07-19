@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
@@ -9,35 +13,42 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/invite_code_card.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/discovered_user.dart';
+import '../controllers/send_friend_request_controller.dart';
+import '../controllers/user_search_controller.dart';
 import '../models/discoverable_user.dart';
 import '../widgets/discoverable_user_list.dart';
 import '../widgets/friends_search_bar.dart';
 
 /// Add a friend — mirrors the prototype's `view-add-friend`: search by
-/// username, or share a static invite code/link.
+/// username or name, or share a static invite code/link.
 ///
-/// CURRENT STATE: presentation only, mock invite code. Search filters
-/// [DiscoverableUser.sample] by username client-side (hides the invite-
-/// link section while searching); "Add" is a local mock toggle (no real
-/// request is sent). Sharing still goes through [_comingSoon] — there's
-/// no backend yet to generate a real invite link.
-class AddFriendScreen extends StatefulWidget {
+/// CURRENT STATE: search hits the real `GET /friends/search` (debounced
+/// while typing). "Add" sends a real `POST /friends/requests` and becomes
+/// a disabled "Requested" state — the other user must accept it before
+/// you're actually friends (see [FriendRequestsScreen]). Sharing still
+/// goes through [_comingSoon] and the invite code is a static
+/// placeholder — there's no backend yet to generate a real invite link.
+class AddFriendScreen extends ConsumerStatefulWidget {
   const AddFriendScreen({super.key});
 
   @override
-  State<AddFriendScreen> createState() => _AddFriendScreenState();
+  ConsumerState<AddFriendScreen> createState() => _AddFriendScreenState();
 }
 
-class _AddFriendScreenState extends State<AddFriendScreen> {
+class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
   static const String _mockInviteCode = 'ZKR-AZ312';
+  static const Duration _debounce = Duration(milliseconds: 350);
 
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
-  final Set<String> _sentUsernames = {};
+  Timer? _debounceTimer;
+  final Set<String> _addedIds = {};
 
   @override
   void dispose() {
     _searchController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
@@ -51,15 +62,38 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     }
   }
 
-  List<DiscoverableUser> get _results {
-    final String needle = _query.toLowerCase();
-    return DiscoverableUser.sample.where((u) => u.username.toLowerCase().contains(needle)).toList();
+  void _onQueryChanged(String value) {
+    setState(() => _query = value);
+    _debounceTimer?.cancel();
+    if (value.isEmpty) {
+      ref.read(userSearchControllerProvider.notifier).clear();
+      return;
+    }
+    _debounceTimer = Timer(_debounce, () {
+      ref.read(userSearchControllerProvider.notifier).search(value);
+    });
+  }
+
+  Future<void> _addFriend(DiscoverableUser user) async {
+    try {
+      await ref.read(sendFriendRequestControllerProvider.notifier).sendRequest(user.id);
+      if (!mounted) return;
+      setState(() => _addedIds.add(user.id));
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final bool isSearching = _query.isNotEmpty;
-    final List<DiscoverableUser> results = _results;
+    final List<DiscoveredUser>? searchResults = ref.watch(userSearchControllerProvider);
+    final List<DiscoverableUser> results =
+        (searchResults ?? const []).map(DiscoverableUser.fromEntity).toList();
 
     return Scaffold(
       body: SafeArea(
@@ -76,11 +110,16 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
               FriendsSearchBar(
                 placeholder: context.t.addFriend.searchByUsername,
                 controller: _searchController,
-                onChanged: (value) => setState(() => _query = value),
+                onChanged: _onQueryChanged,
               ),
               if (isSearching) ...[
                 AppSpacing.lg.vGap,
-                if (results.isEmpty)
+                if (searchResults == null)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (results.isEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                     child: Center(
@@ -93,8 +132,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                 else
                   DiscoverableUserList(
                     users: results,
-                    sentUsernames: _sentUsernames,
-                    onAddTap: (user) => setState(() => _sentUsernames.add(user.username)),
+                    addedIds: _addedIds,
+                    onAddTap: _addFriend,
                   ),
               ] else ...[
                 AppSpacing.lg.vGap,

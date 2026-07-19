@@ -41,12 +41,15 @@ class AuthRemoteDataSource {
     return UserModel.fromJson(response.data as Map<String, dynamic>);
   }
 
-  Future<UserModel> completeOnboarding({
+  Future<UserModel> updateProfile({
     required String username,
     required String firstName,
     required String lastName,
     required String avatarColor,
     required String direction,
+    List<String>? interests,
+    String? studyPlace,
+    String? quizLiking,
   }) async {
     final Response<dynamic> response = await _dio.patch(
       ApiEndpoints.profileSetup,
@@ -56,9 +59,40 @@ class AuthRemoteDataSource {
         'last_name': lastName,
         'avatar_color': avatarColor,
         'direction': direction,
+        'interests': ?interests,
+        'study_place': ?studyPlace,
+        'quiz_liking': ?quizLiking,
       },
     );
     return UserModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<UserModel> uploadAvatarImage(String filePath) async {
+    final FormData formData = FormData.fromMap({
+      'image': await MultipartFile.fromFile(filePath),
+    });
+    final Response<dynamic> response = await _dio.post(
+      ApiEndpoints.avatarUpload,
+      data: formData,
+    );
+    return UserModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    await _dio.post<void>(
+      ApiEndpoints.changePassword,
+      data: {'current_password': currentPassword, 'new_password': newPassword},
+    );
+  }
+
+  Future<void> deleteAccount(String password) async {
+    await _dio.delete<void>(
+      ApiEndpoints.deleteAccount,
+      data: {'password': password},
+    );
   }
 
   Future<bool> isUsernameAvailable(String username) async {

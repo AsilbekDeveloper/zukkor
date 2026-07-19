@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
+import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/domain/entities/user.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
+import '../../../duel/presentation/controllers/duel_controller.dart';
+import '../../../friends/presentation/controllers/friends_controller.dart';
+import '../../../leaderboard/domain/entities/player_stats.dart';
+import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
+import '../../../lobby/presentation/controllers/lobby_controller.dart';
 import '../../../lobby/presentation/screens/lobby_screen.dart';
+import '../../../notifications/presentation/controllers/notifications_controller.dart';
+import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../widgets/category_grid.dart';
 import '../widgets/duel_hero_card.dart';
-import '../widgets/friends_online_card.dart';
+import '../widgets/friends_card.dart';
 import '../widgets/home_header.dart';
 import '../widgets/multiplayer_row.dart';
 import '../widgets/stats_strip.dart';
@@ -21,37 +32,77 @@ import '../widgets/stats_strip.dart';
 /// header, duel hero card, stats strip, create/join room buttons,
 /// category grid, and an online-friends shortcut.
 ///
-/// CURRENT STATE: presentation only. All the data below (name, XP, rank,
-/// categories, friend count) is placeholder — it starts coming from the
-/// `quiz`/`accounts` data layers once those are rebuilt. "Start a duel"
-/// and the friends-online shortcut both push the Duel (choose a friend)
-/// screen; "See all", the center Play tab, and tapping a category all go
-/// to the Categories/quiz flow; "Create a room" and "Join with a code"
-/// go to the Lobby flow; the bell opens Notifications and clears its own
-/// unread dot on return, matching the prototype's `notif-bell-btn`
-/// handler. Every other action without a real destination yet (the Home
-/// tab itself) goes through [_comingSoon].
-class HomeScreen extends StatefulWidget {
+/// CURRENT STATE: name/avatar, the unread-notifications dot, and the
+/// stats strip (XP/rank/level) + streak are all real, from
+/// `GET /leaderboard/{my_user_id}` via [MyStatsController] (shared with
+/// [ProfileScreen]). "Start a duel" and the friends-online shortcut both
+/// push the Duel (choose a friend) screen;
+/// "See all", the center Play tab, and tapping a category all go to the
+/// Categories/quiz flow; "Create a room" and "Join with a code" go to
+/// the Lobby flow; the bell opens Notifications, which marks everything
+/// read on open — the dot here reflects that live, shared state (see
+/// [NotificationsController]), not a local flag. Every other action
+/// without a real destination yet (the Home tab itself) goes through
+/// [_comingSoon].
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  bool _hasUnreadNotifications = true;
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+    Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+    Future.microtask(() async {
+      await ref.read(currentUserControllerProvider.notifier).load();
+      final String? userId = ref.read(currentUserControllerProvider)?.id;
+      if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
+    });
+    Future.microtask(() => ref.read(duelControllerProvider.notifier).connect());
+    Future.microtask(() => ref.read(lobbyControllerProvider.notifier).connect());
+    Future.microtask(() => ref.read(notificationsControllerProvider.notifier).load());
+  }
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
-  Future<void> _openNotifications(BuildContext context) async {
-    await context.push(AppRoutes.notifications);
-    if (!mounted) return;
-    setState(() => _hasUnreadNotifications = false);
+  String _initials(User? user) {
+    final String first = (user?.firstName?.isNotEmpty ?? false) ? user!.firstName![0] : '';
+    final String last = (user?.lastName?.isNotEmpty ?? false) ? user!.lastName![0] : '';
+    final String combined = '$first$last'.toUpperCase();
+    return combined.isNotEmpty ? combined : '?';
   }
+
+  String _displayName(User? user) {
+    final String name = [user?.firstName, user?.lastName]
+        .where((part) => part != null && part.isNotEmpty)
+        .join(' ');
+    return name.isNotEmpty ? name : (user?.username ?? '');
+  }
+
+  void _openNotifications(BuildContext context) => context.push(AppRoutes.notifications);
 
   @override
   Widget build(BuildContext context) {
+    // Fires regardless of which screen is on top, as long as Home stays
+    // mounted underneath (go_router's `push` doesn't dispose it) — a
+    // real incoming challenge opens Duel Invite from wherever the user
+    // is in the app.
+    ref.listen(duelControllerProvider, (previous, next) {
+      if (next.incomingInvite != null && next.incomingInvite != previous?.incomingInvite) {
+        final invite = next.incomingInvite!;
+        ref.read(duelControllerProvider.notifier).clearIncoming();
+        context.push(AppRoutes.duelInvite, extra: invite);
+      }
+    });
+
     final double hPad = context.screenHPad;
+    final User? user = ref.watch(currentUserControllerProvider);
+    final bool hasUnreadNotifications =
+        ref.watch(notificationsControllerProvider)?.any((n) => !n.isRead) ?? false;
 
     return Scaffold(
       body: SafeArea(
@@ -60,9 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
           children: [
             HomeHeader(
-              name: 'Aziz Karimov',
-              initials: 'AK',
-              hasUnreadNotifications: _hasUnreadNotifications,
+              name: _displayName(user),
+              initials: _initials(user),
+              avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
+              avatarImagePath: user?.avatarImagePath,
+              hasUnreadNotifications: hasUnreadNotifications,
               onNotificationsTap: () => _openNotifications(context),
             ),
             AppSpacing.lg.vGap,
@@ -87,10 +140,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Hero card + stats + create/join room buttons.
   List<Widget> _playSection(BuildContext context) {
+    final PlayerStats? stats = ref.watch(myStatsControllerProvider);
+    final double xpProgress =
+        (stats == null || stats.nextLevelXp == 0) ? 0 : (stats.totalXp / stats.nextLevelXp).clamp(0, 1).toDouble();
+
     return [
-      DuelHeroCard(streakDays: 5, onStartDuel: () => context.push(AppRoutes.duel)),
+      DuelHeroCard(streakDays: stats?.currentStreak ?? 0, onStartDuel: () => context.push(AppRoutes.duel)),
       AppSpacing.md.vGap,
-      const StatsStrip(totalXp: 2140, xpProgress: 0.71, rank: 312, level: 12),
+      StatsStrip(
+        totalXp: stats?.totalXp ?? 0,
+        xpProgress: xpProgress,
+        rank: stats?.rank ?? 0,
+        level: stats?.level ?? 0,
+      ),
       AppSpacing.md.vGap,
       MultiplayerRow(
         onCreateRoom: () => context.push(AppRoutes.lobby, extra: LobbyRole.host),
@@ -101,14 +163,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Categories grid + friends-online shortcut.
   List<Widget> _discoverSection(BuildContext context) {
+    final List<QuizCategory> categories = ref
+            .watch(categoriesControllerProvider)
+            ?.map(QuizCategory.fromEntity)
+            .take(6)
+            .toList() ??
+        const [];
+
     return [
       CategoryGrid(
-        categories: QuizCategory.sample,
+        categories: categories,
         onSeeAll: () => context.push(AppRoutes.categories),
-        onCategoryTap: (category) => context.push(AppRoutes.quizIntro, extra: category),
+        onCategoryTap: (category) => context.push(AppRoutes.quizSetup, extra: category),
       ),
       AppSpacing.md.vGap,
-      FriendsOnlineCard(onlineCount: 3, onTap: () => context.push(AppRoutes.duel)),
+      FriendsCard(
+        friendCount: ref.watch(friendsControllerProvider)?.length ?? 0,
+        onTap: () => context.push(AppRoutes.duel),
+      ),
     ];
   }
 }

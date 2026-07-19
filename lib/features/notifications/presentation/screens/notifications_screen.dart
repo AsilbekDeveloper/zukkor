@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_x.dart';
@@ -8,14 +9,34 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/notification_record.dart' show NotificationKind;
+import '../controllers/notifications_controller.dart';
 import '../models/notification_entry.dart';
 import '../widgets/notification_list.dart';
 
 /// The notification inbox — mirrors the prototype's `view-notifications`.
-/// Only the duel-challenge row opens a real screen (Duel Invite); the
-/// rest have no destination yet, matching the prototype's `data-nav`.
-class NotificationsScreen extends StatelessWidget {
+/// Loads real entries from `GET /notifications` and marks them all read
+/// on open. A real incoming duel challenge no longer opens from here —
+/// it arrives live over the duel WebSocket and opens Duel Invite directly
+/// (see [HomeScreen]). Tapping a `friend_request` entry opens the Friend
+/// Requests screen; other kinds still show a coming-soon snackbar.
+class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
+
+  @override
+  ConsumerState<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      await ref.read(notificationsControllerProvider.notifier).load();
+      if (!mounted) return;
+      await ref.read(notificationsControllerProvider.notifier).markAllRead();
+    });
+  }
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -26,15 +47,17 @@ class NotificationsScreen extends StatelessWidget {
   }
 
   void _onEntryTap(BuildContext context, NotificationEntry entry) {
-    if (entry.opensDuelInvite) {
-      context.push(AppRoutes.duelInvite);
-    } else {
-      context.showSnack(context.t.bottomNav.comingSoon);
+    if (entry.kind == NotificationKind.friendRequest) {
+      context.push(AppRoutes.friendRequests);
+      return;
     }
+    context.showSnack(context.t.bottomNav.comingSoon);
   }
 
   @override
   Widget build(BuildContext context) {
+    final entries = ref.watch(notificationsControllerProvider)?.map(NotificationEntry.fromEntity).toList();
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -46,12 +69,21 @@ class NotificationsScreen extends StatelessWidget {
               BackHeader(title: context.t.notifications.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               Expanded(
-                child: SingleChildScrollView(
-                  child: NotificationList(
-                    entries: NotificationEntry.sample,
-                    onEntryTap: (entry) => _onEntryTap(context, entry),
-                  ),
-                ),
+                child: entries == null
+                    ? const Center(child: CircularProgressIndicator())
+                    : entries.isEmpty
+                        ? Center(
+                            child: Text(
+                              context.t.notifications.emptyState,
+                              style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            child: NotificationList(
+                              entries: entries,
+                              onEntryTap: (entry) => _onEntryTap(context, entry),
+                            ),
+                          ),
               ),
             ],
           ),

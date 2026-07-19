@@ -7,7 +7,7 @@
     "retry": "Qayta urinish",
     "loading": "Yuklanmoqda...",
     "dayUnit(param=count)": { "one": "kun", "other": "kun" },
-    "friendsOnline(param=count)": { "one": "$count do'st onlayn", "other": "$count do'st onlayn" },
+    "friendsCount(param=count)": { "one": "$count do'stingiz bor", "other": "$count do'stingiz bor" },
     "questionCount(param=count)": { "one": "$count savol", "other": "$count savol" }
   },
   "home": {
@@ -36,7 +36,7 @@
     "you": "Siz",
     "seeFullRanking": "To'liq reytingni ko'rish",
     "xpValue": "$xp XP",
-    "greetingFiltered": "Reyting · $category"
+    "anonymousPlayer": "O'yinchi"
   },
   "fullLeaderboard": {
     "title": "To'liq reyting"
@@ -48,14 +48,9 @@
     "requestSent": "Yuborildi",
     "rankedLabel": "#$rank o'rin · $xp XP"
   },
-  "rankFilter": {
-    "title": "Kategoriya bo'yicha",
-    "allCategories": "Barcha kategoriyalar"
-  },
   "friends": {
     "addFriend": "Do'st qo'shish",
     "searchPlaceholder": "Do'stlarni qidirish",
-    "onlineSection": "Onlayn",
     "allSection": "Barcha do'stlar",
     "noneFound": "Do'stlar topilmadi"
   },
@@ -65,7 +60,12 @@
     "yourInviteCode": "Sizning taklif kodingiz",
     "shareLink": "Havolani ulashish",
     "addButton": "Qo'shish",
+    "requestedLabel": "So'rov yuborildi",
     "noUsersFound": "Foydalanuvchilar topilmadi"
+  },
+  "friendRequests": {
+    "title": "Do'stlik so'rovlari",
+    "emptyState": "Hozircha so'rovlar yo'q"
   },
   "duelPick": {
     "title": "1v1 Duel",
@@ -94,7 +94,26 @@
     "privacy": "Maxfiylik",
     "helpCenter": "Yordam markazi",
     "termsOfUse": "Foydalanish shartlari",
-    "logOut": "Chiqish"
+    "changePassword": "Parolni o'zgartirish",
+    "logOut": "Chiqish",
+    "groupDangerZone": "Xavfli zona",
+    "deleteAccount": "Akkauntni o'chirish"
+  },
+  "changePassword": {
+    "title": "Parolni o'zgartirish",
+    "currentPasswordLabel": "Joriy parol",
+    "currentPasswordHint": "Joriy parolingizni kiriting",
+    "newPasswordLabel": "Yangi parol",
+    "newPasswordHint": "Kamida 8 ta belgi",
+    "confirmNewPasswordLabel": "Yangi parolni tasdiqlang",
+    "confirmNewPasswordHint": "Yangi parolni qayta kiriting",
+    "saveButton": "Saqlash",
+    "updated": "Parol muvaffaqiyatli o'zgartirildi"
+  },
+  "deleteAccount": {
+    "confirmTitle": "Akkauntni o'chirish",
+    "confirmMessage": "Bu amalni ortga qaytarib bo'lmaydi. Barcha ma'lumotlaringiz — do'stlar, tarix, ball — butunlay o'chiriladi. Davom etish uchun parolingizni kiriting.",
+    "confirmButton": "Ha, o'chirish"
   },
   "history": {
     "segmentAll": "Barchasi",
@@ -102,7 +121,20 @@
     "segmentDuel": "Duel",
     "segmentLobby": "Xona",
     "winBadge": "G'alaba",
-    "lossBadge": "Mag'lubiyat"
+    "lossBadge": "Mag'lubiyat",
+    "drawBadge": "Durrang",
+    "today": "Bugun",
+    "yesterday": "Kecha",
+    "daysAgo": "$days kun oldin",
+    "emptyState": "Bu turdagi o'yinlar hali saqlanmaydi",
+    "noGamesYet": "Hali o'ynalgan o'yinlar yo'q",
+    "lobbyPlayerCount": "$count o'yinchi"
+  },
+  "quizSetup": {
+    "title": "Nechta savol?",
+    "subtitle": "Tezkor variantni tanlang yoki o'zingiz belgilang",
+    "customLabel": "O'zi tanlash",
+    "startButton": "Quizni boshlash"
   },
   "quizIntro": {
     "startLabel": "Boshlash!"
@@ -110,9 +142,14 @@
   "quiz": {
     "questionProgress": "$current/$total-savol"
   },
+  "ballReveal": {
+    "title": "Sizning balingiz",
+    "ballLabel": "ball"
+  },
   "result": {
     "label": "Natija",
     "summary": "$total tadan $correct tasi to'g'ri",
+    "totalBall": "$ball ball",
     "xpEarned": "+$xp XP",
     "playAgain": "Yana o'ynash",
     "challengeAFriend": "Do'stni chaqirish",
@@ -121,7 +158,9 @@
   "joinCode": {
     "hint": "Do'stingiz yuborgan 6 xonali xona kodini kiriting",
     "joinButton": "Qo'shilish",
-    "codeDigitLabel": "$position-raqam"
+    "codeDigitLabel": "$position-raqam",
+    "roomNotFound": "Bunday xona topilmadi",
+    "roomFull": "Xona to'lgan"
   },
   "lobby": {
     "title": "Ko'p o'yinchili xona",
@@ -131,7 +170,11 @@
     "guestRole": "Mehmon",
     "startGame": "O'yinni boshlash",
     "waitingForHost": "Xost o'yinni boshlashini kutmoqda…",
-    "playerCount": "$current/$max"
+    "playerCount": "$current/$max",
+    "closedMessage": "Xost xonani tark etdi, xona yopildi"
+  },
+  "lobbyGame": {
+    "answeredProgress": "$answered/$total javob berdi"
   },
   "lobbyResult": {
     "title": "Xona natijalari",
@@ -140,8 +183,10 @@
   },
   "duelWaiting": {
     "title": "Duel",
-    "waitingForAnswer": "Uning javobini kutmoqda…",
-    "startDemo": "Boshlash (demo)"
+    "waitingForAccept": "Taklif yuborildi, javobni kutmoqda…",
+    "declined": "Taklif rad etildi",
+    "expired": "Taklif muddati tugadi",
+    "backToHome": "Bosh sahifaga"
   },
   "duelInvite": {
     "title": "Duelga taklif",
@@ -149,13 +194,26 @@
     "accept": "Qabul qilish",
     "decline": "Rad etish"
   },
+  "duelGame": {
+    "title": "Duel",
+    "waitingForQuestion": "Savol tayyorlanmoqda…",
+    "opponentAnswered": "Raqib javob berdi"
+  },
+  "duelResult": {
+    "won": "Siz g'olib bo'ldingiz!",
+    "lost": "Siz yutqazdingiz",
+    "draw": "Durrang!",
+    "yourScoreLabel": "Siz",
+    "opponentScoreLabel": "Raqib"
+  },
   "notifications": {
     "title": "Bildirishnomalar",
     "duelChallenge": "Malika sizni duelga chaqirdi",
     "streakReminder": "5 kunlik seriyangizni yo'qotmang — bugun o'ynang!",
     "top50": "Siz haftalik Top 50ga kirdingiz",
     "friendRequest": "Bekzod Xolmatov sizga do'stlik so'rovi yubordi",
-    "welcome": "Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang"
+    "welcome": "Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang",
+    "emptyState": "Hozircha bildirishnomalar yo'q"
   },
   "editProfile": {
     "save": "Saqlash",

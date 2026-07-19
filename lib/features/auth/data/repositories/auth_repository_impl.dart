@@ -5,12 +5,15 @@ import '../../../../core/network/failure_mapper.dart';
 import '../../../../core/storage/token_storage.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/usecases/change_password_use_case.dart';
 import '../../domain/usecases/check_username_available_use_case.dart';
-import '../../domain/usecases/complete_onboarding_use_case.dart';
+import '../../domain/usecases/delete_account_use_case.dart';
 import '../../domain/usecases/get_current_user_use_case.dart';
 import '../../domain/usecases/login_use_case.dart';
 import '../../domain/usecases/logout_use_case.dart';
 import '../../domain/usecases/register_use_case.dart';
+import '../../domain/usecases/update_profile_use_case.dart';
+import '../../domain/usecases/upload_avatar_image_use_case.dart';
 import '../datasources/auth_remote_data_source.dart';
 import '../models/auth_tokens_model.dart';
 
@@ -63,25 +66,68 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User> completeOnboarding({
+  Future<User> updateProfile({
     required String username,
     required String firstName,
     required String lastName,
     required String avatarColor,
     required String direction,
+    List<String>? interests,
+    String? studyPlace,
+    String? quizLiking,
   }) async {
     try {
-      return (await _remoteDataSource.completeOnboarding(
+      return (await _remoteDataSource.updateProfile(
         username: username,
         firstName: firstName,
         lastName: lastName,
         avatarColor: avatarColor,
         direction: direction,
+        interests: interests,
+        studyPlace: studyPlace,
+        quizLiking: quizLiking,
       ))
           .toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
+  }
+
+  @override
+  Future<User> uploadAvatarImage(String filePath) async {
+    try {
+      return (await _remoteDataSource.uploadAvatarImage(filePath)).toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      await _remoteDataSource.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      );
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<void> deleteAccount(String password) async {
+    try {
+      await _remoteDataSource.deleteAccount(password);
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+    // Faqat muvaffaqiyatli o'chirilgandan keyin tozalanadi — logout'dagi
+    // "baribir tozalash"dan farqli, chunki bu yerda so'rov muvaffaqiyatsiz
+    // bo'lsa yuqoridagi throw ishlaydi va bu qatorga yetib kelinmaydi.
+    await _tokenStorage.clear();
   }
 
   @override
@@ -141,12 +187,24 @@ final Provider<LogoutUseCase> logoutUseCaseProvider = Provider<LogoutUseCase>(
   (ref) => LogoutUseCase(ref.watch(authRepositoryProvider)),
 );
 
-final Provider<CompleteOnboardingUseCase> completeOnboardingUseCaseProvider =
-    Provider<CompleteOnboardingUseCase>(
-  (ref) => CompleteOnboardingUseCase(ref.watch(authRepositoryProvider)),
+final Provider<UpdateProfileUseCase> updateProfileUseCaseProvider = Provider<UpdateProfileUseCase>(
+  (ref) => UpdateProfileUseCase(ref.watch(authRepositoryProvider)),
 );
 
 final Provider<CheckUsernameAvailableUseCase> checkUsernameAvailableUseCaseProvider =
     Provider<CheckUsernameAvailableUseCase>(
   (ref) => CheckUsernameAvailableUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<UploadAvatarImageUseCase> uploadAvatarImageUseCaseProvider =
+    Provider<UploadAvatarImageUseCase>(
+  (ref) => UploadAvatarImageUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<ChangePasswordUseCase> changePasswordUseCaseProvider = Provider<ChangePasswordUseCase>(
+  (ref) => ChangePasswordUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<DeleteAccountUseCase> deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>(
+  (ref) => DeleteAccountUseCase(ref.watch(authRepositoryProvider)),
 );

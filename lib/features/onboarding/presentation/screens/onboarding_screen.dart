@@ -10,12 +10,15 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/onboarding_progress_header.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
+import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../models/onboarding_direction.dart';
 import '../widgets/avatar_step.dart';
 import '../widgets/direction_step.dart';
@@ -27,6 +30,11 @@ import '../widgets/profile_info_step.dart';
 /// no per-step network call, EXCEPT step 2, which does a lightweight
 /// `GET /users/username-available` check before advancing so a taken
 /// username is caught immediately rather than only after step 3.
+///
+/// That final request also folds in whatever Introduction-survey answers
+/// [AppPreferences] is holding (interests/study place/quiz liking, saved
+/// pre-registration since there was no user yet to attach them to) —
+/// cleared afterward so they're never resent.
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -121,13 +129,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Future<void> _finish() async {
     try {
-      await ref.read(authControllerProvider.notifier).completeOnboarding(
+      final AppPreferences prefs = ref.read(appPreferencesProvider);
+      final User updated = await ref.read(authControllerProvider.notifier).updateProfile(
             username: _usernameController.text.trim(),
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
             avatarColor: _avatarColor.apiValue,
             direction: _direction!.apiValue,
+            interests: prefs.introInterests,
+            studyPlace: prefs.introStudyPlace,
+            quizLiking: prefs.introQuizLiking,
           );
+      await prefs.clearIntroSurvey();
+      ref.read(currentUserControllerProvider.notifier).setUser(updated);
       if (!mounted) return;
       context.go(AppRoutes.home);
     } on Failure catch (e) {

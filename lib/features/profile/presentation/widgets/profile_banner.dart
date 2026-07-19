@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
+import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// The coral gradient banner with an overlapping avatar circle — mirrors
 /// the prototype's `.profile-banner` / `.profile-avatar-wrap`.
 class ProfileBanner extends StatelessWidget {
-  const ProfileBanner({required this.initials, required this.onEditTap, super.key});
+  const ProfileBanner({
+    required this.initials,
+    required this.avatarColor,
+    required this.onEditTap,
+    this.avatarImagePath,
+    super.key,
+  });
 
   final String initials;
+  final AvatarColorOption avatarColor;
+  final String? avatarImagePath;
   final VoidCallback onEditTap;
 
   static const double _bannerHeight = 92;
@@ -71,23 +81,18 @@ class ProfileBanner extends StatelessWidget {
             bottom: -_avatarOverhang,
             child: Center(
               child: Container(
-                width: _avatarSize,
-                height: _avatarSize,
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: AppRadius.mdAll,
                   border: Border.all(color: context.colors.cream, width: 4),
                   boxShadow: context.colors.shadowMd,
                 ),
-                alignment: Alignment.center,
-                child: Text(
-                  initials,
-                  style: TextStyle(
-                    fontFamily: 'PlusJakartaSans',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 21,
-                    color: context.colors.coralDeep,
-                  ),
+                child: UserAvatar(
+                  size: _avatarSize,
+                  initials: initials,
+                  avatarImagePath: avatarImagePath,
+                  backgroundColor: avatarColor.resolve(context),
+                  borderRadius: AppRadius.mdAll,
+                  fontSize: 21,
                 ),
               ),
             ),

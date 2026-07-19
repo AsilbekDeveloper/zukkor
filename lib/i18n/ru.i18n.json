@@ -12,11 +12,11 @@
       "many": "дней",
       "other": "дня"
     },
-    "friendsOnline(param=count)": {
-      "one": "$count друг онлайн",
-      "few": "$count друга онлайн",
-      "many": "$count друзей онлайн",
-      "other": "$count друга онлайн"
+    "friendsCount(param=count)": {
+      "one": "$count друг",
+      "few": "$count друга",
+      "many": "$count друзей",
+      "other": "$count друга"
     },
     "questionCount(param=count)": {
       "one": "$count вопрос",
@@ -51,7 +51,7 @@
     "you": "Вы",
     "seeFullRanking": "Смотреть полный рейтинг",
     "xpValue": "$xp XP",
-    "greetingFiltered": "Рейтинг · $category"
+    "anonymousPlayer": "Игрок"
   },
   "fullLeaderboard": {
     "title": "Полный рейтинг"
@@ -63,14 +63,9 @@
     "requestSent": "Отправлено",
     "rankedLabel": "#$rank место · $xp XP"
   },
-  "rankFilter": {
-    "title": "По категориям",
-    "allCategories": "Все категории"
-  },
   "friends": {
     "addFriend": "Добавить друга",
     "searchPlaceholder": "Поиск друзей",
-    "onlineSection": "Онлайн",
     "allSection": "Все друзья",
     "noneFound": "Друзья не найдены"
   },
@@ -80,7 +75,12 @@
     "yourInviteCode": "Ваш код приглашения",
     "shareLink": "Поделиться ссылкой",
     "addButton": "Добавить",
+    "requestedLabel": "Запрос отправлен",
     "noUsersFound": "Пользователи не найдены"
+  },
+  "friendRequests": {
+    "title": "Запросы в друзья",
+    "emptyState": "Пока нет запросов"
   },
   "duelPick": {
     "title": "Дуэль 1×1",
@@ -109,7 +109,26 @@
     "privacy": "Конфиденциальность",
     "helpCenter": "Центр помощи",
     "termsOfUse": "Условия использования",
-    "logOut": "Выйти"
+    "changePassword": "Изменить пароль",
+    "logOut": "Выйти",
+    "groupDangerZone": "Опасная зона",
+    "deleteAccount": "Удалить аккаунт"
+  },
+  "changePassword": {
+    "title": "Изменить пароль",
+    "currentPasswordLabel": "Текущий пароль",
+    "currentPasswordHint": "Введите текущий пароль",
+    "newPasswordLabel": "Новый пароль",
+    "newPasswordHint": "Минимум 8 символов",
+    "confirmNewPasswordLabel": "Подтвердите новый пароль",
+    "confirmNewPasswordHint": "Введите новый пароль ещё раз",
+    "saveButton": "Сохранить",
+    "updated": "Пароль успешно изменён"
+  },
+  "deleteAccount": {
+    "confirmTitle": "Удалить аккаунт",
+    "confirmMessage": "Это действие нельзя отменить. Все ваши данные — друзья, история, баллы — будут безвозвратно удалены. Введите пароль, чтобы продолжить.",
+    "confirmButton": "Да, удалить"
   },
   "history": {
     "segmentAll": "Все",
@@ -117,7 +136,20 @@
     "segmentDuel": "Дуэль",
     "segmentLobby": "Комната",
     "winBadge": "Победа",
-    "lossBadge": "Поражение"
+    "lossBadge": "Поражение",
+    "drawBadge": "Ничья",
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "daysAgo": "$days дней назад",
+    "emptyState": "Игры этого типа пока не сохраняются",
+    "noGamesYet": "Пока нет сыгранных игр",
+    "lobbyPlayerCount": "$count игроков"
+  },
+  "quizSetup": {
+    "title": "Сколько вопросов?",
+    "subtitle": "Выберите готовый вариант или укажите своё число",
+    "customLabel": "Свой вариант",
+    "startButton": "Начать викторину"
   },
   "quizIntro": {
     "startLabel": "Старт!"
@@ -125,9 +157,14 @@
   "quiz": {
     "questionProgress": "Вопрос $current из $total"
   },
+  "ballReveal": {
+    "title": "Ваши баллы",
+    "ballLabel": "баллов"
+  },
   "result": {
     "label": "Результат",
     "summary": "$correct из $total правильно",
+    "totalBall": "$ball баллов",
     "xpEarned": "+$xp XP",
     "playAgain": "Играть снова",
     "challengeAFriend": "Вызвать друга",
@@ -136,7 +173,9 @@
   "joinCode": {
     "hint": "Введите 6-значный код комнаты, который прислал друг",
     "joinButton": "Присоединиться",
-    "codeDigitLabel": "Цифра кода $position"
+    "codeDigitLabel": "Цифра кода $position",
+    "roomNotFound": "Комната с таким кодом не найдена",
+    "roomFull": "Эта комната заполнена"
   },
   "lobby": {
     "title": "Комната для нескольких игроков",
@@ -146,7 +185,11 @@
     "guestRole": "Гость",
     "startGame": "Начать игру",
     "waitingForHost": "Ожидание, пока хост начнёт игру…",
-    "playerCount": "$current/$max"
+    "playerCount": "$current/$max",
+    "closedMessage": "Хост покинул комнату, комната закрыта"
+  },
+  "lobbyGame": {
+    "answeredProgress": "$answered/$total ответили"
   },
   "lobbyResult": {
     "title": "Результаты комнаты",
@@ -155,8 +198,10 @@
   },
   "duelWaiting": {
     "title": "Дуэль",
-    "waitingForAnswer": "Ожидание его ответа…",
-    "startDemo": "Начать (демо)"
+    "waitingForAccept": "Приглашение отправлено, ожидание ответа…",
+    "declined": "Приглашение отклонено",
+    "expired": "Срок приглашения истёк",
+    "backToHome": "На главную"
   },
   "duelInvite": {
     "title": "Приглашение на дуэль",
@@ -164,13 +209,26 @@
     "accept": "Принять",
     "decline": "Отклонить"
   },
+  "duelGame": {
+    "title": "Дуэль",
+    "waitingForQuestion": "Подготовка вопроса…",
+    "opponentAnswered": "Соперник ответил"
+  },
+  "duelResult": {
+    "won": "Вы победили!",
+    "lost": "Вы проиграли",
+    "draw": "Ничья!",
+    "yourScoreLabel": "Вы",
+    "opponentScoreLabel": "Соперник"
+  },
   "notifications": {
     "title": "Уведомления",
     "duelChallenge": "Малика вызвала вас на дуэль",
     "streakReminder": "Не теряйте серию из 5 дней — играйте сегодня!",
     "top50": "Вы попали в топ-50 недели",
     "friendRequest": "Бекзод Холматов отправил вам запрос в друзья",
-    "welcome": "Добро пожаловать в Zukkor! Начните свою первую викторину"
+    "welcome": "Добро пожаловать в Zukkor! Начните свою первую викторину",
+    "emptyState": "Пока нет уведомлений"
   },
   "editProfile": {
     "save": "Сохранить",

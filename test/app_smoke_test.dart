@@ -34,12 +34,15 @@ class _FakeAuthRepository implements AuthRepository {
       );
 
   @override
-  Future<User> completeOnboarding({
+  Future<User> updateProfile({
     required String username,
     required String firstName,
     required String lastName,
     required String avatarColor,
     required String direction,
+    List<String>? interests,
+    String? studyPlace,
+    String? quizLiking,
   }) async =>
       User(
         id: '1',
@@ -59,6 +62,16 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout() async {}
+
+  @override
+  Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
+
+  @override
+  Future<void> changePassword({required String currentPassword, required String newPassword}) =>
+      throw UnimplementedError();
+
+  @override
+  Future<void> deleteAccount(String password) => throw UnimplementedError();
 }
 
 /// Butun ilova ulanishining smoke testi: ProviderScope + tema + router

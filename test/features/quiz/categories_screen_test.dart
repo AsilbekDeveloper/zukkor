@@ -15,10 +15,50 @@ import 'package:zukkor/features/friends/presentation/models/duel_match.dart';
 import 'package:zukkor/features/friends/presentation/models/friend_entry.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_waiting_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
+import 'package:zukkor/features/quiz/data/repositories/quiz_repository_impl.dart';
+import 'package:zukkor/features/quiz/domain/entities/answer_result.dart';
+import 'package:zukkor/features/quiz/domain/entities/category.dart';
+import 'package:zukkor/features/quiz/domain/entities/quiz_start_result.dart';
+import 'package:zukkor/features/quiz/domain/repositories/quiz_repository.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_category.dart';
+import 'package:zukkor/features/quiz/presentation/models/quiz_launch_args.dart';
 import 'package:zukkor/features/quiz/presentation/screens/categories_screen.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_intro_screen.dart';
+import 'package:zukkor/features/quiz/presentation/screens/quiz_setup_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
+
+/// Backendga murojaat qilmaydigan soxta quiz repository — Categories
+/// ekrani ochilganda `GET /categories`ni chaqiradi, haqiqiy tarmoqqa
+/// bog'liq bo'lmasligi kerak.
+class _FakeQuizRepository implements QuizRepository {
+  @override
+  Future<List<Category>> getCategories() async => const [
+        Category(id: 1, name: 'Math', iconName: 'math-symbols', colorKey: 'coral', questionCount: 120),
+        Category(id: 2, name: 'History', iconName: 'book', colorKey: 'terra', questionCount: 98),
+        Category(id: 3, name: 'English', iconName: 'language', colorKey: 'teal', questionCount: 150),
+        Category(id: 4, name: 'Movies', iconName: 'movie', colorKey: 'pink', questionCount: 76),
+        Category(
+          id: 5,
+          name: 'Football',
+          iconName: 'ball-football',
+          colorKey: 'green',
+          questionCount: 64,
+        ),
+        Category(id: 6, name: 'Memes', iconName: 'mood-smile', colorKey: 'blue', questionCount: 50),
+      ];
+
+  @override
+  Future<QuizStartResult> startQuiz({required int categoryId, required int questionCount}) =>
+      throw UnimplementedError();
+
+  @override
+  Future<AnswerResult> submitAnswer({
+    required String sessionId,
+    required int sessionQuestionId,
+    required int? selectedOption,
+  }) =>
+      throw UnimplementedError();
+}
 
 Future<GoRouter> _pumpCategories(
   WidgetTester tester, {
@@ -40,8 +80,12 @@ Future<GoRouter> _pumpCategories(
         builder: (context, state) => CategoriesScreen(duelOpponent: state.extra as FriendEntry?),
       ),
       GoRoute(
+        path: AppRoutes.quizSetup,
+        builder: (context, state) => QuizSetupScreen(category: state.extra! as QuizCategory),
+      ),
+      GoRoute(
         path: AppRoutes.quizIntro,
-        builder: (context, state) => QuizIntroScreen(category: state.extra! as QuizCategory),
+        builder: (context, state) => QuizIntroScreen(args: state.extra! as QuizLaunchArgs),
       ),
       GoRoute(
         path: AppRoutes.duelWaiting,
@@ -55,7 +99,10 @@ Future<GoRouter> _pumpCategories(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
+      ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       ),
@@ -86,30 +133,21 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping a category starts the quiz flow (Quiz Intro)', (tester) async {
+  testWidgets('tapping a category opens the question-count picker (Quiz Setup)', (tester) async {
     await _pumpCategories(tester);
 
-    // A single pump (not pumpAndSettle): QuizIntroScreen runs its own
-    // 700ms-tick countdown timer that keeps scheduling frames for ~4s
-    // before auto-navigating onward — settling here would either time
-    // out or hit the (unregistered, in this minimal test router) /quiz
-    // route once the countdown finishes. `push` (not `go`) also leaves
-    // Categories mounted underneath, so this checks the new screen
-    // arrived rather than the old one being gone.
     await tester.tap(find.text('Math'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pumpAndSettle();
 
-    expect(find.byType(QuizIntroScreen), findsOneWidget);
+    expect(find.byType(QuizSetupScreen), findsOneWidget);
   });
 
   testWidgets('with a pending duel opponent, tapping a category opens Duel Waiting instead', (tester) async {
     const FriendEntry opponent = FriendEntry(
       name: 'Malika Yusupova',
+      username: 'malika_yusupova',
       initials: 'MR',
       avatarColor: AvatarColorOption.teal,
-      isOnline: true,
-      statusLabel: 'Online',
     );
     await _pumpCategories(tester, duelOpponent: opponent);
 
@@ -120,7 +158,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.byType(DuelWaitingScreen), findsOneWidget);
-    expect(find.byType(QuizIntroScreen), findsNothing);
+    expect(find.byType(QuizSetupScreen), findsNothing);
     expect(find.text('Malika Yusupova'), findsOneWidget);
     // Categories stays mounted underneath (pushed on top of it) and has
     // its own "History" category tile, so at least one match is enough.

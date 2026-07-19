@@ -43,21 +43,28 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$leaderboard$uz leaderboard = _Translations$leaderboard$uz._(_root);
 	@override late final _Translations$fullLeaderboard$uz fullLeaderboard = _Translations$fullLeaderboard$uz._(_root);
 	@override late final _Translations$playerDetail$uz playerDetail = _Translations$playerDetail$uz._(_root);
-	@override late final _Translations$rankFilter$uz rankFilter = _Translations$rankFilter$uz._(_root);
 	@override late final _Translations$friends$uz friends = _Translations$friends$uz._(_root);
 	@override late final _Translations$addFriend$uz addFriend = _Translations$addFriend$uz._(_root);
+	@override late final _Translations$friendRequests$uz friendRequests = _Translations$friendRequests$uz._(_root);
 	@override late final _Translations$duelPick$uz duelPick = _Translations$duelPick$uz._(_root);
 	@override late final _Translations$profile$uz profile = _Translations$profile$uz._(_root);
 	@override late final _Translations$settings$uz settings = _Translations$settings$uz._(_root);
+	@override late final _Translations$changePassword$uz changePassword = _Translations$changePassword$uz._(_root);
+	@override late final _Translations$deleteAccount$uz deleteAccount = _Translations$deleteAccount$uz._(_root);
 	@override late final _Translations$history$uz history = _Translations$history$uz._(_root);
+	@override late final _Translations$quizSetup$uz quizSetup = _Translations$quizSetup$uz._(_root);
 	@override late final _Translations$quizIntro$uz quizIntro = _Translations$quizIntro$uz._(_root);
 	@override late final _Translations$quiz$uz quiz = _Translations$quiz$uz._(_root);
+	@override late final _Translations$ballReveal$uz ballReveal = _Translations$ballReveal$uz._(_root);
 	@override late final _Translations$result$uz result = _Translations$result$uz._(_root);
 	@override late final _Translations$joinCode$uz joinCode = _Translations$joinCode$uz._(_root);
 	@override late final _Translations$lobby$uz lobby = _Translations$lobby$uz._(_root);
+	@override late final _Translations$lobbyGame$uz lobbyGame = _Translations$lobbyGame$uz._(_root);
 	@override late final _Translations$lobbyResult$uz lobbyResult = _Translations$lobbyResult$uz._(_root);
 	@override late final _Translations$duelWaiting$uz duelWaiting = _Translations$duelWaiting$uz._(_root);
 	@override late final _Translations$duelInvite$uz duelInvite = _Translations$duelInvite$uz._(_root);
+	@override late final _Translations$duelGame$uz duelGame = _Translations$duelGame$uz._(_root);
+	@override late final _Translations$duelResult$uz duelResult = _Translations$duelResult$uz._(_root);
 	@override late final _Translations$notifications$uz notifications = _Translations$notifications$uz._(_root);
 	@override late final _Translations$editProfile$uz editProfile = _Translations$editProfile$uz._(_root);
 	@override late final _Translations$notificationSettings$uz notificationSettings = _Translations$notificationSettings$uz._(_root);
@@ -89,9 +96,9 @@ class _Translations$common$uz implements Translations$common$en {
 		one: 'kun',
 		other: 'kun',
 	);
-	@override String friendsOnline({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count,
-		one: '${count} do\'st onlayn',
-		other: '${count} do\'st onlayn',
+	@override String friendsCount({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count,
+		one: '${count} do\'stingiz bor',
+		other: '${count} do\'stingiz bor',
 	);
 	@override String questionCount({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count,
 		one: '${count} savol',
@@ -145,7 +152,7 @@ class _Translations$leaderboard$uz implements Translations$leaderboard$en {
 	@override String get you => 'Siz';
 	@override String get seeFullRanking => 'To\'liq reytingni ko\'rish';
 	@override String xpValue({required Object xp}) => '${xp} XP';
-	@override String greetingFiltered({required Object category}) => 'Reyting · ${category}';
+	@override String get anonymousPlayer => 'O\'yinchi';
 }
 
 // Path: fullLeaderboard
@@ -172,17 +179,6 @@ class _Translations$playerDetail$uz implements Translations$playerDetail$en {
 	@override String rankedLabel({required Object rank, required Object xp}) => '#${rank} o\'rin · ${xp} XP';
 }
 
-// Path: rankFilter
-class _Translations$rankFilter$uz implements Translations$rankFilter$en {
-	_Translations$rankFilter$uz._(this._root);
-
-	final TranslationsUz _root; // ignore: unused_field
-
-	// Translations
-	@override String get title => 'Kategoriya bo\'yicha';
-	@override String get allCategories => 'Barcha kategoriyalar';
-}
-
 // Path: friends
 class _Translations$friends$uz implements Translations$friends$en {
 	_Translations$friends$uz._(this._root);
@@ -192,7 +188,6 @@ class _Translations$friends$uz implements Translations$friends$en {
 	// Translations
 	@override String get addFriend => 'Do\'st qo\'shish';
 	@override String get searchPlaceholder => 'Do\'stlarni qidirish';
-	@override String get onlineSection => 'Onlayn';
 	@override String get allSection => 'Barcha do\'stlar';
 	@override String get noneFound => 'Do\'stlar topilmadi';
 }
@@ -209,7 +204,19 @@ class _Translations$addFriend$uz implements Translations$addFriend$en {
 	@override String get yourInviteCode => 'Sizning taklif kodingiz';
 	@override String get shareLink => 'Havolani ulashish';
 	@override String get addButton => 'Qo\'shish';
+	@override String get requestedLabel => 'So\'rov yuborildi';
 	@override String get noUsersFound => 'Foydalanuvchilar topilmadi';
+}
+
+// Path: friendRequests
+class _Translations$friendRequests$uz implements Translations$friendRequests$en {
+	_Translations$friendRequests$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Do\'stlik so\'rovlari';
+	@override String get emptyState => 'Hozircha so\'rovlar yo\'q';
 }
 
 // Path: duelPick
@@ -259,7 +266,40 @@ class _Translations$settings$uz implements Translations$settings$en {
 	@override String get privacy => 'Maxfiylik';
 	@override String get helpCenter => 'Yordam markazi';
 	@override String get termsOfUse => 'Foydalanish shartlari';
+	@override String get changePassword => 'Parolni o\'zgartirish';
 	@override String get logOut => 'Chiqish';
+	@override String get groupDangerZone => 'Xavfli zona';
+	@override String get deleteAccount => 'Akkauntni o\'chirish';
+}
+
+// Path: changePassword
+class _Translations$changePassword$uz implements Translations$changePassword$en {
+	_Translations$changePassword$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Parolni o\'zgartirish';
+	@override String get currentPasswordLabel => 'Joriy parol';
+	@override String get currentPasswordHint => 'Joriy parolingizni kiriting';
+	@override String get newPasswordLabel => 'Yangi parol';
+	@override String get newPasswordHint => 'Kamida 8 ta belgi';
+	@override String get confirmNewPasswordLabel => 'Yangi parolni tasdiqlang';
+	@override String get confirmNewPasswordHint => 'Yangi parolni qayta kiriting';
+	@override String get saveButton => 'Saqlash';
+	@override String get updated => 'Parol muvaffaqiyatli o\'zgartirildi';
+}
+
+// Path: deleteAccount
+class _Translations$deleteAccount$uz implements Translations$deleteAccount$en {
+	_Translations$deleteAccount$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get confirmTitle => 'Akkauntni o\'chirish';
+	@override String get confirmMessage => 'Bu amalni ortga qaytarib bo\'lmaydi. Barcha ma\'lumotlaringiz — do\'stlar, tarix, ball — butunlay o\'chiriladi. Davom etish uchun parolingizni kiriting.';
+	@override String get confirmButton => 'Ha, o\'chirish';
 }
 
 // Path: history
@@ -275,6 +315,26 @@ class _Translations$history$uz implements Translations$history$en {
 	@override String get segmentLobby => 'Xona';
 	@override String get winBadge => 'G\'alaba';
 	@override String get lossBadge => 'Mag\'lubiyat';
+	@override String get drawBadge => 'Durrang';
+	@override String get today => 'Bugun';
+	@override String get yesterday => 'Kecha';
+	@override String daysAgo({required Object days}) => '${days} kun oldin';
+	@override String get emptyState => 'Bu turdagi o\'yinlar hali saqlanmaydi';
+	@override String get noGamesYet => 'Hali o\'ynalgan o\'yinlar yo\'q';
+	@override String lobbyPlayerCount({required Object count}) => '${count} o\'yinchi';
+}
+
+// Path: quizSetup
+class _Translations$quizSetup$uz implements Translations$quizSetup$en {
+	_Translations$quizSetup$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Nechta savol?';
+	@override String get subtitle => 'Tezkor variantni tanlang yoki o\'zingiz belgilang';
+	@override String get customLabel => 'O\'zi tanlash';
+	@override String get startButton => 'Quizni boshlash';
 }
 
 // Path: quizIntro
@@ -297,6 +357,17 @@ class _Translations$quiz$uz implements Translations$quiz$en {
 	@override String questionProgress({required Object current, required Object total}) => '${current}/${total}-savol';
 }
 
+// Path: ballReveal
+class _Translations$ballReveal$uz implements Translations$ballReveal$en {
+	_Translations$ballReveal$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Sizning balingiz';
+	@override String get ballLabel => 'ball';
+}
+
 // Path: result
 class _Translations$result$uz implements Translations$result$en {
 	_Translations$result$uz._(this._root);
@@ -306,6 +377,7 @@ class _Translations$result$uz implements Translations$result$en {
 	// Translations
 	@override String get label => 'Natija';
 	@override String summary({required Object total, required Object correct}) => '${total} tadan ${correct} tasi to\'g\'ri';
+	@override String totalBall({required Object ball}) => '${ball} ball';
 	@override String xpEarned({required Object xp}) => '+${xp} XP';
 	@override String get playAgain => 'Yana o\'ynash';
 	@override String get challengeAFriend => 'Do\'stni chaqirish';
@@ -322,6 +394,8 @@ class _Translations$joinCode$uz implements Translations$joinCode$en {
 	@override String get hint => 'Do\'stingiz yuborgan 6 xonali xona kodini kiriting';
 	@override String get joinButton => 'Qo\'shilish';
 	@override String codeDigitLabel({required Object position}) => '${position}-raqam';
+	@override String get roomNotFound => 'Bunday xona topilmadi';
+	@override String get roomFull => 'Xona to\'lgan';
 }
 
 // Path: lobby
@@ -339,6 +413,17 @@ class _Translations$lobby$uz implements Translations$lobby$en {
 	@override String get startGame => 'O\'yinni boshlash';
 	@override String get waitingForHost => 'Xost o\'yinni boshlashini kutmoqda…';
 	@override String playerCount({required Object current, required Object max}) => '${current}/${max}';
+	@override String get closedMessage => 'Xost xonani tark etdi, xona yopildi';
+}
+
+// Path: lobbyGame
+class _Translations$lobbyGame$uz implements Translations$lobbyGame$en {
+	_Translations$lobbyGame$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String answeredProgress({required Object answered, required Object total}) => '${answered}/${total} javob berdi';
 }
 
 // Path: lobbyResult
@@ -361,8 +446,10 @@ class _Translations$duelWaiting$uz implements Translations$duelWaiting$en {
 
 	// Translations
 	@override String get title => 'Duel';
-	@override String get waitingForAnswer => 'Uning javobini kutmoqda…';
-	@override String get startDemo => 'Boshlash (demo)';
+	@override String get waitingForAccept => 'Taklif yuborildi, javobni kutmoqda…';
+	@override String get declined => 'Taklif rad etildi';
+	@override String get expired => 'Taklif muddati tugadi';
+	@override String get backToHome => 'Bosh sahifaga';
 }
 
 // Path: duelInvite
@@ -378,6 +465,32 @@ class _Translations$duelInvite$uz implements Translations$duelInvite$en {
 	@override String get decline => 'Rad etish';
 }
 
+// Path: duelGame
+class _Translations$duelGame$uz implements Translations$duelGame$en {
+	_Translations$duelGame$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Duel';
+	@override String get waitingForQuestion => 'Savol tayyorlanmoqda…';
+	@override String get opponentAnswered => 'Raqib javob berdi';
+}
+
+// Path: duelResult
+class _Translations$duelResult$uz implements Translations$duelResult$en {
+	_Translations$duelResult$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get won => 'Siz g\'olib bo\'ldingiz!';
+	@override String get lost => 'Siz yutqazdingiz';
+	@override String get draw => 'Durrang!';
+	@override String get yourScoreLabel => 'Siz';
+	@override String get opponentScoreLabel => 'Raqib';
+}
+
 // Path: notifications
 class _Translations$notifications$uz implements Translations$notifications$en {
 	_Translations$notifications$uz._(this._root);
@@ -391,6 +504,7 @@ class _Translations$notifications$uz implements Translations$notifications$en {
 	@override String get top50 => 'Siz haftalik Top 50ga kirdingiz';
 	@override String get friendRequest => 'Bekzod Xolmatov sizga do\'stlik so\'rovi yubordi';
 	@override String get welcome => 'Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang';
+	@override String get emptyState => 'Hozircha bildirishnomalar yo\'q';
 }
 
 // Path: editProfile
@@ -634,7 +748,7 @@ extension on TranslationsUz {
 			'common.retry' => 'Qayta urinish',
 			'common.loading' => 'Yuklanmoqda...',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: 'kun', other: 'kun', ), 
-			'common.friendsOnline' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} do\'st onlayn', other: '${count} do\'st onlayn', ), 
+			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} do\'stingiz bor', other: '${count} do\'stingiz bor', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} savol', other: '${count} savol', ), 
 			'home.greeting' => 'Xayrli tong',
 			'home.duelHeroTitle' => 'Bugun kim kuchli?',
@@ -657,18 +771,15 @@ extension on TranslationsUz {
 			'leaderboard.you' => 'Siz',
 			'leaderboard.seeFullRanking' => 'To\'liq reytingni ko\'rish',
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
-			'leaderboard.greetingFiltered' => ({required Object category}) => 'Reyting · ${category}',
+			'leaderboard.anonymousPlayer' => 'O\'yinchi',
 			'fullLeaderboard.title' => 'To\'liq reyting',
 			'playerDetail.title' => 'Profil',
 			'playerDetail.streakLabel' => 'Seriya',
 			'playerDetail.addToFriends' => 'Do\'stlikka qo\'shish',
 			'playerDetail.requestSent' => 'Yuborildi',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => '#${rank} o\'rin · ${xp} XP',
-			'rankFilter.title' => 'Kategoriya bo\'yicha',
-			'rankFilter.allCategories' => 'Barcha kategoriyalar',
 			'friends.addFriend' => 'Do\'st qo\'shish',
 			'friends.searchPlaceholder' => 'Do\'stlarni qidirish',
-			'friends.onlineSection' => 'Onlayn',
 			'friends.allSection' => 'Barcha do\'stlar',
 			'friends.noneFound' => 'Do\'stlar topilmadi',
 			'addFriend.searchByUsername' => 'Foydalanuvchi nomi bo\'yicha qidirish',
@@ -676,7 +787,10 @@ extension on TranslationsUz {
 			'addFriend.yourInviteCode' => 'Sizning taklif kodingiz',
 			'addFriend.shareLink' => 'Havolani ulashish',
 			'addFriend.addButton' => 'Qo\'shish',
+			'addFriend.requestedLabel' => 'So\'rov yuborildi',
 			'addFriend.noUsersFound' => 'Foydalanuvchilar topilmadi',
+			'friendRequests.title' => 'Do\'stlik so\'rovlari',
+			'friendRequests.emptyState' => 'Hozircha so\'rovlar yo\'q',
 			'duelPick.title' => '1v1 Duel',
 			'duelPick.chooseYourFriend' => 'Do\'stingizni tanlang',
 			'profile.editProfile' => 'Profilni tahrirlash',
@@ -699,17 +813,46 @@ extension on TranslationsUz {
 			'settings.privacy' => 'Maxfiylik',
 			'settings.helpCenter' => 'Yordam markazi',
 			'settings.termsOfUse' => 'Foydalanish shartlari',
+			'settings.changePassword' => 'Parolni o\'zgartirish',
 			'settings.logOut' => 'Chiqish',
+			'settings.groupDangerZone' => 'Xavfli zona',
+			'settings.deleteAccount' => 'Akkauntni o\'chirish',
+			'changePassword.title' => 'Parolni o\'zgartirish',
+			'changePassword.currentPasswordLabel' => 'Joriy parol',
+			'changePassword.currentPasswordHint' => 'Joriy parolingizni kiriting',
+			'changePassword.newPasswordLabel' => 'Yangi parol',
+			'changePassword.newPasswordHint' => 'Kamida 8 ta belgi',
+			'changePassword.confirmNewPasswordLabel' => 'Yangi parolni tasdiqlang',
+			'changePassword.confirmNewPasswordHint' => 'Yangi parolni qayta kiriting',
+			'changePassword.saveButton' => 'Saqlash',
+			'changePassword.updated' => 'Parol muvaffaqiyatli o\'zgartirildi',
+			'deleteAccount.confirmTitle' => 'Akkauntni o\'chirish',
+			'deleteAccount.confirmMessage' => 'Bu amalni ortga qaytarib bo\'lmaydi. Barcha ma\'lumotlaringiz — do\'stlar, tarix, ball — butunlay o\'chiriladi. Davom etish uchun parolingizni kiriting.',
+			'deleteAccount.confirmButton' => 'Ha, o\'chirish',
 			'history.segmentAll' => 'Barchasi',
 			'history.segmentSolo' => 'Yakka',
 			'history.segmentDuel' => 'Duel',
 			'history.segmentLobby' => 'Xona',
 			'history.winBadge' => 'G\'alaba',
 			'history.lossBadge' => 'Mag\'lubiyat',
+			'history.drawBadge' => 'Durrang',
+			'history.today' => 'Bugun',
+			'history.yesterday' => 'Kecha',
+			'history.daysAgo' => ({required Object days}) => '${days} kun oldin',
+			'history.emptyState' => 'Bu turdagi o\'yinlar hali saqlanmaydi',
+			'history.noGamesYet' => 'Hali o\'ynalgan o\'yinlar yo\'q',
+			'history.lobbyPlayerCount' => ({required Object count}) => '${count} o\'yinchi',
+			'quizSetup.title' => 'Nechta savol?',
+			'quizSetup.subtitle' => 'Tezkor variantni tanlang yoki o\'zingiz belgilang',
+			'quizSetup.customLabel' => 'O\'zi tanlash',
+			'quizSetup.startButton' => 'Quizni boshlash',
 			'quizIntro.startLabel' => 'Boshlash!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => '${current}/${total}-savol',
+			'ballReveal.title' => 'Sizning balingiz',
+			'ballReveal.ballLabel' => 'ball',
 			'result.label' => 'Natija',
 			'result.summary' => ({required Object total, required Object correct}) => '${total} tadan ${correct} tasi to\'g\'ri',
+			'result.totalBall' => ({required Object ball}) => '${ball} ball',
 			'result.xpEarned' => ({required Object xp}) => '+${xp} XP',
 			'result.playAgain' => 'Yana o\'ynash',
 			'result.challengeAFriend' => 'Do\'stni chaqirish',
@@ -717,6 +860,8 @@ extension on TranslationsUz {
 			'joinCode.hint' => 'Do\'stingiz yuborgan 6 xonali xona kodini kiriting',
 			'joinCode.joinButton' => 'Qo\'shilish',
 			'joinCode.codeDigitLabel' => ({required Object position}) => '${position}-raqam',
+			'joinCode.roomNotFound' => 'Bunday xona topilmadi',
+			'joinCode.roomFull' => 'Xona to\'lgan',
 			'lobby.title' => 'Ko\'p o\'yinchili xona',
 			'lobby.roomCode' => 'Xona kodi',
 			'lobby.players' => 'O\'yinchilar',
@@ -725,22 +870,35 @@ extension on TranslationsUz {
 			'lobby.startGame' => 'O\'yinni boshlash',
 			'lobby.waitingForHost' => 'Xost o\'yinni boshlashini kutmoqda…',
 			'lobby.playerCount' => ({required Object current, required Object max}) => '${current}/${max}',
+			'lobby.closedMessage' => 'Xost xonani tark etdi, xona yopildi',
+			'lobbyGame.answeredProgress' => ({required Object answered, required Object total}) => '${answered}/${total} javob berdi',
 			'lobbyResult.title' => 'Xona natijalari',
 			'lobbyResult.subtitle' => 'Xonadagi hammaning natijasi shunday',
 			'lobbyResult.playAgain' => 'Yana o\'ynash',
 			'duelWaiting.title' => 'Duel',
-			'duelWaiting.waitingForAnswer' => 'Uning javobini kutmoqda…',
-			'duelWaiting.startDemo' => 'Boshlash (demo)',
+			'duelWaiting.waitingForAccept' => 'Taklif yuborildi, javobni kutmoqda…',
+			'duelWaiting.declined' => 'Taklif rad etildi',
+			'duelWaiting.expired' => 'Taklif muddati tugadi',
+			'duelWaiting.backToHome' => 'Bosh sahifaga',
 			'duelInvite.title' => 'Duelga taklif',
 			'duelInvite.challengesYou' => 'sizni duelga chaqirmoqda',
 			'duelInvite.accept' => 'Qabul qilish',
 			'duelInvite.decline' => 'Rad etish',
+			'duelGame.title' => 'Duel',
+			'duelGame.waitingForQuestion' => 'Savol tayyorlanmoqda…',
+			'duelGame.opponentAnswered' => 'Raqib javob berdi',
+			'duelResult.won' => 'Siz g\'olib bo\'ldingiz!',
+			'duelResult.lost' => 'Siz yutqazdingiz',
+			'duelResult.draw' => 'Durrang!',
+			'duelResult.yourScoreLabel' => 'Siz',
+			'duelResult.opponentScoreLabel' => 'Raqib',
 			'notifications.title' => 'Bildirishnomalar',
 			'notifications.duelChallenge' => 'Malika sizni duelga chaqirdi',
 			'notifications.streakReminder' => '5 kunlik seriyangizni yo\'qotmang — bugun o\'ynang!',
 			'notifications.top50' => 'Siz haftalik Top 50ga kirdingiz',
 			'notifications.friendRequest' => 'Bekzod Xolmatov sizga do\'stlik so\'rovi yubordi',
 			'notifications.welcome' => 'Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang',
+			'notifications.emptyState' => 'Hozircha bildirishnomalar yo\'q',
 			'editProfile.save' => 'Saqlash',
 			'editProfile.updated' => 'Profil yangilandi',
 			'notificationSettings.title' => 'Bildirishnoma sozlamalari',

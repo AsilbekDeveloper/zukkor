@@ -3,7 +3,9 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
+import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// Greeting + avatar on the left, notifications bell on the right —
@@ -12,13 +14,17 @@ class HomeHeader extends StatelessWidget {
   const HomeHeader({
     required this.name,
     required this.initials,
+    required this.avatarColor,
     required this.hasUnreadNotifications,
     required this.onNotificationsTap,
+    this.avatarImagePath,
     super.key,
   });
 
   final String name;
   final String initials;
+  final AvatarColorOption avatarColor;
+  final String? avatarImagePath;
   final bool hasUnreadNotifications;
   final VoidCallback onNotificationsTap;
 
@@ -27,21 +33,14 @@ class HomeHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [context.colors.coral, context.colors.coralDeep],
-            ),
+          decoration: BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: context.colors.shadowCoral),
+          child: UserAvatar(
+            size: 48,
+            initials: initials,
+            avatarImagePath: avatarImagePath,
+            backgroundColor: avatarColor.resolve(context),
             borderRadius: AppRadius.smAll,
-            boxShadow: context.colors.shadowCoral,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            initials,
-            style: context.textStyles.titleMedium?.copyWith(color: Colors.white),
+            fontSize: 15.5,
           ),
         ),
         AppSpacing.sm.hGap,

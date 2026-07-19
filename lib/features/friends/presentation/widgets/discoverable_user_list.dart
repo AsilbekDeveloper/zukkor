@@ -4,6 +4,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/discoverable_user.dart';
 
@@ -12,13 +13,13 @@ import '../models/discoverable_user.dart';
 class DiscoverableUserList extends StatelessWidget {
   const DiscoverableUserList({
     required this.users,
-    required this.sentUsernames,
+    required this.addedIds,
     required this.onAddTap,
     super.key,
   });
 
   final List<DiscoverableUser> users;
-  final Set<String> sentUsernames;
+  final Set<String> addedIds;
   final ValueChanged<DiscoverableUser> onAddTap;
 
   @override
@@ -28,7 +29,7 @@ class DiscoverableUserList extends StatelessWidget {
         for (int i = 0; i < users.length; i++) ...[
           _ResultRow(
             user: users[i],
-            isSent: sentUsernames.contains(users[i].username),
+            isAdded: users[i].requestPending || addedIds.contains(users[i].id),
             onTap: () => onAddTap(users[i]),
           ),
           if (i < users.length - 1) AppSpacing.xs.vGap,
@@ -39,10 +40,10 @@ class DiscoverableUserList extends StatelessWidget {
 }
 
 class _ResultRow extends StatelessWidget {
-  const _ResultRow({required this.user, required this.isSent, required this.onTap});
+  const _ResultRow({required this.user, required this.isAdded, required this.onTap});
 
   final DiscoverableUser user;
-  final bool isSent;
+  final bool isAdded;
   final VoidCallback onTap;
 
   @override
@@ -57,20 +58,12 @@ class _ResultRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(shape: BoxShape.circle, color: user.avatarColor.resolve(context)),
-            alignment: Alignment.center,
-            child: Text(
-              user.initials,
-              style: const TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontWeight: FontWeight.w700,
-                fontSize: 11.5,
-                color: Colors.white,
-              ),
-            ),
+          UserAvatar(
+            size: 36,
+            initials: user.initials,
+            avatarImagePath: user.avatarImagePath,
+            backgroundColor: user.avatarColor.resolve(context),
+            fontSize: 11.5,
           ),
           AppSpacing.sm.hGap,
           Expanded(
@@ -84,17 +77,18 @@ class _ResultRow extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.5),
                 ),
-                Text(
-                  '@${user.username}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                ),
+                if (user.handle != null)
+                  Text(
+                    user.handle!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                  ),
               ],
             ),
           ),
           AppSpacing.sm.hGap,
-          _AddButton(isSent: isSent, onTap: onTap),
+          _AddButton(isAdded: isAdded, onTap: onTap),
         ],
       ),
     );
@@ -102,9 +96,9 @@ class _ResultRow extends StatelessWidget {
 }
 
 class _AddButton extends StatelessWidget {
-  const _AddButton({required this.isSent, required this.onTap});
+  const _AddButton({required this.isAdded, required this.onTap});
 
-  final bool isSent;
+  final bool isAdded;
   final VoidCallback onTap;
 
   @override
@@ -116,26 +110,26 @@ class _AddButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            isSent ? TablerIcons.check : TablerIcons.userPlus,
+            isAdded ? TablerIcons.check : TablerIcons.userPlus,
             size: 14,
-            color: isSent ? context.colors.muted : Colors.white,
+            color: isAdded ? context.colors.muted : Colors.white,
           ),
           const SizedBox(width: 4),
           Text(
-            isSent ? context.t.playerDetail.requestSent : context.t.addFriend.addButton,
+            isAdded ? context.t.addFriend.requestedLabel : context.t.addFriend.addButton,
             style: context.textStyles.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: isSent ? context.colors.muted : Colors.white,
+              color: isAdded ? context.colors.muted : Colors.white,
             ),
           ),
         ],
       ),
     );
 
-    // "Sent" mirrors a disabled secondary control — a neutral outline
+    // "Added" mirrors a disabled secondary control — a neutral outline
     // instead of a pale tint of the Add button's coral (that reads as
     // muddy rather than clearly "done").
-    if (isSent) {
+    if (isAdded) {
       return DecoratedBox(
         decoration: BoxDecoration(borderRadius: radius, border: Border.all(color: context.colors.line)),
         child: content,

@@ -5,19 +5,62 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
+import 'package:zukkor/features/quiz/data/repositories/quiz_repository_impl.dart';
+import 'package:zukkor/features/quiz/domain/entities/answer_result.dart';
+import 'package:zukkor/features/quiz/domain/entities/category.dart';
+import 'package:zukkor/features/quiz/domain/entities/quiz_question_data.dart';
+import 'package:zukkor/features/quiz/domain/entities/quiz_start_result.dart';
+import 'package:zukkor/features/quiz/domain/repositories/quiz_repository.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_category.dart';
 import 'package:zukkor/features/quiz/presentation/models/quiz_launch_args.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_intro_screen.dart';
 import 'package:zukkor/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
 
-final QuizCategory _math = QuizCategory.sample.first;
+const QuizCategory _math = QuizCategory(
+  id: 1,
+  name: 'Math',
+  questionCount: 120,
+  icon: TablerIcons.mathSymbols,
+  colorKey: CategoryColorKey.coral,
+);
+
+/// Backendga murojaat qilmaydigan soxta quiz repository — countdown
+/// tugagach `QuizScreen` haqiqiy `POST /quiz/start`ni chaqiradi, bu
+/// test faqat o'sha ekranga yetib borishni tekshiradi.
+class _FakeQuizRepository implements QuizRepository {
+  @override
+  Future<List<Category>> getCategories() => throw UnimplementedError();
+
+  @override
+  Future<QuizStartResult> startQuiz({required int categoryId, required int questionCount}) async =>
+      const QuizStartResult(
+        sessionId: 'session-1',
+        question: QuizQuestionData(
+          sessionQuestionId: 1,
+          questionText: 'What is 2 + 2?',
+          options: ['3', '4', '5', '6'],
+          order: 1,
+          total: 5,
+          timeLimitMs: 15000,
+        ),
+      );
+
+  @override
+  Future<AnswerResult> submitAnswer({
+    required String sessionId,
+    required int sessionQuestionId,
+    required int? selectedOption,
+  }) =>
+      throw UnimplementedError();
+}
 
 Future<void> _pumpIntro(WidgetTester tester, {Size size = const Size(390, 844)}) async {
   tester.view.physicalSize = size;
@@ -32,13 +75,16 @@ Future<void> _pumpIntro(WidgetTester tester, {Size size = const Size(390, 844)})
       GoRoute(path: AppRoutes.duel, builder: (context, state) => const DuelScreen()),
       GoRoute(
         path: AppRoutes.quizIntro,
-        builder: (context, state) => QuizIntroScreen(category: state.extra! as QuizCategory),
+        builder: (context, state) => QuizIntroScreen(args: state.extra! as QuizLaunchArgs),
       ),
       GoRoute(
         path: AppRoutes.quiz,
         builder: (context, state) {
           final QuizLaunchArgs args = state.extra! as QuizLaunchArgs;
-          return QuizScreen(category: args.category, isLobbyGame: args.isLobbyGame);
+          return QuizScreen(
+            category: args.category,
+            questionCount: args.questionCount,
+          );
         },
       ),
     ],
@@ -49,7 +95,10 @@ Future<void> _pumpIntro(WidgetTester tester, {Size size = const Size(390, 844)})
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
+      ],
       child: TranslationProvider(
         child: MaterialApp.router(
           theme: AppTheme.light(),
@@ -58,7 +107,7 @@ Future<void> _pumpIntro(WidgetTester tester, {Size size = const Size(390, 844)})
       ),
     ),
   );
-  unawaited(router.push(AppRoutes.quizIntro, extra: _math));
+  unawaited(router.push(AppRoutes.quizIntro, extra: const QuizLaunchArgs(category: _math)));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 300));
 }

@@ -34,8 +34,10 @@ import '../widgets/welcome_step.dart';
 /// [AppSound.success] before handing off to Login. Haptics and
 /// [AppSound.tap] accompany navigation and selections.
 ///
-/// CURRENT STATE: presentation only — survey answers aren't sent anywhere
-/// yet (no backend call), they just live in local widget state for now.
+/// CURRENT STATE: survey answers are saved locally ([AppPreferences]) on
+/// finish — there's no user account yet at this point, so they can't be
+/// sent directly. [OnboardingScreen] picks them up and folds them into its
+/// `PATCH /users/me/profile` call once registration completes.
 class IntroductionScreen extends ConsumerStatefulWidget {
   const IntroductionScreen({super.key});
 
@@ -48,6 +50,11 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   int _step = 1;
   bool _isFinishing = false;
+
+  // Skip can fire from any page, including before the survey pages (5-6)
+  // are ever shown — in that case there's nothing real to save, just the
+  // untouched defaults below.
+  bool _reachedSurvey = false;
 
   final Set<String> _selectedInterests = {};
   bool _otherInterestSelected = false;
@@ -96,6 +103,7 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
     HapticFeedback.selectionClick();
     if (_step < _totalSteps) {
       setState(() => _step++);
+      if (_step >= 5) _reachedSurvey = true;
     } else {
       _complete();
     }
@@ -125,9 +133,22 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
   }
 
   Future<void> _finish() async {
-    // TODO(introduction): once the profile-setup backend call exists, fold
-    // the interests/study-place/quiz-liking answers collected here into
-    // that same request instead of discarding them.
+    if (_reachedSurvey) {
+      final List<String> interests = [
+        ..._selectedInterests,
+        if (_otherInterestSelected && _otherInterestController.text.trim().isNotEmpty)
+          _otherInterestController.text.trim(),
+      ];
+      final String studyPlace = _studyPlace == StudyPlace.other && _otherStudyPlaceController.text.trim().isNotEmpty
+          ? _otherStudyPlaceController.text.trim()
+          : _studyPlace.apiValue;
+
+      await ref.read(appPreferencesProvider).saveIntroSurvey(
+            interests: interests,
+            studyPlace: studyPlace,
+            quizLiking: _quizLiking.apiValue,
+          );
+    }
     await ref.read(appPreferencesProvider).saveHasSeenIntroduction(true);
     if (!mounted) return;
     context.go(AppRoutes.login);

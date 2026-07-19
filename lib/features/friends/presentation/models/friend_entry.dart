@@ -1,47 +1,58 @@
 import '../../../../core/models/avatar_color_option.dart';
+import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/friend.dart';
 
-/// A single friend row — mirrors the prototype's `.friend-row` /
-/// `.online-item` data (index4.html `view-friends`).
+/// A single friend row — mirrors the prototype's `.friend-row` data
+/// (index4.html `view-friends`). Built from the real `GET /friends`
+/// entities via [FriendEntry.fromEntity]. [id] is the backend user id —
+/// null only for [DuelInviteScreen]'s still-mock demo invite, which
+/// isn't a real user.
 class FriendEntry {
   const FriendEntry({
     required this.name,
+    required this.username,
     required this.initials,
     required this.avatarColor,
-    required this.isOnline,
-    required this.statusLabel,
+    this.avatarImagePath,
+    this.id,
   });
 
+  factory FriendEntry.fromEntity(Friend entity) => FriendEntry(
+        id: entity.id,
+        name: _displayName(
+          firstName: entity.firstName,
+          lastName: entity.lastName,
+          username: entity.username,
+        ),
+        username: entity.username,
+        initials: _initials(firstName: entity.firstName, lastName: entity.lastName),
+        avatarColor: AvatarColorOption.fromApiValue(entity.avatarColor),
+        avatarImagePath: entity.avatarImagePath,
+      );
+
+  final String? id;
   final String name;
+  final String? username;
   final String initials;
   final AvatarColorOption avatarColor;
-  final bool isOnline;
+  final String? avatarImagePath;
 
-  /// e.g. "Online", "2 hours ago", "Yesterday" — mock presence text,
-  /// there's no backend yet to compute this from a real timestamp.
-  final String statusLabel;
+  /// `'@username'`, or null when the backend has no username yet (earned
+  /// this friendship before ever completing onboarding).
+  String? get handle => username != null ? '@$username' : null;
 
-  /// The 3 friends shown in the horizontal "Online" row.
-  static const List<FriendEntry> sampleOnline = [
-    FriendEntry(name: 'Malika', initials: 'MR', avatarColor: AvatarColorOption.teal, isOnline: true, statusLabel: 'Online'),
-    FriendEntry(name: 'Shohruh', initials: 'SH', avatarColor: AvatarColorOption.terra, isOnline: true, statusLabel: 'Online'),
-    FriendEntry(name: 'Dilnoza', initials: 'DI', avatarColor: AvatarColorOption.pink, isOnline: true, statusLabel: 'Online'),
-  ];
+  static String _displayName({required String? firstName, required String? lastName, required String? username}) {
+    final String name =
+        [firstName, lastName].where((part) => part != null && part.isNotEmpty).join(' ');
+    if (name.isNotEmpty) return name;
+    if (username != null && username.isNotEmpty) return username;
+    return t.leaderboard.anonymousPlayer;
+  }
 
-  /// The full "All friends" list. [totalFriendCount] (shown next to the
-  /// section title) is intentionally larger — it mirrors the prototype's
-  /// static "12" badge, standing in for friends beyond this sample page.
-  static const List<FriendEntry> sampleAll = [
-    FriendEntry(name: 'Malika Yusupova', initials: 'MR', avatarColor: AvatarColorOption.teal, isOnline: true, statusLabel: 'Online'),
-    FriendEntry(name: 'Shohruh Toshpulatov', initials: 'SH', avatarColor: AvatarColorOption.terra, isOnline: true, statusLabel: 'Online'),
-    FriendEntry(name: 'Dilnoza Rustamova', initials: 'DI', avatarColor: AvatarColorOption.pink, isOnline: true, statusLabel: 'Online'),
-    FriendEntry(name: 'Bekzod Xolmatov', initials: 'BX', avatarColor: AvatarColorOption.coral, isOnline: false, statusLabel: '2 hours ago'),
-    FriendEntry(name: 'Nilufar Yoqubova', initials: 'NY', avatarColor: AvatarColorOption.blue, isOnline: false, statusLabel: 'Yesterday'),
-  ];
-
-  static const int totalFriendCount = 12;
-
-  /// Friends eligible to be challenged to a duel right now — mirrors the
-  /// prototype's 1v1 Duel screen, which only lists online friends.
-  static List<FriendEntry> get sampleOnlineForDuel =>
-      sampleAll.where((e) => e.isOnline).toList();
+  static String _initials({required String? firstName, required String? lastName}) {
+    final String first = (firstName?.isNotEmpty ?? false) ? firstName![0] : '';
+    final String last = (lastName?.isNotEmpty ?? false) ? lastName![0] : '';
+    final String combined = '$first$last'.toUpperCase();
+    return combined.isNotEmpty ? combined : '?';
+  }
 }

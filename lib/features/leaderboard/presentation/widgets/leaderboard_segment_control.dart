@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/leaderboard_scope.dart';
 
-/// Which leaderboard slice is shown. Only [weekly] has real (sample) data
-/// wired up right now — the others are stubs until a real backend exists.
-enum LeaderboardSegment { weekly, allTime, friends }
-
-extension LeaderboardSegmentLabel on LeaderboardSegment {
+extension LeaderboardScopeLabel on LeaderboardScope {
   /// Needs [context] (not a const field) so the label re-translates when
   /// the locale changes — see [LeaderboardSegmentControl.build].
   String label(BuildContext context) => switch (this) {
-        LeaderboardSegment.weekly => context.t.leaderboard.segmentWeekly,
-        LeaderboardSegment.allTime => context.t.leaderboard.segmentAllTime,
-        LeaderboardSegment.friends => context.t.leaderboard.segmentFriends,
+        LeaderboardScope.weekly => context.t.leaderboard.segmentWeekly,
+        LeaderboardScope.allTime => context.t.leaderboard.segmentAllTime,
+        LeaderboardScope.friends => context.t.leaderboard.segmentFriends,
       };
 }
 
@@ -27,15 +24,15 @@ class LeaderboardSegmentControl extends StatelessWidget {
     super.key,
   });
 
-  final LeaderboardSegment selected;
-  final ValueChanged<LeaderboardSegment> onChanged;
+  final LeaderboardScope selected;
+  final ValueChanged<LeaderboardScope> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return PillSegmentControl<LeaderboardSegment>(
-      values: LeaderboardSegment.values,
+    return PillSegmentControl<LeaderboardScope>(
+      values: LeaderboardScope.values,
       selected: selected,
-      labelBuilder: (segment) => segment.label(context),
+      labelBuilder: (scope) => scope.label(context),
       onChanged: onChanged,
     );
   }
