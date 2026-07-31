@@ -73,15 +73,20 @@ class _SegmentButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm - 1),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: context.textStyles.bodySmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: isActive ? Colors.white : context.colors.muted,
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm - 1, horizontal: AppSpacing.xxs),
+          // Shrinks instead of ellipsizing — each segment is a narrow
+          // fraction of the pill's width, and some locales' label is
+          // longer than others (e.g. History's 4-way filter).
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: context.textStyles.bodySmall?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isActive ? Colors.white : context.colors.muted,
+              ),
             ),
           ),
         ),

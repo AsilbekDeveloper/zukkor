@@ -21,7 +21,8 @@ import 'package:zukkor/i18n/strings.g.dart';
 /// `GET /history` javobiga mos, 3 ta solo va 1 ta duel seans.
 class _FakeHistoryRepository implements HistoryRepository {
   @override
-  Future<List<SessionHistoryEntry>> getHistory({int limit = 50}) async => [
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
+      (hasMore: false, entries: [
         SessionHistoryEntry(
           sessionId: '1',
           categoryId: 1,
@@ -94,20 +95,22 @@ class _FakeHistoryRepository implements HistoryRepository {
           mode: HistorySessionMode.lobby,
           lobbyResult: const LobbyHistoryResult(rank: 2, participantCount: 4),
         ),
-      ];
+      ]);
 }
 
 /// Same shape, but no sessions at all — for the genuinely-empty case.
 class _FakeEmptyHistoryRepository implements HistoryRepository {
   @override
-  Future<List<SessionHistoryEntry>> getHistory({int limit = 50}) async => const [];
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
+      const (entries: <SessionHistoryEntry>[], hasMore: false);
 }
 
 /// Has sessions, but none of them lobby — for "this segment has nothing"
 /// (distinct from history being genuinely empty).
 class _FakeHistoryRepositoryNoLobby implements HistoryRepository {
   @override
-  Future<List<SessionHistoryEntry>> getHistory({int limit = 50}) async => [
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
+      (hasMore: false, entries: [
         SessionHistoryEntry(
           sessionId: '1',
           categoryId: 1,
@@ -121,7 +124,7 @@ class _FakeHistoryRepositoryNoLobby implements HistoryRepository {
           totalXpEarned: 72,
           mode: HistorySessionMode.solo,
         ),
-      ];
+      ]);
 }
 
 Future<GoRouter> _pumpHistory(

@@ -41,40 +41,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Har safar ekran ochilganda yangilanadi — masalan Profilni tahrirlash
-    // ekranidan qaytgach ma'lumot eskirmasin.
-    Future.microtask(() async {
-      await ref.read(currentUserControllerProvider.notifier).load();
-      final String? userId = ref.read(currentUserControllerProvider)?.id;
-      if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
-    });
+    // Loaded once per session, not on every visit — [EditProfileScreen]
+    // already reloads [currentUserControllerProvider] directly after a
+    // successful save, and finishing a game invalidates
+    // [myStatsControllerProvider], so both stay correct without a
+    // refetch here every time this screen mounts.
+    if (ref.read(currentUserControllerProvider).data == null || ref.read(myStatsControllerProvider).data == null) {
+      Future.microtask(() async {
+        await ref.read(currentUserControllerProvider.notifier).load();
+        final String? userId = ref.read(currentUserControllerProvider).data?.id;
+        if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
+      });
+    }
   }
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
-  String _initials(User? user) {
-    final String first = (user?.firstName?.isNotEmpty ?? false) ? user!.firstName![0] : '';
-    final String last = (user?.lastName?.isNotEmpty ?? false) ? user!.lastName![0] : '';
-    final String combined = '$first$last'.toUpperCase();
-    return combined.isNotEmpty ? combined : '?';
-  }
-
-  String _displayName(User? user) {
-    final String name = [user?.firstName, user?.lastName]
-        .where((part) => part != null && part.isNotEmpty)
-        .join(' ');
-    return name.isNotEmpty ? name : (user?.username ?? '');
-  }
-
   /// Level ring + 3-stat strip.
   List<Widget> _progressSection(BuildContext context) {
-    final PlayerStats? stats = ref.watch(myStatsControllerProvider);
+    final PlayerStats? stats = ref.watch(myStatsControllerProvider).data;
     return [
       LevelCard(
         level: stats?.level ?? 0,
         levelTitle: stats?.levelTitle ?? '',
         currentXp: stats?.totalXp ?? 0,
         targetXp: stats?.nextLevelXp ?? 0,
+        levelStartXp: stats?.currentLevelXp ?? 0,
       ),
       AppSpacing.sm.vGap,
       ProfileStatsRow(
@@ -106,7 +98,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
-    final User? user = ref.watch(currentUserControllerProvider);
+    final User? user = ref.watch(currentUserControllerProvider).data;
 
     return Scaffold(
       body: SafeArea(
@@ -117,12 +109,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ProfileHeader(onSettingsTap: () => context.push(AppRoutes.settings)),
             AppSpacing.lg.vGap,
             ProfileBanner(
-              initials: _initials(user),
+              initials: user.initials,
               avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
               avatarImagePath: user?.avatarImagePath,
               onEditTap: () => context.push(AppRoutes.editProfile),
             ),
-            ProfileNameBlock(name: _displayName(user), username: user?.username ?? ''),
+            ProfileNameBlock(name: user.displayName, username: user?.username ?? ''),
             AppSpacing.lg.vGap,
             ..._progressSection(context),
             AppSpacing.lg.vGap,

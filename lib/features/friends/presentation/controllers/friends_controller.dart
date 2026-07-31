@@ -1,24 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/state/load_state.dart';
 import '../../data/repositories/friends_repository_impl.dart';
 import '../../domain/entities/friend.dart';
 
 /// Do'stlar ro'yxati — `GET /friends`. Ekran ochilganda [load] chaqirilishi
-/// kerak (avtomatik yuklanmaydi); muvaffaqiyatsiz bo'lsa `state` eskicha
-/// (yoki `null`) qoladi.
-class FriendsController extends Notifier<List<Friend>?> {
+/// kerak (avtomatik yuklanmaydi); muvaffaqiyatsiz bo'lsa `state.hasError`
+/// `true` bo'ladi — chaqiruvchi ekran qayta urinish tugmasini ko'rsatadi.
+class FriendsController extends Notifier<LoadState<List<Friend>>> {
   @override
-  List<Friend>? build() => null;
+  LoadState<List<Friend>> build() => const LoadState();
 
   Future<void> load() async {
+    state = const LoadState();
     try {
-      state = await ref.read(getFriendsUseCaseProvider).call();
+      state = LoadState(data: await ref.read(getFriendsUseCaseProvider).call());
     } catch (_) {
-      // e'tiborsiz qoldiriladi — chaqiruvchi ekran `null`ni "yuklanmoqda
-      // yoki xato" sifatida ko'rsatadi.
+      state = const LoadState(hasError: true);
     }
   }
 }
 
-final NotifierProvider<FriendsController, List<Friend>?> friendsControllerProvider =
-    NotifierProvider<FriendsController, List<Friend>?>(FriendsController.new);
+final NotifierProvider<FriendsController, LoadState<List<Friend>>> friendsControllerProvider =
+    NotifierProvider<FriendsController, LoadState<List<Friend>>>(FriendsController.new);

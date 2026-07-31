@@ -61,7 +61,10 @@
     "streakLabel": "Серия",
     "addToFriends": "Добавить в друзья",
     "requestSent": "Отправлено",
-    "rankedLabel": "#$rank место · $xp XP"
+    "rankedLabel": "#$rank место · $xp XP",
+    "alreadyFriends": "Вы друзья",
+    "acceptRequest": "Принять",
+    "declineRequest": "Отклонить"
   },
   "friends": {
     "addFriend": "Добавить друга",
@@ -168,14 +171,17 @@
     "xpEarned": "+$xp XP",
     "playAgain": "Играть снова",
     "challengeAFriend": "Вызвать друга",
-    "backToHome": "На главную"
+    "backToHome": "На главную",
+    "breakdownTitle": "Результаты по вопросам"
   },
   "joinCode": {
     "hint": "Введите 6-значный код комнаты, который прислал друг",
     "joinButton": "Присоединиться",
     "codeDigitLabel": "Цифра кода $position",
     "roomNotFound": "Комната с таким кодом не найдена",
-    "roomFull": "Эта комната заполнена"
+    "roomFull": "Эта комната заполнена",
+    "alreadyStarted": "Игра в этой комнате уже началась",
+    "timedOut": "Не удалось подключиться — проверьте соединение и попробуйте снова"
   },
   "lobby": {
     "title": "Комната для нескольких игроков",
@@ -186,10 +192,17 @@
     "startGame": "Начать игру",
     "waitingForHost": "Ожидание, пока хост начнёт игру…",
     "playerCount": "$current/$max",
-    "closedMessage": "Хост покинул комнату, комната закрыта"
+    "closedMessage": "Хост покинул комнату, комната закрыта",
+    "creatingRoom": "Создание комнаты…",
+    "createFailed": "Не удалось создать комнату — проверьте соединение и попробуйте снова",
+    "backToHome": "На главную"
   },
   "lobbyGame": {
-    "answeredProgress": "$answered/$total ответили"
+    "title": "Комната",
+    "waitingForQuestion": "Подготовка вопроса…",
+    "waitingForOthers": "Вы ответили на все вопросы! Ждём остальных…",
+    "startFailed": "Игра не началась — проверьте соединение и попробуйте снова",
+    "backToHome": "На главную"
   },
   "lobbyResult": {
     "title": "Результаты комнаты",
@@ -201,6 +214,8 @@
     "waitingForAccept": "Приглашение отправлено, ожидание ответа…",
     "declined": "Приглашение отклонено",
     "expired": "Срок приглашения истёк",
+    "failed": "Не удалось отправить приглашение",
+    "timedOut": "Не удалось связаться с другом — проверьте соединение и попробуйте снова",
     "backToHome": "На главную"
   },
   "duelInvite": {
@@ -212,7 +227,10 @@
   "duelGame": {
     "title": "Дуэль",
     "waitingForQuestion": "Подготовка вопроса…",
-    "opponentAnswered": "Соперник ответил"
+    "opponentProgress": "Соперник: вопрос $index/$total",
+    "waitingForOpponent": "Вы ответили на все вопросы! Ждём соперника…",
+    "startFailed": "Игра не началась — проверьте соединение и попробуйте снова",
+    "backToHome": "На главную"
   },
   "duelResult": {
     "won": "Вы победили!",
@@ -223,10 +241,12 @@
   },
   "notifications": {
     "title": "Уведомления",
-    "duelChallenge": "Малика вызвала вас на дуэль",
+    "duelChallenge": "$name вызвал(а) вас на дуэль",
+    "duelChallengeGeneric": "Вас вызвали на дуэль",
     "streakReminder": "Не теряйте серию из 5 дней — играйте сегодня!",
     "top50": "Вы попали в топ-50 недели",
-    "friendRequest": "Бекзод Холматов отправил вам запрос в друзья",
+    "friendRequest": "$name отправил(а) вам запрос в друзья",
+    "friendRequestGeneric": "Вам пришёл новый запрос в друзья",
     "welcome": "Добро пожаловать в Zukkor! Начните свою первую викторину",
     "emptyState": "Пока нет уведомлений"
   },

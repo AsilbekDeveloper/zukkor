@@ -44,7 +44,10 @@ abstract final class FailureMapper {
   }
 
   /// `detail` oddiy matn bo'lsa — o'zi xabar; ro'yxat (422 validatsiya
-  /// formati) bo'lsa — birinchi elementning `msg`i.
+  /// formati) bo'lsa — birinchi elementning `msg`i, oldiga maydon nomi
+  /// qo'shilgan holda. Maydon nomisiz FastAPI'ning "field required" kabi
+  /// xabarlari qaysi maydon haqida ekanini aytmaydi — foydalanuvchi ham,
+  /// xatoni izlayotgan dasturchi ham nima noto'g'ri ketganini bilmaydi.
   static String? _extractDetailMessage(dynamic data) {
     if (data is! Map<String, dynamic>) return null;
     final dynamic detail = data['detail'];
@@ -53,10 +56,21 @@ abstract final class FailureMapper {
       final dynamic first = detail.first;
       if (first is Map<String, dynamic>) {
         final dynamic msg = first['msg'];
-        if (msg is String && msg.isNotEmpty) return msg;
+        if (msg is! String || msg.isEmpty) return null;
+        final String? field = _fieldNameOf(first);
+        return field == null ? msg : '$field: $msg';
       }
     }
     return null;
+  }
+
+  /// 422 elementining `loc`idagi maydon nomi — `["body", "avatar_color"]`
+  /// dan `avatar_color`. Faqat `["body"]` bo'lsa (butun tanaga tegishli
+  /// xato) `null`.
+  static String? _fieldNameOf(Map<String, dynamic> item) {
+    final dynamic loc = item['loc'];
+    if (loc is! List || loc.length < 2) return null;
+    return loc.last.toString();
   }
 
   /// 422 validatsiya ro'yxatini maydon nomi → xabarlar map'iga aylantiradi.

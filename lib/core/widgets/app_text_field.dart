@@ -23,6 +23,7 @@ class AppTextField extends StatefulWidget {
     this.validator,
     this.onSubmitted,
     this.enabled = true,
+    this.maxLength,
   });
 
   final String label;
@@ -39,6 +40,11 @@ class AppTextField extends StatefulWidget {
   final String? Function(String?)? validator;
   final ValueChanged<String>? onSubmitted;
   final bool enabled;
+
+  /// Maksimal belgilar soni — o'rnatilsa, kiritish shu chegarada to'xtaydi
+  /// (backend qabul qilmaydigan uzunlikni oldini oladi). Standart hisoblagich
+  /// ko'rsatilmaydi, forma toza qoladi.
+  final int? maxLength;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -69,6 +75,12 @@ class _AppTextFieldState extends State<AppTextField> {
           autofillHints: widget.autofillHints,
           validator: widget.validator,
           onFieldSubmitted: widget.onSubmitted,
+          maxLength: widget.maxLength,
+          // Standart "12/50" hisoblagichni yashiramiz — kichik so'rovnoma
+          // maydonlarida u ortiqcha, chegara jimgina qo'llaniladi.
+          buildCounter: widget.maxLength == null
+              ? null
+              : (_, {required currentLength, required isFocused, maxLength}) => null,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: context.textStyles.bodyMedium?.copyWith(
             color: context.colors.ink,

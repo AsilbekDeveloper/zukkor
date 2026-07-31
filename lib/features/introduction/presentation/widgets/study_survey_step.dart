@@ -57,6 +57,7 @@ class StudySurveyStep extends StatelessWidget {
             hint: context.t.introduction.otherFieldHint,
             controller: otherStudyPlaceController,
             textInputAction: TextInputAction.done,
+            maxLength: kOtherAnswerMaxLength,
           ),
         ],
         AppSpacing.xl.vGap,

@@ -15,12 +15,14 @@ class FriendRequestList extends StatelessWidget {
     required this.entries,
     required this.onAcceptTap,
     required this.onDeclineTap,
+    required this.onRowTap,
     super.key,
   });
 
   final List<FriendRequestEntry> entries;
   final ValueChanged<FriendRequestEntry> onAcceptTap;
   final ValueChanged<FriendRequestEntry> onDeclineTap;
+  final ValueChanged<FriendRequestEntry> onRowTap;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,7 @@ class FriendRequestList extends StatelessWidget {
             entry: entries[i],
             onAcceptTap: () => onAcceptTap(entries[i]),
             onDeclineTap: () => onDeclineTap(entries[i]),
+            onRowTap: () => onRowTap(entries[i]),
           ),
           if (i < entries.length - 1) AppSpacing.xs.vGap,
         ],
@@ -40,58 +43,71 @@ class FriendRequestList extends StatelessWidget {
 }
 
 class _RequestRow extends StatelessWidget {
-  const _RequestRow({required this.entry, required this.onAcceptTap, required this.onDeclineTap});
+  const _RequestRow({
+    required this.entry,
+    required this.onAcceptTap,
+    required this.onDeclineTap,
+    required this.onRowTap,
+  });
 
   final FriendRequestEntry entry;
   final VoidCallback onAcceptTap;
   final VoidCallback onDeclineTap;
+  final VoidCallback onRowTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 1),
-      decoration: BoxDecoration(
-        color: context.colors.card,
+    return Material(
+      color: context.colors.card,
+      borderRadius: AppRadius.smAll,
+      child: InkWell(
+        onTap: onRowTap,
         borderRadius: AppRadius.smAll,
-        border: Border.all(color: context.colors.line),
-        boxShadow: context.colors.shadowSm,
-      ),
-      child: Row(
-        children: [
-          UserAvatar(
-            size: 36,
-            initials: entry.initials,
-            avatarImagePath: entry.avatarImagePath,
-            backgroundColor: entry.avatarColor.resolve(context),
-            fontSize: 11.5,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 1),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.smAll,
+            border: Border.all(color: context.colors.line),
+            boxShadow: context.colors.shadowSm,
           ),
-          AppSpacing.sm.hGap,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  entry.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.5),
+          child: Row(
+            children: [
+              UserAvatar(
+                size: 36,
+                initials: entry.initials,
+                avatarImagePath: entry.avatarImagePath,
+                backgroundColor: entry.avatarColor.resolve(context),
+                fontSize: 11.5,
+              ),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      entry.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.5),
+                    ),
+                    if (entry.handle != null)
+                      Text(
+                        entry.handle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                      ),
+                  ],
                 ),
-                if (entry.handle != null)
-                  Text(
-                    entry.handle!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                  ),
-              ],
-            ),
+              ),
+              AppSpacing.sm.hGap,
+              _ActionButton(icon: TablerIcons.x, onTap: onDeclineTap, isPrimary: false),
+              AppSpacing.xs.hGap,
+              _ActionButton(icon: TablerIcons.check, onTap: onAcceptTap, isPrimary: true),
+            ],
           ),
-          AppSpacing.sm.hGap,
-          _ActionButton(icon: TablerIcons.x, onTap: onDeclineTap, isPrimary: false),
-          AppSpacing.xs.hGap,
-          _ActionButton(icon: TablerIcons.check, onTap: onAcceptTap, isPrimary: true),
-        ],
+        ),
       ),
     );
   }

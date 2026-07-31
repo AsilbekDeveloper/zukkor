@@ -44,10 +44,8 @@ import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.da
 import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/rank_entry.dart';
 import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
-import 'package:zukkor/features/leaderboard/presentation/models/leaderboard_entry.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/leaderboard_screen.dart';
-import 'package:zukkor/features/leaderboard/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_final_result.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_participant.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_player_score.dart';
@@ -59,6 +57,8 @@ import 'package:zukkor/features/lobby/presentation/screens/lobby_result_screen.d
 import 'package:zukkor/features/lobby/presentation/screens/lobby_screen.dart';
 import 'package:zukkor/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:zukkor/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:zukkor/features/player_detail/presentation/models/player_detail_args.dart';
+import 'package:zukkor/features/player_detail/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/features/profile/presentation/screens/edit_profile_screen.dart';
 import 'package:zukkor/features/profile/presentation/screens/profile_screen.dart';
 import 'package:zukkor/features/quiz/data/repositories/quiz_repository_impl.dart';
@@ -142,7 +142,7 @@ final List<_ScreenCase> _screens = [
   (name: 'Onboarding', builder: (_) => const OnboardingScreen()),
   (name: 'Home', builder: (_) => const HomeScreen()),
   (name: 'Categories', builder: (_) => const CategoriesScreen()),
-  (name: 'QuizSetup', builder: (_) => const QuizSetupScreen(category: _math)),
+  (name: 'QuizSetup', builder: (_) => QuizSetupScreen(category: _math, onStart: (context, ref, count) {})),
   (
     name: 'QuizIntro',
     builder: (_) => const QuizIntroScreen(args: QuizLaunchArgs(category: _math)),
@@ -157,6 +157,7 @@ final List<_ScreenCase> _screens = [
         totalCount: 5,
         xpEarned: 60,
         totalBall: 4200,
+        breakdown: [],
       ),
     ),
   ),
@@ -169,6 +170,7 @@ final List<_ScreenCase> _screens = [
         totalCount: 5,
         xpEarned: 60,
         totalBall: 4200,
+        breakdown: [],
       ),
     ),
   ),
@@ -239,6 +241,7 @@ final List<_ScreenCase> _screens = [
           ],
           xpEarned: 58,
           ballEarned: 4000,
+          breakdown: [],
         ),
       ),
     ),
@@ -247,14 +250,7 @@ final List<_ScreenCase> _screens = [
   (
     name: 'PlayerDetail',
     builder: (_) => const PlayerDetailScreen(
-      entry: LeaderboardEntry(
-        id: '1',
-        rank: 1,
-        name: 'Aziz K.',
-        initials: 'AK',
-        xp: 4820,
-        avatarColor: AvatarColorOption.coral,
-      ),
+      args: PlayerDetailArgs(userId: '1'),
     ),
   ),
   (name: 'Settings', builder: (_) => const SettingsScreen()),
@@ -314,6 +310,7 @@ final List<_ScreenCase> _screens = [
           opponentScore: DuelPlayerScore(correct: 3, total: 5, totalTimeMs: 45000),
           xpEarned: 60,
           ballEarned: 4200,
+          breakdown: [],
         ),
       ),
     ),
@@ -339,12 +336,16 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> login({required String email, required String password}) async {}
 
   @override
+  Future<User?> signInWithGoogle() => throw UnimplementedError();
+
+  @override
   Future<User> getCurrentUser() async => User(
         id: '1',
         email: 'aziz@example.com',
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: false,
+        authProvider: 'email',
       );
 
   @override
@@ -352,7 +353,7 @@ class _FakeAuthRepository implements AuthRepository {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -369,6 +370,7 @@ class _FakeAuthRepository implements AuthRepository {
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: true,
+        authProvider: 'email',
       );
 
   @override
@@ -378,6 +380,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> logout() async {}
 
   @override
+  Future<void> registerPushToken(String token) async {}
+
+  @override
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
@@ -385,7 +390,7 @@ class _FakeAuthRepository implements AuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<void> deleteAccount(String password) => throw UnimplementedError();
+  Future<void> deleteAccount(String? password) => throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta leaderboard repository —
@@ -395,7 +400,11 @@ class _FakeAuthRepository implements AuthRepository {
 /// olish uchun.
 class _FakeLeaderboardRepository implements LeaderboardRepository {
   @override
-  Future<LeaderboardData> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) async =>
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async =>
       const LeaderboardData(
         entries: [
           RankEntry(
@@ -462,6 +471,7 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         level: 12,
         levelTitle: 'Scholar',
         nextLevelXp: 5000,
+        currentLevelXp: 4750,
         currentStreak: 5,
         longestStreak: 15,
         gamesPlayed: 40,
@@ -504,7 +514,8 @@ class _FakeQuizRepository implements QuizRepository {
 /// audit testi haqiqiy tarmoqqa bog'liq bo'lmasligi kerak.
 class _FakeHistoryRepository implements HistoryRepository {
   @override
-  Future<List<SessionHistoryEntry>> getHistory({int limit = 50}) async => [
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
+      (hasMore: false, entries: [
         SessionHistoryEntry(
           sessionId: '1',
           categoryId: 1,
@@ -518,7 +529,7 @@ class _FakeHistoryRepository implements HistoryRepository {
           totalXpEarned: 72,
           mode: HistorySessionMode.solo,
         ),
-      ];
+      ]);
 }
 
 /// Backendga murojaat qilmaydigan soxta repository —

@@ -254,6 +254,15 @@ class Translations$playerDetail$en {
 
 	/// en: 'Ranked #$rank · $xp XP'
 	String rankedLabel({required Object rank, required Object xp}) => 'Ranked #${rank} · ${xp} XP';
+
+	/// en: 'You're friends'
+	String get alreadyFriends => 'You\'re friends';
+
+	/// en: 'Accept'
+	String get acceptRequest => 'Accept';
+
+	/// en: 'Decline'
+	String get declineRequest => 'Decline';
 }
 
 // Path: friends
@@ -617,6 +626,9 @@ class Translations$result$en {
 
 	/// en: 'Back to home'
 	String get backToHome => 'Back to home';
+
+	/// en: 'Question by question'
+	String get breakdownTitle => 'Question by question';
 }
 
 // Path: joinCode
@@ -641,6 +653,12 @@ class Translations$joinCode$en {
 
 	/// en: 'That room is full'
 	String get roomFull => 'That room is full';
+
+	/// en: 'This room's game has already started'
+	String get alreadyStarted => 'This room\'s game has already started';
+
+	/// en: 'Couldn't connect — check your connection and try again'
+	String get timedOut => 'Couldn\'t connect — check your connection and try again';
 }
 
 // Path: lobby
@@ -677,6 +695,15 @@ class Translations$lobby$en {
 
 	/// en: 'The host left, the room closed'
 	String get closedMessage => 'The host left, the room closed';
+
+	/// en: 'Creating room…'
+	String get creatingRoom => 'Creating room…';
+
+	/// en: 'Couldn't create the room — check your connection and try again'
+	String get createFailed => 'Couldn\'t create the room — check your connection and try again';
+
+	/// en: 'Back to home'
+	String get backToHome => 'Back to home';
 }
 
 // Path: lobbyGame
@@ -687,8 +714,20 @@ class Translations$lobbyGame$en {
 
 	// Translations
 
-	/// en: '$answered/$total answered'
-	String answeredProgress({required Object answered, required Object total}) => '${answered}/${total} answered';
+	/// en: 'Room'
+	String get title => 'Room';
+
+	/// en: 'Preparing the question…'
+	String get waitingForQuestion => 'Preparing the question…';
+
+	/// en: 'You've answered every question! Waiting for the others…'
+	String get waitingForOthers => 'You\'ve answered every question! Waiting for the others…';
+
+	/// en: 'The game didn't start — check your connection and try again'
+	String get startFailed => 'The game didn\'t start — check your connection and try again';
+
+	/// en: 'Back to home'
+	String get backToHome => 'Back to home';
 }
 
 // Path: lobbyResult
@@ -729,6 +768,12 @@ class Translations$duelWaiting$en {
 	/// en: 'Invite expired'
 	String get expired => 'Invite expired';
 
+	/// en: 'Couldn't send the invite'
+	String get failed => 'Couldn\'t send the invite';
+
+	/// en: 'Couldn't reach your friend — check your connection and try again'
+	String get timedOut => 'Couldn\'t reach your friend — check your connection and try again';
+
 	/// en: 'Back to home'
 	String get backToHome => 'Back to home';
 }
@@ -768,8 +813,17 @@ class Translations$duelGame$en {
 	/// en: 'Preparing the question…'
 	String get waitingForQuestion => 'Preparing the question…';
 
-	/// en: 'Opponent answered'
-	String get opponentAnswered => 'Opponent answered';
+	/// en: 'Opponent: question $index/$total'
+	String opponentProgress({required Object index, required Object total}) => 'Opponent: question ${index}/${total}';
+
+	/// en: 'You've answered every question! Waiting for your opponent…'
+	String get waitingForOpponent => 'You\'ve answered every question! Waiting for your opponent…';
+
+	/// en: 'The game didn't start — check your connection and try again'
+	String get startFailed => 'The game didn\'t start — check your connection and try again';
+
+	/// en: 'Back to home'
+	String get backToHome => 'Back to home';
 }
 
 // Path: duelResult
@@ -807,8 +861,11 @@ class Translations$notifications$en {
 	/// en: 'Notifications'
 	String get title => 'Notifications';
 
-	/// en: 'Malika challenged you to a duel'
-	String get duelChallenge => 'Malika challenged you to a duel';
+	/// en: '$name challenged you to a duel'
+	String duelChallenge({required Object name}) => '${name} challenged you to a duel';
+
+	/// en: 'You were challenged to a duel'
+	String get duelChallengeGeneric => 'You were challenged to a duel';
 
 	/// en: 'Don't lose your 5-day streak — play today!'
 	String get streakReminder => 'Don\'t lose your 5-day streak — play today!';
@@ -816,8 +873,11 @@ class Translations$notifications$en {
 	/// en: 'You made it into the weekly Top 50'
 	String get top50 => 'You made it into the weekly Top 50';
 
-	/// en: 'Bekzod Xolmatov sent you a friend request'
-	String get friendRequest => 'Bekzod Xolmatov sent you a friend request';
+	/// en: '$name sent you a friend request'
+	String friendRequest({required Object name}) => '${name} sent you a friend request';
+
+	/// en: 'You have a new friend request'
+	String get friendRequestGeneric => 'You have a new friend request';
 
 	/// en: 'Welcome to Zukkor! Start your first quiz'
 	String get welcome => 'Welcome to Zukkor! Start your first quiz';
@@ -1351,6 +1411,9 @@ extension on Translations {
 			'playerDetail.addToFriends' => 'Add to friends',
 			'playerDetail.requestSent' => 'Sent',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => 'Ranked #${rank} · ${xp} XP',
+			'playerDetail.alreadyFriends' => 'You\'re friends',
+			'playerDetail.acceptRequest' => 'Accept',
+			'playerDetail.declineRequest' => 'Decline',
 			'friends.addFriend' => 'Add friend',
 			'friends.searchPlaceholder' => 'Search friends',
 			'friends.allSection' => 'All friends',
@@ -1430,11 +1493,14 @@ extension on Translations {
 			'result.playAgain' => 'Play again',
 			'result.challengeAFriend' => 'Challenge a friend',
 			'result.backToHome' => 'Back to home',
+			'result.breakdownTitle' => 'Question by question',
 			'joinCode.hint' => 'Enter the 6-digit room code your friend sent you',
 			'joinCode.joinButton' => 'Join',
 			'joinCode.codeDigitLabel' => ({required Object position}) => 'Code digit ${position}',
 			'joinCode.roomNotFound' => 'No room found with that code',
 			'joinCode.roomFull' => 'That room is full',
+			'joinCode.alreadyStarted' => 'This room\'s game has already started',
+			'joinCode.timedOut' => 'Couldn\'t connect — check your connection and try again',
 			'lobby.title' => 'Multiplayer room',
 			'lobby.roomCode' => 'Room code',
 			'lobby.players' => 'Players',
@@ -1444,7 +1510,14 @@ extension on Translations {
 			'lobby.waitingForHost' => 'Waiting for the host to start…',
 			'lobby.playerCount' => ({required Object current, required Object max}) => '${current}/${max}',
 			'lobby.closedMessage' => 'The host left, the room closed',
-			'lobbyGame.answeredProgress' => ({required Object answered, required Object total}) => '${answered}/${total} answered',
+			'lobby.creatingRoom' => 'Creating room…',
+			'lobby.createFailed' => 'Couldn\'t create the room — check your connection and try again',
+			'lobby.backToHome' => 'Back to home',
+			'lobbyGame.title' => 'Room',
+			'lobbyGame.waitingForQuestion' => 'Preparing the question…',
+			'lobbyGame.waitingForOthers' => 'You\'ve answered every question! Waiting for the others…',
+			'lobbyGame.startFailed' => 'The game didn\'t start — check your connection and try again',
+			'lobbyGame.backToHome' => 'Back to home',
 			'lobbyResult.title' => 'Room results',
 			'lobbyResult.subtitle' => 'Here\'s how everyone in the room did',
 			'lobbyResult.playAgain' => 'Play again',
@@ -1452,6 +1525,8 @@ extension on Translations {
 			'duelWaiting.waitingForAccept' => 'Invite sent, waiting for a response…',
 			'duelWaiting.declined' => 'Invite declined',
 			'duelWaiting.expired' => 'Invite expired',
+			'duelWaiting.failed' => 'Couldn\'t send the invite',
+			'duelWaiting.timedOut' => 'Couldn\'t reach your friend — check your connection and try again',
 			'duelWaiting.backToHome' => 'Back to home',
 			'duelInvite.title' => 'Duel invite',
 			'duelInvite.challengesYou' => 'is challenging you to a duel',
@@ -1459,17 +1534,22 @@ extension on Translations {
 			'duelInvite.decline' => 'Decline',
 			'duelGame.title' => 'Duel',
 			'duelGame.waitingForQuestion' => 'Preparing the question…',
-			'duelGame.opponentAnswered' => 'Opponent answered',
+			'duelGame.opponentProgress' => ({required Object index, required Object total}) => 'Opponent: question ${index}/${total}',
+			'duelGame.waitingForOpponent' => 'You\'ve answered every question! Waiting for your opponent…',
+			'duelGame.startFailed' => 'The game didn\'t start — check your connection and try again',
+			'duelGame.backToHome' => 'Back to home',
 			'duelResult.won' => 'You won!',
 			'duelResult.lost' => 'You lost',
 			'duelResult.draw' => 'It\'s a draw!',
 			'duelResult.yourScoreLabel' => 'You',
 			'duelResult.opponentScoreLabel' => 'Opponent',
 			'notifications.title' => 'Notifications',
-			'notifications.duelChallenge' => 'Malika challenged you to a duel',
+			'notifications.duelChallenge' => ({required Object name}) => '${name} challenged you to a duel',
+			'notifications.duelChallengeGeneric' => 'You were challenged to a duel',
 			'notifications.streakReminder' => 'Don\'t lose your 5-day streak — play today!',
 			'notifications.top50' => 'You made it into the weekly Top 50',
-			'notifications.friendRequest' => 'Bekzod Xolmatov sent you a friend request',
+			'notifications.friendRequest' => ({required Object name}) => '${name} sent you a friend request',
+			'notifications.friendRequestGeneric' => 'You have a new friend request',
 			'notifications.welcome' => 'Welcome to Zukkor! Start your first quiz',
 			'notifications.emptyState' => 'No notifications yet',
 			'editProfile.save' => 'Save',

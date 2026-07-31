@@ -14,10 +14,10 @@ class HistoryRepositoryImpl implements HistoryRepository {
   final HistoryRemoteDataSource _remoteDataSource;
 
   @override
-  Future<List<SessionHistoryEntry>> getHistory({int limit = 50}) async {
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async {
     try {
-      final models = await _remoteDataSource.getHistory(limit: limit);
-      return models.map((model) => model.toEntity()).toList();
+      final page = await _remoteDataSource.getHistory(limit: limit, offset: offset);
+      return (entries: page.entries.map((model) => model.toEntity()).toList(), hasMore: page.hasMore);
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }

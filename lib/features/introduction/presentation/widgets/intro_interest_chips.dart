@@ -8,6 +8,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/intro_interest.dart';
+import '../models/study_survey.dart';
 
 /// Multi-select chip grid for "what are you into?" — plus an "Other" chip
 /// that reveals a free-text field for interests not in the list.
@@ -60,6 +61,7 @@ class IntroInterestChips extends StatelessWidget {
             hint: context.t.introduction.otherFieldHint,
             controller: otherController,
             textInputAction: TextInputAction.done,
+            maxLength: kOtherAnswerMaxLength,
           ),
         ],
       ],

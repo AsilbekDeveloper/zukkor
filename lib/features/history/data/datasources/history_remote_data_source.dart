@@ -13,12 +13,16 @@ class HistoryRemoteDataSource {
 
   final Dio _dio;
 
-  Future<List<SessionHistoryEntryModel>> getHistory({int limit = 50}) async {
-    final Response<dynamic> response = await _dio.get(ApiEndpoints.history(limit: limit));
+  Future<({List<SessionHistoryEntryModel> entries, bool hasMore})> getHistory({
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final Response<dynamic> response = await _dio.get(ApiEndpoints.history(limit: limit, offset: offset));
     final Map<String, dynamic> data = response.data as Map<String, dynamic>;
-    return (data['entries'] as List<dynamic>)
+    final List<SessionHistoryEntryModel> entries = (data['entries'] as List<dynamic>)
         .map((json) => SessionHistoryEntryModel.fromJson(json as Map<String, dynamic>))
         .toList();
+    return (entries: entries, hasMore: data['has_more'] as bool? ?? false);
   }
 }
 

@@ -6,10 +6,28 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/app.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
+import 'package:zukkor/core/storage/token_storage.dart';
+
+/// Saqlangan token yo'q — [SplashScreen]'ni (ilova endi shu bilan
+/// boshlanadi) "kirilmagan" holatga deterministik yo'naltiradi, real
+/// secure storage'ga (test muhitida platforma kanali yo'q) tegmasdan.
+class _FakeTokenStorage implements TokenStorage {
+  @override
+  Future<String?> readAccessToken() async => null;
+
+  @override
+  Future<String?> readRefreshToken() async => null;
+
+  @override
+  Future<void> saveTokens({required String access, String? refresh}) async {}
+
+  @override
+  Future<void> clear() async {}
+}
 
 /// A fresh install has no `hasSeenIntroduction` flag, so the app's own
-/// router lands directly on the Introduction walkthrough — no manual
-/// push needed, unlike the post-Introduction screens.
+/// router lands on Introduction (via a brief [SplashScreen] hop) — no
+/// manual push needed, unlike the post-Introduction screens.
 ///
 /// The explainer pages run continuous "breathing"/orbit animations for
 /// as long as they're mounted, so `pumpAndSettle()` would never return —
@@ -26,7 +44,10 @@ Future<SharedPreferences> _pumpAppOnIntroduction(WidgetTester tester) async {
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [
+        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
+      ],
       child: const ZukkorApp(),
     ),
   );

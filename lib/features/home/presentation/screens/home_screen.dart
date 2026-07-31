@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,11 +7,13 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
+import '../../../../core/notifications/push_notification_service.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../duel/presentation/controllers/duel_controller.dart';
@@ -21,6 +25,7 @@ import '../../../lobby/presentation/screens/lobby_screen.dart';
 import '../../../notifications/presentation/controllers/notifications_controller.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
+import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../widgets/category_grid.dart';
 import '../widgets/duel_hero_card.dart';
 import '../widgets/friends_card.dart';
@@ -55,33 +60,48 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
-    Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
-    Future.microtask(() async {
-      await ref.read(currentUserControllerProvider.notifier).load();
-      final String? userId = ref.read(currentUserControllerProvider)?.id;
-      if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
-    });
+    // Categories/friends/profile/stats only change via this device's own
+    // actions (each of those flows refreshes its own provider directly),
+    // so re-fetching them on every Home visit is wasted traffic — loaded
+    // once per session and reused. Notifications stay unconditional: a
+    // new one can arrive from the backend at any time with no other
+    // signal telling this screen to refresh, so the unread dot would go
+    // stale for the rest of the session otherwise.
+    if (ref.read(categoriesControllerProvider).data == null) {
+      Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+    }
+    if (ref.read(friendsControllerProvider).data == null) {
+      Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+    }
+    if (ref.read(currentUserControllerProvider).data == null || ref.read(myStatsControllerProvider).data == null) {
+      Future.microtask(() async {
+        await ref.read(currentUserControllerProvider.notifier).load();
+        final String? userId = ref.read(currentUserControllerProvider).data?.id;
+        if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
+      });
+    }
     Future.microtask(() => ref.read(duelControllerProvider.notifier).connect());
     Future.microtask(() => ref.read(lobbyControllerProvider.notifier).connect());
     Future.microtask(() => ref.read(notificationsControllerProvider.notifier).load());
+    Future.microtask(_syncPushToken);
+  }
+
+  /// Ruxsat so'raydi, FCM token'ni backendga bog'laydi va token
+  /// almashtirilgan holatlarni (masalan qayta o'rnatilgandan keyin) ham
+  /// kuzatib boradi — har safar Home ochilganda emas, bir marta.
+  Future<void> _syncPushToken() async {
+    final PushNotificationService service = ref.read(pushNotificationServiceProvider);
+    final String? token = await service.requestTokenOrNull();
+    if (!mounted) return;
+    if (token != null) {
+      unawaited(ref.read(registerPushTokenUseCaseProvider).call(token));
+    }
+    service.listenTokenRefresh(
+      (newToken) => ref.read(registerPushTokenUseCaseProvider).call(newToken),
+    );
   }
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
-
-  String _initials(User? user) {
-    final String first = (user?.firstName?.isNotEmpty ?? false) ? user!.firstName![0] : '';
-    final String last = (user?.lastName?.isNotEmpty ?? false) ? user!.lastName![0] : '';
-    final String combined = '$first$last'.toUpperCase();
-    return combined.isNotEmpty ? combined : '?';
-  }
-
-  String _displayName(User? user) {
-    final String name = [user?.firstName, user?.lastName]
-        .where((part) => part != null && part.isNotEmpty)
-        .join(' ');
-    return name.isNotEmpty ? name : (user?.username ?? '');
-  }
 
   void _openNotifications(BuildContext context) => context.push(AppRoutes.notifications);
 
@@ -100,9 +120,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
 
     final double hPad = context.screenHPad;
-    final User? user = ref.watch(currentUserControllerProvider);
+    final User? user = ref.watch(currentUserControllerProvider).data;
     final bool hasUnreadNotifications =
-        ref.watch(notificationsControllerProvider)?.any((n) => !n.isRead) ?? false;
+        ref.watch(notificationsControllerProvider).data?.any((n) => !n.isRead) ?? false;
 
     return Scaffold(
       body: SafeArea(
@@ -111,8 +131,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
           children: [
             HomeHeader(
-              name: _displayName(user),
-              initials: _initials(user),
+              name: user.displayName,
+              initials: user.initials,
               avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
               avatarImagePath: user?.avatarImagePath,
               hasUnreadNotifications: hasUnreadNotifications,
@@ -140,9 +160,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   /// Hero card + stats + create/join room buttons.
   List<Widget> _playSection(BuildContext context) {
-    final PlayerStats? stats = ref.watch(myStatsControllerProvider);
-    final double xpProgress =
-        (stats == null || stats.nextLevelXp == 0) ? 0 : (stats.totalXp / stats.nextLevelXp).clamp(0, 1).toDouble();
+    final PlayerStats? stats = ref.watch(myStatsControllerProvider).data;
+    final int levelSpan = (stats == null) ? 0 : stats.nextLevelXp - stats.currentLevelXp;
+    final double xpProgress = (stats == null || levelSpan == 0)
+        ? 0
+        : ((stats.totalXp - stats.currentLevelXp) / levelSpan).clamp(0, 1).toDouble();
 
     return [
       DuelHeroCard(streakDays: stats?.currentStreak ?? 0, onStartDuel: () => context.push(AppRoutes.duel)),
@@ -165,6 +187,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<Widget> _discoverSection(BuildContext context) {
     final List<QuizCategory> categories = ref
             .watch(categoriesControllerProvider)
+            .data
             ?.map(QuizCategory.fromEntity)
             .take(6)
             .toList() ??
@@ -174,11 +197,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       CategoryGrid(
         categories: categories,
         onSeeAll: () => context.push(AppRoutes.categories),
-        onCategoryTap: (category) => context.push(AppRoutes.quizSetup, extra: category),
+        onCategoryTap: (category) => context.push(
+          AppRoutes.quizSetup,
+          extra: (
+            category: category,
+            onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
+              AppRoutes.quizIntro,
+              extra: QuizLaunchArgs(category: category, questionCount: count),
+            ),
+          ),
+        ),
       ),
       AppSpacing.md.vGap,
       FriendsCard(
-        friendCount: ref.watch(friendsControllerProvider)?.length ?? 0,
+        friendCount: ref.watch(friendsControllerProvider).data?.length ?? 0,
         onTap: () => context.push(AppRoutes.duel),
       ),
     ];

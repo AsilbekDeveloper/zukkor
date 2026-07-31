@@ -8,7 +8,9 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/section_head.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/friend_requests_controller.dart';
 import '../controllers/friends_controller.dart';
@@ -39,7 +41,13 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+    // The friend list only changes via this device's own actions
+    // (accepting a request already reloads it directly) — cached for the
+    // session. Pending requests stay unconditional: a new incoming
+    // request has no other signal telling this screen to refresh.
+    if (ref.read(friendsControllerProvider).data == null) {
+      Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+    }
     Future.microtask(() => ref.read(friendRequestsControllerProvider.notifier).load());
   }
 
@@ -50,6 +58,12 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   }
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
+
+  void _openPlayerDetail(BuildContext context, FriendEntry friend) {
+    final String? id = friend.id;
+    if (id == null) return;
+    context.push(AppRoutes.playerDetail, extra: {'userId': id, 'relation': 'friend'});
+  }
 
   List<FriendEntry> _filteredFriends(List<FriendEntry> friends) {
     if (_query.isEmpty) return friends;
@@ -65,52 +79,62 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
     final bool isSearching = _query.isNotEmpty;
-    final List<FriendEntry>? allFriends =
-        ref.watch(friendsControllerProvider)?.map(FriendEntry.fromEntity).toList();
+    final friendsState = ref.watch(friendsControllerProvider);
+    final List<FriendEntry>? allFriends = friendsState.data?.map(FriendEntry.fromEntity).toList();
     final List<FriendEntry> results = allFriends == null ? const [] : _filteredFriends(allFriends);
-    final int pendingRequestCount = ref.watch(friendRequestsControllerProvider)?.length ?? 0;
+    final int pendingRequestCount = ref.watch(friendRequestsControllerProvider).data?.length ?? 0;
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: allFriends == null
-            ? const Center(child: CircularProgressIndicator())
-            : ListView(
-                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
-                children: [
-                  FriendsHeader(
-                    onAddFriendTap: () => context.push(AppRoutes.addFriend),
-                    onRequestsTap: () => context.push(AppRoutes.friendRequests),
-                    pendingRequestCount: pendingRequestCount,
-                  ),
-                  AppSpacing.lg.vGap,
-                  FriendsSearchBar(
-                    placeholder: context.t.friends.searchPlaceholder,
-                    controller: _searchController,
-                    onChanged: (value) => setState(() => _query = value),
-                  ),
-                  AppSpacing.lg.vGap,
-                  SectionHead(
-                    title: context.t.friends.allSection,
-                    trailing: isSearching ? null : '${allFriends.length}',
-                  ),
-                  AppSpacing.sm.vGap,
-                  if (results.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                      child: Center(
-                        child: Text(
-                          context.t.friends.noneFound,
-                          style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-                        ),
-                      ),
-                    )
-                  else
-                    FriendList(
-                      entries: results,
-                      onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
+        child: friendsState.hasError
+            ? ErrorRetryView(onRetry: () => ref.read(friendsControllerProvider.notifier).load())
+            : allFriends == null
+            ? Padding(
+                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xl, hPad, AppSpacing.lg),
+                child: const ShimmerListSkeleton(trailingWidth: 36),
+              )
+            : RefreshIndicator(
+                onRefresh: () => ref.read(friendsControllerProvider.notifier).load(),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+                  children: [
+                    FriendsHeader(
+                      onAddFriendTap: () => context.push(AppRoutes.addFriend),
+                      onRequestsTap: () => context.push(AppRoutes.friendRequests),
+                      pendingRequestCount: pendingRequestCount,
                     ),
-                ],
+                    AppSpacing.lg.vGap,
+                    FriendsSearchBar(
+                      placeholder: context.t.friends.searchPlaceholder,
+                      controller: _searchController,
+                      onChanged: (value) => setState(() => _query = value),
+                    ),
+                    AppSpacing.lg.vGap,
+                    SectionHead(
+                      title: context.t.friends.allSection,
+                      trailing: isSearching ? null : '${allFriends.length}',
+                    ),
+                    AppSpacing.sm.vGap,
+                    if (results.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                        child: Center(
+                          child: Text(
+                            context.t.friends.noneFound,
+                            style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                          ),
+                        ),
+                      )
+                    else
+                      FriendList(
+                        entries: results,
+                        onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
+                        onRowTap: (friend) => _openPlayerDetail(context, friend),
+                      ),
+                  ],
+                ),
               ),
       ),
       bottomNavigationBar: AppBottomNavBar(

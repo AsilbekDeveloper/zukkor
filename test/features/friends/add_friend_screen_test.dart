@@ -17,6 +17,13 @@ import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
 import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
 import 'package:zukkor/features/friends/presentation/screens/add_friend_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/friends_screen.dart';
+import 'package:zukkor/features/leaderboard/data/repositories/leaderboard_repository_impl.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_data.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
+import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
+import 'package:zukkor/features/player_detail/presentation/models/player_detail_args.dart';
+import 'package:zukkor/features/player_detail/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
 
 const List<DiscoveredUser> _directory = [
@@ -64,6 +71,38 @@ class _FakeFriendsRepository implements FriendsRepository {
   Future<void> declineFriendRequest(String requestId) async {}
 }
 
+/// Backendga murojaat qilmaydigan soxta leaderboard repository —
+/// [PlayerDetailScreen] `GET /leaderboard/{user_id}`ni chaqiradi.
+class _FakeLeaderboardRepository implements LeaderboardRepository {
+  @override
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
+        userId: userId,
+        rank: 20,
+        username: 'sardor_aliyev',
+        firstName: 'Sardor',
+        lastName: 'Aliyev',
+        avatarColor: 'a-blue',
+        avatarImagePath: null,
+        totalXp: 1200,
+        level: 4,
+        levelTitle: 'Newcomer',
+        nextLevelXp: 1500,
+        currentLevelXp: 1250,
+        currentStreak: 1,
+        longestStreak: 2,
+        gamesPlayed: 5,
+        winRatePercent: 40,
+      );
+}
+
 Future<GoRouter> _pumpAddFriend(
   WidgetTester tester, {
   Size size = const Size(390, 844),
@@ -82,6 +121,23 @@ Future<GoRouter> _pumpAddFriend(
     routes: [
       GoRoute(path: AppRoutes.friends, builder: (context, state) => const FriendsScreen()),
       GoRoute(path: AppRoutes.addFriend, builder: (context, state) => const AddFriendScreen()),
+      GoRoute(
+        path: AppRoutes.playerDetail,
+        builder: (context, state) {
+          final Map<dynamic, dynamic> extra = state.extra! as Map;
+          return PlayerDetailScreen(
+            args: PlayerDetailArgs(
+              userId: extra['userId'] as String,
+              relation: PlayerDetailRelation.values.firstWhere(
+                (r) => r.name == extra['relation'],
+                orElse: () => PlayerDetailRelation.unknown,
+              ),
+              incomingRequestId: extra['requestId'] as String?,
+              initialRequestSent: extra['requestSent'] == true,
+            ),
+          );
+        },
+      ),
     ],
   );
 
@@ -90,6 +146,7 @@ Future<GoRouter> _pumpAddFriend(
       overrides: [
         appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
         friendsRepositoryProvider.overrideWithValue(repository ?? _FakeFriendsRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
@@ -159,6 +216,18 @@ void main() {
     expect(repository.addedUserIds, ['10']);
     expect(find.text(AppStrings.requestedLabel), findsOneWidget);
     expect(find.text(AppStrings.addButton), findsNothing);
+  });
+
+  testWidgets('tapping a search result row opens their profile with Add to friends', (tester) async {
+    await _pumpAddFriend(tester);
+
+    await _search(tester, 'sardor');
+    await tester.tap(find.text('Sardor Aliyev'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlayerDetailScreen), findsOneWidget);
+    expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('clearing the search restores the invite section', (tester) async {

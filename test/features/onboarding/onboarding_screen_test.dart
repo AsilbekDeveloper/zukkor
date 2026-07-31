@@ -10,9 +10,28 @@ import 'package:zukkor/app.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
+import 'package:zukkor/core/storage/token_storage.dart';
 import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:zukkor/features/auth/domain/entities/user.dart';
 import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
+
+/// Saqlangan token yo'q — [SplashScreen]'ni (ilova endi shu bilan
+/// boshlanadi) "kirilmagan" holatga deterministik yo'naltiradi. Real
+/// secure storage'ni ishlatsa, test muhitida platforma kanaliga javob
+/// kelmagani uchun `pumpAndSettle()` cheksiz kutib qolardi.
+class _FakeTokenStorage implements TokenStorage {
+  @override
+  Future<String?> readAccessToken() async => null;
+
+  @override
+  Future<String?> readRefreshToken() async => null;
+
+  @override
+  Future<void> saveTokens({required String access, String? refresh}) async {}
+
+  @override
+  Future<void> clear() async {}
+}
 
 /// Backendga murojaat qilmaydigan soxta auth repository — "happy path"
 /// testi `completeOnboarding()`ni chaqiradi, haqiqiy tarmoqqa bog'liq
@@ -32,12 +51,16 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> login({required String email, required String password}) async {}
 
   @override
+  Future<User?> signInWithGoogle() => throw UnimplementedError();
+
+  @override
   Future<User> getCurrentUser() async => User(
         id: '1',
         email: 'aziz@example.com',
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: false,
+        authProvider: 'email',
       );
 
   @override
@@ -45,7 +68,7 @@ class _FakeAuthRepository implements AuthRepository {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -65,6 +88,7 @@ class _FakeAuthRepository implements AuthRepository {
       isActive: true,
       createdAt: DateTime(2026),
       onboardingCompleted: true,
+      authProvider: 'email',
     );
   }
 
@@ -75,6 +99,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> logout() async {}
 
   @override
+  Future<void> registerPushToken(String token) async {}
+
+  @override
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
@@ -82,7 +109,7 @@ class _FakeAuthRepository implements AuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<void> deleteAccount(String password) => throw UnimplementedError();
+  Future<void> deleteAccount(String? password) => throw UnimplementedError();
 }
 
 /// The onboarding wizard has no entry point wired up yet (login/register
@@ -112,6 +139,7 @@ Future<SharedPreferences> _pumpAppOnOnboarding(
       overrides: [
         appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
         authRepositoryProvider.overrideWithValue(authRepository ?? _FakeAuthRepository()),
+        tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
       ],
       child: const ZukkorApp(),
     ),

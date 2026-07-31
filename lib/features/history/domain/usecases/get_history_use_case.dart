@@ -6,5 +6,6 @@ class GetHistoryUseCase {
 
   final HistoryRepository _repository;
 
-  Future<List<SessionHistoryEntry>> call({int limit = 50}) => _repository.getHistory(limit: limit);
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> call({int limit = 50, int offset = 0}) =>
+      _repository.getHistory(limit: limit, offset: offset);
 }

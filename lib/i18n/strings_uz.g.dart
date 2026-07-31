@@ -177,6 +177,9 @@ class _Translations$playerDetail$uz implements Translations$playerDetail$en {
 	@override String get addToFriends => 'Do\'stlikka qo\'shish';
 	@override String get requestSent => 'Yuborildi';
 	@override String rankedLabel({required Object rank, required Object xp}) => '#${rank} o\'rin · ${xp} XP';
+	@override String get alreadyFriends => 'Siz do\'stsiz';
+	@override String get acceptRequest => 'Qabul qilish';
+	@override String get declineRequest => 'Rad etish';
 }
 
 // Path: friends
@@ -382,6 +385,7 @@ class _Translations$result$uz implements Translations$result$en {
 	@override String get playAgain => 'Yana o\'ynash';
 	@override String get challengeAFriend => 'Do\'stni chaqirish';
 	@override String get backToHome => 'Bosh sahifaga';
+	@override String get breakdownTitle => 'Savollar bo\'yicha natija';
 }
 
 // Path: joinCode
@@ -396,6 +400,8 @@ class _Translations$joinCode$uz implements Translations$joinCode$en {
 	@override String codeDigitLabel({required Object position}) => '${position}-raqam';
 	@override String get roomNotFound => 'Bunday xona topilmadi';
 	@override String get roomFull => 'Xona to\'lgan';
+	@override String get alreadyStarted => 'Bu xonada o\'yin allaqachon boshlangan';
+	@override String get timedOut => 'Bog\'lanib bo\'lmadi — internetni tekshirib qayta urinib ko\'ring';
 }
 
 // Path: lobby
@@ -414,6 +420,9 @@ class _Translations$lobby$uz implements Translations$lobby$en {
 	@override String get waitingForHost => 'Xost o\'yinni boshlashini kutmoqda…';
 	@override String playerCount({required Object current, required Object max}) => '${current}/${max}';
 	@override String get closedMessage => 'Xost xonani tark etdi, xona yopildi';
+	@override String get creatingRoom => 'Xona yaratilmoqda…';
+	@override String get createFailed => 'Xona yaratib bo\'lmadi — internetni tekshirib qayta urinib ko\'ring';
+	@override String get backToHome => 'Bosh sahifaga';
 }
 
 // Path: lobbyGame
@@ -423,7 +432,11 @@ class _Translations$lobbyGame$uz implements Translations$lobbyGame$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
-	@override String answeredProgress({required Object answered, required Object total}) => '${answered}/${total} javob berdi';
+	@override String get title => 'Xona';
+	@override String get waitingForQuestion => 'Savol tayyorlanmoqda…';
+	@override String get waitingForOthers => 'Siz barcha savollarga javob berdingiz! Boshqalarni kutmoqdamiz…';
+	@override String get startFailed => 'O\'yin boshlanmadi — internetni tekshirib qayta urinib ko\'ring';
+	@override String get backToHome => 'Bosh sahifaga';
 }
 
 // Path: lobbyResult
@@ -449,6 +462,8 @@ class _Translations$duelWaiting$uz implements Translations$duelWaiting$en {
 	@override String get waitingForAccept => 'Taklif yuborildi, javobni kutmoqda…';
 	@override String get declined => 'Taklif rad etildi';
 	@override String get expired => 'Taklif muddati tugadi';
+	@override String get failed => 'Taklifni yuborib bo\'lmadi';
+	@override String get timedOut => 'Do\'stingizga ulanib bo\'lmadi — internetni tekshirib qayta urinib ko\'ring';
 	@override String get backToHome => 'Bosh sahifaga';
 }
 
@@ -474,7 +489,10 @@ class _Translations$duelGame$uz implements Translations$duelGame$en {
 	// Translations
 	@override String get title => 'Duel';
 	@override String get waitingForQuestion => 'Savol tayyorlanmoqda…';
-	@override String get opponentAnswered => 'Raqib javob berdi';
+	@override String opponentProgress({required Object index, required Object total}) => 'Raqib: ${index}/${total} savolda';
+	@override String get waitingForOpponent => 'Siz barcha savollarga javob berdingiz! Sherigingizni kutmoqdamiz…';
+	@override String get startFailed => 'O\'yin boshlanmadi — internetni tekshirib qayta urinib ko\'ring';
+	@override String get backToHome => 'Bosh sahifaga';
 }
 
 // Path: duelResult
@@ -499,10 +517,12 @@ class _Translations$notifications$uz implements Translations$notifications$en {
 
 	// Translations
 	@override String get title => 'Bildirishnomalar';
-	@override String get duelChallenge => 'Malika sizni duelga chaqirdi';
+	@override String duelChallenge({required Object name}) => '${name} sizni duelga chaqirdi';
+	@override String get duelChallengeGeneric => 'Sizni duelga chaqirishdi';
 	@override String get streakReminder => '5 kunlik seriyangizni yo\'qotmang — bugun o\'ynang!';
 	@override String get top50 => 'Siz haftalik Top 50ga kirdingiz';
-	@override String get friendRequest => 'Bekzod Xolmatov sizga do\'stlik so\'rovi yubordi';
+	@override String friendRequest({required Object name}) => '${name} sizga do\'stlik so\'rovi yubordi';
+	@override String get friendRequestGeneric => 'Sizga do\'stlik so\'rovi keldi';
 	@override String get welcome => 'Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang';
 	@override String get emptyState => 'Hozircha bildirishnomalar yo\'q';
 }
@@ -778,6 +798,9 @@ extension on TranslationsUz {
 			'playerDetail.addToFriends' => 'Do\'stlikka qo\'shish',
 			'playerDetail.requestSent' => 'Yuborildi',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => '#${rank} o\'rin · ${xp} XP',
+			'playerDetail.alreadyFriends' => 'Siz do\'stsiz',
+			'playerDetail.acceptRequest' => 'Qabul qilish',
+			'playerDetail.declineRequest' => 'Rad etish',
 			'friends.addFriend' => 'Do\'st qo\'shish',
 			'friends.searchPlaceholder' => 'Do\'stlarni qidirish',
 			'friends.allSection' => 'Barcha do\'stlar',
@@ -857,11 +880,14 @@ extension on TranslationsUz {
 			'result.playAgain' => 'Yana o\'ynash',
 			'result.challengeAFriend' => 'Do\'stni chaqirish',
 			'result.backToHome' => 'Bosh sahifaga',
+			'result.breakdownTitle' => 'Savollar bo\'yicha natija',
 			'joinCode.hint' => 'Do\'stingiz yuborgan 6 xonali xona kodini kiriting',
 			'joinCode.joinButton' => 'Qo\'shilish',
 			'joinCode.codeDigitLabel' => ({required Object position}) => '${position}-raqam',
 			'joinCode.roomNotFound' => 'Bunday xona topilmadi',
 			'joinCode.roomFull' => 'Xona to\'lgan',
+			'joinCode.alreadyStarted' => 'Bu xonada o\'yin allaqachon boshlangan',
+			'joinCode.timedOut' => 'Bog\'lanib bo\'lmadi — internetni tekshirib qayta urinib ko\'ring',
 			'lobby.title' => 'Ko\'p o\'yinchili xona',
 			'lobby.roomCode' => 'Xona kodi',
 			'lobby.players' => 'O\'yinchilar',
@@ -871,7 +897,14 @@ extension on TranslationsUz {
 			'lobby.waitingForHost' => 'Xost o\'yinni boshlashini kutmoqda…',
 			'lobby.playerCount' => ({required Object current, required Object max}) => '${current}/${max}',
 			'lobby.closedMessage' => 'Xost xonani tark etdi, xona yopildi',
-			'lobbyGame.answeredProgress' => ({required Object answered, required Object total}) => '${answered}/${total} javob berdi',
+			'lobby.creatingRoom' => 'Xona yaratilmoqda…',
+			'lobby.createFailed' => 'Xona yaratib bo\'lmadi — internetni tekshirib qayta urinib ko\'ring',
+			'lobby.backToHome' => 'Bosh sahifaga',
+			'lobbyGame.title' => 'Xona',
+			'lobbyGame.waitingForQuestion' => 'Savol tayyorlanmoqda…',
+			'lobbyGame.waitingForOthers' => 'Siz barcha savollarga javob berdingiz! Boshqalarni kutmoqdamiz…',
+			'lobbyGame.startFailed' => 'O\'yin boshlanmadi — internetni tekshirib qayta urinib ko\'ring',
+			'lobbyGame.backToHome' => 'Bosh sahifaga',
 			'lobbyResult.title' => 'Xona natijalari',
 			'lobbyResult.subtitle' => 'Xonadagi hammaning natijasi shunday',
 			'lobbyResult.playAgain' => 'Yana o\'ynash',
@@ -879,6 +912,8 @@ extension on TranslationsUz {
 			'duelWaiting.waitingForAccept' => 'Taklif yuborildi, javobni kutmoqda…',
 			'duelWaiting.declined' => 'Taklif rad etildi',
 			'duelWaiting.expired' => 'Taklif muddati tugadi',
+			'duelWaiting.failed' => 'Taklifni yuborib bo\'lmadi',
+			'duelWaiting.timedOut' => 'Do\'stingizga ulanib bo\'lmadi — internetni tekshirib qayta urinib ko\'ring',
 			'duelWaiting.backToHome' => 'Bosh sahifaga',
 			'duelInvite.title' => 'Duelga taklif',
 			'duelInvite.challengesYou' => 'sizni duelga chaqirmoqda',
@@ -886,17 +921,22 @@ extension on TranslationsUz {
 			'duelInvite.decline' => 'Rad etish',
 			'duelGame.title' => 'Duel',
 			'duelGame.waitingForQuestion' => 'Savol tayyorlanmoqda…',
-			'duelGame.opponentAnswered' => 'Raqib javob berdi',
+			'duelGame.opponentProgress' => ({required Object index, required Object total}) => 'Raqib: ${index}/${total} savolda',
+			'duelGame.waitingForOpponent' => 'Siz barcha savollarga javob berdingiz! Sherigingizni kutmoqdamiz…',
+			'duelGame.startFailed' => 'O\'yin boshlanmadi — internetni tekshirib qayta urinib ko\'ring',
+			'duelGame.backToHome' => 'Bosh sahifaga',
 			'duelResult.won' => 'Siz g\'olib bo\'ldingiz!',
 			'duelResult.lost' => 'Siz yutqazdingiz',
 			'duelResult.draw' => 'Durrang!',
 			'duelResult.yourScoreLabel' => 'Siz',
 			'duelResult.opponentScoreLabel' => 'Raqib',
 			'notifications.title' => 'Bildirishnomalar',
-			'notifications.duelChallenge' => 'Malika sizni duelga chaqirdi',
+			'notifications.duelChallenge' => ({required Object name}) => '${name} sizni duelga chaqirdi',
+			'notifications.duelChallengeGeneric' => 'Sizni duelga chaqirishdi',
 			'notifications.streakReminder' => '5 kunlik seriyangizni yo\'qotmang — bugun o\'ynang!',
 			'notifications.top50' => 'Siz haftalik Top 50ga kirdingiz',
-			'notifications.friendRequest' => 'Bekzod Xolmatov sizga do\'stlik so\'rovi yubordi',
+			'notifications.friendRequest' => ({required Object name}) => '${name} sizga do\'stlik so\'rovi yubordi',
+			'notifications.friendRequestGeneric' => 'Sizga do\'stlik so\'rovi keldi',
 			'notifications.welcome' => 'Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang',
 			'notifications.emptyState' => 'Hozircha bildirishnomalar yo\'q',
 			'editProfile.save' => 'Saqlash',

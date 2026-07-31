@@ -7,12 +7,12 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
-import '../../../friends/presentation/models/duel_match.dart';
-import '../../../friends/presentation/models/friend_entry.dart';
-import '../../../lobby/presentation/controllers/lobby_controller.dart';
 import '../controllers/categories_controller.dart';
 import '../models/quiz_category.dart';
+import '../models/quiz_launch_args.dart';
 import '../widgets/category_grid_view.dart';
 
 /// Full category list — mirrors the prototype's `view-categories`:
@@ -20,23 +20,15 @@ import '../widgets/category_grid_view.dart';
 /// Home's "Categories" section (here, the complete list). Categories are
 /// fetched from `GET /categories` on open.
 ///
-/// Doubles as the category picker for a pending duel: when reached from
-/// the Duel (choose a friend) screen with [duelOpponent] set, tapping a
-/// category opens Duel Waiting for that friend+category instead of the
-/// solo question-count picker — mirrors the prototype's
-/// `pendingDuelOpponent` flow (Duel and Solo share this same
-/// category-picker screen, both real backend categories).
-///
-/// Also doubles as the category picker for starting a Lobby room's game:
-/// when reached with [lobbyRoomId] set, tapping a category sends
-/// `lobby_start` for that room and pops back to [LobbyScreen], which
-/// navigates everyone into [LobbyGameScreen] once `lobby_game_started`
-/// arrives.
+/// Also doubles as the category picker for other flows (a pending duel,
+/// starting a Lobby room's game) — rather than this screen knowing about
+/// those features itself (which would tangle Quiz up with Friends and
+/// Lobby), the caller supplies [onCategoryPicked] to react to a tap its
+/// own way. Null means the plain solo picker: push Quiz Setup.
 class CategoriesScreen extends ConsumerStatefulWidget {
-  const CategoriesScreen({this.duelOpponent, this.lobbyRoomId, super.key});
+  const CategoriesScreen({this.onCategoryPicked, super.key});
 
-  final FriendEntry? duelOpponent;
-  final String? lobbyRoomId;
+  final void Function(BuildContext context, WidgetRef ref, QuizCategory category)? onCategoryPicked;
 
   @override
   ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
@@ -46,7 +38,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+    if (ref.read(categoriesControllerProvider).data == null) {
+      Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+    }
   }
 
   void _goBack(BuildContext context) {
@@ -58,25 +52,27 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   }
 
   void _onCategoryTap(BuildContext context, QuizCategory category) {
-    if (widget.duelOpponent != null) {
-      context.push(
-        AppRoutes.duelWaiting,
-        extra: DuelMatch(opponent: widget.duelOpponent!, category: category),
-      );
-    } else if (widget.lobbyRoomId != null) {
-      ref.read(lobbyControllerProvider.notifier).startGame(category.id);
-      context.pop();
+    final onPicked = widget.onCategoryPicked;
+    if (onPicked != null) {
+      onPicked(context, ref, category);
     } else {
-      context.push(AppRoutes.quizSetup, extra: category);
+      context.push(
+        AppRoutes.quizSetup,
+        extra: (
+          category: category,
+          onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
+            AppRoutes.quizIntro,
+            extra: QuizLaunchArgs(category: category, questionCount: count),
+          ),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<QuizCategory>? categories = ref
-        .watch(categoriesControllerProvider)
-        ?.map(QuizCategory.fromEntity)
-        .toList();
+    final categoriesState = ref.watch(categoriesControllerProvider);
+    final List<QuizCategory>? categories = categoriesState.data?.map(QuizCategory.fromEntity).toList();
 
     return Scaffold(
       body: SafeArea(
@@ -89,14 +85,16 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               BackHeader(title: context.t.categories.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               Expanded(
-                child: categories == null
-                    ? const Center(child: CircularProgressIndicator())
-                    : SingleChildScrollView(
-                        child: CategoryGridView(
-                          categories: categories,
-                          onCategoryTap: (category) => _onCategoryTap(context, category),
-                        ),
-                      ),
+                child: categoriesState.hasError
+                    ? ErrorRetryView(onRetry: () => ref.read(categoriesControllerProvider.notifier).load())
+                    : categories == null
+                        ? const ShimmerCategoryGridSkeleton()
+                        : SingleChildScrollView(
+                            child: CategoryGridView(
+                              categories: categories,
+                              onCategoryTap: (category) => _onCategoryTap(context, category),
+                            ),
+                          ),
               ),
             ],
           ),

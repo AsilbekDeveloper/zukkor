@@ -1,0 +1,12 @@
+base_locale: en
+input_directory: lib/i18n
+output_directory: lib/i18n
+
+# Deferred (lazy) loading requires explicitly awaiting `loadLibrary()`
+# before a non-base locale can be used — main.dart sets the saved locale
+# synchronously before runApp() (so the first frame paints in the right
+# language), which crashes with "Deferred library l_uz was not loaded"
+# for any user whose saved locale isn't the base one. Mobile builds get
+# no real benefit from splitting locale bundles anyway (no Play Feature
+# Delivery config here), so this is pure risk with no upside — disabled.
+lazy: false

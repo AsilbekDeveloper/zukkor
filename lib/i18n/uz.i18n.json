@@ -46,7 +46,10 @@
     "streakLabel": "Seriya",
     "addToFriends": "Do'stlikka qo'shish",
     "requestSent": "Yuborildi",
-    "rankedLabel": "#$rank o'rin · $xp XP"
+    "rankedLabel": "#$rank o'rin · $xp XP",
+    "alreadyFriends": "Siz do'stsiz",
+    "acceptRequest": "Qabul qilish",
+    "declineRequest": "Rad etish"
   },
   "friends": {
     "addFriend": "Do'st qo'shish",
@@ -153,14 +156,17 @@
     "xpEarned": "+$xp XP",
     "playAgain": "Yana o'ynash",
     "challengeAFriend": "Do'stni chaqirish",
-    "backToHome": "Bosh sahifaga"
+    "backToHome": "Bosh sahifaga",
+    "breakdownTitle": "Savollar bo'yicha natija"
   },
   "joinCode": {
     "hint": "Do'stingiz yuborgan 6 xonali xona kodini kiriting",
     "joinButton": "Qo'shilish",
     "codeDigitLabel": "$position-raqam",
     "roomNotFound": "Bunday xona topilmadi",
-    "roomFull": "Xona to'lgan"
+    "roomFull": "Xona to'lgan",
+    "alreadyStarted": "Bu xonada o'yin allaqachon boshlangan",
+    "timedOut": "Bog'lanib bo'lmadi — internetni tekshirib qayta urinib ko'ring"
   },
   "lobby": {
     "title": "Ko'p o'yinchili xona",
@@ -171,10 +177,17 @@
     "startGame": "O'yinni boshlash",
     "waitingForHost": "Xost o'yinni boshlashini kutmoqda…",
     "playerCount": "$current/$max",
-    "closedMessage": "Xost xonani tark etdi, xona yopildi"
+    "closedMessage": "Xost xonani tark etdi, xona yopildi",
+    "creatingRoom": "Xona yaratilmoqda…",
+    "createFailed": "Xona yaratib bo'lmadi — internetni tekshirib qayta urinib ko'ring",
+    "backToHome": "Bosh sahifaga"
   },
   "lobbyGame": {
-    "answeredProgress": "$answered/$total javob berdi"
+    "title": "Xona",
+    "waitingForQuestion": "Savol tayyorlanmoqda…",
+    "waitingForOthers": "Siz barcha savollarga javob berdingiz! Boshqalarni kutmoqdamiz…",
+    "startFailed": "O'yin boshlanmadi — internetni tekshirib qayta urinib ko'ring",
+    "backToHome": "Bosh sahifaga"
   },
   "lobbyResult": {
     "title": "Xona natijalari",
@@ -186,6 +199,8 @@
     "waitingForAccept": "Taklif yuborildi, javobni kutmoqda…",
     "declined": "Taklif rad etildi",
     "expired": "Taklif muddati tugadi",
+    "failed": "Taklifni yuborib bo'lmadi",
+    "timedOut": "Do'stingizga ulanib bo'lmadi — internetni tekshirib qayta urinib ko'ring",
     "backToHome": "Bosh sahifaga"
   },
   "duelInvite": {
@@ -197,7 +212,10 @@
   "duelGame": {
     "title": "Duel",
     "waitingForQuestion": "Savol tayyorlanmoqda…",
-    "opponentAnswered": "Raqib javob berdi"
+    "opponentProgress": "Raqib: $index/$total savolda",
+    "waitingForOpponent": "Siz barcha savollarga javob berdingiz! Sherigingizni kutmoqdamiz…",
+    "startFailed": "O'yin boshlanmadi — internetni tekshirib qayta urinib ko'ring",
+    "backToHome": "Bosh sahifaga"
   },
   "duelResult": {
     "won": "Siz g'olib bo'ldingiz!",
@@ -208,10 +226,12 @@
   },
   "notifications": {
     "title": "Bildirishnomalar",
-    "duelChallenge": "Malika sizni duelga chaqirdi",
+    "duelChallenge": "$name sizni duelga chaqirdi",
+    "duelChallengeGeneric": "Sizni duelga chaqirishdi",
     "streakReminder": "5 kunlik seriyangizni yo'qotmang — bugun o'ynang!",
     "top50": "Siz haftalik Top 50ga kirdingiz",
-    "friendRequest": "Bekzod Xolmatov sizga do'stlik so'rovi yubordi",
+    "friendRequest": "$name sizga do'stlik so'rovi yubordi",
+    "friendRequestGeneric": "Sizga do'stlik so'rovi keldi",
     "welcome": "Zukkorga xush kelibsiz! Birinchi viktorinangizni boshlang",
     "emptyState": "Hozircha bildirishnomalar yo'q"
   },

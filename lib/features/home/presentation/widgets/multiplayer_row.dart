@@ -85,15 +85,20 @@ class _MpButton extends StatelessWidget {
             children: [
               Icon(icon, size: 18, color: iconColor),
               const SizedBox(width: 6),
+              // Shrinks instead of ellipsizing — this button is half the
+              // row's width, and some locales' translation (e.g. Russian
+              // "Присоединиться по коду") is much longer than English.
               Flexible(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.bodySmall?.copyWith(
-                    color: foreground,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: context.textStyles.bodySmall?.copyWith(
+                      color: foreground,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ),

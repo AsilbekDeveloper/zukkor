@@ -7,6 +7,7 @@ import '../../domain/entities/friend_request.dart';
 class FriendRequestEntry {
   const FriendRequestEntry({
     required this.id,
+    required this.userId,
     required this.name,
     required this.username,
     required this.initials,
@@ -16,6 +17,7 @@ class FriendRequestEntry {
 
   factory FriendRequestEntry.fromEntity(FriendRequest entity) => FriendRequestEntry(
         id: entity.id,
+        userId: entity.fromUserId,
         name: _displayName(
           firstName: entity.firstName,
           lastName: entity.lastName,
@@ -27,7 +29,11 @@ class FriendRequestEntry {
         avatarImagePath: entity.avatarImagePath,
       );
 
+  /// The request's own id — passed to accept/decline.
   final String id;
+
+  /// The sender's user id — passed to [PlayerDetailScreen].
+  final String userId;
   final String name;
   final String? username;
   final String initials;

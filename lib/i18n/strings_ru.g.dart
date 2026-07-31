@@ -183,6 +183,9 @@ class _Translations$playerDetail$ru implements Translations$playerDetail$en {
 	@override String get addToFriends => 'Добавить в друзья';
 	@override String get requestSent => 'Отправлено';
 	@override String rankedLabel({required Object rank, required Object xp}) => '#${rank} место · ${xp} XP';
+	@override String get alreadyFriends => 'Вы друзья';
+	@override String get acceptRequest => 'Принять';
+	@override String get declineRequest => 'Отклонить';
 }
 
 // Path: friends
@@ -388,6 +391,7 @@ class _Translations$result$ru implements Translations$result$en {
 	@override String get playAgain => 'Играть снова';
 	@override String get challengeAFriend => 'Вызвать друга';
 	@override String get backToHome => 'На главную';
+	@override String get breakdownTitle => 'Результаты по вопросам';
 }
 
 // Path: joinCode
@@ -402,6 +406,8 @@ class _Translations$joinCode$ru implements Translations$joinCode$en {
 	@override String codeDigitLabel({required Object position}) => 'Цифра кода ${position}';
 	@override String get roomNotFound => 'Комната с таким кодом не найдена';
 	@override String get roomFull => 'Эта комната заполнена';
+	@override String get alreadyStarted => 'Игра в этой комнате уже началась';
+	@override String get timedOut => 'Не удалось подключиться — проверьте соединение и попробуйте снова';
 }
 
 // Path: lobby
@@ -420,6 +426,9 @@ class _Translations$lobby$ru implements Translations$lobby$en {
 	@override String get waitingForHost => 'Ожидание, пока хост начнёт игру…';
 	@override String playerCount({required Object current, required Object max}) => '${current}/${max}';
 	@override String get closedMessage => 'Хост покинул комнату, комната закрыта';
+	@override String get creatingRoom => 'Создание комнаты…';
+	@override String get createFailed => 'Не удалось создать комнату — проверьте соединение и попробуйте снова';
+	@override String get backToHome => 'На главную';
 }
 
 // Path: lobbyGame
@@ -429,7 +438,11 @@ class _Translations$lobbyGame$ru implements Translations$lobbyGame$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String answeredProgress({required Object answered, required Object total}) => '${answered}/${total} ответили';
+	@override String get title => 'Комната';
+	@override String get waitingForQuestion => 'Подготовка вопроса…';
+	@override String get waitingForOthers => 'Вы ответили на все вопросы! Ждём остальных…';
+	@override String get startFailed => 'Игра не началась — проверьте соединение и попробуйте снова';
+	@override String get backToHome => 'На главную';
 }
 
 // Path: lobbyResult
@@ -455,6 +468,8 @@ class _Translations$duelWaiting$ru implements Translations$duelWaiting$en {
 	@override String get waitingForAccept => 'Приглашение отправлено, ожидание ответа…';
 	@override String get declined => 'Приглашение отклонено';
 	@override String get expired => 'Срок приглашения истёк';
+	@override String get failed => 'Не удалось отправить приглашение';
+	@override String get timedOut => 'Не удалось связаться с другом — проверьте соединение и попробуйте снова';
 	@override String get backToHome => 'На главную';
 }
 
@@ -480,7 +495,10 @@ class _Translations$duelGame$ru implements Translations$duelGame$en {
 	// Translations
 	@override String get title => 'Дуэль';
 	@override String get waitingForQuestion => 'Подготовка вопроса…';
-	@override String get opponentAnswered => 'Соперник ответил';
+	@override String opponentProgress({required Object index, required Object total}) => 'Соперник: вопрос ${index}/${total}';
+	@override String get waitingForOpponent => 'Вы ответили на все вопросы! Ждём соперника…';
+	@override String get startFailed => 'Игра не началась — проверьте соединение и попробуйте снова';
+	@override String get backToHome => 'На главную';
 }
 
 // Path: duelResult
@@ -505,10 +523,12 @@ class _Translations$notifications$ru implements Translations$notifications$en {
 
 	// Translations
 	@override String get title => 'Уведомления';
-	@override String get duelChallenge => 'Малика вызвала вас на дуэль';
+	@override String duelChallenge({required Object name}) => '${name} вызвал(а) вас на дуэль';
+	@override String get duelChallengeGeneric => 'Вас вызвали на дуэль';
 	@override String get streakReminder => 'Не теряйте серию из 5 дней — играйте сегодня!';
 	@override String get top50 => 'Вы попали в топ-50 недели';
-	@override String get friendRequest => 'Бекзод Холматов отправил вам запрос в друзья';
+	@override String friendRequest({required Object name}) => '${name} отправил(а) вам запрос в друзья';
+	@override String get friendRequestGeneric => 'Вам пришёл новый запрос в друзья';
 	@override String get welcome => 'Добро пожаловать в Zukkor! Начните свою первую викторину';
 	@override String get emptyState => 'Пока нет уведомлений';
 }
@@ -784,6 +804,9 @@ extension on TranslationsRu {
 			'playerDetail.addToFriends' => 'Добавить в друзья',
 			'playerDetail.requestSent' => 'Отправлено',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => '#${rank} место · ${xp} XP',
+			'playerDetail.alreadyFriends' => 'Вы друзья',
+			'playerDetail.acceptRequest' => 'Принять',
+			'playerDetail.declineRequest' => 'Отклонить',
 			'friends.addFriend' => 'Добавить друга',
 			'friends.searchPlaceholder' => 'Поиск друзей',
 			'friends.allSection' => 'Все друзья',
@@ -863,11 +886,14 @@ extension on TranslationsRu {
 			'result.playAgain' => 'Играть снова',
 			'result.challengeAFriend' => 'Вызвать друга',
 			'result.backToHome' => 'На главную',
+			'result.breakdownTitle' => 'Результаты по вопросам',
 			'joinCode.hint' => 'Введите 6-значный код комнаты, который прислал друг',
 			'joinCode.joinButton' => 'Присоединиться',
 			'joinCode.codeDigitLabel' => ({required Object position}) => 'Цифра кода ${position}',
 			'joinCode.roomNotFound' => 'Комната с таким кодом не найдена',
 			'joinCode.roomFull' => 'Эта комната заполнена',
+			'joinCode.alreadyStarted' => 'Игра в этой комнате уже началась',
+			'joinCode.timedOut' => 'Не удалось подключиться — проверьте соединение и попробуйте снова',
 			'lobby.title' => 'Комната для нескольких игроков',
 			'lobby.roomCode' => 'Код комнаты',
 			'lobby.players' => 'Игроки',
@@ -877,7 +903,14 @@ extension on TranslationsRu {
 			'lobby.waitingForHost' => 'Ожидание, пока хост начнёт игру…',
 			'lobby.playerCount' => ({required Object current, required Object max}) => '${current}/${max}',
 			'lobby.closedMessage' => 'Хост покинул комнату, комната закрыта',
-			'lobbyGame.answeredProgress' => ({required Object answered, required Object total}) => '${answered}/${total} ответили',
+			'lobby.creatingRoom' => 'Создание комнаты…',
+			'lobby.createFailed' => 'Не удалось создать комнату — проверьте соединение и попробуйте снова',
+			'lobby.backToHome' => 'На главную',
+			'lobbyGame.title' => 'Комната',
+			'lobbyGame.waitingForQuestion' => 'Подготовка вопроса…',
+			'lobbyGame.waitingForOthers' => 'Вы ответили на все вопросы! Ждём остальных…',
+			'lobbyGame.startFailed' => 'Игра не началась — проверьте соединение и попробуйте снова',
+			'lobbyGame.backToHome' => 'На главную',
 			'lobbyResult.title' => 'Результаты комнаты',
 			'lobbyResult.subtitle' => 'Вот как сыграли все в комнате',
 			'lobbyResult.playAgain' => 'Играть снова',
@@ -885,6 +918,8 @@ extension on TranslationsRu {
 			'duelWaiting.waitingForAccept' => 'Приглашение отправлено, ожидание ответа…',
 			'duelWaiting.declined' => 'Приглашение отклонено',
 			'duelWaiting.expired' => 'Срок приглашения истёк',
+			'duelWaiting.failed' => 'Не удалось отправить приглашение',
+			'duelWaiting.timedOut' => 'Не удалось связаться с другом — проверьте соединение и попробуйте снова',
 			'duelWaiting.backToHome' => 'На главную',
 			'duelInvite.title' => 'Приглашение на дуэль',
 			'duelInvite.challengesYou' => 'вызывает вас на дуэль',
@@ -892,17 +927,22 @@ extension on TranslationsRu {
 			'duelInvite.decline' => 'Отклонить',
 			'duelGame.title' => 'Дуэль',
 			'duelGame.waitingForQuestion' => 'Подготовка вопроса…',
-			'duelGame.opponentAnswered' => 'Соперник ответил',
+			'duelGame.opponentProgress' => ({required Object index, required Object total}) => 'Соперник: вопрос ${index}/${total}',
+			'duelGame.waitingForOpponent' => 'Вы ответили на все вопросы! Ждём соперника…',
+			'duelGame.startFailed' => 'Игра не началась — проверьте соединение и попробуйте снова',
+			'duelGame.backToHome' => 'На главную',
 			'duelResult.won' => 'Вы победили!',
 			'duelResult.lost' => 'Вы проиграли',
 			'duelResult.draw' => 'Ничья!',
 			'duelResult.yourScoreLabel' => 'Вы',
 			'duelResult.opponentScoreLabel' => 'Соперник',
 			'notifications.title' => 'Уведомления',
-			'notifications.duelChallenge' => 'Малика вызвала вас на дуэль',
+			'notifications.duelChallenge' => ({required Object name}) => '${name} вызвал(а) вас на дуэль',
+			'notifications.duelChallengeGeneric' => 'Вас вызвали на дуэль',
 			'notifications.streakReminder' => 'Не теряйте серию из 5 дней — играйте сегодня!',
 			'notifications.top50' => 'Вы попали в топ-50 недели',
-			'notifications.friendRequest' => 'Бекзод Холматов отправил вам запрос в друзья',
+			'notifications.friendRequest' => ({required Object name}) => '${name} отправил(а) вам запрос в друзья',
+			'notifications.friendRequestGeneric' => 'Вам пришёл новый запрос в друзья',
 			'notifications.welcome' => 'Добро пожаловать в Zukkor! Начните свою первую викторину',
 			'notifications.emptyState' => 'Пока нет уведомлений',
 			'editProfile.save' => 'Сохранить',

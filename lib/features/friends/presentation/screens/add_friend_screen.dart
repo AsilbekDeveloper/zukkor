@@ -12,6 +12,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/invite_code_card.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/discovered_user.dart';
 import '../controllers/send_friend_request_controller.dart';
@@ -45,6 +46,12 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
   Timer? _debounceTimer;
   final Set<String> _addedIds = {};
 
+  /// So'rov hali javob kutayotgan foydalanuvchilar — tugma shu vaqtda
+  /// o'chirilgan turadi. Aks holda tez ketma-ket ikki bosish bitta
+  /// odamga IKKITA so'rov yuborardi (backend'da ularning bir juftligi
+  /// uchun takrorlanmaslik cheklovi yo'q).
+  final Set<String> _sendingIds = {};
+
   @override
   void dispose() {
     _searchController.dispose();
@@ -74,7 +81,19 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
     });
   }
 
+  void _openPlayerDetail(DiscoverableUser user) {
+    context.push(
+      AppRoutes.playerDetail,
+      extra: {
+        'userId': user.id,
+        if (user.requestPending || _addedIds.contains(user.id)) 'requestSent': true,
+      },
+    );
+  }
+
   Future<void> _addFriend(DiscoverableUser user) async {
+    if (_sendingIds.contains(user.id)) return;
+    setState(() => _sendingIds.add(user.id));
     try {
       await ref.read(sendFriendRequestControllerProvider.notifier).sendRequest(user.id);
       if (!mounted) return;
@@ -85,6 +104,8 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
     } catch (_) {
       if (!mounted) return;
       context.showSnack(t.errors.unknown);
+    } finally {
+      if (mounted) setState(() => _sendingIds.remove(user.id));
     }
   }
 
@@ -115,10 +136,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
               if (isSearching) ...[
                 AppSpacing.lg.vGap,
                 if (searchResults == null)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
+                  const ShimmerListSkeleton(count: 4, trailingWidth: 70)
                 else if (results.isEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
@@ -133,7 +151,9 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
                   DiscoverableUserList(
                     users: results,
                     addedIds: _addedIds,
+                    sendingIds: _sendingIds,
                     onAddTap: _addFriend,
+                    onRowTap: _openPlayerDetail,
                   ),
               ] else ...[
                 AppSpacing.lg.vGap,

@@ -77,11 +77,31 @@ Future<GoRouter> _pumpCategories(
       GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
       GoRoute(
         path: AppRoutes.categories,
-        builder: (context, state) => CategoriesScreen(duelOpponent: state.extra as FriendEntry?),
+        builder: (context, state) {
+          final Object? extra = state.extra;
+          if (extra is FriendEntry) {
+            return CategoriesScreen(
+              onCategoryPicked: (context, ref, category) => context.push(
+                AppRoutes.quizSetup,
+                extra: (
+                  category: category,
+                  onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
+                    AppRoutes.duelWaiting,
+                    extra: DuelMatch(opponent: extra, category: category, questionCount: count),
+                  ),
+                ),
+              ),
+            );
+          }
+          return const CategoriesScreen();
+        },
       ),
       GoRoute(
         path: AppRoutes.quizSetup,
-        builder: (context, state) => QuizSetupScreen(category: state.extra! as QuizCategory),
+        builder: (context, state) {
+          final extra = state.extra! as ({QuizCategory category, void Function(BuildContext, WidgetRef, int) onStart});
+          return QuizSetupScreen(category: extra.category, onStart: extra.onStart);
+        },
       ),
       GoRoute(
         path: AppRoutes.quizIntro,
@@ -142,7 +162,8 @@ void main() {
     expect(find.byType(QuizSetupScreen), findsOneWidget);
   });
 
-  testWidgets('with a pending duel opponent, tapping a category opens Duel Waiting instead', (tester) async {
+  testWidgets('with a pending duel opponent, tapping a category opens Quiz Setup, then Duel Waiting',
+      (tester) async {
     const FriendEntry opponent = FriendEntry(
       name: 'Malika Yusupova',
       username: 'malika_yusupova',
@@ -151,14 +172,20 @@ void main() {
     );
     await _pumpCategories(tester, duelOpponent: opponent);
 
-    // Not pumpAndSettle: DuelWaitingScreen's waiting-dot animation repeats
-    // forever, so settling here would time out.
     await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+
+    // The question-count picker comes first for a duel too, same as solo.
+    expect(find.byType(QuizSetupScreen), findsOneWidget);
+    expect(find.byType(DuelWaitingScreen), findsNothing);
+
+    await tester.tap(find.text(t.quizSetup.startButton));
+    // Not pumpAndSettle from here: DuelWaitingScreen's waiting-dot
+    // animation repeats forever, so settling would time out.
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.byType(DuelWaitingScreen), findsOneWidget);
-    expect(find.byType(QuizSetupScreen), findsNothing);
     expect(find.text('Malika Yusupova'), findsOneWidget);
     // Categories stays mounted underneath (pushed on top of it) and has
     // its own "History" category tile, so at least one match is enough.

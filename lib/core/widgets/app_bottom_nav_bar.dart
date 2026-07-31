@@ -136,11 +136,19 @@ class _TabItem extends StatelessWidget {
           children: [
             Icon(icon, color: color, size: 22),
             const SizedBox(height: 3),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: context.textStyles.labelSmall?.copyWith(color: color),
+            // Shrinks instead of ellipsizing — some locales' word for a
+            // tab (e.g. English "Leaderboard") is longer than others and
+            // would otherwise clip in this narrow, fixed-width slot.
+            SizedBox(
+              width: double.infinity,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  style: context.textStyles.labelSmall?.copyWith(color: color),
+                ),
+              ),
             ),
           ],
         ),

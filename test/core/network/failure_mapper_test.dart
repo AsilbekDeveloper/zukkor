@@ -51,8 +51,20 @@ void main() {
       final ValidationFailure v = failure as ValidationFailure;
       expect(v.forField('password'), "Parolda kamida 1 ta katta harf bo'lishi kerak");
       expect(v.forField('email'), isNull);
-      // Umumiy xabar ham birinchi maydon xatosidan olinadi.
-      expect(v.message, "Parolda kamida 1 ta katta harf bo'lishi kerak");
+      // Umumiy xabar ham birinchi maydon xatosidan olinadi — maydon nomi
+      // bilan, aks holda "field required" kabi xabarlar qaysi maydon
+      // haqida ekani noma'lum bo'lib qoladi.
+      expect(v.message, "password: Parolda kamida 1 ta katta harf bo'lishi kerak");
+    });
+
+    test("422 loc faqat ['body'] bo'lsa: xabar maydon nomisiz qoladi", () {
+      final Failure failure = FailureMapper.fromDio(_badResponse(422, {
+        'detail': [
+          {'type': 'value_error', 'loc': ['body'], 'msg': 'field required'},
+        ],
+      }));
+
+      expect(failure.message, 'field required');
     });
 
     test('400 oddiy detail matn: umumiy ValidationFailure (maydonsiz)', () {

@@ -115,6 +115,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                       textInputAction: TextInputAction.next,
                       autofillHints: const [AutofillHints.newPassword],
                       validator: Validators.password,
+                      maxLength: kPasswordMaxLength,
                     ),
                     AppSpacing.md.vGap,
                     AppTextField(
@@ -126,6 +127,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                       autofillHints: const [AutofillHints.newPassword],
                       validator: (value) => Validators.confirmPassword(value, _newPasswordController.text),
                       onSubmitted: (_) => _save(),
+                      maxLength: kPasswordMaxLength,
                     ),
                   ],
                 ),

@@ -45,6 +45,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> login({required String email, required String password}) async {}
 
   @override
+  Future<User?> signInWithGoogle() => throw UnimplementedError();
+
+  @override
   Future<User> getCurrentUser() async => User(
         id: '1',
         email: 'aziz@example.com',
@@ -54,6 +57,7 @@ class _FakeAuthRepository implements AuthRepository {
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: true,
+        authProvider: 'email',
       );
 
   @override
@@ -61,7 +65,7 @@ class _FakeAuthRepository implements AuthRepository {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -76,6 +80,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> logout() async {}
 
   @override
+  Future<void> registerPushToken(String token) async {}
+
+  @override
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
@@ -83,7 +90,7 @@ class _FakeAuthRepository implements AuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<void> deleteAccount(String password) => throw UnimplementedError();
+  Future<void> deleteAccount(String? password) => throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta leaderboard repository —
@@ -91,7 +98,11 @@ class _FakeAuthRepository implements AuthRepository {
 /// bog'liq bo'lmasligi kerak.
 class _FakeLeaderboardRepository implements LeaderboardRepository {
   @override
-  Future<LeaderboardData> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) async =>
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async =>
       const LeaderboardData(
         entries: [
           RankEntry(
@@ -134,6 +145,7 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         level: 12,
         levelTitle: 'Scholar',
         nextLevelXp: 3000,
+        currentLevelXp: 2750,
         currentStreak: 8,
         longestStreak: 12,
         gamesPlayed: 184,
@@ -146,7 +158,8 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
 /// bo'lmasligi kerak.
 class _FakeHistoryRepository implements HistoryRepository {
   @override
-  Future<List<SessionHistoryEntry>> getHistory({int limit = 50}) async => [
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
+      (hasMore: false, entries: [
         SessionHistoryEntry(
           sessionId: '1',
           categoryId: 1,
@@ -160,7 +173,7 @@ class _FakeHistoryRepository implements HistoryRepository {
           totalXpEarned: 72,
           mode: HistorySessionMode.solo,
         ),
-      ];
+      ]);
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Friends tab'i

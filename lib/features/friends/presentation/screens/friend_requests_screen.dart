@@ -9,6 +9,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/friend_requests_controller.dart';
 import '../models/friend_request_entry.dart';
@@ -62,10 +64,17 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen> {
     }
   }
 
+  void _openPlayerDetail(FriendRequestEntry entry) {
+    context.push(
+      AppRoutes.playerDetail,
+      extra: {'userId': entry.userId, 'relation': 'incomingRequest', 'requestId': entry.id},
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final entries =
-        ref.watch(friendRequestsControllerProvider)?.map(FriendRequestEntry.fromEntity).toList();
+    final friendRequestsState = ref.watch(friendRequestsControllerProvider);
+    final entries = friendRequestsState.data?.map(FriendRequestEntry.fromEntity).toList();
 
     return Scaffold(
       body: SafeArea(
@@ -78,8 +87,10 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen> {
               BackHeader(title: context.t.friendRequests.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               Expanded(
-                child: entries == null
-                    ? const Center(child: CircularProgressIndicator())
+                child: friendRequestsState.hasError
+                    ? ErrorRetryView(onRetry: () => ref.read(friendRequestsControllerProvider.notifier).load())
+                    : entries == null
+                    ? const ShimmerListSkeleton(count: 4, trailingWidth: 80)
                     : entries.isEmpty
                         ? Center(
                             child: Text(
@@ -92,6 +103,7 @@ class _FriendRequestsScreenState extends ConsumerState<FriendRequestsScreen> {
                               entries: entries,
                               onAcceptTap: _accept,
                               onDeclineTap: _decline,
+                              onRowTap: _openPlayerDetail,
                             ),
                           ),
               ),

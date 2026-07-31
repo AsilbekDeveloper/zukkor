@@ -42,13 +42,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   String? _originalUsername;
   bool _usernameTaken = false;
   bool _checkingUsername = false;
+  bool _uploadingPhoto = false;
 
   @override
   void initState() {
     super.initState();
     _usernameController.addListener(_clearUsernameTakenError);
 
-    final User? user = ref.read(currentUserControllerProvider);
+    final User? user = ref.read(currentUserControllerProvider).data;
     if (user != null) {
       _prefill(user);
     } else {
@@ -56,7 +57,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       // ehtiyot chorasi — odatda Profile ekrani buni oldindan yuklab qo'yadi.
       Future.microtask(() async {
         await ref.read(currentUserControllerProvider.notifier).load();
-        final User? loaded = ref.read(currentUserControllerProvider);
+        final User? loaded = ref.read(currentUserControllerProvider).data;
         if (mounted && loaded != null) setState(() => _prefill(loaded));
       });
     }
@@ -73,12 +74,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   /// Galereyadan rasm tanlab, darhol backend'ga yuklaydi (Saqlash
   /// tugmasini kutmasdan) — backend `avatar_color`ni tozalaydi, ular
-  /// bir-birini istisno qiladi.
+  /// bir-birini istisno qiladi. Yuklashdan oldin rasm 1024×1024'gacha
+  /// kichraytiriladi — telefon kamerasining asl hajmi (ko'pincha bir
+  /// necha MB) sekin yuklanishning asosiy sababi edi.
   Future<void> _pickAndUploadPhoto() async {
-    final XFile? picked = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 85);
-    if (picked == null || !mounted) return;
-
     try {
+      final XFile? picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+
+      setState(() => _uploadingPhoto = true);
       final User updated =
           await ref.read(authControllerProvider.notifier).uploadAvatarImage(picked.path);
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
@@ -90,7 +99,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
-      if (mounted) context.showSnack(t.errors.unknown);
+      if (mounted) context.showSnack(t.errors.unknown); 
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
     }
   }
 
@@ -145,13 +156,18 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       }
     }
 
-    final User? current = ref.read(currentUserControllerProvider);
+    final User? current = ref.read(currentUserControllerProvider).data;
     try {
       final User updated = await ref.read(authControllerProvider.notifier).updateProfile(
             username: newUsername,
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
-            avatarColor: _avatarColor.apiValue,
+            // Faqat foydalanuvchining joriy tanlovi rang bo'lsagina
+            // yuboriladi — agar u hozir yuklangan rasmni ishlatayotgan
+            // bo'lsa (_avatarImagePath != null), bu maydonni yuborish
+            // backend'da o'sha rasmni o'chirib, rangga qaytarib qo'yar edi
+            // (ular bir-birini istisno qiladi).
+            avatarColor: _avatarImagePath == null ? _avatarColor.apiValue : null,
             // Bu ekranda yo'nalish o'zgartirilmaydi — joriy qiymat
             // o'zgarishsiz qayta yuboriladi (backend uni ham talab qiladi).
             direction: current?.direction ?? OnboardingDirection.casual.apiValue,
@@ -184,6 +200,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               AvatarColorPicker(
                 selectedColor: _avatarColor,
                 avatarImagePath: _avatarImagePath,
+                isUploading: _uploadingPhoto,
                 // Rang tanlash rasmni bekor qiladi — ikkalasi bir-birini
                 // istisno qiladi (Saqlash bosilganda backend ham shunday
                 // tozalaydi).

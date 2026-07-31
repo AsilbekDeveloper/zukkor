@@ -19,12 +19,18 @@ class AvatarColorPicker extends StatelessWidget {
     required this.onColorSelected,
     required this.onUploadPhoto,
     this.avatarImagePath,
+    this.isUploading = false,
   });
 
   final AvatarColorOption selectedColor;
   final String? avatarImagePath;
   final ValueChanged<AvatarColorOption> onColorSelected;
   final VoidCallback onUploadPhoto;
+
+  /// Shows a spinner over the avatar and disables the upload button —
+  /// immediate feedback while a picked photo is uploading, so a slow
+  /// connection doesn't read as "the tap did nothing".
+  final bool isUploading;
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +48,26 @@ class AvatarColorPicker extends StatelessWidget {
                       backgroundColor: selectedColor.resolve(context),
                       child: const Icon(TablerIcons.user, color: Colors.white, size: 56),
                     ),
+              if (isUploading)
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.black.withValues(alpha: 0.4),
+                    ),
+                    child: const Center(
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                      ),
+                    ),
+                  ),
+                ),
               Positioned(
                 right: -4,
                 bottom: -4,
-                child: _UploadButton(onTap: onUploadPhoto),
+                child: _UploadButton(onTap: isUploading ? null : onUploadPhoto),
               ),
             ],
           ),
@@ -73,7 +95,7 @@ class AvatarColorPicker extends StatelessWidget {
 class _UploadButton extends StatelessWidget {
   const _UploadButton({required this.onTap});
 
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

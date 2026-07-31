@@ -12,6 +12,12 @@ import '../../i18n/strings.g.dart';
 /// [BuildContext] qabul qilmaydi (TextFormField.validator sifatida
 /// ishlatiladi), shu sababli reaktiv `context.t` emas, global `t`
 /// ishlatiladi — har chaqiruvda joriy tilni to'g'ri o'qiydi.
+/// Parol maksimal uzunligi — bcrypt faqat dastlabki 72 baytni hisobga oladi,
+/// undan uzun parol server tomonda jimgina kesiladi. Backend'ning
+/// `MAX_PASSWORD_LEN` (72) bilan bir xil. Parol YARATILADIGAN maydonlarda
+/// (ro'yxatdan o'tish, parolni o'zgartirish) kiritishni shu yerda cheklaymiz.
+const int kPasswordMaxLength = 72;
+
 abstract final class Validators {
   static final RegExp _emailRegex =
       RegExp(r'^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');

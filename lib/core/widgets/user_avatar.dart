@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../config/app_config.dart';
 import '../extensions/context_x.dart';
 
 /// A user's avatar — a real uploaded photo when [avatarImagePath] is set,
@@ -48,7 +49,7 @@ class UserAvatar extends StatelessWidget {
     return ClipRRect(
       borderRadius: radius,
       child: Image.network(
-        path,
+        _resolveUrl(path),
         width: size,
         height: size,
         fit: BoxFit.cover,
@@ -57,6 +58,15 @@ class UserAvatar extends StatelessWidget {
             progress == null ? child : _fallback(context, radius),
       ),
     );
+  }
+
+  /// Backend may return either an absolute URL or a path relative to the
+  /// API root (e.g. `/uploads/avatars/xyz.jpg`) — `Image.network` needs a
+  /// full URL either way, so a relative path gets [AppConfig.apiBaseUrl]
+  /// prepended.
+  static String _resolveUrl(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    return path.startsWith('/') ? '${AppConfig.apiBaseUrl}$path' : '${AppConfig.apiBaseUrl}/$path';
   }
 
   Widget _fallback(BuildContext context, BorderRadius radius) {

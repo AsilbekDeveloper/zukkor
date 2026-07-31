@@ -71,9 +71,13 @@ class AppButton extends ConsumerWidget {
                   icon!,
                   const SizedBox(width: AppSpacing.xs),
                 ],
-                // Katta shrift masshtabida ham bir qatorda sig'adi.
+                // Kesib tashlash o'rniga kichraytiradi — ba'zi tillardagi
+                // tarjima boshqalaridan ancha uzunroq bo'lishi mumkin.
                 Flexible(
-                  child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(label, maxLines: 1),
+                  ),
                 ),
               ],
             ),

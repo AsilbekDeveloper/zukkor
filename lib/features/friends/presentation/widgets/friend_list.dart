@@ -14,10 +14,14 @@ import '../models/friend_entry.dart';
 /// prototype — and automatically 2 columns when the container is wide
 /// (tablets), so the list fills the screen instead of stretching rows.
 class FriendList extends StatelessWidget {
-  const FriendList({required this.entries, required this.onDuelTap, super.key});
+  const FriendList({required this.entries, required this.onDuelTap, required this.onRowTap, super.key});
 
   final List<FriendEntry> entries;
   final ValueChanged<FriendEntry> onDuelTap;
+
+  /// Opens the friend's profile — a no-op if [FriendEntry.id] is null
+  /// (only possible for the mock demo invite, never a real friend row).
+  final ValueChanged<FriendEntry> onRowTap;
 
   /// Row height from its content (same technique as the category grid):
   /// avatar (36) or the scaled two-line text block, whichever is taller,
@@ -46,66 +50,74 @@ class FriendList extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final FriendEntry entry = entries[index];
-        return _FriendRow(entry: entry, onDuelTap: () => onDuelTap(entry));
+        return _FriendRow(entry: entry, onDuelTap: () => onDuelTap(entry), onRowTap: () => onRowTap(entry));
       },
     );
   }
 }
 
 class _FriendRow extends StatelessWidget {
-  const _FriendRow({required this.entry, required this.onDuelTap});
+  const _FriendRow({required this.entry, required this.onDuelTap, required this.onRowTap});
 
   final FriendEntry entry;
   final VoidCallback onDuelTap;
+  final VoidCallback onRowTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 1),
-      decoration: BoxDecoration(
-        color: context.colors.card,
+    return Material(
+      color: context.colors.card,
+      borderRadius: AppRadius.smAll,
+      child: InkWell(
+        onTap: onRowTap,
         borderRadius: AppRadius.smAll,
-        border: Border.all(color: context.colors.line),
-        boxShadow: context.colors.shadowSm,
-      ),
-      child: Row(
-        children: [
-          UserAvatar(
-            size: 36,
-            initials: entry.initials,
-            avatarImagePath: entry.avatarImagePath,
-            backgroundColor: entry.avatarColor.resolve(context),
-            fontSize: 11.5,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 1),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.smAll,
+            border: Border.all(color: context.colors.line),
+            boxShadow: context.colors.shadowSm,
           ),
-          AppSpacing.sm.hGap,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  entry.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13.5,
-                    color: context.colors.ink,
-                  ),
+          child: Row(
+            children: [
+              UserAvatar(
+                size: 36,
+                initials: entry.initials,
+                avatarImagePath: entry.avatarImagePath,
+                backgroundColor: entry.avatarColor.resolve(context),
+                fontSize: 11.5,
+              ),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      entry.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13.5,
+                        color: context.colors.ink,
+                      ),
+                    ),
+                    if (entry.handle != null)
+                      Text(
+                        entry.handle!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                      ),
+                  ],
                 ),
-                if (entry.handle != null)
-                  Text(
-                    entry.handle!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                  ),
-              ],
-            ),
+              ),
+              AppSpacing.sm.hGap,
+              _DuelButton(onTap: onDuelTap),
+            ],
           ),
-          AppSpacing.sm.hGap,
-          _DuelButton(onTap: onDuelTap),
-        ],
+        ),
       ),
     );
   }

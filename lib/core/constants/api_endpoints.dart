@@ -3,7 +3,7 @@ abstract final class ApiEndpoints {
   // Auth — FastAPI backendga 1:1 mos (2026-07-15 holatiga ko'ra tayyor).
   static const String register = '/auth/register';
   static const String login = '/auth/login';
-  static const String google = '/auth/google'; // hali backendda yo'q, TODO
+  static const String google = '/auth/google'; // endi Firebase ID token qabul qiladi — backendda Firebase Admin SDK bilan tekshiriladi
   static const String tokenRefresh = '/auth/refresh';
   static const String logout = '/auth/logout';
   static const String me = '/auth/me';
@@ -31,12 +31,12 @@ abstract final class ApiEndpoints {
 
   // Leaderboard (2026-07-17'da qo'shildi; scope 2026-07-19'da qo'shildi —
   // weekly/all_time/friends kesimlari).
-  static String leaderboard({int limit = 50, String scope = 'all_time'}) =>
-      '/leaderboard?limit=$limit&scope=$scope';
+  static String leaderboard({int limit = 50, String scope = 'all_time', int offset = 0}) =>
+      '/leaderboard?limit=$limit&scope=$scope&offset=$offset';
   static String playerStats(String userId) => '/leaderboard/$userId';
 
   // Game history (2026-07-18'da qo'shildi).
-  static String history({int limit = 50}) => '/history?limit=$limit';
+  static String history({int limit = 50, int offset = 0}) => '/history?limit=$limit&offset=$offset';
 
   // Friends (2026-07-18'da qo'shildi).
   static const String friends = '/friends';
@@ -52,4 +52,7 @@ abstract final class ApiEndpoints {
   // Notifications (2026-07-19'da qo'shildi, hali backend'da yo'q).
   static const String notifications = '/notifications';
   static const String notificationsMarkAllRead = '/notifications/mark-all-read';
+
+  // Push-token ro'yxatga olish — FCM (2026-07-21'da qo'shildi, hali backend'da yo'q).
+  static const String pushToken = '/users/me/push-token';
 }

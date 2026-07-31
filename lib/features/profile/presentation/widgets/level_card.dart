@@ -14,6 +14,7 @@ class LevelCard extends StatelessWidget {
     required this.levelTitle,
     required this.currentXp,
     required this.targetXp,
+    required this.levelStartXp,
     super.key,
   });
 
@@ -22,11 +23,18 @@ class LevelCard extends StatelessWidget {
   final int currentXp;
   final int targetXp;
 
+  /// Absolute XP threshold where [level] itself started — the ring shows
+  /// progress *within this level*, not `currentXp / targetXp` (which
+  /// treats every level as starting from 0 XP and inflates the ring for
+  /// anyone above level 1).
+  final int levelStartXp;
+
   static const double _ringSize = 56;
 
   @override
   Widget build(BuildContext context) {
-    final double progress = targetXp == 0 ? 0 : (currentXp / targetXp).clamp(0, 1);
+    final int levelSpan = targetXp - levelStartXp;
+    final double progress = levelSpan == 0 ? 0 : ((currentXp - levelStartXp) / levelSpan).clamp(0, 1);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),

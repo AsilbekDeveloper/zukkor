@@ -8,19 +8,26 @@ import '../../../../core/widgets/avatar_color_picker.dart';
 import '../../../../core/widgets/step_header.dart';
 import '../../../../i18n/strings.g.dart';
 
-/// Onboarding step 1 — pick an avatar background color (photo upload is a
-/// stub for now, see [onUploadPhoto]).
+/// Onboarding step 1 — pick an avatar background color, or upload a photo
+/// instead (the two are mutually exclusive server-side).
 class AvatarStep extends StatelessWidget {
   const AvatarStep({
     super.key,
     required this.selectedColor,
     required this.onColorSelected,
     required this.onUploadPhoto,
+    this.avatarImagePath,
+    this.isUploading = false,
   });
 
   final AvatarColorOption selectedColor;
   final ValueChanged<AvatarColorOption> onColorSelected;
   final VoidCallback onUploadPhoto;
+
+  /// Non-null once a photo has been uploaded in this step — the picker
+  /// then shows the real image instead of the colored circle.
+  final String? avatarImagePath;
+  final bool isUploading;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +44,8 @@ class AvatarStep extends StatelessWidget {
           selectedColor: selectedColor,
           onColorSelected: onColorSelected,
           onUploadPhoto: onUploadPhoto,
+          avatarImagePath: avatarImagePath,
+          isUploading: isUploading,
         ),
       ],
     );

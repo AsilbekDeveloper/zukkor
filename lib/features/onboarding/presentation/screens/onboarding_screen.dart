@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/constants/app_durations.dart';
 import '../../../../core/error/failures.dart';
@@ -47,6 +48,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   int _step = 1;
   AvatarColorOption _avatarColor = AvatarColorOption.fallback;
+
+  /// Bu bosqichda rasm yuklangan bo'lsa to'ldiriladi — shunda oxirgi
+  /// so'rovda `avatar_color` umuman yuborilmaydi (backend'da rasm va
+  /// rang bir-birini istisno qiladi, rangni yuborish rasmni o'chirar edi).
+  String? _avatarImagePath;
+  bool _uploadingPhoto = false;
   OnboardingDirection? _direction;
   bool _directionTouched = false;
   bool _usernameTaken = false;
@@ -80,10 +87,33 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
-  void _uploadPhoto() {
-    // TODO(onboarding): wire image_picker once native permissions are set up.
-    // Backend hozircha faqat avatar_color'ni qo'llab-quvvatlaydi, rasm
-    // yuklash uchun alohida endpoint yo'q.
+  /// Galereyadan rasm tanlab, darhol yuklaydi (oxirgi bosqichni
+  /// kutmasdan) — Edit Profile'dagi bilan bir xil oqim. Foydalanuvchi
+  /// bu yerga Google Sign-In yoki ro'yxatdan o'tish orqali kelgan,
+  /// ya'ni tokeni bor, shuning uchun yuklash shu bosqichda ham mumkin.
+  Future<void> _uploadPhoto() async {
+    try {
+      final XFile? picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (picked == null || !mounted) return;
+
+      setState(() => _uploadingPhoto = true);
+      final User updated =
+          await ref.read(authControllerProvider.notifier).uploadAvatarImage(picked.path);
+      ref.read(currentUserControllerProvider.notifier).setUser(updated);
+      if (!mounted) return;
+      setState(() => _avatarImagePath = updated.avatarImagePath);
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+    } catch (_) {
+      if (mounted) context.showSnack(t.errors.unknown);
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
+    }
   }
 
   Future<void> _next() async {
@@ -134,7 +164,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             username: _usernameController.text.trim(),
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
-            avatarColor: _avatarColor.apiValue,
+            // Faqat rasm yuklanmagan bo'lsa yuboriladi — aks holda
+            // backend yangi yuklangan rasmni o'chirib, rangga qaytarardi.
+            avatarColor: _avatarImagePath == null ? _avatarColor.apiValue : null,
             direction: _direction!.apiValue,
             interests: prefs.introInterests,
             studyPlace: prefs.introStudyPlace,
@@ -227,8 +259,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     return switch (_step) {
       1 => AvatarStep(
           selectedColor: _avatarColor,
-          onColorSelected: (color) => setState(() => _avatarColor = color),
-          onUploadPhoto: _uploadPhoto,
+          onColorSelected: (color) => setState(() {
+            _avatarColor = color;
+            // Rang tanlash yuklangan rasmdan voz kechish demakdir —
+            // ular bir-birini istisno qiladi.
+            _avatarImagePath = null;
+          }),
+          onUploadPhoto: () => unawaited(_uploadPhoto()),
+          avatarImagePath: _avatarImagePath,
+          isUploading: _uploadingPhoto,
         ),
       2 => ProfileInfoStep(
           formKey: _profileFormKey,

@@ -8,7 +8,9 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/session_history_entry.dart';
 import '../controllers/history_controller.dart';
@@ -28,11 +30,50 @@ class HistoryScreen extends ConsumerStatefulWidget {
 
 class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   GameMode? _selectedMode;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(historyControllerProvider.notifier).load());
+    // Cached for the session — finishing a game invalidates this
+    // provider directly (see DuelController/LobbyController/QuizScreen),
+    // so a stale list here would only happen if that hook were missing.
+    if (ref.read(historyControllerProvider).entries == null) {
+      Future.microtask(() => ref.read(historyControllerProvider.notifier).load());
+    }
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  // Fires the next page a little before the user actually hits the
+  // bottom, so the new rows are ready by the time they get there.
+  void _onScroll() {
+    if (_scrollController.position.pixels < _scrollController.position.maxScrollExtent - 200) return;
+    ref.read(historyControllerProvider.notifier).loadMore();
+  }
+
+  /// A segment filter (Duel/Lobby) is applied client-side over whatever
+  /// page(s) [HistoryController] has already fetched — so a user whose
+  /// history is mostly solo games can end up with a filtered list that's
+  /// too short (or empty) to scroll at all, even though matching entries
+  /// exist further back. [_onScroll] alone would never fire in that case
+  /// (there's nothing to scroll), silently hiding real data. Called after
+  /// every build, this keeps pulling pages until the filtered list either
+  /// fills the viewport or [HistoryState.hasMore] runs out.
+  void _maybeLoadMoreForFilter(HistoryState state, List<GameHistoryEntry> filteredEntries) {
+    if (!mounted || state.entries == null || !state.hasMore || state.isLoadingMore) return;
+    final bool viewportNotFull =
+        !_scrollController.hasClients || _scrollController.position.maxScrollExtent <= 0;
+    if (filteredEntries.isEmpty || viewportNotFull) {
+      ref.read(historyControllerProvider.notifier).loadMore();
+    }
   }
 
   void _goBack(BuildContext context) {
@@ -58,10 +99,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<SessionHistoryEntry>? sessions = ref.watch(historyControllerProvider);
+    final HistoryState historyState = ref.watch(historyControllerProvider);
+    final List<SessionHistoryEntry>? sessions = historyState.entries;
     final List<GameHistoryEntry> entries = sessions == null ? const [] : _filteredEntries(sessions);
     final String emptyMessage =
         _selectedMode == null ? context.t.history.noGamesYet : context.t.history.emptyState;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeLoadMoreForFilter(historyState, entries));
 
     return Scaffold(
       body: SafeArea(
@@ -81,8 +125,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               ),
               AppSpacing.lg.vGap,
               Expanded(
-                child: sessions == null
-                    ? const Center(child: CircularProgressIndicator())
+                child: historyState.hasError
+                    ? ErrorRetryView(onRetry: () => ref.read(historyControllerProvider.notifier).load())
+                    : sessions == null
+                    ? const ShimmerListSkeleton()
                     : entries.isEmpty
                         ? Center(
                             child: Text(
@@ -91,7 +137,28 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                             ),
                           )
-                        : SingleChildScrollView(child: HistoryList(entries: entries)),
+                        : RefreshIndicator(
+                            onRefresh: () => ref.read(historyControllerProvider.notifier).load(),
+                            child: SingleChildScrollView(
+                              controller: _scrollController,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Column(
+                                children: [
+                                  HistoryList(entries: entries),
+                                  if (historyState.isLoadingMore) ...[
+                                    AppSpacing.md.vGap,
+                                    const Center(
+                                      child: SizedBox.square(
+                                        dimension: 22,
+                                        child: CircularProgressIndicator(strokeWidth: 2.5),
+                                      ),
+                                    ),
+                                    AppSpacing.md.vGap,
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
               ),
             ],
           ),

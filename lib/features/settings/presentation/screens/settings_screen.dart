@@ -16,6 +16,7 @@ import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/confirm_dialog.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../profile/presentation/widgets/settings_list.dart';
 
 /// The Settings screen — mirrors the prototype's `view-settings`: a
@@ -80,7 +81,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ),
       ];
 
-  List<Widget> _accountGroup(BuildContext context) => [
+  List<Widget> _accountGroup(BuildContext context, bool isGoogleAccount) => [
         _GroupLabel(context.t.settings.groupAccount),
         AppSpacing.xs.vGap,
         SettingsList(
@@ -100,11 +101,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               label: context.t.settings.termsOfUse,
               onTap: () => context.push(AppRoutes.termsOfUse),
             ),
-            SettingsRowData(
-              icon: TablerIcons.key,
-              label: context.t.settings.changePassword,
-              onTap: () => context.push(AppRoutes.changePassword),
-            ),
+            // A Google account has no password at all — this would only
+            // ever fail with a confusing "current password wrong" error,
+            // so the row isn't offered in the first place.
+            if (!isGoogleAccount)
+              SettingsRowData(
+                icon: TablerIcons.key,
+                label: context.t.settings.changePassword,
+                onTap: () => context.push(AppRoutes.changePassword),
+              ),
           ],
         ),
       ];
@@ -135,22 +140,25 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       );
 
-  Future<void> _deleteAccount() async {
+  Future<void> _deleteAccount(bool isGoogleAccount) async {
     final bool? deleted = await ConfirmDialog.show(
       context,
       title: context.t.deleteAccount.confirmTitle,
       message: context.t.deleteAccount.confirmMessage,
       confirmLabel: context.t.deleteAccount.confirmButton,
       isDanger: true,
-      passwordLabel: context.t.auth.passwordLabel,
-      passwordHint: context.t.auth.passwordHint,
-      onConfirm: (password) => ref.read(authControllerProvider.notifier).deleteAccount(password!),
+      // A Google account has no password to re-confirm with — the dialog
+      // just asks for a plain "are you sure" tap instead of a password
+      // field that could never actually be verified.
+      passwordLabel: isGoogleAccount ? null : context.t.auth.passwordLabel,
+      passwordHint: isGoogleAccount ? null : context.t.auth.passwordHint,
+      onConfirm: (password) => ref.read(authControllerProvider.notifier).deleteAccount(password),
     );
     if (deleted != true || !mounted) return;
     context.go(AppRoutes.login);
   }
 
-  List<Widget> _dangerZoneGroup(BuildContext context) => [
+  List<Widget> _dangerZoneGroup(BuildContext context, bool isGoogleAccount) => [
         _GroupLabel(context.t.settings.groupDangerZone),
         AppSpacing.xs.vGap,
         SettingsList(
@@ -160,7 +168,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               label: context.t.settings.deleteAccount,
               isDanger: true,
               trailingWidget: const SizedBox.shrink(),
-              onTap: _deleteAccount,
+              onTap: () => _deleteAccount(isGoogleAccount),
             ),
           ],
         ),
@@ -172,6 +180,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final bool isDark = ref.watch(themeControllerProvider) == ThemeMode.dark;
     final bool soundEnabled = ref.watch(soundControllerProvider);
     final String language = ref.watch(localeControllerProvider).displayName;
+    final bool isGoogleAccount = ref.watch(currentUserControllerProvider).data?.isGoogleAccount ?? false;
 
     return Scaffold(
       body: SafeArea(
@@ -183,11 +192,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             AppSpacing.lg.vGap,
             ..._generalGroup(context, isDark, soundEnabled, language),
             AppSpacing.md.vGap,
-            ..._accountGroup(context),
+            ..._accountGroup(context, isGoogleAccount),
             AppSpacing.md.vGap,
             _logOutGroup(context),
             AppSpacing.md.vGap,
-            ..._dangerZoneGroup(context),
+            ..._dangerZoneGroup(context, isGoogleAccount),
           ],
         ),
       ),

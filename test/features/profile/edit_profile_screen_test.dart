@@ -21,9 +21,20 @@ import 'package:zukkor/i18n/strings.g.dart';
 /// haqiqiy foydalanuvchini yuklaydi va saqlaydi, haqiqiy tarmoqqa bog'liq
 /// bo'lmasligi kerak.
 class _FakeAuthRepository implements AuthRepository {
-  _FakeAuthRepository({this.usernameAvailable = true});
+  _FakeAuthRepository({this.usernameAvailable = true, this.hasUploadedAvatar = false});
 
   final bool usernameAvailable;
+
+  /// When true, the seeded user already has an uploaded avatar image
+  /// (not a color) — for the regression test below: saving other
+  /// profile fields must not wipe it out by resending `avatar_color`.
+  final bool hasUploadedAvatar;
+
+  /// The `avatarColor` argument [updateProfile] was last called with —
+  /// `notCalled` marks "never called" so a test can tell that apart
+  /// from an actual `null` argument.
+  static const String notCalled = '<not called>';
+  String? lastUpdateProfileAvatarColor = notCalled;
 
   @override
   Future<void> register({required String email, required String password}) async {}
@@ -32,17 +43,22 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> login({required String email, required String password}) async {}
 
   @override
+  Future<User?> signInWithGoogle() => throw UnimplementedError();
+
+  @override
   Future<User> getCurrentUser() async => User(
         id: '1',
         email: 'aziz@example.com',
         username: 'aziz_karimov',
         firstName: 'Aziz',
         lastName: 'Karimov',
-        avatarColor: 'a-coral',
+        avatarColor: hasUploadedAvatar ? null : 'a-coral',
+        avatarImagePath: hasUploadedAvatar ? '/uploads/avatars/aziz.jpg' : null,
         direction: 'casual',
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: true,
+        authProvider: 'email',
       );
 
   @override
@@ -50,30 +66,37 @@ class _FakeAuthRepository implements AuthRepository {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
     String? quizLiking,
-  }) async =>
-      User(
-        id: '1',
-        email: 'aziz@example.com',
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        avatarColor: avatarColor,
-        direction: direction,
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: true,
-      );
+  }) async {
+    lastUpdateProfileAvatarColor = avatarColor;
+    return User(
+      id: '1',
+      email: 'aziz@example.com',
+      username: username,
+      firstName: firstName,
+      lastName: lastName,
+      avatarColor: avatarColor,
+      avatarImagePath: hasUploadedAvatar ? '/uploads/avatars/aziz.jpg' : null,
+      direction: direction,
+      isActive: true,
+      createdAt: DateTime(2026),
+      onboardingCompleted: true,
+      authProvider: 'email',
+    );
+  }
 
   @override
   Future<bool> isUsernameAvailable(String username) async => usernameAvailable;
 
   @override
   Future<void> logout() async {}
+
+  @override
+  Future<void> registerPushToken(String token) async {}
 
   @override
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
@@ -83,10 +106,14 @@ class _FakeAuthRepository implements AuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<void> deleteAccount(String password) => throw UnimplementedError();
+  Future<void> deleteAccount(String? password) => throw UnimplementedError();
 }
 
-Future<GoRouter> _pumpEditProfile(WidgetTester tester, {Size size = const Size(390, 844)}) async {
+Future<({GoRouter router, _FakeAuthRepository repository})> _pumpEditProfile(
+  WidgetTester tester, {
+  Size size = const Size(390, 844),
+  _FakeAuthRepository? repository,
+}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -94,6 +121,7 @@ Future<GoRouter> _pumpEditProfile(WidgetTester tester, {Size size = const Size(3
 
   SharedPreferences.setMockInitialValues(<String, Object>{});
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  final _FakeAuthRepository repo = repository ?? _FakeAuthRepository();
 
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
@@ -107,7 +135,7 @@ Future<GoRouter> _pumpEditProfile(WidgetTester tester, {Size size = const Size(3
     ProviderScope(
       overrides: [
         appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
-        authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+        authRepositoryProvider.overrideWithValue(repo),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
@@ -116,7 +144,7 @@ Future<GoRouter> _pumpEditProfile(WidgetTester tester, {Size size = const Size(3
   );
   unawaited(router.push(AppRoutes.editProfile));
   await tester.pumpAndSettle();
-  return router;
+  return (router: router, repository: repo);
 }
 
 void main() {
@@ -145,6 +173,7 @@ void main() {
     await _pumpEditProfile(tester);
 
     await tester.enterText(find.widgetWithText(TextFormField, 'Aziz'), '');
+    await tester.ensureVisible(find.text(AppStrings.saveButton));
     await tester.tap(find.text(AppStrings.saveButton));
     await tester.pump();
 
@@ -152,9 +181,26 @@ void main() {
     expect(find.byType(EditProfileScreen), findsOneWidget);
   });
 
+  testWidgets("saving doesn't resend avatarColor for a user with an uploaded photo", (tester) async {
+    // Regression test: previously _save() always sent avatarColor, and
+    // the backend treats avatar_color/avatar_image as mutually
+    // exclusive — so saving any other field (name, username, ...) after
+    // uploading a photo silently wiped the photo back to a color.
+    final result = await _pumpEditProfile(tester, repository: _FakeAuthRepository(hasUploadedAvatar: true));
+
+    await tester.enterText(find.widgetWithText(TextFormField, 'Karimov'), 'Yusupov');
+    await tester.ensureVisible(find.text(AppStrings.saveButton));
+    await tester.tap(find.text(AppStrings.saveButton));
+    await tester.pumpAndSettle();
+
+    expect(result.repository.lastUpdateProfileAvatarColor, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('saving with valid data confirms and returns to Home', (tester) async {
     await _pumpEditProfile(tester);
 
+    await tester.ensureVisible(find.text(AppStrings.saveButton));
     await tester.tap(find.text(AppStrings.saveButton));
     await tester.pumpAndSettle();
 
@@ -194,6 +240,7 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.widgetWithText(TextFormField, 'aziz_karimov'), 'someone_else');
+    await tester.ensureVisible(find.text(AppStrings.saveButton));
     await tester.tap(find.text(AppStrings.saveButton));
     await tester.pumpAndSettle();
 

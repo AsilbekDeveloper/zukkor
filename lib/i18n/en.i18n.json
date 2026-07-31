@@ -46,7 +46,10 @@
     "streakLabel": "Streak",
     "addToFriends": "Add to friends",
     "requestSent": "Sent",
-    "rankedLabel": "Ranked #$rank · $xp XP"
+    "rankedLabel": "Ranked #$rank · $xp XP",
+    "alreadyFriends": "You're friends",
+    "acceptRequest": "Accept",
+    "declineRequest": "Decline"
   },
   "friends": {
     "addFriend": "Add friend",
@@ -153,14 +156,17 @@
     "xpEarned": "+$xp XP",
     "playAgain": "Play again",
     "challengeAFriend": "Challenge a friend",
-    "backToHome": "Back to home"
+    "backToHome": "Back to home",
+    "breakdownTitle": "Question by question"
   },
   "joinCode": {
     "hint": "Enter the 6-digit room code your friend sent you",
     "joinButton": "Join",
     "codeDigitLabel": "Code digit $position",
     "roomNotFound": "No room found with that code",
-    "roomFull": "That room is full"
+    "roomFull": "That room is full",
+    "alreadyStarted": "This room's game has already started",
+    "timedOut": "Couldn't connect — check your connection and try again"
   },
   "lobby": {
     "title": "Multiplayer room",
@@ -171,10 +177,17 @@
     "startGame": "Start the game",
     "waitingForHost": "Waiting for the host to start…",
     "playerCount": "$current/$max",
-    "closedMessage": "The host left, the room closed"
+    "closedMessage": "The host left, the room closed",
+    "creatingRoom": "Creating room…",
+    "createFailed": "Couldn't create the room — check your connection and try again",
+    "backToHome": "Back to home"
   },
   "lobbyGame": {
-    "answeredProgress": "$answered/$total answered"
+    "title": "Room",
+    "waitingForQuestion": "Preparing the question…",
+    "waitingForOthers": "You've answered every question! Waiting for the others…",
+    "startFailed": "The game didn't start — check your connection and try again",
+    "backToHome": "Back to home"
   },
   "lobbyResult": {
     "title": "Room results",
@@ -186,6 +199,8 @@
     "waitingForAccept": "Invite sent, waiting for a response…",
     "declined": "Invite declined",
     "expired": "Invite expired",
+    "failed": "Couldn't send the invite",
+    "timedOut": "Couldn't reach your friend — check your connection and try again",
     "backToHome": "Back to home"
   },
   "duelInvite": {
@@ -197,7 +212,10 @@
   "duelGame": {
     "title": "Duel",
     "waitingForQuestion": "Preparing the question…",
-    "opponentAnswered": "Opponent answered"
+    "opponentProgress": "Opponent: question $index/$total",
+    "waitingForOpponent": "You've answered every question! Waiting for your opponent…",
+    "startFailed": "The game didn't start — check your connection and try again",
+    "backToHome": "Back to home"
   },
   "duelResult": {
     "won": "You won!",
@@ -208,10 +226,12 @@
   },
   "notifications": {
     "title": "Notifications",
-    "duelChallenge": "Malika challenged you to a duel",
+    "duelChallenge": "$name challenged you to a duel",
+    "duelChallengeGeneric": "You were challenged to a duel",
     "streakReminder": "Don't lose your 5-day streak — play today!",
     "top50": "You made it into the weekly Top 50",
-    "friendRequest": "Bekzod Xolmatov sent you a friend request",
+    "friendRequest": "$name sent you a friend request",
+    "friendRequestGeneric": "You have a new friend request",
     "welcome": "Welcome to Zukkor! Start your first quiz",
     "emptyState": "No notifications yet"
   },
