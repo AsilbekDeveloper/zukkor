@@ -11,6 +11,7 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/quiz_launch_args.dart';
 import '../models/quiz_result.dart';
+import '../widgets/question_breakdown_list.dart';
 import '../widgets/score_ring.dart';
 
 /// Post-quiz summary — mirrors the prototype's `view-result`: an
@@ -87,6 +88,8 @@ class ResultScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              AppSpacing.xl.vGap,
+              QuestionBreakdownList(items: result.breakdown),
               AppSpacing.xxl.vGap,
               AppButton.primary(
                 label: context.t.result.playAgain,

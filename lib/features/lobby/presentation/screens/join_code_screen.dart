@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +31,20 @@ class JoinCodeScreen extends ConsumerStatefulWidget {
 }
 
 class _JoinCodeScreenState extends ConsumerState<JoinCodeScreen> {
+  // Mirrors DuelWaitingScreen/LobbyScreen's same safety net: a lost
+  // `lobby_join` (socket not actually ready, dropped message, ...)
+  // otherwise left the Join button spinning with zero feedback forever.
+  static const Duration _joinTimeout = Duration(seconds: 20);
+
   String _code = '';
+  bool _joining = false;
+  Timer? _joinTimeoutTimer;
+
+  @override
+  void dispose() {
+    _joinTimeoutTimer?.cancel();
+    super.dispose();
+  }
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -40,20 +55,32 @@ class _JoinCodeScreenState extends ConsumerState<JoinCodeScreen> {
   }
 
   void _join() {
+    setState(() => _joining = true);
     ref.read(lobbyControllerProvider.notifier).joinRoom(_code);
+    _joinTimeoutTimer?.cancel();
+    _joinTimeoutTimer = Timer(_joinTimeout, () {
+      if (mounted) {
+        setState(() => _joining = false);
+        context.showSnack(context.t.joinCode.timedOut);
+      }
+    });
   }
 
   String _errorMessage(BuildContext context, LobbyJoinErrorReason reason) => switch (reason) {
         LobbyJoinErrorReason.notFound => context.t.joinCode.roomNotFound,
         LobbyJoinErrorReason.roomFull => context.t.joinCode.roomFull,
+        LobbyJoinErrorReason.alreadyStarted => context.t.joinCode.alreadyStarted,
       };
 
   @override
   Widget build(BuildContext context) {
     ref.listen(lobbyControllerProvider, (previous, next) {
       if (next.room != null && next.room != previous?.room) {
+        _joinTimeoutTimer?.cancel();
         context.pushReplacement(AppRoutes.lobby, extra: LobbyRole.guest);
       } else if (next.joinError != null && next.joinError != previous?.joinError) {
+        _joinTimeoutTimer?.cancel();
+        setState(() => _joining = false);
         context.showSnack(_errorMessage(context, next.joinError!));
       }
     });
@@ -84,6 +111,7 @@ class _JoinCodeScreenState extends ConsumerState<JoinCodeScreen> {
               AppButton.primary(
                 label: context.t.joinCode.joinButton,
                 icon: const Icon(TablerIcons.arrowRight, color: Colors.white, size: 18),
+                isLoading: _joining,
                 onPressed: _code.length == CodeInputRow.digitCount ? _join : null,
               ),
             ],

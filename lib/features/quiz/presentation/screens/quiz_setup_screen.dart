@@ -1,31 +1,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/quiz_category.dart';
-import '../models/quiz_launch_args.dart';
 
 /// Savollar sonini tanlash — tezkor variantlar (5/10/15/20) yoki pastga
 /// aylantirib istalgan sonni (1-50) tanlash. Kategoriya tanlangandan
-/// keyin, Countdown'dan oldin ko'rsatiladi.
-class QuizSetupScreen extends StatefulWidget {
-  const QuizSetupScreen({required this.category, super.key});
+/// keyin, Countdown'dan oldin ko'rsatiladi. Shared by Solo, Duel, and
+/// Lobby — [onStart] decides what "start" actually means for each (push
+/// Quiz Intro, push Duel Waiting, or call LobbyController.startGame),
+/// keeping this screen ignorant of those other features' types.
+class QuizSetupScreen extends ConsumerStatefulWidget {
+  const QuizSetupScreen({required this.category, required this.onStart, super.key});
 
   final QuizCategory category;
+  final void Function(BuildContext context, WidgetRef ref, int questionCount) onStart;
 
   @override
-  State<QuizSetupScreen> createState() => _QuizSetupScreenState();
+  ConsumerState<QuizSetupScreen> createState() => _QuizSetupScreenState();
 }
 
-class _QuizSetupScreenState extends State<QuizSetupScreen> {
+class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
   static const List<int> _quickOptions = [5, 10, 15, 20];
   static const int _minCustom = 1;
   static const int _maxCustom = 50;
@@ -60,10 +63,7 @@ class _QuizSetupScreenState extends State<QuizSetupScreen> {
   }
 
   void _start() {
-    context.push(
-      AppRoutes.quizIntro,
-      extra: QuizLaunchArgs(category: widget.category, questionCount: _selectedCount),
-    );
+    widget.onStart(context, ref, _selectedCount);
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,9 +11,12 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/close_header.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/widgets/answer_button.dart';
 import '../../../quiz/presentation/widgets/question_card.dart';
+import '../../../quiz/presentation/widgets/question_timer.dart';
 import '../../../quiz/presentation/widgets/quiz_progress_header.dart';
 import '../../domain/entities/lobby_question_result.dart';
 import '../../domain/entities/lobby_room_state.dart';
@@ -19,12 +24,13 @@ import '../controllers/lobby_controller.dart';
 import '../models/lobby_game_state.dart';
 import '../models/lobby_result_args.dart';
 
-/// The synchronized room question-answer loop — mirrors [DuelGameScreen]'s
-/// timer/answer mechanics, but for N players instead of 2: instead of a
-/// single "opponent answered" line, this shows a live "X/N answered"
-/// count, and there's no per-opponent reveal — only this player's own
-/// correctness (the room's overall standings only settle at the end,
-/// see [LobbyResultScreen]).
+/// The room question-answer loop — mirrors [DuelGameScreen]'s timer/answer
+/// mechanics, but for N players instead of 2. Each player answers at
+/// their own pace; there's no per-opponent reveal, only this player's own
+/// correctness (the room's overall standings only settle at the end, see
+/// [LobbyResultScreen]) — this screen switches to a "waiting for others"
+/// state once this player has finished every question but the room
+/// hasn't.
 class LobbyGameScreen extends ConsumerStatefulWidget {
   const LobbyGameScreen({super.key});
 
@@ -33,6 +39,22 @@ class LobbyGameScreen extends ConsumerStatefulWidget {
 }
 
 class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTickerProviderStateMixin {
+  // A lost/dropped `lobby_game_started`/`lobby_question` (the same class
+  // of socket-delivery gap as room creation) otherwise left this screen
+  // on a bare, header-less spinner forever — and there's no screen left
+  // underneath to fall back to (this replaced Lobby via pushReplacement).
+  // This is the safety net for that.
+  static const Duration _startTimeout = Duration(seconds: 20);
+  Timer? _startTimeoutTimer;
+  bool _startFailed = false;
+
+  // Purely cosmetic on this end — the server holds off broadcasting the
+  // first question for the same span (see lobby_manager.start_game), so
+  // this doesn't eat into anyone's real answer time.
+  static const int _preGameCountdownStart = 5;
+  int _preGameCountdown = _preGameCountdownStart;
+  Timer? _preGameCountdownTimer;
+
   late final AnimationController _timerController;
 
   int? _timerStartedForIndex;
@@ -45,6 +67,13 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
     super.initState();
     _timerController = AnimationController(vsync: this, duration: const Duration(seconds: 1))
       ..addStatusListener(_onTimerStatusChanged);
+    _startTimeoutTimer = Timer(_startTimeout, () {
+      if (mounted) setState(() => _startFailed = true);
+    });
+    _preGameCountdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted || _preGameCountdown <= 0) return;
+      setState(() => _preGameCountdown--);
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       _sync(ref.read(lobbyControllerProvider).game);
@@ -53,6 +82,8 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
 
   @override
   void dispose() {
+    _startTimeoutTimer?.cancel();
+    _preGameCountdownTimer?.cancel();
     _timerController.dispose();
     super.dispose();
   }
@@ -66,6 +97,10 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
 
   void _sync(LobbyGameState? game) {
     if (game == null) return;
+    if (game.question != null) {
+      _startTimeoutTimer?.cancel();
+      _preGameCountdownTimer?.cancel();
+    }
 
     if (game.finalResult != null) {
       if (_navigatedToResult) return;
@@ -96,6 +131,7 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
   }
 
   void _selectAnswer(int index) {
+    _timerController.stop();
     ref.read(lobbyControllerProvider.notifier).submitAnswer(index);
   }
 
@@ -114,11 +150,96 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
     ref.listen(lobbyControllerProvider, (previous, next) => _sync(next.game));
     final LobbyGameState? game = ref.watch(lobbyControllerProvider).game;
 
-    if (game == null || game.question == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (game != null && game.waitingForOthers && game.finalResult == null) {
+      return Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: AppSpacing.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppSpacing.xs.vGap,
+                CloseHeader(title: context.t.lobbyGame.title, onClose: () => context.go(AppRoutes.home)),
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const CircularProgressIndicator(),
+                        AppSpacing.lg.vGap,
+                        Text(
+                          context.t.lobbyGame.waitingForOthers,
+                          textAlign: TextAlign.center,
+                          style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
     }
 
-    final int totalPlayers = ref.watch(lobbyControllerProvider).room?.participants.length ?? 0;
+    if (game == null || game.question == null) {
+      return Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: AppSpacing.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppSpacing.xs.vGap,
+                CloseHeader(title: context.t.lobbyGame.title, onClose: () => context.go(AppRoutes.home)),
+                Expanded(
+                  child: Center(
+                    child: _startFailed
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                context.t.lobbyGame.startFailed,
+                                textAlign: TextAlign.center,
+                                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
+                              ),
+                              AppSpacing.lg.vGap,
+                              AppButton.secondary(
+                                label: context.t.lobbyGame.backToHome,
+                                onPressed: () => context.go(AppRoutes.home),
+                              ),
+                            ],
+                          )
+                        : game != null
+                            ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    context.t.lobbyGame.waitingForQuestion,
+                                    style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
+                                  ),
+                                  AppSpacing.md.vGap,
+                                  Text(
+                                    _preGameCountdown > 0 ? '$_preGameCountdown' : '!',
+                                    style: TextStyle(
+                                      fontFamily: 'PlusJakartaSans',
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 56,
+                                      color: context.colors.coralDeep,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : const CircularProgressIndicator(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -127,22 +248,23 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              QuizProgressHeader(
-                questionNumber: game.questionIndex + 1,
-                totalQuestions: game.totalQuestions,
-                score: _correctCount,
-                onBack: () => context.go(AppRoutes.home),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: QuizProgressHeader(
+                      questionNumber: game.questionIndex + 1,
+                      totalQuestions: game.totalQuestions,
+                      score: _correctCount,
+                      onBack: () => context.go(AppRoutes.home),
+                    ),
+                  ),
+                  AppSpacing.sm.hGap,
+                  QuestionTimer(controller: _timerController),
+                ],
               ),
               AppSpacing.lg.vGap,
               QuestionCard(categoryName: game.category.name, question: game.question!.text),
-              AppSpacing.sm.vGap,
-              if (game.lastResult == null && totalPlayers > 0)
-                Center(
-                  child: Text(
-                    context.t.lobbyGame.answeredProgress(answered: game.answeredCount, total: totalPlayers),
-                    style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-                  ),
-                ),
               AppSpacing.sm.vGap,
               for (int i = 0; i < game.question!.options.length; i++) ...[
                 AnswerButton(

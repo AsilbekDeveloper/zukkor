@@ -15,7 +15,6 @@ import 'package:zukkor/features/friends/domain/entities/discovered_user.dart';
 import 'package:zukkor/features/friends/domain/entities/friend.dart';
 import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
 import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
-import 'package:zukkor/features/friends/presentation/models/friend_entry.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/quiz/data/repositories/quiz_repository_impl.dart';
@@ -110,7 +109,7 @@ Future<GoRouter> _pumpDuel(WidgetTester tester, {Size size = const Size(390, 844
       GoRoute(path: AppRoutes.duel, builder: (context, state) => const DuelScreen()),
       GoRoute(
         path: AppRoutes.categories,
-        builder: (context, state) => CategoriesScreen(duelOpponent: state.extra as FriendEntry?),
+        builder: (context, state) => const CategoriesScreen(),
       ),
     ],
   );

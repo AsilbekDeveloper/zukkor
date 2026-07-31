@@ -1,4 +1,3 @@
-import '../entities/lobby_answer_progress.dart';
 import '../entities/lobby_final_result.dart';
 import '../entities/lobby_game_started_info.dart';
 import '../entities/lobby_join_error.dart';
@@ -21,9 +20,16 @@ abstract interface class LobbyRepository {
   Stream<String> get roomClosed;
 
   Stream<LobbyGameStartedInfo> get gameStarted;
+
+  /// Fires whenever the server pushes this player's next question.
   Stream<LobbyQuestionEvent> get gameQuestion;
-  Stream<LobbyAnswerProgress> get answerProgress;
+
   Stream<LobbyQuestionResult> get gameQuestionResult;
+
+  /// Fires (with the room id) once this player has answered every
+  /// question but at least one other member hasn't finished yet.
+  Stream<String> get waitingForOthers;
+
   Stream<LobbyFinalResult> get gameFinished;
 
   Future<void> connect();
@@ -31,6 +37,6 @@ abstract interface class LobbyRepository {
   void createRoom();
   void joinRoom(String roomCode);
   void leaveRoom(String roomId);
-  void startGame({required String roomId, required int categoryId});
+  void startGame({required String roomId, required int categoryId, int? questionCount});
   void submitAnswer({required String roomId, required int questionIndex, required int? selectedOption});
 }

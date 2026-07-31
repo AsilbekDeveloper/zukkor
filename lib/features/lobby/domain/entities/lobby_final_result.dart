@@ -1,3 +1,4 @@
+import '../../../quiz/domain/entities/question_breakdown_item.dart';
 import 'lobby_player_score.dart';
 
 /// `lobby_game_finished` — the room's final standings, sent to every
@@ -10,6 +11,7 @@ class LobbyFinalResult {
     required this.standings,
     required this.xpEarned,
     required this.ballEarned,
+    required this.breakdown,
   });
 
   final String roomId;
@@ -22,4 +24,7 @@ class LobbyFinalResult {
   /// else, computed server-side.
   final int xpEarned;
   final int ballEarned;
+
+  /// This player's own answers, in question order.
+  final List<QuestionBreakdownItem> breakdown;
 }

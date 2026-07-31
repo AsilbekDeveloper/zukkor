@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +35,14 @@ class DuelWaitingScreen extends ConsumerStatefulWidget {
 }
 
 class _DuelWaitingScreenState extends ConsumerState<DuelWaitingScreen> {
+  // A lost invite (dropped by the socket, the friend's app never
+  // actually connected, etc.) otherwise leaves this screen spinning on
+  // "waiting for accept" forever with no feedback — this is the only
+  // safety net for that.
+  static const Duration _timeout = Duration(seconds: 20);
+  Timer? _timeoutTimer;
+  bool _timedOut = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,8 +55,18 @@ class _DuelWaitingScreenState extends ConsumerState<DuelWaitingScreen> {
       Future.microtask(() => ref.read(duelControllerProvider.notifier).sendInvite(
             toUserId: opponentId,
             categoryId: widget.match.category.id,
+            questionCount: widget.match.questionCount,
           ));
     }
+    _timeoutTimer = Timer(_timeout, () {
+      if (mounted) setState(() => _timedOut = true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timeoutTimer?.cancel();
+    super.dispose();
   }
 
   void _cancel(BuildContext context) {
@@ -61,11 +81,16 @@ class _DuelWaitingScreenState extends ConsumerState<DuelWaitingScreen> {
   Widget build(BuildContext context) {
     ref.listen(duelControllerProvider, (previous, next) {
       if (next.outgoingStatus == OutgoingDuelStatus.accepted) {
+        _timeoutTimer?.cancel();
         context.pushReplacement(AppRoutes.duelGame);
+      } else if (next.outgoingStatus != OutgoingDuelStatus.waiting &&
+          next.outgoingStatus != previous?.outgoingStatus) {
+        _timeoutTimer?.cancel();
       }
     });
 
-    final OutgoingDuelStatus status = ref.watch(duelControllerProvider).outgoingStatus;
+    final DuelState duelState = ref.watch(duelControllerProvider);
+    final OutgoingDuelStatus status = duelState.outgoingStatus;
 
     return Scaffold(
       body: SafeArea(
@@ -99,7 +124,7 @@ class _DuelWaitingScreenState extends ConsumerState<DuelWaitingScreen> {
               AppSpacing.lg.vGap,
               Center(child: DuelCategoryChip(category: widget.match.category)),
               AppSpacing.xl.vGap,
-              ..._statusSection(context, status),
+              ..._statusSection(context, status, _timedOut, duelState.outgoingErrorMessage),
             ],
           ),
         ),
@@ -107,7 +132,28 @@ class _DuelWaitingScreenState extends ConsumerState<DuelWaitingScreen> {
     );
   }
 
-  List<Widget> _statusSection(BuildContext context, OutgoingDuelStatus status) {
+  List<Widget> _statusSection(
+    BuildContext context,
+    OutgoingDuelStatus status,
+    bool timedOut,
+    String? errorMessage,
+  ) {
+    if (timedOut && (status == OutgoingDuelStatus.waiting || status == OutgoingDuelStatus.idle)) {
+      return [
+        Center(
+          child: Text(
+            context.t.duelWaiting.timedOut,
+            textAlign: TextAlign.center,
+            style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
+          ),
+        ),
+        AppSpacing.lg.vGap,
+        AppButton.secondary(
+          label: context.t.duelWaiting.backToHome,
+          onPressed: () => context.go(AppRoutes.home),
+        ),
+      ];
+    }
     return switch (status) {
       OutgoingDuelStatus.declined => [
           Center(
@@ -126,6 +172,24 @@ class _DuelWaitingScreenState extends ConsumerState<DuelWaitingScreen> {
           Center(
             child: Text(
               context.t.duelWaiting.expired,
+              style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
+            ),
+          ),
+          AppSpacing.lg.vGap,
+          AppButton.secondary(
+            label: context.t.duelWaiting.backToHome,
+            onPressed: () => context.go(AppRoutes.home),
+          ),
+        ],
+      // The server's own reason (e.g. no longer friends, category
+      // deactivated) — shown as-is, same as every other backend-authored
+      // error message in this app, with a generic fallback for the rare
+      // case it didn't send one.
+      OutgoingDuelStatus.failed => [
+          Center(
+            child: Text(
+              errorMessage ?? context.t.duelWaiting.failed,
+              textAlign: TextAlign.center,
               style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
             ),
           ),

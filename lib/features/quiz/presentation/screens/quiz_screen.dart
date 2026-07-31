@@ -13,6 +13,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../history/presentation/controllers/history_controller.dart';
+import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../../domain/entities/answer_result.dart';
 import '../../domain/entities/quiz_question_data.dart';
 import '../controllers/quiz_controller.dart';
@@ -20,6 +22,7 @@ import '../models/quiz_category.dart';
 import '../models/quiz_result.dart';
 import '../widgets/answer_button.dart';
 import '../widgets/question_card.dart';
+import '../widgets/question_timer.dart';
 import '../widgets/quiz_progress_header.dart';
 
 /// The question-answer loop — mirrors the prototype's `view-quiz`. Runs the
@@ -152,7 +155,13 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
         totalCount: summary.totalQuestions,
         xpEarned: summary.xpEarned,
         totalBall: summary.totalBall,
+        breakdown: summary.breakdown,
       );
+      // This session's own XP/history just changed server-side — drop
+      // the cached copies so History/Home/Profile fetch fresh next time
+      // they're visited, instead of showing the pre-game snapshot.
+      ref.invalidate(historyControllerProvider);
+      ref.invalidate(myStatsControllerProvider);
       context.pushReplacement(AppRoutes.ballReveal, extra: quizResult);
       return;
     }
@@ -200,11 +209,20 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              QuizProgressHeader(
-                questionNumber: questionNumber,
-                totalQuestions: totalQuestions,
-                score: score,
-                onBack: () => context.go(AppRoutes.home),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: QuizProgressHeader(
+                      questionNumber: questionNumber,
+                      totalQuestions: totalQuestions,
+                      score: score,
+                      onBack: () => context.go(AppRoutes.home),
+                    ),
+                  ),
+                  AppSpacing.sm.hGap,
+                  QuestionTimer(controller: _timerController),
+                ],
               ),
               AppSpacing.lg.vGap,
               QuestionCard(categoryName: widget.category.name, question: questionText),

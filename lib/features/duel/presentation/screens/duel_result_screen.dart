@@ -10,6 +10,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../quiz/presentation/widgets/question_breakdown_list.dart';
 import '../../../quiz/presentation/widgets/score_ring.dart';
 import '../../domain/entities/duel_final_result.dart';
 import '../controllers/duel_controller.dart';
@@ -139,6 +140,8 @@ class DuelResultScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              AppSpacing.xl.vGap,
+              QuestionBreakdownList(items: result.breakdown),
               AppSpacing.xxl.vGap,
               AppButton.primary(
                 label: context.t.result.backToHome,

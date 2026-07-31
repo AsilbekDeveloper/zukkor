@@ -8,6 +8,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/friends_controller.dart';
 import '../models/friend_entry.dart';
@@ -31,7 +33,9 @@ class _DuelScreenState extends ConsumerState<DuelScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+    if (ref.read(friendsControllerProvider).data == null) {
+      Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+    }
   }
 
   void _goBack(BuildContext context) {
@@ -42,10 +46,16 @@ class _DuelScreenState extends ConsumerState<DuelScreen> {
     }
   }
 
+  void _openPlayerDetail(BuildContext context, FriendEntry friend) {
+    final String? id = friend.id;
+    if (id == null) return;
+    context.push(AppRoutes.playerDetail, extra: {'userId': id, 'relation': 'friend'});
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<FriendEntry>? friends =
-        ref.watch(friendsControllerProvider)?.map(FriendEntry.fromEntity).toList();
+    final friendsState = ref.watch(friendsControllerProvider);
+    final List<FriendEntry>? friends = friendsState.data?.map(FriendEntry.fromEntity).toList();
 
     return Scaffold(
       body: SafeArea(
@@ -60,12 +70,15 @@ class _DuelScreenState extends ConsumerState<DuelScreen> {
               Text(context.t.duelPick.chooseYourFriend, style: context.textStyles.titleLarge),
               AppSpacing.sm.vGap,
               Expanded(
-                child: friends == null
-                    ? const Center(child: CircularProgressIndicator())
+                child: friendsState.hasError
+                    ? ErrorRetryView(onRetry: () => ref.read(friendsControllerProvider.notifier).load())
+                    : friends == null
+                    ? const ShimmerListSkeleton(trailingWidth: 36)
                     : SingleChildScrollView(
                         child: FriendList(
                           entries: friends,
                           onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
+                          onRowTap: (friend) => _openPlayerDetail(context, friend),
                         ),
                       ),
               ),

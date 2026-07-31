@@ -1,6 +1,8 @@
-/// `duel_question_result` — sent once both players have answered (or
-/// timed out) for a question: reveals the correct option and both
-/// sides' picks, right before the server pushes the next question.
+/// `duel_question_result` — sent to this player alone once they've
+/// answered (or timed out) their own current question: reveals the
+/// correct option and their own pick, right before the server pushes
+/// their next question. Duel now runs at each player's own pace, so
+/// there's no "opponent's pick" to reveal alongside it anymore.
 class DuelQuestionResult {
   const DuelQuestionResult({
     required this.duelId,
@@ -8,8 +10,6 @@ class DuelQuestionResult {
     required this.correctOption,
     required this.yourSelectedOption,
     required this.yourCorrect,
-    required this.opponentSelectedOption,
-    required this.opponentCorrect,
   });
 
   final String duelId;
@@ -17,6 +17,4 @@ class DuelQuestionResult {
   final int correctOption;
   final int? yourSelectedOption;
   final bool yourCorrect;
-  final int? opponentSelectedOption;
-  final bool opponentCorrect;
 }

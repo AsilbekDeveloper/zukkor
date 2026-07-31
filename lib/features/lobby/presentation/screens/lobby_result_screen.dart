@@ -13,6 +13,7 @@ import '../../../../i18n/strings.g.dart';
 import '../../../leaderboard/presentation/models/leaderboard_entry.dart';
 import '../../../leaderboard/presentation/widgets/leaderboard_podium.dart';
 import '../../../leaderboard/presentation/widgets/rank_list.dart';
+import '../../../quiz/presentation/widgets/question_breakdown_list.dart';
 import '../../domain/entities/lobby_participant.dart';
 import '../../domain/entities/lobby_player_score.dart';
 import '../../domain/entities/lobby_room_state.dart';
@@ -65,7 +66,12 @@ class LobbyResultScreen extends ConsumerWidget {
       ref.read(lobbyControllerProvider.notifier).clearGame();
     });
 
-    final bool isHost = room.participants.firstWhere((p) => p.id == room.youParticipantId).isHost;
+    // A defensive default rather than a bare `firstWhere` — "you" not
+    // being in the roster shouldn't be possible, but this beats crashing
+    // the screen outright if it ever momentarily isn't.
+    final bool isHost = room.participants.where((p) => p.id == room.youParticipantId).isEmpty
+        ? false
+        : room.participants.firstWhere((p) => p.id == room.youParticipantId).isHost;
     final List<LeaderboardEntry> ranked = _ranked(room);
     final bool hasPodium = ranked.length >= 3;
     final List<LeaderboardEntry> podium = hasPodium ? [ranked[1], ranked[0], ranked[2]] : const [];
@@ -138,6 +144,8 @@ class LobbyResultScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              AppSpacing.xl.vGap,
+              QuestionBreakdownList(items: args.result.breakdown),
               AppSpacing.xxl.vGap,
               if (isHost) ...[
                 AppButton.primary(

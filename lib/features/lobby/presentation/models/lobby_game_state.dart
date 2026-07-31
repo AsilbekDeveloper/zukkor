@@ -14,7 +14,7 @@ class LobbyGameState {
     this.questionIndex = -1,
     this.question,
     this.hasAnswered = false,
-    this.answeredCount = 0,
+    this.waitingForOthers = false,
     this.lastResult,
     this.finalResult,
   });
@@ -26,9 +26,12 @@ class LobbyGameState {
   final LobbyQuestion? question;
   final bool hasAnswered;
 
-  /// How many room members (including this one) have answered the
-  /// current question so far.
-  final int answeredCount;
+  /// True once this player has answered every question but at least one
+  /// other room member hasn't finished yet — the result screen can't
+  /// show until [finalResult] arrives, so this drives a "waiting" state
+  /// in between. Each player answers at their own pace now, so there's
+  /// no meaningful "X/N answered this question" count to show anymore.
+  final bool waitingForOthers;
 
   /// The reveal for the question that was just answered — cleared (via
   /// `lastResult: () => null`) whenever a new question arrives.
@@ -39,7 +42,7 @@ class LobbyGameState {
     int? questionIndex,
     LobbyQuestion? Function()? question,
     bool? hasAnswered,
-    int? answeredCount,
+    bool? waitingForOthers,
     LobbyQuestionResult? Function()? lastResult,
     LobbyFinalResult? Function()? finalResult,
   }) =>
@@ -50,7 +53,7 @@ class LobbyGameState {
         questionIndex: questionIndex ?? this.questionIndex,
         question: question != null ? question() : this.question,
         hasAnswered: hasAnswered ?? this.hasAnswered,
-        answeredCount: answeredCount ?? this.answeredCount,
+        waitingForOthers: waitingForOthers ?? this.waitingForOthers,
         lastResult: lastResult != null ? lastResult() : this.lastResult,
         finalResult: finalResult != null ? finalResult() : this.finalResult,
       );

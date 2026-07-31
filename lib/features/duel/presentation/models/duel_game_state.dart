@@ -16,7 +16,8 @@ class DuelGameState {
     this.questionIndex = -1,
     this.question,
     this.hasAnswered = false,
-    this.opponentHasAnswered = false,
+    this.opponentQuestionIndex,
+    this.waitingForOpponent = false,
     this.lastResult,
     this.finalResult,
   });
@@ -28,7 +29,16 @@ class DuelGameState {
   final int questionIndex;
   final DuelQuestion? question;
   final bool hasAnswered;
-  final bool opponentHasAnswered;
+
+  /// The opponent's own progress, purely cosmetic (each player answers
+  /// at their own pace, this doesn't gate anything) — `null` until the
+  /// first `duel_opponent_progress` arrives.
+  final int? opponentQuestionIndex;
+
+  /// True once this player has answered every question but the
+  /// opponent hasn't finished yet — the result screen can't show until
+  /// [finalResult] arrives, so this drives a "waiting" state in between.
+  final bool waitingForOpponent;
 
   /// The reveal for the question that was just answered — cleared (via
   /// `lastResult: () => null`) whenever a new question arrives.
@@ -39,7 +49,8 @@ class DuelGameState {
     int? questionIndex,
     DuelQuestion? Function()? question,
     bool? hasAnswered,
-    bool? opponentHasAnswered,
+    int? Function()? opponentQuestionIndex,
+    bool? waitingForOpponent,
     DuelQuestionResult? Function()? lastResult,
     DuelFinalResult? Function()? finalResult,
   }) =>
@@ -51,7 +62,9 @@ class DuelGameState {
         questionIndex: questionIndex ?? this.questionIndex,
         question: question != null ? question() : this.question,
         hasAnswered: hasAnswered ?? this.hasAnswered,
-        opponentHasAnswered: opponentHasAnswered ?? this.opponentHasAnswered,
+        opponentQuestionIndex:
+            opponentQuestionIndex != null ? opponentQuestionIndex() : this.opponentQuestionIndex,
+        waitingForOpponent: waitingForOpponent ?? this.waitingForOpponent,
         lastResult: lastResult != null ? lastResult() : this.lastResult,
         finalResult: finalResult != null ? finalResult() : this.finalResult,
       );

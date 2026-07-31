@@ -1,3 +1,5 @@
+import '../../../quiz/data/models/question_breakdown_item_model.dart';
+import '../../../quiz/domain/entities/question_breakdown_item.dart';
 import '../../domain/entities/duel_final_result.dart';
 import '../../domain/entities/duel_player_score.dart';
 
@@ -10,6 +12,7 @@ class DuelFinalResultModel {
     required this.opponentScore,
     required this.xpEarned,
     required this.ballEarned,
+    required this.breakdown,
   });
 
   factory DuelFinalResultModel.fromJson(Map<String, dynamic> json) => DuelFinalResultModel(
@@ -19,6 +22,7 @@ class DuelFinalResultModel {
         opponentScore: _scoreFromJson(json['opponent_score'] as Map<String, dynamic>),
         xpEarned: json['xp_earned'] as int,
         ballEarned: json['ball_earned'] as int,
+        breakdown: parseQuestionBreakdown(json['breakdown']),
       );
 
   final String duelId;
@@ -27,6 +31,7 @@ class DuelFinalResultModel {
   final DuelPlayerScore opponentScore;
   final int xpEarned;
   final int ballEarned;
+  final List<QuestionBreakdownItem> breakdown;
 
   static DuelOutcome _outcomeFromString(String value) => switch (value) {
         'won' => DuelOutcome.won,
@@ -47,5 +52,6 @@ class DuelFinalResultModel {
         opponentScore: opponentScore,
         xpEarned: xpEarned,
         ballEarned: ballEarned,
+        breakdown: breakdown,
       );
 }

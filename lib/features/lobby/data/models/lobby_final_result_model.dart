@@ -1,3 +1,5 @@
+import '../../../quiz/data/models/question_breakdown_item_model.dart';
+import '../../../quiz/domain/entities/question_breakdown_item.dart';
 import '../../domain/entities/lobby_final_result.dart';
 import '../../domain/entities/lobby_player_score.dart';
 
@@ -8,6 +10,7 @@ class LobbyFinalResultModel {
     required this.standings,
     required this.xpEarned,
     required this.ballEarned,
+    required this.breakdown,
   });
 
   factory LobbyFinalResultModel.fromJson(Map<String, dynamic> json) => LobbyFinalResultModel(
@@ -27,13 +30,20 @@ class LobbyFinalResultModel {
             .toList(),
         xpEarned: json['xp_earned'] as int,
         ballEarned: json['ball_earned'] as int,
+        breakdown: parseQuestionBreakdown(json['breakdown']),
       );
 
   final String roomId;
   final List<LobbyPlayerScore> standings;
   final int xpEarned;
   final int ballEarned;
+  final List<QuestionBreakdownItem> breakdown;
 
-  LobbyFinalResult toEntity() =>
-      LobbyFinalResult(roomId: roomId, standings: standings, xpEarned: xpEarned, ballEarned: ballEarned);
+  LobbyFinalResult toEntity() => LobbyFinalResult(
+        roomId: roomId,
+        standings: standings,
+        xpEarned: xpEarned,
+        ballEarned: ballEarned,
+        breakdown: breakdown,
+      );
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,10 +19,9 @@ import '../../features/friends/presentation/screens/friends_screen.dart';
 import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/introduction/presentation/screens/introduction_screen.dart';
-import '../../features/leaderboard/presentation/models/leaderboard_entry.dart';
 import '../../features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import '../../features/leaderboard/presentation/screens/leaderboard_screen.dart';
-import '../../features/leaderboard/presentation/screens/player_detail_screen.dart';
+import '../../features/lobby/presentation/controllers/lobby_controller.dart';
 import '../../features/lobby/presentation/models/lobby_result_args.dart';
 import '../../features/lobby/presentation/screens/join_code_screen.dart';
 import '../../features/lobby/presentation/screens/lobby_game_screen.dart';
@@ -29,6 +29,8 @@ import '../../features/lobby/presentation/screens/lobby_result_screen.dart';
 import '../../features/lobby/presentation/screens/lobby_screen.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/player_detail/presentation/models/player_detail_args.dart';
+import '../../features/player_detail/presentation/screens/player_detail_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/quiz/presentation/models/quiz_category.dart';
@@ -48,21 +50,24 @@ import '../../features/settings/presentation/screens/privacy_policy_screen.dart'
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/settings/presentation/screens/terms_of_use_screen.dart';
 import '../../features/splash/splash_screen.dart';
-import '../storage/app_preferences.dart';
 import 'app_routes.dart';
 
-/// Hozircha statik marshrutlar — auth holatiga bog'liq yo'naltirish
-/// (redirect) auth qatlami qayta qurilganda qaytariladi. Ekranlar orasida
-/// hozircha to'g'ridan-to'g'ri `context.go(...)` bilan o'tiladi.
-///
-/// `initialLocation` faqat bittasi bundan mustasno: birinchi marta
-/// kirganda (hali [AppPreferences.hasSeenIntroduction] false bo'lganda)
-/// ilova Login/Register'dan OLDIN Introduction oqimini ko'rsatadi.
-final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
-  final AppPreferences prefs = ref.watch(appPreferencesProvider);
+/// [QuizSetupScreen]'s route `extra` — the category just picked, plus a
+/// closure deciding what "start" means for whichever flow got it there
+/// (solo, a duel challenge, or a lobby game). Built as a record instead
+/// of a class so QuizSetupScreen doesn't need to import Friends'/Lobby's
+/// types just to carry this - only this router (which is allowed to
+/// know about every feature) ever constructs one.
+typedef QuizSetupExtra = ({QuizCategory category, void Function(BuildContext, WidgetRef, int) onStart});
 
+/// Marshrutlar. Ilova [SplashScreen]dan boshlanadi: u saqlangan token'ni
+/// tekshirib, tegishli ekranga yo'naltiradi — token bo'lsa Home, aks holda
+/// (Introduction ko'rilmagan bo'lsa) Introduction, yoki Login. Ekranlar
+/// orasida to'g'ridan-to'g'ri `context.go(...)` bilan o'tiladi; sessiya
+/// majburan tugaganda [ZukkorApp] Login'ga qaytaradi.
+final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: prefs.hasSeenIntroduction ? AppRoutes.home : AppRoutes.introduction,
+    initialLocation: AppRoutes.splash,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -88,14 +93,47 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.home,
         builder: (context, state) => const HomeScreen(),
       ),
-      // `extra` carries the pending duel opponent when reached from the
-      // Duel screen; absent (or a deep link) means the plain solo picker.
+      // `extra` carries the pending duel opponent (a FriendEntry) or a
+      // pending Lobby room id (a String) when reached from those flows;
+      // absent (or a deep link) means the plain solo picker. Building the
+      // actual per-flow tap behavior here — rather than inside
+      // CategoriesScreen itself — keeps Quiz from needing to know about
+      // Friends' or Lobby's types at all; this router is the one place
+      // allowed to know about every feature.
       GoRoute(
         path: AppRoutes.categories,
-        builder: (context, state) => CategoriesScreen(
-          duelOpponent: state.extra is FriendEntry ? state.extra as FriendEntry : null,
-          lobbyRoomId: state.extra is String ? state.extra as String : null,
-        ),
+        builder: (context, state) {
+          final Object? extra = state.extra;
+          if (extra is FriendEntry) {
+            return CategoriesScreen(
+              onCategoryPicked: (context, ref, category) => context.push(
+                AppRoutes.quizSetup,
+                extra: (
+                  category: category,
+                  onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
+                    AppRoutes.duelWaiting,
+                    extra: DuelMatch(opponent: extra, category: category, questionCount: count),
+                  ),
+                ),
+              ),
+            );
+          }
+          if (extra is String) {
+            return CategoriesScreen(
+              onCategoryPicked: (context, ref, category) => context.push(
+                AppRoutes.quizSetup,
+                extra: (
+                  category: category,
+                  onStart: (BuildContext ctx, WidgetRef ref, int count) {
+                    ref.read(lobbyControllerProvider.notifier).startGame(category.id, questionCount: count);
+                    ctx.pop();
+                  },
+                ),
+              ),
+            );
+          }
+          return const CategoriesScreen();
+        },
       ),
       GoRoute(
         path: AppRoutes.leaderboard,
@@ -126,8 +164,11 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       // lost on a hot restart), redirect to Home instead of crashing.
       GoRoute(
         path: AppRoutes.quizSetup,
-        redirect: (context, state) => state.extra is QuizCategory ? null : AppRoutes.home,
-        builder: (context, state) => QuizSetupScreen(category: state.extra! as QuizCategory),
+        redirect: (context, state) => state.extra is QuizSetupExtra ? null : AppRoutes.home,
+        builder: (context, state) {
+          final QuizSetupExtra extra = state.extra! as QuizSetupExtra;
+          return QuizSetupScreen(category: extra.category, onStart: extra.onStart);
+        },
       ),
       GoRoute(
         path: AppRoutes.quizIntro,
@@ -180,10 +221,29 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.fullLeaderboard,
         builder: (context, state) => const FullLeaderboardScreen(),
       ),
+      // `extra` is a plain `Map` (userId + optional relation/requestId/
+      // requestSent) rather than a typed args object — this is the one
+      // place [PlayerDetailArgs] gets constructed, so none of its
+      // callers (Leaderboard, Friends, Add Friend, Friend Requests) need
+      // to import the player_detail feature just to navigate here.
       GoRoute(
         path: AppRoutes.playerDetail,
-        redirect: (context, state) => state.extra is LeaderboardEntry ? null : AppRoutes.leaderboard,
-        builder: (context, state) => PlayerDetailScreen(entry: state.extra! as LeaderboardEntry),
+        redirect: (context, state) =>
+            state.extra is Map && (state.extra! as Map)['userId'] is String ? null : AppRoutes.leaderboard,
+        builder: (context, state) {
+          final Map<dynamic, dynamic> extra = state.extra! as Map;
+          return PlayerDetailScreen(
+            args: PlayerDetailArgs(
+              userId: extra['userId'] as String,
+              relation: PlayerDetailRelation.values.firstWhere(
+                (r) => r.name == extra['relation'],
+                orElse: () => PlayerDetailRelation.unknown,
+              ),
+              incomingRequestId: extra['requestId'] as String?,
+              initialRequestSent: extra['requestSent'] == true,
+            ),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.settings,

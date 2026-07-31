@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../history/presentation/controllers/history_controller.dart';
+import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../../data/repositories/lobby_repository_impl.dart';
-import '../../domain/entities/lobby_answer_progress.dart';
 import '../../domain/entities/lobby_final_result.dart';
 import '../../domain/entities/lobby_game_started_info.dart';
 import '../../domain/entities/lobby_join_error.dart';
@@ -56,11 +59,14 @@ class LobbyState {
 }
 
 /// Owns the lobby WebSocket's lifecycle and turns its event streams into
-/// watchable state. [connect] must be called once (e.g. from Home) —
-/// there's no automatic reconnect-on-app-resume yet, a known gap
-/// (matches [DuelController]'s same gap).
+/// watchable state. [connect] must be called once (e.g. from Home) — a
+/// dropped connection (idle-timeout close, brief network loss, ...) is
+/// retried automatically every few seconds until it comes back (matches
+/// [DuelController]'s same behavior).
 class LobbyController extends Notifier<LobbyState> {
   bool _subscribed = false;
+  bool _everConnected = false;
+  Timer? _reconnectTimer;
 
   @override
   LobbyState build() => const LobbyState();
@@ -69,7 +75,16 @@ class LobbyController extends Notifier<LobbyState> {
     final LobbyRepository repository = ref.read(lobbyRepositoryProvider);
     if (!_subscribed) {
       _subscribed = true;
-      repository.connectionStatus.listen((connected) => state = state.copyWith(isConnected: connected));
+      ref.onDispose(() => _reconnectTimer?.cancel());
+      repository.connectionStatus.listen((connected) {
+        state = state.copyWith(isConnected: connected);
+        if (connected) {
+          _everConnected = true;
+          _reconnectTimer?.cancel();
+        } else if (_everConnected) {
+          _scheduleReconnect();
+        }
+      });
       repository.roomUpdates.listen(
         (room) => state = state.copyWith(room: () => room, joinError: () => null),
       );
@@ -77,11 +92,22 @@ class LobbyController extends Notifier<LobbyState> {
       repository.roomClosed.listen(_handleRoomClosed);
       repository.gameStarted.listen(_handleGameStarted);
       repository.gameQuestion.listen(_handleGameQuestion);
-      repository.answerProgress.listen(_handleAnswerProgress);
       repository.gameQuestionResult.listen(_handleGameQuestionResult);
+      repository.waitingForOthers.listen(_handleWaitingForOthers);
       repository.gameFinished.listen(_handleGameFinished);
     }
     await repository.connect();
+  }
+
+  /// A single delayed retry per disconnect — if it also fails, the next
+  /// `connectionStatus` "false" event schedules another one, so this
+  /// naturally keeps retrying every few seconds while offline without
+  /// hammering the server in a tight loop.
+  void _scheduleReconnect() {
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(const Duration(seconds: 3), () {
+      ref.read(lobbyRepositoryProvider).connect();
+    });
   }
 
   void _handleRoomClosed(String roomId) {
@@ -115,10 +141,14 @@ class LobbyController extends Notifier<LobbyState> {
 
   /// Host-only: picks a category and kicks off a synchronized game for
   /// the whole room.
-  void startGame(int categoryId) {
+  void startGame(int categoryId, {int? questionCount}) {
     final LobbyRoomState? room = state.room;
     if (room == null) return;
-    ref.read(lobbyRepositoryProvider).startGame(roomId: room.roomId, categoryId: categoryId);
+    ref.read(lobbyRepositoryProvider).startGame(
+          roomId: room.roomId,
+          categoryId: categoryId,
+          questionCount: questionCount,
+        );
   }
 
   void _handleGameStarted(LobbyGameStartedInfo info) {
@@ -139,16 +169,9 @@ class LobbyController extends Notifier<LobbyState> {
         questionIndex: event.questionIndex,
         question: () => event.question,
         hasAnswered: false,
-        answeredCount: 0,
         lastResult: () => null,
       ),
     );
-  }
-
-  void _handleAnswerProgress(LobbyAnswerProgress progress) {
-    final LobbyGameState? game = state.game;
-    if (game == null || game.roomId != progress.roomId || game.questionIndex != progress.questionIndex) return;
-    state = state.copyWith(game: () => game.copyWith(answeredCount: progress.answeredCount));
   }
 
   void _handleGameQuestionResult(LobbyQuestionResult result) {
@@ -157,10 +180,20 @@ class LobbyController extends Notifier<LobbyState> {
     state = state.copyWith(game: () => game.copyWith(lastResult: () => result));
   }
 
+  void _handleWaitingForOthers(String roomId) {
+    final LobbyGameState? game = state.game;
+    if (game == null || game.roomId != roomId) return;
+    state = state.copyWith(game: () => game.copyWith(waitingForOthers: true));
+  }
+
   void _handleGameFinished(LobbyFinalResult result) {
     final LobbyGameState? game = state.game;
     if (game == null || game.roomId != result.roomId) return;
     state = state.copyWith(game: () => game.copyWith(finalResult: () => result));
+    // This device's own XP/history just changed server-side — drop the
+    // cached copies so History/Home/Profile fetch fresh next visit.
+    ref.invalidate(historyControllerProvider);
+    ref.invalidate(myStatsControllerProvider);
   }
 
   /// Locks in an answer for the current question (or `null` on timeout).

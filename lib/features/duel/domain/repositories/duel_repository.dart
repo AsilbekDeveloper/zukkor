@@ -1,14 +1,15 @@
 import '../entities/duel_final_result.dart';
 import '../entities/duel_invite.dart';
 import '../entities/duel_invite_outcome.dart';
-import '../entities/duel_opponent_answered_event.dart';
+import '../entities/duel_opponent_progress_event.dart';
 import '../entities/duel_question_event.dart';
 import '../entities/duel_question_result.dart';
 import '../entities/duel_started_info.dart';
 
 /// Real-time duel signaling over a WebSocket connection — invites,
-/// accept/decline, and (once accepted) the synchronized question-by-
-/// question game itself.
+/// accept/decline, and (once accepted) the question-by-question game
+/// itself. Both players see the same question set, but each answers at
+/// their own pace — there's no shared "current question" to wait on.
 abstract interface class DuelRepository {
   /// Fires whenever the WebSocket connection state changes.
   Stream<bool> get connectionStatus;
@@ -22,14 +23,21 @@ abstract interface class DuelRepository {
   /// Fires for both players right after an invite is accepted.
   Stream<DuelStartedInfo> get duelStarted;
 
-  /// Fires whenever the server pushes the current question.
+  /// Fires whenever the server pushes this player's next question.
   Stream<DuelQuestionEvent> get duelQuestion;
 
-  /// Fires when the opponent locks in an answer for the current question.
-  Stream<DuelOpponentAnsweredEvent> get opponentAnswered;
+  /// A light, purely cosmetic signal that the opponent has moved on to a
+  /// new question — lets the UI show roughly where they are, without
+  /// gating this player's own pace on it.
+  Stream<DuelOpponentProgressEvent> get opponentProgress;
 
-  /// Fires once both sides have answered (or timed out) a question.
+  /// Fires once this player has answered (or timed out) their own
+  /// current question, revealing whether it was correct.
   Stream<DuelQuestionResult> get duelQuestionResult;
+
+  /// Fires (with the duel id) once this player has answered every
+  /// question but the opponent hasn't finished yet.
+  Stream<String> get waitingForOpponent;
 
   /// Fires once the duel is over.
   Stream<DuelFinalResult> get duelFinished;
@@ -47,6 +55,7 @@ abstract interface class DuelRepository {
     required String toUserId,
     required int categoryId,
     required String clientInviteId,
+    int? questionCount,
   });
 
   /// Accepts or declines an invite from [incomingInvites].

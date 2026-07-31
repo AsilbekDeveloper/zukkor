@@ -13,7 +13,6 @@ import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/core/widgets/app_button.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/lobby/data/repositories/lobby_repository_impl.dart';
-import 'package:zukkor/features/lobby/domain/entities/lobby_answer_progress.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_final_result.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_game_started_info.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_join_error.dart';
@@ -56,7 +55,7 @@ class _FakeLobbyRepository implements LobbyRepository {
   Stream<LobbyQuestionEvent> get gameQuestion => const Stream.empty();
 
   @override
-  Stream<LobbyAnswerProgress> get answerProgress => const Stream.empty();
+  Stream<String> get waitingForOthers => const Stream.empty();
 
   @override
   Stream<LobbyQuestionResult> get gameQuestionResult => const Stream.empty();
@@ -65,7 +64,7 @@ class _FakeLobbyRepository implements LobbyRepository {
   Stream<LobbyFinalResult> get gameFinished => const Stream.empty();
 
   @override
-  void startGame({required String roomId, required int categoryId}) {}
+  void startGame({required String roomId, required int categoryId, int? questionCount}) {}
 
   @override
   void submitAnswer({required String roomId, required int questionIndex, required int? selectedOption}) {}

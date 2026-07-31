@@ -8,8 +8,6 @@ class DuelQuestionResultModel {
     required this.correctOption,
     required this.yourSelectedOption,
     required this.yourCorrect,
-    required this.opponentSelectedOption,
-    required this.opponentCorrect,
   });
 
   factory DuelQuestionResultModel.fromJson(Map<String, dynamic> json) => DuelQuestionResultModel(
@@ -18,8 +16,6 @@ class DuelQuestionResultModel {
         correctOption: json['correct_option'] as int,
         yourSelectedOption: json['your_selected_option'] as int?,
         yourCorrect: json['your_correct'] as bool,
-        opponentSelectedOption: json['opponent_selected_option'] as int?,
-        opponentCorrect: json['opponent_correct'] as bool,
       );
 
   final String duelId;
@@ -27,8 +23,6 @@ class DuelQuestionResultModel {
   final int correctOption;
   final int? yourSelectedOption;
   final bool yourCorrect;
-  final int? opponentSelectedOption;
-  final bool opponentCorrect;
 
   DuelQuestionResult toEntity() => DuelQuestionResult(
         duelId: duelId,
@@ -36,7 +30,5 @@ class DuelQuestionResultModel {
         correctOption: correctOption,
         yourSelectedOption: yourSelectedOption,
         yourCorrect: yourCorrect,
-        opponentSelectedOption: opponentSelectedOption,
-        opponentCorrect: opponentCorrect,
       );
 }

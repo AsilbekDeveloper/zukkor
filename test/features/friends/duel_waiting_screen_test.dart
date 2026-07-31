@@ -15,7 +15,7 @@ import 'package:zukkor/features/duel/data/repositories/duel_repository_impl.dart
 import 'package:zukkor/features/duel/domain/entities/duel_final_result.dart';
 import 'package:zukkor/features/duel/domain/entities/duel_invite.dart';
 import 'package:zukkor/features/duel/domain/entities/duel_invite_outcome.dart';
-import 'package:zukkor/features/duel/domain/entities/duel_opponent_answered_event.dart';
+import 'package:zukkor/features/duel/domain/entities/duel_opponent_progress_event.dart';
 import 'package:zukkor/features/duel/domain/entities/duel_question_event.dart';
 import 'package:zukkor/features/duel/domain/entities/duel_question_result.dart';
 import 'package:zukkor/features/duel/domain/entities/duel_started_info.dart';
@@ -71,10 +71,13 @@ class _FakeDuelRepository implements DuelRepository {
   Stream<DuelQuestionEvent> get duelQuestion => const Stream.empty();
 
   @override
-  Stream<DuelOpponentAnsweredEvent> get opponentAnswered => const Stream.empty();
+  Stream<DuelOpponentProgressEvent> get opponentProgress => const Stream.empty();
 
   @override
   Stream<DuelQuestionResult> get duelQuestionResult => const Stream.empty();
+
+  @override
+  Stream<String> get waitingForOpponent => const Stream.empty();
 
   @override
   Stream<DuelFinalResult> get duelFinished => const Stream.empty();
@@ -86,7 +89,12 @@ class _FakeDuelRepository implements DuelRepository {
   void disconnect() {}
 
   @override
-  void sendInvite({required String toUserId, required int categoryId, required String clientInviteId}) {
+  void sendInvite({
+    required String toUserId,
+    required int categoryId,
+    required String clientInviteId,
+    int? questionCount,
+  }) {
     lastClientInviteId = clientInviteId;
     lastToUserId = toUserId;
     lastCategoryId = categoryId;

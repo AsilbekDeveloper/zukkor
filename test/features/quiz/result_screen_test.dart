@@ -32,7 +32,7 @@ const QuizCategory _math = QuizCategory(
   colorKey: CategoryColorKey.coral,
 );
 const QuizResult _result =
-    QuizResult(category: _math, correctCount: 4, totalCount: 5, xpEarned: 60, totalBall: 4200);
+    QuizResult(category: _math, correctCount: 4, totalCount: 5, xpEarned: 60, totalBall: 4200, breakdown: []);
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home va Duel
 /// ekranlari `GET /friends`ni chaqiradi, haqiqiy tarmoqqa bog'liq

@@ -5,8 +5,11 @@ import 'friend_entry.dart';
 /// into one object so they can travel together through a single
 /// go_router `extra` (Categories → Duel Waiting).
 class DuelMatch {
-  const DuelMatch({required this.opponent, required this.category});
+  const DuelMatch({required this.opponent, required this.category, this.questionCount});
 
   final FriendEntry opponent;
   final QuizCategory category;
+
+  /// `null` lets the server fall back to its own default question count.
+  final int? questionCount;
 }

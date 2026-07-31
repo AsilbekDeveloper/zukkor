@@ -1,3 +1,4 @@
+import '../../../quiz/domain/entities/question_breakdown_item.dart';
 import 'duel_player_score.dart';
 
 enum DuelOutcome { won, lost, draw }
@@ -13,6 +14,7 @@ class DuelFinalResult {
     required this.opponentScore,
     required this.xpEarned,
     required this.ballEarned,
+    required this.breakdown,
   });
 
   final String duelId;
@@ -21,4 +23,7 @@ class DuelFinalResult {
   final DuelPlayerScore opponentScore;
   final int xpEarned;
   final int ballEarned;
+
+  /// This player's own answers, in question order.
+  final List<QuestionBreakdownItem> breakdown;
 }

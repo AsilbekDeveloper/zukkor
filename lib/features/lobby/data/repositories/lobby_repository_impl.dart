@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/entities/lobby_answer_progress.dart';
 import '../../domain/entities/lobby_final_result.dart';
 import '../../domain/entities/lobby_game_started_info.dart';
 import '../../domain/entities/lobby_join_error.dart';
@@ -34,6 +35,7 @@ class LobbyRepositoryImpl implements LobbyRepository {
   Stream<LobbyJoinErrorReason> get joinErrors => _dataSource.joinError.map(
         (json) => switch (json['reason'] as String?) {
           'room_full' => LobbyJoinErrorReason.roomFull,
+          'already_started' => LobbyJoinErrorReason.alreadyStarted,
           _ => LobbyJoinErrorReason.notFound,
         },
       );
@@ -50,14 +52,8 @@ class LobbyRepositoryImpl implements LobbyRepository {
       _dataSource.question.map((json) => LobbyQuestionEventModel.fromJson(json).toEntity());
 
   @override
-  Stream<LobbyAnswerProgress> get answerProgress => _dataSource.answerProgress.map(
-        (json) => LobbyAnswerProgress(
-          roomId: json['room_id'] as String,
-          questionIndex: json['question_index'] as int,
-          answeredCount: json['answered_count'] as int,
-          totalCount: json['total_count'] as int,
-        ),
-      );
+  Stream<String> get waitingForOthers =>
+      _dataSource.waitingForOthers.map((json) => json['room_id'] as String);
 
   @override
   Stream<LobbyQuestionResult> get gameQuestionResult =>
@@ -74,26 +70,33 @@ class LobbyRepositoryImpl implements LobbyRepository {
   void disconnect() => _dataSource.disconnect();
 
   @override
-  void createRoom() => _dataSource.send({'type': 'lobby_create'});
+  void createRoom() => unawaited(_dataSource.send({'type': 'lobby_create'}));
 
   @override
-  void joinRoom(String roomCode) => _dataSource.send({'type': 'lobby_join', 'room_code': roomCode});
+  void joinRoom(String roomCode) =>
+      unawaited(_dataSource.send({'type': 'lobby_join', 'room_code': roomCode}));
 
   @override
-  void leaveRoom(String roomId) => _dataSource.send({'type': 'lobby_leave', 'room_id': roomId});
+  void leaveRoom(String roomId) => unawaited(_dataSource.send({'type': 'lobby_leave', 'room_id': roomId}));
 
   @override
-  void startGame({required String roomId, required int categoryId}) =>
-      _dataSource.send({'type': 'lobby_start', 'room_id': roomId, 'category_id': categoryId});
+  void startGame({required String roomId, required int categoryId, int? questionCount}) => unawaited(
+        _dataSource.send({
+          'type': 'lobby_start',
+          'room_id': roomId,
+          'category_id': categoryId,
+          'question_count': questionCount,
+        }),
+      );
 
   @override
   void submitAnswer({required String roomId, required int questionIndex, required int? selectedOption}) =>
-      _dataSource.send({
+      unawaited(_dataSource.send({
         'type': 'lobby_answer',
         'room_id': roomId,
         'question_index': questionIndex,
         'selected_option': selectedOption,
-      });
+      }));
 }
 
 final Provider<LobbyRepository> lobbyRepositoryProvider = Provider<LobbyRepository>(

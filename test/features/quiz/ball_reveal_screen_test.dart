@@ -25,7 +25,7 @@ const QuizCategory _math = QuizCategory(
   colorKey: CategoryColorKey.coral,
 );
 const QuizResult _soloResult =
-    QuizResult(category: _math, correctCount: 4, totalCount: 5, xpEarned: 60, totalBall: 4200);
+    QuizResult(category: _math, correctCount: 4, totalCount: 5, xpEarned: 60, totalBall: 4200, breakdown: []);
 
 Future<void> _pumpBallReveal(
   WidgetTester tester, {

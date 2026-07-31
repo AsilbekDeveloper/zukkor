@@ -1,4 +1,6 @@
+import '../../domain/entities/question_breakdown_item.dart';
 import '../../domain/entities/quiz_summary.dart';
+import 'question_breakdown_item_model.dart';
 
 class QuizSummaryModel {
   const QuizSummaryModel({
@@ -7,6 +9,7 @@ class QuizSummaryModel {
     required this.totalQuestions,
     required this.xpEarned,
     required this.newTotalXp,
+    required this.breakdown,
   });
 
   factory QuizSummaryModel.fromJson(Map<String, dynamic> json) => QuizSummaryModel(
@@ -15,6 +18,7 @@ class QuizSummaryModel {
         totalQuestions: json['total_questions'] as int,
         xpEarned: json['xp_earned'] as int,
         newTotalXp: json['new_total_xp'] as int,
+        breakdown: parseQuestionBreakdown(json['breakdown']),
       );
 
   final int totalBall;
@@ -22,6 +26,7 @@ class QuizSummaryModel {
   final int totalQuestions;
   final int xpEarned;
   final int newTotalXp;
+  final List<QuestionBreakdownItem> breakdown;
 
   QuizSummary toEntity() => QuizSummary(
         totalBall: totalBall,
@@ -29,5 +34,6 @@ class QuizSummaryModel {
         totalQuestions: totalQuestions,
         xpEarned: xpEarned,
         newTotalXp: newTotalXp,
+        breakdown: breakdown,
       );
 }

@@ -65,6 +65,7 @@ class _FakeQuizRepository implements QuizRepository {
           totalQuestions: 5,
           xpEarned: 60,
           newTotalXp: 2200,
+          breakdown: [],
         ),
       );
     }

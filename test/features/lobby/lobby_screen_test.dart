@@ -13,7 +13,6 @@ import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/widgets/leaderboard_podium.dart';
 import 'package:zukkor/features/lobby/data/repositories/lobby_repository_impl.dart';
-import 'package:zukkor/features/lobby/domain/entities/lobby_answer_progress.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_final_result.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_game_started_info.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_join_error.dart';
@@ -124,8 +123,7 @@ class _FakeLobbyRepository implements LobbyRepository {
       StreamController<LobbyGameStartedInfo>.broadcast();
   final StreamController<LobbyQuestionEvent> _questionController =
       StreamController<LobbyQuestionEvent>.broadcast();
-  final StreamController<LobbyAnswerProgress> _answerProgressController =
-      StreamController<LobbyAnswerProgress>.broadcast();
+  final StreamController<String> _waitingForOthersController = StreamController<String>.broadcast();
   final StreamController<LobbyQuestionResult> _questionResultController =
       StreamController<LobbyQuestionResult>.broadcast();
   final StreamController<LobbyFinalResult> _gameFinishedController =
@@ -153,7 +151,7 @@ class _FakeLobbyRepository implements LobbyRepository {
   Stream<LobbyQuestionEvent> get gameQuestion => _questionController.stream;
 
   @override
-  Stream<LobbyAnswerProgress> get answerProgress => _answerProgressController.stream;
+  Stream<String> get waitingForOthers => _waitingForOthersController.stream;
 
   @override
   Stream<LobbyQuestionResult> get gameQuestionResult => _questionResultController.stream;
@@ -197,7 +195,7 @@ class _FakeLobbyRepository implements LobbyRepository {
   }
 
   @override
-  void startGame({required String roomId, required int categoryId}) {
+  void startGame({required String roomId, required int categoryId, int? questionCount}) {
     lastStartedCategoryId = categoryId;
     _gameStartedController.add(
       const LobbyGameStartedInfo(roomId: 'room-1', category: _mathCategory, totalQuestions: 1),
@@ -233,6 +231,7 @@ class _FakeLobbyRepository implements LobbyRepository {
         ],
         xpEarned: 15,
         ballEarned: 900,
+        breakdown: [],
       ),
     );
   }
@@ -260,7 +259,12 @@ Future<({GoRouter router, _FakeLobbyRepository repository})> _pumpLobby(
       ),
       GoRoute(
         path: AppRoutes.categories,
-        builder: (context, state) => CategoriesScreen(lobbyRoomId: state.extra as String?),
+        builder: (context, state) => CategoriesScreen(
+          onCategoryPicked: (context, ref, category) {
+            ref.read(lobbyControllerProvider.notifier).startGame(category.id);
+            context.pop();
+          },
+        ),
       ),
       GoRoute(
         path: AppRoutes.lobbyGame,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +9,8 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/invite_code_card.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../../i18n/strings.g.dart';
@@ -37,12 +41,29 @@ class LobbyScreen extends ConsumerStatefulWidget {
 }
 
 class _LobbyScreenState extends ConsumerState<LobbyScreen> {
+  // A lost/dropped `lobby_create` (socket not actually ready yet, a
+  // network blip, ...) otherwise left this screen on a bare spinner
+  // forever — no label, no way back except the OS back gesture. This is
+  // the safety net for that (mirrors DuelWaitingScreen's same fix).
+  static const Duration _createTimeout = Duration(seconds: 20);
+  Timer? _createTimeoutTimer;
+  bool _createFailed = false;
+
   @override
   void initState() {
     super.initState();
     if (widget.role == LobbyRole.host) {
       Future.microtask(() => ref.read(lobbyControllerProvider.notifier).createRoom());
+      _createTimeoutTimer = Timer(_createTimeout, () {
+        if (mounted) setState(() => _createFailed = true);
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    _createTimeoutTimer?.cancel();
+    super.dispose();
   }
 
   void _leaveAndGoBack(BuildContext context) {
@@ -59,6 +80,9 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen(lobbyControllerProvider, (previous, next) {
+      if (next.room != null && previous?.room == null) {
+        _createTimeoutTimer?.cancel();
+      }
       if (next.closed && !(previous?.closed ?? false)) {
         ref.read(lobbyControllerProvider.notifier).clearClosed();
         context.showSnack(context.t.lobby.closedMessage);
@@ -71,13 +95,52 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
     final LobbyRoomState? room = ref.watch(lobbyControllerProvider).room;
 
     if (room == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: AppSpacing.screenPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppSpacing.xs.vGap,
+                BackHeader(title: context.t.lobby.title, onBack: () => _leaveAndGoBack(context)),
+                Expanded(
+                  child: Center(
+                    child: _createFailed
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                context.t.lobby.createFailed,
+                                textAlign: TextAlign.center,
+                                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
+                              ),
+                              AppSpacing.lg.vGap,
+                              AppButton.secondary(
+                                label: context.t.lobby.backToHome,
+                                onPressed: () => context.go(AppRoutes.home),
+                              ),
+                            ],
+                          )
+                        : LobbyWaitingIndicator(label: context.t.lobby.creatingRoom),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
     }
 
     final List<LobbyPlayer> players = room.participants
         .map((p) => LobbyPlayer.fromEntity(p, isYou: p.id == room.youParticipantId))
         .toList();
-    final bool isHost = room.participants.firstWhere((p) => p.id == room.youParticipantId).isHost;
+    // A defensive default rather than a bare `firstWhere` — "you" not
+    // being in the roster shouldn't be possible, but this beats crashing
+    // the screen outright if it ever momentarily isn't.
+    final bool isHost = room.participants.where((p) => p.id == room.youParticipantId).isEmpty
+        ? false
+        : room.participants.firstWhere((p) => p.id == room.youParticipantId).isHost;
 
     return Scaffold(
       body: SafeArea(
