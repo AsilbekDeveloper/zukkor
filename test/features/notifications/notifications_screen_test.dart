@@ -36,6 +36,7 @@ class _FakeNotificationsRepository implements NotificationsRepository {
           kind: NotificationKind.duelChallenge,
           createdAt: DateTime.now(),
           isRead: false,
+          relatedUserName: 'Malika',
         ),
         NotificationRecord(
           id: '2',
@@ -54,6 +55,7 @@ class _FakeNotificationsRepository implements NotificationsRepository {
           kind: NotificationKind.friendRequest,
           createdAt: DateTime.now().subtract(const Duration(days: 2)),
           isRead: true,
+          relatedUserName: 'Bekzod Xolmatov',
         ),
         NotificationRecord(
           id: '5',
@@ -136,10 +138,10 @@ void main() {
     await _pumpNotifications(tester);
 
     expect(find.text(AppStrings.notificationsTitle), findsOneWidget);
-    expect(find.text(AppStrings.notifDuelChallenge), findsOneWidget);
+    expect(find.text(AppStrings.notifDuelChallenge('Malika')), findsOneWidget);
     expect(find.text(AppStrings.notifStreakReminder), findsOneWidget);
     expect(find.text(AppStrings.notifTop50), findsOneWidget);
-    expect(find.text(AppStrings.notifFriendRequest), findsOneWidget);
+    expect(find.text(AppStrings.notifFriendRequest('Bekzod Xolmatov')), findsOneWidget);
     expect(find.text(AppStrings.notifWelcome), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -162,7 +164,7 @@ void main() {
 
     // A real incoming duel challenge no longer opens from this list — it
     // arrives live over the duel WebSocket instead (see home_screen_test).
-    await tester.tap(find.text(AppStrings.notifDuelChallenge));
+    await tester.tap(find.text(AppStrings.notifDuelChallenge('Malika')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
@@ -172,7 +174,7 @@ void main() {
   testWidgets('tapping a friend-request row opens Friend Requests', (tester) async {
     await _pumpNotifications(tester);
 
-    await tester.tap(find.text(AppStrings.notifFriendRequest));
+    await tester.tap(find.text(AppStrings.notifFriendRequest('Bekzod Xolmatov')));
     await tester.pumpAndSettle();
 
     expect(find.text(AppStrings.friendRequestsTitle), findsOneWidget);

@@ -1,25 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/state/load_state.dart';
 import '../../data/repositories/leaderboard_repository_impl.dart';
 import '../../domain/entities/player_stats.dart';
 
 /// Joriy foydalanuvchining o'z statistikasi — `GET /leaderboard/{user_id}`ni
 /// o'z ID'si bilan chaqiradi (Home va Profile ekranlari uchun umumiy). Ekran
-/// ochilganda [load] chaqirilishi kerak; muvaffaqiyatsiz bo'lsa `state`
-/// eskicha (yoki `null`) qoladi.
-class MyStatsController extends Notifier<PlayerStats?> {
+/// ochilganda [load] chaqirilishi kerak; muvaffaqiyatsiz bo'lsa
+/// `state.hasError` `true` bo'ladi.
+class MyStatsController extends Notifier<LoadState<PlayerStats>> {
   @override
-  PlayerStats? build() => null;
+  LoadState<PlayerStats> build() => const LoadState();
 
   Future<void> load(String userId) async {
+    state = const LoadState();
     try {
-      state = await ref.read(getPlayerStatsUseCaseProvider).call(userId);
+      state = LoadState(data: await ref.read(getPlayerStatsUseCaseProvider).call(userId));
     } catch (_) {
-      // e'tiborsiz qoldiriladi — chaqiruvchi ekran `null`ni "yuklanmoqda
-      // yoki xato" sifatida ko'rsatadi.
+      state = const LoadState(hasError: true);
     }
   }
 }
 
-final NotifierProvider<MyStatsController, PlayerStats?> myStatsControllerProvider =
-    NotifierProvider<MyStatsController, PlayerStats?>(MyStatsController.new);
+final NotifierProvider<MyStatsController, LoadState<PlayerStats>> myStatsControllerProvider =
+    NotifierProvider<MyStatsController, LoadState<PlayerStats>>(MyStatsController.new);

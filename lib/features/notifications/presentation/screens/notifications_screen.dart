@@ -8,6 +8,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/notification_record.dart' show NotificationKind;
 import '../controllers/notifications_controller.dart';
@@ -56,7 +58,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final entries = ref.watch(notificationsControllerProvider)?.map(NotificationEntry.fromEntity).toList();
+    final notificationsState = ref.watch(notificationsControllerProvider);
+    final entries = notificationsState.data?.map(NotificationEntry.fromEntity).toList();
 
     return Scaffold(
       body: SafeArea(
@@ -69,8 +72,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               BackHeader(title: context.t.notifications.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
               Expanded(
-                child: entries == null
-                    ? const Center(child: CircularProgressIndicator())
+                child: notificationsState.hasError
+                    ? ErrorRetryView(onRetry: () => ref.read(notificationsControllerProvider.notifier).load())
+                    : entries == null
+                    ? const ShimmerListSkeleton()
                     : entries.isEmpty
                         ? Center(
                             child: Text(

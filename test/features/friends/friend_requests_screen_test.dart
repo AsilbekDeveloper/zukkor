@@ -17,6 +17,13 @@ import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
 import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
 import 'package:zukkor/features/friends/presentation/screens/friend_requests_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/friends_screen.dart';
+import 'package:zukkor/features/leaderboard/data/repositories/leaderboard_repository_impl.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_data.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
+import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
+import 'package:zukkor/features/player_detail/presentation/models/player_detail_args.dart';
+import 'package:zukkor/features/player_detail/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
 
 final List<FriendRequest> _requests = [
@@ -76,6 +83,38 @@ class _FakeFriendsRepository implements FriendsRepository {
   }
 }
 
+/// Backendga murojaat qilmaydigan soxta leaderboard repository —
+/// [PlayerDetailScreen] `GET /leaderboard/{user_id}`ni chaqiradi.
+class _FakeLeaderboardRepository implements LeaderboardRepository {
+  @override
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
+        userId: userId,
+        rank: 9,
+        username: 'bekzod_xolmatov',
+        firstName: 'Bekzod',
+        lastName: 'Xolmatov',
+        avatarColor: 'a-blue',
+        avatarImagePath: null,
+        totalXp: 2800,
+        level: 7,
+        levelTitle: 'Scholar',
+        nextLevelXp: 3200,
+        currentLevelXp: 2950,
+        currentStreak: 2,
+        longestStreak: 6,
+        gamesPlayed: 18,
+        winRatePercent: 50,
+      );
+}
+
 Future<({GoRouter router, _FakeFriendsRepository repository})> _pumpFriendRequests(
   WidgetTester tester, {
   Size size = const Size(390, 844),
@@ -95,6 +134,23 @@ Future<({GoRouter router, _FakeFriendsRepository repository})> _pumpFriendReques
     routes: [
       GoRoute(path: AppRoutes.friends, builder: (context, state) => const FriendsScreen()),
       GoRoute(path: AppRoutes.friendRequests, builder: (context, state) => const FriendRequestsScreen()),
+      GoRoute(
+        path: AppRoutes.playerDetail,
+        builder: (context, state) {
+          final Map<dynamic, dynamic> extra = state.extra! as Map;
+          return PlayerDetailScreen(
+            args: PlayerDetailArgs(
+              userId: extra['userId'] as String,
+              relation: PlayerDetailRelation.values.firstWhere(
+                (r) => r.name == extra['relation'],
+                orElse: () => PlayerDetailRelation.unknown,
+              ),
+              incomingRequestId: extra['requestId'] as String?,
+              initialRequestSent: extra['requestSent'] == true,
+            ),
+          );
+        },
+      ),
     ],
   );
 
@@ -103,6 +159,7 @@ Future<({GoRouter router, _FakeFriendsRepository repository})> _pumpFriendReques
       overrides: [
         appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
         friendsRepositoryProvider.overrideWithValue(repository),
+        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
@@ -156,6 +213,25 @@ void main() {
     expect(result.repository.declinedIds, ['req-1']);
     expect(find.text('Bekzod Xolmatov'), findsNothing);
     expect(find.text('Nodira Saidova'), findsOneWidget);
+  });
+
+  testWidgets('tapping a request row opens their profile with Accept/Decline', (tester) async {
+    final result = await _pumpFriendRequests(tester);
+
+    await tester.tap(find.text('Bekzod Xolmatov'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlayerDetailScreen), findsOneWidget);
+    expect(find.text(AppStrings.acceptRequestButton), findsOneWidget);
+    expect(find.text(AppStrings.declineRequestButton), findsOneWidget);
+
+    await tester.tap(find.text(AppStrings.acceptRequestButton));
+    await tester.pumpAndSettle();
+
+    expect(result.repository.acceptedIds, ['req-1']);
+    expect(find.byType(PlayerDetailScreen), findsNothing);
+    expect(find.text('Bekzod Xolmatov'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('the back button returns to Friends when pushed on top of it', (tester) async {

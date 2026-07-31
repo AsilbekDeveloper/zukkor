@@ -13,6 +13,7 @@ class PlayerStatsModel {
     required this.level,
     required this.levelTitle,
     required this.nextLevelXp,
+    required this.currentLevelXp,
     required this.currentStreak,
     required this.longestStreak,
     required this.gamesPlayed,
@@ -31,6 +32,7 @@ class PlayerStatsModel {
         level: json['level'] as int,
         levelTitle: json['level_title'] as String,
         nextLevelXp: json['next_level_xp'] as int,
+        currentLevelXp: json['current_level_xp'] as int,
         currentStreak: json['current_streak'] as int,
         longestStreak: json['longest_streak'] as int,
         gamesPlayed: json['games_played'] as int,
@@ -48,6 +50,7 @@ class PlayerStatsModel {
   final int level;
   final String levelTitle;
   final int nextLevelXp;
+  final int currentLevelXp;
   final int currentStreak;
   final int longestStreak;
   final int gamesPlayed;
@@ -65,6 +68,7 @@ class PlayerStatsModel {
         level: level,
         levelTitle: levelTitle,
         nextLevelXp: nextLevelXp,
+        currentLevelXp: currentLevelXp,
         currentStreak: currentStreak,
         longestStreak: longestStreak,
         gamesPlayed: gamesPlayed,

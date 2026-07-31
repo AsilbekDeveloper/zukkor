@@ -13,6 +13,7 @@ class PlayerStats {
     required this.level,
     required this.levelTitle,
     required this.nextLevelXp,
+    required this.currentLevelXp,
     required this.currentStreak,
     required this.longestStreak,
     required this.gamesPlayed,
@@ -33,9 +34,14 @@ class PlayerStats {
   final int level;
   final String levelTitle;
 
-  // Absolute XP threshold to reach [level] + 1 — total XP progress toward
-  // the next level is `totalXp / nextLevelXp`.
+  // Absolute XP threshold to reach [level] + 1.
   final int nextLevelXp;
+
+  // Absolute XP threshold where [level] itself started — progress within
+  // the current level is `(totalXp - currentLevelXp) / (nextLevelXp -
+  // currentLevelXp)`, NOT `totalXp / nextLevelXp` (that treats every level
+  // as starting from 0 XP, inflating the bar for anyone above level 1).
+  final int currentLevelXp;
   final int currentStreak;
   final int longestStreak;
   final int gamesPlayed;

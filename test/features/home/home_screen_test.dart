@@ -27,7 +27,6 @@ import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.da
 import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
 import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
 import 'package:zukkor/features/lobby/data/repositories/lobby_repository_impl.dart';
-import 'package:zukkor/features/lobby/domain/entities/lobby_answer_progress.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_final_result.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_game_started_info.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_join_error.dart';
@@ -142,6 +141,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> login({required String email, required String password}) async {}
 
   @override
+  Future<User?> signInWithGoogle() => throw UnimplementedError();
+
+  @override
   Future<User> getCurrentUser() async => User(
         id: '1',
         email: 'aziz@example.com',
@@ -151,6 +153,7 @@ class _FakeAuthRepository implements AuthRepository {
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: true,
+        authProvider: 'email',
       );
 
   @override
@@ -158,7 +161,7 @@ class _FakeAuthRepository implements AuthRepository {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -173,6 +176,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> logout() async {}
 
   @override
+  Future<void> registerPushToken(String token) async {}
+
+  @override
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
@@ -180,7 +186,7 @@ class _FakeAuthRepository implements AuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<void> deleteAccount(String password) => throw UnimplementedError();
+  Future<void> deleteAccount(String? password) => throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta leaderboard repository — Home
@@ -188,7 +194,11 @@ class _FakeAuthRepository implements AuthRepository {
 /// yuklaydi, haqiqiy tarmoqqa bog'liq bo'lmasligi kerak.
 class _FakeLeaderboardRepository implements LeaderboardRepository {
   @override
-  Future<LeaderboardData> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) =>
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) =>
       throw UnimplementedError();
 
   @override
@@ -204,6 +214,7 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         level: 12,
         levelTitle: 'Scholar',
         nextLevelXp: 3000,
+        currentLevelXp: 2750,
         currentStreak: 5,
         longestStreak: 15,
         gamesPlayed: 40,
@@ -236,7 +247,7 @@ class _FakeLobbyRepository implements LobbyRepository {
   Stream<LobbyQuestionEvent> get gameQuestion => const Stream.empty();
 
   @override
-  Stream<LobbyAnswerProgress> get answerProgress => const Stream.empty();
+  Stream<String> get waitingForOthers => const Stream.empty();
 
   @override
   Stream<LobbyQuestionResult> get gameQuestionResult => const Stream.empty();
@@ -245,7 +256,7 @@ class _FakeLobbyRepository implements LobbyRepository {
   Stream<LobbyFinalResult> get gameFinished => const Stream.empty();
 
   @override
-  void startGame({required String roomId, required int categoryId}) {}
+  void startGame({required String roomId, required int categoryId, int? questionCount}) {}
 
   @override
   void submitAnswer({required String roomId, required int questionIndex, required int? selectedOption}) {}

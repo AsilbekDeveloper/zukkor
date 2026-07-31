@@ -7,6 +7,10 @@ class GetLeaderboardUseCase {
 
   final LeaderboardRepository _repository;
 
-  Future<LeaderboardData> call({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) =>
-      _repository.getLeaderboard(limit: limit, scope: scope);
+  Future<LeaderboardData> call({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) =>
+      _repository.getLeaderboard(limit: limit, scope: scope, offset: offset);
 }

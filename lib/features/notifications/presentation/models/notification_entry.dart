@@ -5,14 +5,17 @@ import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../domain/entities/notification_record.dart';
 
-extension NotificationKindTitle on NotificationKind {
-  String title(BuildContext context) => switch (this) {
-        NotificationKind.duelChallenge => context.t.notifications.duelChallenge,
-        NotificationKind.streakReminder => context.t.notifications.streakReminder,
-        NotificationKind.top50 => context.t.notifications.top50,
-        NotificationKind.friendRequest => context.t.notifications.friendRequest,
-        NotificationKind.welcome => context.t.notifications.welcome,
-      };
+String _titleFor(BuildContext context, NotificationKind kind, String? relatedUserName) {
+  final name = relatedUserName;
+  return switch (kind) {
+    NotificationKind.duelChallenge =>
+      name == null ? context.t.notifications.duelChallengeGeneric : context.t.notifications.duelChallenge(name: name),
+    NotificationKind.streakReminder => context.t.notifications.streakReminder,
+    NotificationKind.top50 => context.t.notifications.top50,
+    NotificationKind.friendRequest =>
+      name == null ? context.t.notifications.friendRequestGeneric : context.t.notifications.friendRequest(name: name),
+    NotificationKind.welcome => context.t.notifications.welcome,
+  };
 }
 
 /// A single row on the Notifications screen (`view-notifications`'s
@@ -24,6 +27,7 @@ class NotificationEntry {
     required this.icon,
     required this.colorKey,
     required this.kind,
+    required this.relatedUserName,
     required this.timeLabel,
     required this.isUnread,
   });
@@ -43,6 +47,7 @@ class NotificationEntry {
       icon: icon,
       colorKey: colorKey,
       kind: record.kind,
+      relatedUserName: record.relatedUserName,
       timeLabel: _formatTimeLabel(record.createdAt),
       isUnread: !record.isRead,
     );
@@ -51,8 +56,11 @@ class NotificationEntry {
   final IconData icon;
   final CategoryColorKey colorKey;
   final NotificationKind kind;
+  final String? relatedUserName;
   final String timeLabel;
   final bool isUnread;
+
+  String title(BuildContext context) => _titleFor(context, kind, relatedUserName);
 
   static String _formatTimeLabel(DateTime createdAt) {
     final DateTime now = DateTime.now();

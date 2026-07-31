@@ -1,20 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/state/load_state.dart';
 import '../../data/repositories/notifications_repository_impl.dart';
 import '../../domain/entities/notification_record.dart';
 
 /// `GET /notifications`. [load] must be called when the screen opens (not
-/// automatic); a failed [load] leaves `state` null — matches the
-/// silent-catch pattern used by other "just show data" screens.
-class NotificationsController extends Notifier<List<NotificationRecord>?> {
+/// automatic); a failed [load] sets `state.hasError` instead of leaving
+/// the screen stuck on its loading skeleton forever.
+class NotificationsController extends Notifier<LoadState<List<NotificationRecord>>> {
   @override
-  List<NotificationRecord>? build() => null;
+  LoadState<List<NotificationRecord>> build() => const LoadState();
 
   Future<void> load() async {
+    state = const LoadState();
     try {
-      state = await ref.read(getNotificationsUseCaseProvider).call();
+      state = LoadState(data: await ref.read(getNotificationsUseCaseProvider).call());
     } catch (_) {
-      // e'tiborsiz qoldiriladi — pastga qarang.
+      state = const LoadState(hasError: true);
     }
   }
 
@@ -25,12 +27,20 @@ class NotificationsController extends Notifier<List<NotificationRecord>?> {
   /// after the user has already seen them would be more confusing than
   /// helpful.
   Future<void> markAllRead() async {
-    final List<NotificationRecord>? current = state;
+    final List<NotificationRecord>? current = state.data;
     if (current == null || current.every((n) => n.isRead)) return;
-    state = [
-      for (final entry in current)
-        NotificationRecord(id: entry.id, kind: entry.kind, createdAt: entry.createdAt, isRead: true),
-    ];
+    state = LoadState(
+      data: [
+        for (final entry in current)
+          NotificationRecord(
+            id: entry.id,
+            kind: entry.kind,
+            createdAt: entry.createdAt,
+            isRead: true,
+            relatedUserName: entry.relatedUserName,
+          ),
+      ],
+    );
     try {
       await ref.read(markAllNotificationsReadUseCaseProvider).call();
     } catch (_) {
@@ -39,5 +49,7 @@ class NotificationsController extends Notifier<List<NotificationRecord>?> {
   }
 }
 
-final NotifierProvider<NotificationsController, List<NotificationRecord>?> notificationsControllerProvider =
-    NotifierProvider<NotificationsController, List<NotificationRecord>?>(NotificationsController.new);
+final NotifierProvider<NotificationsController, LoadState<List<NotificationRecord>>>
+    notificationsControllerProvider =
+    NotifierProvider<NotificationsController, LoadState<List<NotificationRecord>>>(
+        NotificationsController.new);

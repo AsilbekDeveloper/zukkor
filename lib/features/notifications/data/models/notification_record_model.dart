@@ -6,6 +6,7 @@ class NotificationRecordModel {
     required this.kind,
     required this.createdAt,
     required this.isRead,
+    this.relatedUserName,
   });
 
   factory NotificationRecordModel.fromJson(Map<String, dynamic> json) => NotificationRecordModel(
@@ -13,12 +14,14 @@ class NotificationRecordModel {
         kind: _kindFromString(json['kind'] as String?),
         createdAt: DateTime.parse(json['created_at'] as String),
         isRead: json['is_read'] as bool,
+        relatedUserName: json['related_user_name'] as String?,
       );
 
   final String id;
   final NotificationKind kind;
   final DateTime createdAt;
   final bool isRead;
+  final String? relatedUserName;
 
   static NotificationKind _kindFromString(String? raw) => switch (raw) {
         'duel_challenge' => NotificationKind.duelChallenge,
@@ -28,6 +31,11 @@ class NotificationRecordModel {
         _ => NotificationKind.welcome,
       };
 
-  NotificationRecord toEntity() =>
-      NotificationRecord(id: id, kind: kind, createdAt: createdAt.toLocal(), isRead: isRead);
+  NotificationRecord toEntity() => NotificationRecord(
+        id: id,
+        kind: kind,
+        createdAt: createdAt.toLocal(),
+        isRead: isRead,
+        relatedUserName: relatedUserName,
+      );
 }

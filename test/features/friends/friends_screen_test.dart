@@ -13,7 +13,6 @@ import 'package:zukkor/features/friends/domain/entities/discovered_user.dart';
 import 'package:zukkor/features/friends/domain/entities/friend.dart';
 import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
 import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
-import 'package:zukkor/features/friends/presentation/models/friend_entry.dart';
 import 'package:zukkor/features/friends/presentation/screens/add_friend_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/friend_requests_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/friends_screen.dart';
@@ -25,6 +24,8 @@ import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/rank_entry.dart';
 import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/leaderboard_screen.dart';
+import 'package:zukkor/features/player_detail/presentation/models/player_detail_args.dart';
+import 'package:zukkor/features/player_detail/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/features/quiz/data/repositories/quiz_repository_impl.dart';
 import 'package:zukkor/features/quiz/domain/entities/answer_result.dart';
 import 'package:zukkor/features/quiz/domain/entities/category.dart';
@@ -61,7 +62,11 @@ class _FakeQuizRepository implements QuizRepository {
 /// bog'liq bo'lmasligi kerak.
 class _FakeLeaderboardRepository implements LeaderboardRepository {
   @override
-  Future<LeaderboardData> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) async =>
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async =>
       const LeaderboardData(
         entries: [
           RankEntry(
@@ -92,7 +97,24 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
       );
 
   @override
-  Future<PlayerStats> getPlayerStats(String userId) => throw UnimplementedError();
+  Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
+        userId: userId,
+        rank: 5,
+        username: 'malika_yusupova',
+        firstName: 'Malika',
+        lastName: 'Yusupova',
+        avatarColor: 'a-teal',
+        avatarImagePath: null,
+        totalXp: 3000,
+        level: 8,
+        levelTitle: 'Scholar',
+        nextLevelXp: 3500,
+        currentLevelXp: 3250,
+        currentStreak: 3,
+        longestStreak: 10,
+        gamesPlayed: 20,
+        winRatePercent: 55,
+      );
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — real
@@ -167,7 +189,24 @@ Future<GoRouter> _pumpFriends(
       GoRoute(path: AppRoutes.friendRequests, builder: (context, state) => const FriendRequestsScreen()),
       GoRoute(
         path: AppRoutes.categories,
-        builder: (context, state) => CategoriesScreen(duelOpponent: state.extra as FriendEntry?),
+        builder: (context, state) => const CategoriesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.playerDetail,
+        builder: (context, state) {
+          final Map<dynamic, dynamic> extra = state.extra! as Map;
+          return PlayerDetailScreen(
+            args: PlayerDetailArgs(
+              userId: extra['userId'] as String,
+              relation: PlayerDetailRelation.values.firstWhere(
+                (r) => r.name == extra['relation'],
+                orElse: () => PlayerDetailRelation.unknown,
+              ),
+              incomingRequestId: extra['requestId'] as String?,
+              initialRequestSent: extra['requestSent'] == true,
+            ),
+          );
+        },
       ),
     ],
   );
@@ -266,6 +305,18 @@ void main() {
 
     expect(find.byType(CategoriesScreen), findsOneWidget);
     expect(find.text(AppStrings.categoriesScreenTitle), findsOneWidget);
+  });
+
+  testWidgets('tapping a friend row opens their profile with an already-friends badge', (tester) async {
+    await _pumpFriends(tester);
+
+    await tester.tap(find.text('Malika Yusupova'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PlayerDetailScreen), findsOneWidget);
+    expect(find.text(AppStrings.alreadyFriendsLabel), findsOneWidget);
+    expect(find.text(AppStrings.addToFriendsButton), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('the bottom nav Home tab navigates back to Home', (tester) async {

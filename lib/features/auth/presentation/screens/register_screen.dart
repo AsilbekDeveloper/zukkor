@@ -77,9 +77,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  void _signInWithGoogle() {
-    // Backend hali Google Sign-In'ni qo'llab-quvvatlamaydi.
-    context.showSnack(t.bottomNav.comingSoon);
+  Future<void> _signInWithGoogle() async {
+    try {
+      final user = await ref.read(authControllerProvider.notifier).signInWithGoogle();
+      if (!mounted || user == null) return; // foydalanuvchi tanlagichni yopdi — bekor qilingan
+      context.go(user.onboardingCompleted ? AppRoutes.home : AppRoutes.onboarding);
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+    } catch (_) {
+      if (mounted) context.showSnack(t.errors.unknown);
+    }
   }
 
   void _goToLogin() {
@@ -147,6 +154,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             textInputAction: TextInputAction.next,
                             autofillHints: const [AutofillHints.newPassword],
                             validator: Validators.password,
+                            maxLength: kPasswordMaxLength,
                           ),
                           AppSpacing.md.vGap,
                           AppTextField(
@@ -161,6 +169,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               _passwordController.text,
                             ),
                             onSubmitted: (_) => _submit(),
+                            maxLength: kPasswordMaxLength,
                           ),
                         ],
                       ),

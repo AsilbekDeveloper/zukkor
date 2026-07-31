@@ -7,6 +7,7 @@ import 'package:zukkor/core/theme/app_theme.dart';
 
 import 'core/locale/locale_controller.dart';
 import 'core/theme/theme_controller.dart';
+import 'features/auth/presentation/user_session.dart';
 import 'i18n/strings.g.dart';
 
 class ZukkorApp extends ConsumerWidget {
@@ -15,6 +16,11 @@ class ZukkorApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocale locale = ref.watch(localeControllerProvider);
+
+    // Sessiya majburan tugaganda foydalanuvchini Login'ga qaytaradigan
+    // ishlov beruvchini butun ilova umri davomida jonli saqlaymiz.
+    ref.watch(sessionExpiryHandlerProvider);
+
     return TranslationProvider(
       child: MaterialApp.router(
         title: t.common.appName,

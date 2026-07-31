@@ -67,7 +67,7 @@ class _NotificationRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      entry.kind.title(context),
+                      entry.title(context),
                       style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w600, height: 1.35),
                     ),
                     Text(entry.timeLabel, style: context.textStyles.labelSmall),

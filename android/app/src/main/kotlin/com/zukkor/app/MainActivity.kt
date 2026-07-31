@@ -1,4 +1,4 @@
-package com.example.zukkor
+package com.zukkor.app
 
 import io.flutter.embedding.android.FlutterActivity
 

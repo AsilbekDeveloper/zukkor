@@ -17,9 +17,13 @@ class LeaderboardRepositoryImpl implements LeaderboardRepository {
   final LeaderboardRemoteDataSource _remoteDataSource;
 
   @override
-  Future<LeaderboardData> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) async {
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async {
     try {
-      return (await _remoteDataSource.getLeaderboard(limit: limit, scope: scope)).toEntity();
+      return (await _remoteDataSource.getLeaderboard(limit: limit, scope: scope, offset: offset)).toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }

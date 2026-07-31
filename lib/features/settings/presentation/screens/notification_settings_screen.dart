@@ -9,6 +9,8 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../profile/presentation/widgets/settings_list.dart';
 import '../../domain/entities/notification_preferences.dart';
@@ -37,7 +39,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(notificationPreferencesControllerProvider.notifier).load());
+    if (ref.read(notificationPreferencesControllerProvider).data == null) {
+      Future.microtask(() => ref.read(notificationPreferencesControllerProvider.notifier).load());
+    }
   }
 
   void _goBack(BuildContext context) {
@@ -84,7 +88,8 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
 
   @override
   Widget build(BuildContext context) {
-    final NotificationPreferences? prefs = _current ?? ref.watch(notificationPreferencesControllerProvider);
+    final prefsState = ref.watch(notificationPreferencesControllerProvider);
+    final NotificationPreferences? prefs = _current ?? prefsState.data;
 
     return Scaffold(
       body: SafeArea(
@@ -96,8 +101,10 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
               AppSpacing.xs.vGap,
               BackHeader(title: context.t.notificationSettings.title, onBack: () => _goBack(context)),
               AppSpacing.lg.vGap,
-              if (prefs == null)
-                const Center(child: CircularProgressIndicator())
+              if (prefsState.hasError && prefs == null)
+                ErrorRetryView(onRetry: () => ref.read(notificationPreferencesControllerProvider.notifier).load())
+              else if (prefs == null)
+                const _NotificationPrefsShimmer()
               else
                 SettingsList(
                   rows: [
@@ -135,6 +142,43 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NotificationPrefsShimmer extends StatelessWidget {
+  const _NotificationPrefsShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: context.colors.card,
+          borderRadius: AppRadius.mdAll,
+          border: Border.all(color: context.colors.line),
+        ),
+        child: Column(
+          children: [
+            for (int i = 0; i < 5; i++) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+                child: Row(
+                  children: [
+                    const ShimmerBox(width: 19, height: 19, radius: 5),
+                    AppSpacing.sm.hGap,
+                    const Expanded(child: ShimmerBox(height: 13)),
+                    AppSpacing.sm.hGap,
+                    const ShimmerBox(width: 36, height: 20, radius: 10),
+                  ],
+                ),
+              ),
+              if (i < 4) Divider(height: 1, color: context.colors.line),
+            ],
+          ],
         ),
       ),
     );

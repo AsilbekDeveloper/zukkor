@@ -15,9 +15,13 @@ class LeaderboardRemoteDataSource {
 
   final Dio _dio;
 
-  Future<LeaderboardDataModel> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) async {
+  Future<LeaderboardDataModel> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async {
     final Response<dynamic> response =
-        await _dio.get(ApiEndpoints.leaderboard(limit: limit, scope: _scopeParam(scope)));
+        await _dio.get(ApiEndpoints.leaderboard(limit: limit, scope: _scopeParam(scope), offset: offset));
     return LeaderboardDataModel.fromJson(response.data as Map<String, dynamic>);
   }
 

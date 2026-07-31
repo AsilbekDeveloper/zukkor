@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/network/failure_mapper.dart';
 import '../../../../core/storage/token_storage.dart';
 import '../../domain/entities/user.dart';
@@ -11,20 +13,26 @@ import '../../domain/usecases/delete_account_use_case.dart';
 import '../../domain/usecases/get_current_user_use_case.dart';
 import '../../domain/usecases/login_use_case.dart';
 import '../../domain/usecases/logout_use_case.dart';
+import '../../domain/usecases/register_push_token_use_case.dart';
 import '../../domain/usecases/register_use_case.dart';
+import '../../domain/usecases/sign_in_with_google_use_case.dart';
 import '../../domain/usecases/update_profile_use_case.dart';
 import '../../domain/usecases/upload_avatar_image_use_case.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../datasources/google_auth_data_source.dart';
 import '../models/auth_tokens_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl({
     required AuthRemoteDataSource remoteDataSource,
+    required GoogleAuthDataSource googleAuthDataSource,
     required TokenStorage tokenStorage,
   })  : _remoteDataSource = remoteDataSource,
+        _googleAuthDataSource = googleAuthDataSource,
         _tokenStorage = tokenStorage;
 
   final AuthRemoteDataSource _remoteDataSource;
+  final GoogleAuthDataSource _googleAuthDataSource;
   final TokenStorage _tokenStorage;
 
   @override
@@ -57,6 +65,25 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<User?> signInWithGoogle() async {
+    final String? idToken;
+    try {
+      idToken = await _googleAuthDataSource.signIn();
+    } on GoogleSignInException {
+      throw UnknownFailure();
+    }
+    if (idToken == null) return null;
+
+    try {
+      final AuthTokensModel tokens = await _remoteDataSource.signInWithGoogle(idToken);
+      await _saveTokens(tokens);
+      return (await _remoteDataSource.getCurrentUser()).toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
   Future<User> getCurrentUser() async {
     try {
       return (await _remoteDataSource.getCurrentUser()).toEntity();
@@ -70,7 +97,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -118,7 +145,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> deleteAccount(String password) async {
+  Future<void> deleteAccount(String? password) async {
     try {
       await _remoteDataSource.deleteAccount(password);
     } on DioException catch (e) {
@@ -155,6 +182,16 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<void> registerPushToken(String token) async {
+    try {
+      await _remoteDataSource.registerPushToken(token);
+    } on DioException {
+      // Best-effort — bildirishnoma ishlamasligi kirish/ilovadan
+      // foydalanishni to'sib qo'ymasligi kerak.
+    }
+  }
+
   Future<void> _saveTokens(AuthTokensModel tokens) => _tokenStorage.saveTokens(
         access: tokens.accessToken,
         refresh: tokens.refreshToken,
@@ -164,6 +201,7 @@ class AuthRepositoryImpl implements AuthRepository {
 final Provider<AuthRepository> authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepositoryImpl(
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
+    googleAuthDataSource: ref.watch(googleAuthDataSourceProvider),
     tokenStorage: ref.watch(tokenStorageProvider),
   ),
 );
@@ -176,6 +214,10 @@ final Provider<RegisterUseCase> registerUseCaseProvider = Provider<RegisterUseCa
 
 final Provider<LoginUseCase> loginUseCaseProvider = Provider<LoginUseCase>(
   (ref) => LoginUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<SignInWithGoogleUseCase> signInWithGoogleUseCaseProvider = Provider<SignInWithGoogleUseCase>(
+  (ref) => SignInWithGoogleUseCase(ref.watch(authRepositoryProvider)),
 );
 
 final Provider<GetCurrentUserUseCase> getCurrentUserUseCaseProvider =
@@ -207,4 +249,9 @@ final Provider<ChangePasswordUseCase> changePasswordUseCaseProvider = Provider<C
 
 final Provider<DeleteAccountUseCase> deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>(
   (ref) => DeleteAccountUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<RegisterPushTokenUseCase> registerPushTokenUseCaseProvider =
+    Provider<RegisterPushTokenUseCase>(
+  (ref) => RegisterPushTokenUseCase(ref.watch(authRepositoryProvider)),
 );

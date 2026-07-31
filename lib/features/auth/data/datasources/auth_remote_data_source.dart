@@ -36,6 +36,14 @@ class AuthRemoteDataSource {
     return AuthTokensModel.fromJson(response.data as Map<String, dynamic>);
   }
 
+  Future<AuthTokensModel> signInWithGoogle(String idToken) async {
+    final Response<dynamic> response = await _dio.post(
+      ApiEndpoints.google,
+      data: {'id_token': idToken},
+    );
+    return AuthTokensModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
   Future<UserModel> getCurrentUser() async {
     final Response<dynamic> response = await _dio.get(ApiEndpoints.me);
     return UserModel.fromJson(response.data as Map<String, dynamic>);
@@ -45,7 +53,7 @@ class AuthRemoteDataSource {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -57,8 +65,12 @@ class AuthRemoteDataSource {
         'username': username,
         'first_name': firstName,
         'last_name': lastName,
-        'avatar_color': avatarColor,
         'direction': direction,
+        // Omitted entirely (not even sent as null) when the user's active
+        // choice is an uploaded photo, not a color — avatar_color and the
+        // photo are mutually exclusive server-side, so sending this would
+        // wipe out a just-uploaded avatar image.
+        'avatar_color': ?avatarColor,
         'interests': ?interests,
         'study_place': ?studyPlace,
         'quiz_liking': ?quizLiking,
@@ -88,10 +100,12 @@ class AuthRemoteDataSource {
     );
   }
 
-  Future<void> deleteAccount(String password) async {
+  Future<void> deleteAccount(String? password) async {
     await _dio.delete<void>(
       ApiEndpoints.deleteAccount,
-      data: {'password': password},
+      // Omitted entirely for a Google account (no password to send) —
+      // the backend skips its password check when this key is absent.
+      data: {'password': ?password},
     );
   }
 
@@ -107,6 +121,13 @@ class AuthRemoteDataSource {
     await _dio.post<void>(
       ApiEndpoints.logout,
       data: {'refresh_token': refreshToken},
+    );
+  }
+
+  Future<void> registerPushToken(String token) async {
+    await _dio.put<void>(
+      ApiEndpoints.pushToken,
+      data: {'token': token, 'platform': 'android'},
     );
   }
 }

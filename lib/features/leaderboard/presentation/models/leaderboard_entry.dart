@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/leaderboard_data.dart';
+import '../../domain/entities/player_stats.dart';
 import '../../domain/entities/rank_entry.dart';
 
 /// One row on the leaderboard — mirrors the prototype's `.rank-row` /
@@ -36,6 +37,20 @@ class LeaderboardEntry {
         avatarColor: AvatarColorOption.fromApiValue(entity.avatarColor),
         avatarImagePath: entity.avatarImagePath,
         isCurrentUser: entity.isMe,
+      );
+
+  /// Builds a row from `GET /leaderboard/{user_id}` — used by
+  /// [PlayerDetailScreen] to paint its header once stats arrive, for
+  /// callers (Friends, Add Friend, Friend Requests) that don't already
+  /// have a [LeaderboardEntry] on hand the way a Leaderboard row tap does.
+  factory LeaderboardEntry.fromPlayerStats(PlayerStats stats) => LeaderboardEntry(
+        id: stats.userId,
+        rank: stats.rank,
+        name: _displayName(firstName: stats.firstName, lastName: stats.lastName, username: stats.username),
+        initials: _initials(firstName: stats.firstName, lastName: stats.lastName),
+        xp: stats.totalXp,
+        avatarColor: AvatarColorOption.fromApiValue(stats.avatarColor),
+        avatarImagePath: stats.avatarImagePath,
       );
 
   final String? id;

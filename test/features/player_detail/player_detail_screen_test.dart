@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
-import 'package:zukkor/core/models/avatar_color_option.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
@@ -22,39 +21,35 @@ import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_data.dar
 import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
 import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
-import 'package:zukkor/features/leaderboard/presentation/models/leaderboard_entry.dart';
-import 'package:zukkor/features/leaderboard/presentation/screens/player_detail_screen.dart';
+import 'package:zukkor/features/player_detail/presentation/models/player_detail_args.dart';
+import 'package:zukkor/features/player_detail/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
-
-const LeaderboardEntry _entry = LeaderboardEntry(
-  id: '2',
-  rank: 2,
-  name: 'Malika Yusupova',
-  initials: 'MY',
-  xp: 4510,
-  avatarColor: AvatarColorOption.teal,
-);
 
 /// Backendga murojaat qilmaydigan soxta leaderboard repository —
 /// `GET /leaderboard/{user_id}`ga mos to'liq statistika qaytaradi.
 class _FakeLeaderboardRepository implements LeaderboardRepository {
   @override
-  Future<LeaderboardData> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) =>
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) =>
       throw UnimplementedError();
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
         userId: userId,
-        rank: _entry.rank,
+        rank: 2,
         username: 'malika',
         firstName: 'Malika',
         lastName: 'Yusupova',
         avatarColor: 'a-teal',
         avatarImagePath: null,
-        totalXp: _entry.xp,
+        totalXp: 4510,
         level: 15,
         levelTitle: 'Scholar',
         nextLevelXp: 5000,
+        currentLevelXp: 4750,
         currentStreak: 8,
         longestStreak: 20,
         gamesPlayed: 40,
@@ -101,7 +96,7 @@ Future<({GoRouter router, _FakeFriendsRepository friendsRepository})> _pumpPlaye
       GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
       GoRoute(
         path: AppRoutes.playerDetail,
-        builder: (context, state) => PlayerDetailScreen(entry: state.extra! as LeaderboardEntry),
+        builder: (context, state) => const PlayerDetailScreen(args: PlayerDetailArgs(userId: '2')),
       ),
     ],
   );
@@ -122,7 +117,7 @@ Future<({GoRouter router, _FakeFriendsRepository friendsRepository})> _pumpPlaye
       ),
     ),
   );
-  unawaited(router.push(AppRoutes.playerDetail, extra: _entry));
+  unawaited(router.push(AppRoutes.playerDetail, extra: {'userId': '2'}));
   await tester.pumpAndSettle();
   return (router: router, friendsRepository: friendsRepository);
 }
@@ -131,7 +126,7 @@ void main() {
   testWidgets('renders name, rank, real stats and the Add to friends button, no overflow', (tester) async {
     await _pumpPlayerDetail(tester);
 
-    expect(find.text(_entry.name), findsOneWidget);
+    expect(find.text('Malika Yusupova'), findsOneWidget);
     expect(find.text(AppStrings.rankedLabel(2, 4510)), findsOneWidget);
     expect(find.text('15'), findsOneWidget); // level
     expect(find.text('62%'), findsOneWidget); // win rate
@@ -143,7 +138,7 @@ void main() {
   testWidgets('fits on the smallest supported phone width', (tester) async {
     await _pumpPlayerDetail(tester, size: const Size(360, 780));
 
-    expect(find.text(_entry.name), findsOneWidget);
+    expect(find.text('Malika Yusupova'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -169,10 +164,10 @@ void main() {
     final result = await _pumpPlayerDetail(tester);
     final GoRouter router = result.router;
     router.go(AppRoutes.home);
-    unawaited(router.push(AppRoutes.playerDetail, extra: _entry));
+    unawaited(router.push(AppRoutes.playerDetail, extra: {'userId': '2'}));
     await tester.pumpAndSettle();
 
-    expect(find.text(_entry.name), findsOneWidget);
+    expect(find.text('Malika Yusupova'), findsOneWidget);
 
     await tester.tap(find.byIcon(TablerIcons.x));
     await tester.pumpAndSettle();

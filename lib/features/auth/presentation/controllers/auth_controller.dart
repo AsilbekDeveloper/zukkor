@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user.dart';
+import '../user_session.dart';
 
 /// Login/Register/Logout/Profil-yangilash amallarini boshqaradi. Holati —
 /// shunchaki `isLoading` bayrog'i (ekranlarda spinner ko'rsatish uchun);
@@ -15,6 +16,9 @@ class AuthController extends Notifier<bool> {
     state = true;
     try {
       await ref.read(registerUseCaseProvider).call(email: email, password: password);
+      // Yangi hisob — oldingi sessiyadan qolgan keshni tozalab, "eski
+      // foydalanuvchi ko'rinib turishi" xatosining oldini olamiz.
+      resetUserScopedState(ref);
     } finally {
       state = false;
     }
@@ -24,6 +28,23 @@ class AuthController extends Notifier<bool> {
     state = true;
     try {
       await ref.read(loginUseCaseProvider).call(email: email, password: password);
+      resetUserScopedState(ref);
+    } finally {
+      state = false;
+    }
+  }
+
+  /// Google hisob tanlagichini ochadi. Foydalanuvchi hech kimni
+  /// tanlamasdan yopsa `null` qaytaradi (xato emas, chaqiruvchi hech
+  /// narsa qilmasligi kerak).
+  Future<User?> signInWithGoogle() async {
+    state = true;
+    try {
+      final User? user = await ref.read(signInWithGoogleUseCaseProvider).call();
+      // Faqat haqiqatan kirilgan bo'lsa tozalanadi — bekor qilinsa (null)
+      // hozirgi holat o'zgarmasligi kerak.
+      if (user != null) resetUserScopedState(ref);
+      return user;
     } finally {
       state = false;
     }
@@ -34,6 +55,9 @@ class AuthController extends Notifier<bool> {
     try {
       await ref.read(logoutUseCaseProvider).call();
     } finally {
+      // Server so'rovi muvaffaqiyatsiz bo'lsa ham lokal holat tozalanadi —
+      // foydalanuvchi qurilmada baribir chiqqan hisoblanadi.
+      resetUserScopedState(ref);
       state = false;
     }
   }
@@ -46,7 +70,7 @@ class AuthController extends Notifier<bool> {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -95,11 +119,13 @@ class AuthController extends Notifier<bool> {
   }
 
   /// `DELETE /auth/me`ni chaqiradi — muvaffaqiyatli bo'lsa lokal tokenlar
-  /// ham tozalanadi.
-  Future<void> deleteAccount(String password) async {
+  /// ham tozalanadi. [password] Google hisoblar uchun null.
+  Future<void> deleteAccount(String? password) async {
     state = true;
     try {
       await ref.read(deleteAccountUseCaseProvider).call(password);
+      // Hisob o'chirildi — barcha keshlangan holat ham tozalanishi kerak.
+      resetUserScopedState(ref);
     } finally {
       state = false;
     }

@@ -9,6 +9,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_bottom_nav_bar.dart';
+import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/leaderboard_data.dart';
 import '../../domain/entities/leaderboard_scope.dart';
@@ -26,10 +28,14 @@ import '../widgets/rank_list.dart';
 ///
 /// CURRENT STATE: all 3 segments are real — `GET /leaderboard?scope=...`
 /// returns a different ranked slice for weekly/all-time/friends.
-/// Switching segments re-fetches (not cached). Tapping anyone but
-/// yourself opens their [PlayerDetailScreen]; "See full ranking" opens
-/// [FullLeaderboardScreen] (which shows whichever segment was last
-/// loaded here, via the shared [leaderboardControllerProvider]).
+/// Switching segments re-fetches (not cached). Loaded once per session
+/// like Friends/Categories/Home — a cached [LeaderboardState.data] isn't
+/// re-fetched on re-entry; pull-to-refresh or a segment switch are the
+/// only ways to force a new request. Tapping anyone but yourself opens
+/// their profile (`AppRoutes.playerDetail`, in the player_detail
+/// feature); "See full ranking" opens [FullLeaderboardScreen] (which
+/// shows whichever segment was last loaded here, via the shared
+/// [leaderboardControllerProvider]).
 class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
 
@@ -38,12 +44,22 @@ class LeaderboardScreen extends ConsumerStatefulWidget {
 }
 
 class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
-  LeaderboardScope _scope = LeaderboardScope.allTime;
+  late LeaderboardScope _scope;
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope));
+    final LeaderboardState current = ref.read(leaderboardControllerProvider);
+    // Boshqa "bir marta yukla" ekranlari bilan bir xil: ma'lumot
+    // allaqachon (masalan oldingi tashrifdan) keshlangan bo'lsa, qayta
+    // so'ralmaydi. Mahalliy segment tanlovi ham keshlangan holatga mos
+    // qilib tiklanadi — aks holda ekran har safar "All Time"dan
+    // boshlanib, ko'rsatilayotgan ma'lumot (masalan "Weekly") bilan mos
+    // kelmay qolardi.
+    _scope = current.scope;
+    if (current.data == null) {
+      Future.microtask(() => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope));
+    }
   }
 
   void _onScopeChanged(LeaderboardScope scope) {
@@ -55,7 +71,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
 
   void _openPlayerDetail(LeaderboardEntry entry) {
     if (entry.isCurrentUser || entry.id == null) return;
-    context.push(AppRoutes.playerDetail, extra: entry);
+    context.push(AppRoutes.playerDetail, extra: {'userId': entry.id!});
   }
 
   /// Segment control + top-3 podium + the rest of the ranked list. Falls
@@ -91,20 +107,30 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
-    final LeaderboardData? data = ref.watch(leaderboardControllerProvider);
+    final leaderboardState = ref.watch(leaderboardControllerProvider);
+    final LeaderboardData? data = leaderboardState.data;
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: data == null
-            ? const Center(child: CircularProgressIndicator())
-            : ListView(
-                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
-                children: [
-                  LeaderboardHeader(greeting: context.t.leaderboard.greeting),
-                  AppSpacing.lg.vGap,
-                  ..._bodySections(context, data),
-                ],
+        child: leaderboardState.hasError
+            ? ErrorRetryView(onRetry: () => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope))
+            : data == null
+            ? Padding(
+                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xl, hPad, AppSpacing.lg),
+                child: const ShimmerListSkeleton(),
+              )
+            : RefreshIndicator(
+                onRefresh: () => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+                  children: [
+                    LeaderboardHeader(greeting: context.t.leaderboard.greeting),
+                    AppSpacing.lg.vGap,
+                    ..._bodySections(context, data),
+                  ],
+                ),
               ),
       ),
       bottomNavigationBar: AppBottomNavBar(

@@ -47,6 +47,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> login({required String email, required String password}) async {}
 
   @override
+  Future<User?> signInWithGoogle() => throw UnimplementedError();
+
+  @override
   Future<User> getCurrentUser() async => User(
         id: '1',
         email: 'aziz@example.com',
@@ -54,6 +57,7 @@ class _FakeAuthRepository implements AuthRepository {
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: true,
+        authProvider: 'email',
       );
 
   @override
@@ -61,7 +65,7 @@ class _FakeAuthRepository implements AuthRepository {
     required String username,
     required String firstName,
     required String lastName,
-    required String avatarColor,
+    String? avatarColor,
     required String direction,
     List<String>? interests,
     String? studyPlace,
@@ -78,6 +82,7 @@ class _FakeAuthRepository implements AuthRepository {
         isActive: true,
         createdAt: DateTime(2026),
         onboardingCompleted: true,
+        authProvider: 'email',
       );
 
   @override
@@ -87,6 +92,9 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> logout() async {}
 
   @override
+  Future<void> registerPushToken(String token) async {}
+
+  @override
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
@@ -94,7 +102,7 @@ class _FakeAuthRepository implements AuthRepository {
       throw UnimplementedError();
 
   @override
-  Future<void> deleteAccount(String password) async {
+  Future<void> deleteAccount(String? password) async {
     if (deleteAccountFails) throw AuthFailure('Wrong password');
     deletedWithPassword = password;
   }

@@ -56,9 +56,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  void _signInWithGoogle() {
-    // Backend hali Google Sign-In'ni qo'llab-quvvatlamaydi.
-    context.showSnack(t.bottomNav.comingSoon);
+  Future<void> _signInWithGoogle() async {
+    try {
+      final user = await ref.read(authControllerProvider.notifier).signInWithGoogle();
+      if (!mounted || user == null) return; // foydalanuvchi tanlagichni yopdi — bekor qilingan
+      context.go(user.onboardingCompleted ? AppRoutes.home : AppRoutes.onboarding);
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+    } catch (_) {
+      if (mounted) context.showSnack(t.errors.unknown);
+    }
   }
 
   void _goToRegister() {
@@ -121,7 +128,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             obscure: true,
                             textInputAction: TextInputAction.done,
                             autofillHints: const [AutofillHints.password],
-                            validator: Validators.password,
+                            // Login'da faqat bo'shligini tekshiramiz —
+                            // ro'yxatdan o'tish qoidalarini (uzunlik/format)
+                            // emas: noto'g'ri parolni backend aytadi, mavjud
+                            // hisobga kirishni client validatori to'smasin.
+                            validator: Validators.currentPassword,
                             onSubmitted: (_) => _submit(),
                           ),
                         ],

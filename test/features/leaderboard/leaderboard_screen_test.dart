@@ -15,11 +15,11 @@ import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.da
 import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/rank_entry.dart';
 import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
-import 'package:zukkor/features/leaderboard/presentation/models/leaderboard_entry.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/leaderboard_screen.dart';
-import 'package:zukkor/features/leaderboard/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/widgets/leaderboard_segment_control.dart';
+import 'package:zukkor/features/player_detail/presentation/models/player_detail_args.dart';
+import 'package:zukkor/features/player_detail/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
 
 /// Backendga murojaat qilmaydigan soxta leaderboard repository — real
@@ -29,7 +29,11 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
   final List<LeaderboardScope> requestedScopes = [];
 
   @override
-  Future<LeaderboardData> getLeaderboard({int limit = 50, LeaderboardScope scope = LeaderboardScope.allTime}) async {
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async {
     requestedScopes.add(scope);
     return switch (scope) {
       LeaderboardScope.weekly => _weekly,
@@ -186,23 +190,27 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
       );
 
   @override
-  Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
-        userId: userId,
-        rank: 4,
-        username: 'dilnoza',
-        firstName: 'Dilnoza',
-        lastName: 'Rustamova',
-        avatarColor: 'a-teal',
-        avatarImagePath: null,
-        totalXp: 3980,
-        level: 9,
-        levelTitle: 'Scholar',
-        nextLevelXp: 4500,
-        currentStreak: 8,
-        longestStreak: 15,
-        gamesPlayed: 40,
-        winRatePercent: 62,
-      );
+  Future<PlayerStats> getPlayerStats(String userId) async {
+    final RankEntry entry = _allTime.entries.firstWhere((e) => e.userId == userId);
+    return PlayerStats(
+      userId: userId,
+      rank: entry.rank,
+      username: entry.username,
+      firstName: entry.firstName,
+      lastName: entry.lastName,
+      avatarColor: entry.avatarColor,
+      avatarImagePath: entry.avatarImagePath,
+      totalXp: entry.totalXp,
+      level: entry.level,
+      levelTitle: 'Scholar',
+      nextLevelXp: entry.totalXp + 500,
+      currentLevelXp: entry.totalXp + 250,
+      currentStreak: 8,
+      longestStreak: 15,
+      gamesPlayed: 40,
+      winRatePercent: 62,
+    );
+  }
 }
 
 Future<({GoRouter router, _FakeLeaderboardRepository repository})> _pumpLeaderboard(
@@ -232,7 +240,20 @@ Future<({GoRouter router, _FakeLeaderboardRepository repository})> _pumpLeaderbo
       ),
       GoRoute(
         path: AppRoutes.playerDetail,
-        builder: (context, state) => PlayerDetailScreen(entry: state.extra! as LeaderboardEntry),
+        builder: (context, state) {
+          final Map<dynamic, dynamic> extra = state.extra! as Map;
+          return PlayerDetailScreen(
+            args: PlayerDetailArgs(
+              userId: extra['userId'] as String,
+              relation: PlayerDetailRelation.values.firstWhere(
+                (r) => r.name == extra['relation'],
+                orElse: () => PlayerDetailRelation.unknown,
+              ),
+              incomingRequestId: extra['requestId'] as String?,
+              initialRequestSent: extra['requestSent'] == true,
+            ),
+          );
+        },
       ),
     ],
   );
