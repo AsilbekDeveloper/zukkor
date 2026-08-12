@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
+
+import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
@@ -83,6 +86,13 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             children: [
               AppSpacing.xs.vGap,
               BackHeader(title: context.t.categories.title, onBack: () => _goBack(context)),
+              // Duel/Lobby'ga chaqiruv sifatida ishlatilganda (o'zga
+              // odamning ekranida ko'rinadi) shaxsiy AI quizlarga havola
+              // ko'rsatilmaydi — hozircha faqat solo o'ynash uchun.
+              if (widget.onCategoryPicked == null) ...[
+                AppSpacing.md.vGap,
+                _AiQuizEntryCard(onTap: () => context.push(AppRoutes.myAiQuizzes)),
+              ],
               AppSpacing.lg.vGap,
               Expanded(
                 child: categoriesState.hasError
@@ -96,6 +106,48 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                             ),
                           ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point into "Mening AI quizlarim" — hujjatdan AI orqali yaratilgan
+/// shaxsiy quizlar. Global kategoriyalar bilan bir xil karta ko'rinishida
+/// emas — ular umuman boshqa manbadan (GET /ai-quiz) kelgani va bu ekran
+/// [CategoriesController]dan mustaqil ekanini vizual ajratib turadi.
+class _AiQuizEntryCard extends StatelessWidget {
+  const _AiQuizEntryCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.surfaceDark,
+      borderRadius: AppRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(borderRadius: AppRadius.mdAll, boxShadow: context.colors.shadowSm),
+          child: Row(
+            children: [
+              const Icon(TablerIcons.sparkle, color: Colors.white, size: 20),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Text(
+                  context.t.aiQuiz.entryCardLabel,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const Icon(TablerIcons.chevronRight, color: Colors.white, size: 18),
             ],
           ),
         ),

@@ -6,6 +6,7 @@
     "cancel": "Cancel",
     "retry": "Retry",
     "loading": "Loading...",
+    "delete": "Delete",
     "dayUnit(param=count)": { "one": "day", "other": "days" },
     "friendsCount(param=count)": { "one": "$count friend", "other": "$count friends" },
     "questionCount(param=count)": { "one": "$count question", "other": "$count questions" }
@@ -383,5 +384,24 @@
     "invalidCredentials": "Incorrect email or password.",
     "sessionExpired": "Your session has expired. Please sign in again.",
     "googleCancelled": "Google sign-in was cancelled."
+  },
+  "aiQuiz": {
+    "entryCardLabel": "Create a quiz from a document with AI",
+    "myQuizzesTitle": "My AI quizzes",
+    "createButton": "+ Create a new AI quiz",
+    "emptyTitle": "You haven't created an AI quiz yet",
+    "emptySubtitle": "Upload a document (PDF, Word, or text) and get a quiz generated from it",
+    "deleteConfirmTitle": "Delete quiz",
+    "deleteConfirmMessage": "Delete \"$name\"? This can't be undone.",
+    "generateTitle": "Create a quiz with AI",
+    "generateSubtitle": "Upload a document (PDF, Word, or text) and describe what to make questions about",
+    "pickFileLabel": "Choose a document (PDF, Word, text)",
+    "pickFileFirst": "Choose a document first",
+    "instructionLabel": "Instructions",
+    "instructionHint": "E.g.: 10 questions from chapter 3, or from the whole document",
+    "instructionRequired": "Instructions are required",
+    "questionCountLabel": "Number of questions",
+    "generateButton": "Generate",
+    "generated": "Done! Saved to \"My AI quizzes\""
   }
 }

@@ -55,4 +55,9 @@ abstract final class ApiEndpoints {
 
   // Push-token ro'yxatga olish — FCM (2026-07-21'da qo'shildi, hali backend'da yo'q).
   static const String pushToken = '/users/me/push-token';
+
+  // AI orqali hujjatdan quiz yaratish (2026-08-11'da qo'shildi).
+  static const String aiQuiz = '/ai-quiz';
+  static const String aiQuizGenerate = '/ai-quiz/generate';
+  static String aiQuizDelete(int id) => '/ai-quiz/$id';
 }

@@ -31,6 +31,9 @@ dependencies:
   # Avatar photo upload — gallery/camera picker.
   image_picker: ^1.1.2
 
+  # AI orqali quiz yaratish — hujjat (PDF/Word/matn) tanlash uchun.
+  file_picker: ^8.1.7
+
   # Google Sign-In
   google_sign_in: ^7.1.1
 

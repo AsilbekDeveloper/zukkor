@@ -80,6 +80,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$auth$en auth = Translations$auth$en._(_root);
 	late final Translations$authValidation$en authValidation = Translations$authValidation$en._(_root);
 	late final Translations$errors$en errors = Translations$errors$en._(_root);
+	late final Translations$aiQuiz$en aiQuiz = Translations$aiQuiz$en._(_root);
 }
 
 // Path: common
@@ -107,6 +108,9 @@ class Translations$common$en {
 
 	/// en: 'Loading...'
 	String get loading => 'Loading...';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
 
 	/// en: '(one) {day} (other) {days}'
 	String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count,
@@ -1366,6 +1370,66 @@ class Translations$errors$en {
 	String get googleCancelled => 'Google sign-in was cancelled.';
 }
 
+// Path: aiQuiz
+class Translations$aiQuiz$en {
+	Translations$aiQuiz$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Create a quiz from a document with AI'
+	String get entryCardLabel => 'Create a quiz from a document with AI';
+
+	/// en: 'My AI quizzes'
+	String get myQuizzesTitle => 'My AI quizzes';
+
+	/// en: '+ Create a new AI quiz'
+	String get createButton => '+ Create a new AI quiz';
+
+	/// en: 'You haven't created an AI quiz yet'
+	String get emptyTitle => 'You haven\'t created an AI quiz yet';
+
+	/// en: 'Upload a document (PDF, Word, or text) and get a quiz generated from it'
+	String get emptySubtitle => 'Upload a document (PDF, Word, or text) and get a quiz generated from it';
+
+	/// en: 'Delete quiz'
+	String get deleteConfirmTitle => 'Delete quiz';
+
+	/// en: 'Delete "$name"? This can't be undone.'
+	String deleteConfirmMessage({required Object name}) => 'Delete "${name}"? This can\'t be undone.';
+
+	/// en: 'Create a quiz with AI'
+	String get generateTitle => 'Create a quiz with AI';
+
+	/// en: 'Upload a document (PDF, Word, or text) and describe what to make questions about'
+	String get generateSubtitle => 'Upload a document (PDF, Word, or text) and describe what to make questions about';
+
+	/// en: 'Choose a document (PDF, Word, text)'
+	String get pickFileLabel => 'Choose a document (PDF, Word, text)';
+
+	/// en: 'Choose a document first'
+	String get pickFileFirst => 'Choose a document first';
+
+	/// en: 'Instructions'
+	String get instructionLabel => 'Instructions';
+
+	/// en: 'E.g.: 10 questions from chapter 3, or from the whole document'
+	String get instructionHint => 'E.g.: 10 questions from chapter 3, or from the whole document';
+
+	/// en: 'Instructions are required'
+	String get instructionRequired => 'Instructions are required';
+
+	/// en: 'Number of questions'
+	String get questionCountLabel => 'Number of questions';
+
+	/// en: 'Generate'
+	String get generateButton => 'Generate';
+
+	/// en: 'Done! Saved to "My AI quizzes"'
+	String get generated => 'Done! Saved to "My AI quizzes"';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1380,6 +1444,7 @@ extension on Translations {
 			'common.cancel' => 'Cancel',
 			'common.retry' => 'Retry',
 			'common.loading' => 'Loading...',
+			'common.delete' => 'Delete',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: 'day', other: 'days', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} friend', other: '${count} friends', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} question', other: '${count} questions', ), 
@@ -1679,6 +1744,23 @@ extension on Translations {
 			'errors.invalidCredentials' => 'Incorrect email or password.',
 			'errors.sessionExpired' => 'Your session has expired. Please sign in again.',
 			'errors.googleCancelled' => 'Google sign-in was cancelled.',
+			'aiQuiz.entryCardLabel' => 'Create a quiz from a document with AI',
+			'aiQuiz.myQuizzesTitle' => 'My AI quizzes',
+			'aiQuiz.createButton' => '+ Create a new AI quiz',
+			'aiQuiz.emptyTitle' => 'You haven\'t created an AI quiz yet',
+			'aiQuiz.emptySubtitle' => 'Upload a document (PDF, Word, or text) and get a quiz generated from it',
+			'aiQuiz.deleteConfirmTitle' => 'Delete quiz',
+			'aiQuiz.deleteConfirmMessage' => ({required Object name}) => 'Delete "${name}"? This can\'t be undone.',
+			'aiQuiz.generateTitle' => 'Create a quiz with AI',
+			'aiQuiz.generateSubtitle' => 'Upload a document (PDF, Word, or text) and describe what to make questions about',
+			'aiQuiz.pickFileLabel' => 'Choose a document (PDF, Word, text)',
+			'aiQuiz.pickFileFirst' => 'Choose a document first',
+			'aiQuiz.instructionLabel' => 'Instructions',
+			'aiQuiz.instructionHint' => 'E.g.: 10 questions from chapter 3, or from the whole document',
+			'aiQuiz.instructionRequired' => 'Instructions are required',
+			'aiQuiz.questionCountLabel' => 'Number of questions',
+			'aiQuiz.generateButton' => 'Generate',
+			'aiQuiz.generated' => 'Done! Saved to "My AI quizzes"',
 			_ => null,
 		};
 	}

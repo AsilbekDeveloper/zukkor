@@ -77,6 +77,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$auth$ru auth = _Translations$auth$ru._(_root);
 	@override late final _Translations$authValidation$ru authValidation = _Translations$authValidation$ru._(_root);
 	@override late final _Translations$errors$ru errors = _Translations$errors$ru._(_root);
+	@override late final _Translations$aiQuiz$ru aiQuiz = _Translations$aiQuiz$ru._(_root);
 }
 
 // Path: common
@@ -92,6 +93,7 @@ class _Translations$common$ru implements Translations$common$en {
 	@override String get cancel => 'Отмена';
 	@override String get retry => 'Повторить';
 	@override String get loading => 'Загрузка...';
+	@override String get delete => 'Удалить';
 	@override String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count,
 		one: 'день',
 		few: 'дня',
@@ -759,6 +761,32 @@ class _Translations$errors$ru implements Translations$errors$en {
 	@override String get googleCancelled => 'Вход через Google отменён.';
 }
 
+// Path: aiQuiz
+class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
+	_Translations$aiQuiz$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get entryCardLabel => 'Создать викторину из документа с помощью AI';
+	@override String get myQuizzesTitle => 'Мои AI-викторины';
+	@override String get createButton => '+ Создать новую AI-викторину';
+	@override String get emptyTitle => 'У вас пока нет AI-викторин';
+	@override String get emptySubtitle => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе';
+	@override String get deleteConfirmTitle => 'Удалить викторину';
+	@override String deleteConfirmMessage({required Object name}) => 'Удалить «${name}»? Это действие необратимо.';
+	@override String get generateTitle => 'Создать викторину с AI';
+	@override String get generateSubtitle => 'Загрузите документ (PDF, Word или текст) и опишите, о чём должны быть вопросы';
+	@override String get pickFileLabel => 'Выбрать документ (PDF, Word, текст)';
+	@override String get pickFileFirst => 'Сначала выберите документ';
+	@override String get instructionLabel => 'Инструкция';
+	@override String get instructionHint => 'Например: 10 вопросов по 3 главе, или по всему документу';
+	@override String get instructionRequired => 'Инструкция обязательна';
+	@override String get questionCountLabel => 'Количество вопросов';
+	@override String get generateButton => 'Сгенерировать';
+	@override String get generated => 'Готово! Сохранено в «Мои AI-викторины»';
+}
+
 /// The flat map containing all translations for locale <ru>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -773,6 +801,7 @@ extension on TranslationsRu {
 			'common.cancel' => 'Отмена',
 			'common.retry' => 'Повторить',
 			'common.loading' => 'Загрузка...',
+			'common.delete' => 'Удалить',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: 'день', few: 'дня', many: 'дней', other: 'дня', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} друг', few: '${count} друга', many: '${count} друзей', other: '${count} друга', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} вопрос', few: '${count} вопроса', many: '${count} вопросов', other: '${count} вопроса', ), 
@@ -1072,6 +1101,23 @@ extension on TranslationsRu {
 			'errors.invalidCredentials' => 'Неверный email или пароль.',
 			'errors.sessionExpired' => 'Сессия истекла. Пожалуйста, войдите снова.',
 			'errors.googleCancelled' => 'Вход через Google отменён.',
+			'aiQuiz.entryCardLabel' => 'Создать викторину из документа с помощью AI',
+			'aiQuiz.myQuizzesTitle' => 'Мои AI-викторины',
+			'aiQuiz.createButton' => '+ Создать новую AI-викторину',
+			'aiQuiz.emptyTitle' => 'У вас пока нет AI-викторин',
+			'aiQuiz.emptySubtitle' => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе',
+			'aiQuiz.deleteConfirmTitle' => 'Удалить викторину',
+			'aiQuiz.deleteConfirmMessage' => ({required Object name}) => 'Удалить «${name}»? Это действие необратимо.',
+			'aiQuiz.generateTitle' => 'Создать викторину с AI',
+			'aiQuiz.generateSubtitle' => 'Загрузите документ (PDF, Word или текст) и опишите, о чём должны быть вопросы',
+			'aiQuiz.pickFileLabel' => 'Выбрать документ (PDF, Word, текст)',
+			'aiQuiz.pickFileFirst' => 'Сначала выберите документ',
+			'aiQuiz.instructionLabel' => 'Инструкция',
+			'aiQuiz.instructionHint' => 'Например: 10 вопросов по 3 главе, или по всему документу',
+			'aiQuiz.instructionRequired' => 'Инструкция обязательна',
+			'aiQuiz.questionCountLabel' => 'Количество вопросов',
+			'aiQuiz.generateButton' => 'Сгенерировать',
+			'aiQuiz.generated' => 'Готово! Сохранено в «Мои AI-викторины»',
 			_ => null,
 		};
 	}

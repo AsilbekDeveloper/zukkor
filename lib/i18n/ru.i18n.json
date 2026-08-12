@@ -6,6 +6,7 @@
     "cancel": "Отмена",
     "retry": "Повторить",
     "loading": "Загрузка...",
+    "delete": "Удалить",
     "dayUnit(param=count)": {
       "one": "день",
       "few": "дня",
@@ -398,5 +399,24 @@
     "invalidCredentials": "Неверный email или пароль.",
     "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова.",
     "googleCancelled": "Вход через Google отменён."
+  },
+  "aiQuiz": {
+    "entryCardLabel": "Создать викторину из документа с помощью AI",
+    "myQuizzesTitle": "Мои AI-викторины",
+    "createButton": "+ Создать новую AI-викторину",
+    "emptyTitle": "У вас пока нет AI-викторин",
+    "emptySubtitle": "Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе",
+    "deleteConfirmTitle": "Удалить викторину",
+    "deleteConfirmMessage": "Удалить «$name»? Это действие необратимо.",
+    "generateTitle": "Создать викторину с AI",
+    "generateSubtitle": "Загрузите документ (PDF, Word или текст) и опишите, о чём должны быть вопросы",
+    "pickFileLabel": "Выбрать документ (PDF, Word, текст)",
+    "pickFileFirst": "Сначала выберите документ",
+    "instructionLabel": "Инструкция",
+    "instructionHint": "Например: 10 вопросов по 3 главе, или по всему документу",
+    "instructionRequired": "Инструкция обязательна",
+    "questionCountLabel": "Количество вопросов",
+    "generateButton": "Сгенерировать",
+    "generated": "Готово! Сохранено в «Мои AI-викторины»"
   }
 }

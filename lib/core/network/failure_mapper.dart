@@ -38,7 +38,11 @@ abstract final class FailureMapper {
           detailMessage ?? t.errors.unknown,
           fieldErrors: _extractFieldErrors(data),
         ),
-      >= 500 => ServerFailure(),
+      // 429 — masalan AI quiz kunlik generatsiya limiti tugaganda; backend
+      // aynan nima sababligini `detail`da aytadi, umumiy xabarga
+      // tushirmasdan shuni ko'rsatamiz.
+      429 => ValidationFailure(detailMessage ?? t.errors.unknown),
+      >= 500 => ServerFailure(detailMessage),
       _ => UnknownFailure(),
     };
   }

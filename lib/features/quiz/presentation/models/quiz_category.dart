@@ -70,6 +70,7 @@ class QuizCategory {
     'wifi': TablerIcons.wifi,
     'car': TablerIcons.car,
     'ghost': TablerIcons.ghost,
+    'sparkle': TablerIcons.sparkle,
   };
 }
 

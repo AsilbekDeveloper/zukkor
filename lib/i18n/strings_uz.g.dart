@@ -77,6 +77,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$auth$uz auth = _Translations$auth$uz._(_root);
 	@override late final _Translations$authValidation$uz authValidation = _Translations$authValidation$uz._(_root);
 	@override late final _Translations$errors$uz errors = _Translations$errors$uz._(_root);
+	@override late final _Translations$aiQuiz$uz aiQuiz = _Translations$aiQuiz$uz._(_root);
 }
 
 // Path: common
@@ -92,6 +93,7 @@ class _Translations$common$uz implements Translations$common$en {
 	@override String get cancel => 'Bekor qilish';
 	@override String get retry => 'Qayta urinish';
 	@override String get loading => 'Yuklanmoqda...';
+	@override String get delete => 'O\'chirish';
 	@override String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count,
 		one: 'kun',
 		other: 'kun',
@@ -753,6 +755,32 @@ class _Translations$errors$uz implements Translations$errors$en {
 	@override String get googleCancelled => 'Google orqali kirish bekor qilindi.';
 }
 
+// Path: aiQuiz
+class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
+	_Translations$aiQuiz$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get entryCardLabel => 'AI orqali hujjatdan quiz yaratish';
+	@override String get myQuizzesTitle => 'Mening AI quizlarim';
+	@override String get createButton => '+ Yangi AI quiz yaratish';
+	@override String get emptyTitle => 'Hali AI quiz yaratmagansiz';
+	@override String get emptySubtitle => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating';
+	@override String get deleteConfirmTitle => 'Quizni o\'chirish';
+	@override String deleteConfirmMessage({required Object name}) => '"${name}" o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.';
+	@override String get generateTitle => 'AI orqali quiz yaratish';
+	@override String get generateSubtitle => 'Hujjat yuklang (PDF, Word yoki matn) va nima haqida savol tayyorlash kerakligini yozing';
+	@override String get pickFileLabel => 'Hujjat tanlash (PDF, Word, matn)';
+	@override String get pickFileFirst => 'Avval hujjat tanlang';
+	@override String get instructionLabel => 'Ko\'rsatma';
+	@override String get instructionHint => 'Masalan: 3-bobdan 10 ta savol, yoki hammasidan';
+	@override String get instructionRequired => 'Ko\'rsatma yozilishi shart';
+	@override String get questionCountLabel => 'Savollar soni';
+	@override String get generateButton => 'Generatsiya qilish';
+	@override String get generated => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi';
+}
+
 /// The flat map containing all translations for locale <uz>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -767,6 +795,7 @@ extension on TranslationsUz {
 			'common.cancel' => 'Bekor qilish',
 			'common.retry' => 'Qayta urinish',
 			'common.loading' => 'Yuklanmoqda...',
+			'common.delete' => 'O\'chirish',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: 'kun', other: 'kun', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} do\'stingiz bor', other: '${count} do\'stingiz bor', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} savol', other: '${count} savol', ), 
@@ -1066,6 +1095,23 @@ extension on TranslationsUz {
 			'errors.invalidCredentials' => 'Email yoki parol noto\'g\'ri.',
 			'errors.sessionExpired' => 'Sessiyangiz muddati tugadi. Qaytadan tizimga kiring.',
 			'errors.googleCancelled' => 'Google orqali kirish bekor qilindi.',
+			'aiQuiz.entryCardLabel' => 'AI orqali hujjatdan quiz yaratish',
+			'aiQuiz.myQuizzesTitle' => 'Mening AI quizlarim',
+			'aiQuiz.createButton' => '+ Yangi AI quiz yaratish',
+			'aiQuiz.emptyTitle' => 'Hali AI quiz yaratmagansiz',
+			'aiQuiz.emptySubtitle' => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating',
+			'aiQuiz.deleteConfirmTitle' => 'Quizni o\'chirish',
+			'aiQuiz.deleteConfirmMessage' => ({required Object name}) => '"${name}" o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.',
+			'aiQuiz.generateTitle' => 'AI orqali quiz yaratish',
+			'aiQuiz.generateSubtitle' => 'Hujjat yuklang (PDF, Word yoki matn) va nima haqida savol tayyorlash kerakligini yozing',
+			'aiQuiz.pickFileLabel' => 'Hujjat tanlash (PDF, Word, matn)',
+			'aiQuiz.pickFileFirst' => 'Avval hujjat tanlang',
+			'aiQuiz.instructionLabel' => 'Ko\'rsatma',
+			'aiQuiz.instructionHint' => 'Masalan: 3-bobdan 10 ta savol, yoki hammasidan',
+			'aiQuiz.instructionRequired' => 'Ko\'rsatma yozilishi shart',
+			'aiQuiz.questionCountLabel' => 'Savollar soni',
+			'aiQuiz.generateButton' => 'Generatsiya qilish',
+			'aiQuiz.generated' => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi',
 			_ => null,
 		};
 	}

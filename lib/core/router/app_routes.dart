@@ -38,4 +38,6 @@ abstract final class AppRoutes {
   static const String duelGame = '/duel-game';
   static const String duelResult = '/duel-result';
   static const String lobbyGame = '/lobby-game';
+  static const String myAiQuizzes = '/ai-quiz';
+  static const String generateAiQuiz = '/ai-quiz/generate';
 }

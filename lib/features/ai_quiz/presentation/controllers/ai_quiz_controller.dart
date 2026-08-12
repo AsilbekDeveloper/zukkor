@@ -1,0 +1,77 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../data/repositories/ai_quiz_repository_impl.dart';
+import '../../domain/entities/ai_quiz.dart';
+
+class AiQuizState {
+  const AiQuizState({this.quizzes, this.hasListError = false, this.isGenerating = false});
+
+  /// `null` — hali yuklanmagan (yoki yuklanmoqda); bo'sh ro'yxat — yuklandi,
+  /// lekin hech qanday AI quiz yo'q.
+  final List<AiQuiz>? quizzes;
+  final bool hasListError;
+  final bool isGenerating;
+
+  AiQuizState copyWith({
+    List<AiQuiz>? Function()? quizzes,
+    bool? hasListError,
+    bool? isGenerating,
+  }) =>
+      AiQuizState(
+        quizzes: quizzes != null ? quizzes() : this.quizzes,
+        hasListError: hasListError ?? this.hasListError,
+        isGenerating: isGenerating ?? this.isGenerating,
+      );
+}
+
+/// Foydalanuvchining shaxsiy AI-generatsiya qilingan quizlarini boshqaradi
+/// — ro'yxatni yuklaydi, yangi hujjatdan generatsiya qiladi (natija
+/// backend'da darhol saqlanadi, alohida "saqlash" qadami yo'q), va
+/// o'chiradi.
+class AiQuizController extends Notifier<AiQuizState> {
+  @override
+  AiQuizState build() => const AiQuizState();
+
+  Future<void> loadList() async {
+    state = state.copyWith(hasListError: false);
+    try {
+      final List<AiQuiz> quizzes = await ref.read(listAiQuizzesUseCaseProvider).call();
+      state = state.copyWith(quizzes: () => quizzes);
+    } catch (_) {
+      state = state.copyWith(hasListError: true);
+    }
+  }
+
+  /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran o'zi ushlab,
+  /// xabarni ko'rsatishi kerak (ilovaning boshqa joylaridagi kabi).
+  Future<AiQuiz> generate({
+    required String filePath,
+    required String fileName,
+    required String instruction,
+    required int questionCount,
+  }) async {
+    state = state.copyWith(isGenerating: true);
+    try {
+      final AiQuiz quiz = await ref.read(generateAiQuizUseCaseProvider).call(
+            filePath: filePath,
+            fileName: fileName,
+            instruction: instruction,
+            questionCount: questionCount,
+          );
+      final List<AiQuiz> updated = [quiz, ...?state.quizzes];
+      state = state.copyWith(quizzes: () => updated);
+      return quiz;
+    } finally {
+      state = state.copyWith(isGenerating: false);
+    }
+  }
+
+  Future<void> delete(int id) async {
+    await ref.read(deleteAiQuizUseCaseProvider).call(id);
+    final List<AiQuiz> updated = (state.quizzes ?? const []).where((quiz) => quiz.id != id).toList();
+    state = state.copyWith(quizzes: () => updated);
+  }
+}
+
+final NotifierProvider<AiQuizController, AiQuizState> aiQuizControllerProvider =
+    NotifierProvider<AiQuizController, AiQuizState>(AiQuizController.new);
