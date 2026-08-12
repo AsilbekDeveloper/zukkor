@@ -16,9 +16,10 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
 
   @override
   Future<AiQuiz> generate({
-    required String filePath,
-    required String fileName,
-    required String instruction,
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
     required int questionCount,
   }) async {
     try {
@@ -26,6 +27,7 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
         filePath: filePath,
         fileName: fileName,
         instruction: instruction,
+        topic: topic,
         questionCount: questionCount,
       ))
           .toEntity();

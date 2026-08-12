@@ -1402,8 +1402,14 @@ class Translations$aiQuiz$en {
 	/// en: 'Create a quiz with AI'
 	String get generateTitle => 'Create a quiz with AI';
 
-	/// en: 'Upload a document (PDF, Word, or text) and describe what to make questions about'
-	String get generateSubtitle => 'Upload a document (PDF, Word, or text) and describe what to make questions about';
+	/// en: 'Create a quiz with AI from a document or a topic'
+	String get generateSubtitle => 'Create a quiz with AI from a document or a topic';
+
+	/// en: 'Document'
+	String get modeDocumentLabel => 'Document';
+
+	/// en: 'Topic'
+	String get modeTopicLabel => 'Topic';
 
 	/// en: 'Choose a document (PDF, Word, text)'
 	String get pickFileLabel => 'Choose a document (PDF, Word, text)';
@@ -1411,14 +1417,20 @@ class Translations$aiQuiz$en {
 	/// en: 'Choose a document first'
 	String get pickFileFirst => 'Choose a document first';
 
-	/// en: 'Instructions'
-	String get instructionLabel => 'Instructions';
+	/// en: 'Instructions (optional)'
+	String get instructionLabel => 'Instructions (optional)';
 
 	/// en: 'E.g.: 10 questions from chapter 3, or from the whole document'
 	String get instructionHint => 'E.g.: 10 questions from chapter 3, or from the whole document';
 
-	/// en: 'Instructions are required'
-	String get instructionRequired => 'Instructions are required';
+	/// en: 'Topic'
+	String get topicLabel => 'Topic';
+
+	/// en: 'E.g.: ask for WWII history questions at medium difficulty, or Uzbek movie questions'
+	String get topicHint => 'E.g.: ask for WWII history questions at medium difficulty, or Uzbek movie questions';
+
+	/// en: 'Enter a topic'
+	String get topicRequired => 'Enter a topic';
 
 	/// en: 'Number of questions'
 	String get questionCountLabel => 'Number of questions';
@@ -1752,12 +1764,16 @@ extension on Translations {
 			'aiQuiz.deleteConfirmTitle' => 'Delete quiz',
 			'aiQuiz.deleteConfirmMessage' => ({required Object name}) => 'Delete "${name}"? This can\'t be undone.',
 			'aiQuiz.generateTitle' => 'Create a quiz with AI',
-			'aiQuiz.generateSubtitle' => 'Upload a document (PDF, Word, or text) and describe what to make questions about',
+			'aiQuiz.generateSubtitle' => 'Create a quiz with AI from a document or a topic',
+			'aiQuiz.modeDocumentLabel' => 'Document',
+			'aiQuiz.modeTopicLabel' => 'Topic',
 			'aiQuiz.pickFileLabel' => 'Choose a document (PDF, Word, text)',
 			'aiQuiz.pickFileFirst' => 'Choose a document first',
-			'aiQuiz.instructionLabel' => 'Instructions',
+			'aiQuiz.instructionLabel' => 'Instructions (optional)',
 			'aiQuiz.instructionHint' => 'E.g.: 10 questions from chapter 3, or from the whole document',
-			'aiQuiz.instructionRequired' => 'Instructions are required',
+			'aiQuiz.topicLabel' => 'Topic',
+			'aiQuiz.topicHint' => 'E.g.: ask for WWII history questions at medium difficulty, or Uzbek movie questions',
+			'aiQuiz.topicRequired' => 'Enter a topic',
 			'aiQuiz.questionCountLabel' => 'Number of questions',
 			'aiQuiz.generateButton' => 'Generate',
 			'aiQuiz.generated' => 'Done! Saved to "My AI quizzes"',

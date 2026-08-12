@@ -16,10 +16,13 @@ import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/ai_quiz_controller.dart';
 
-/// Hujjat (PDF/Word/matn) yuklab, undan AI orqali quiz generatsiya
-/// qilish. Muvaffaqiyatli bo'lsa natija darhol backend'da saqlanadi
-/// (alohida "saqlash" qadami yo'q) va foydalanuvchi "Mening AI
-/// quizlarim" ro'yxatiga qaytariladi.
+enum _GenerateMode { document, topic }
+
+/// Ikki usulda AI orqali quiz generatsiya qilish: hujjat (PDF/Word/matn)
+/// yuklab undan, yoki faqat mavzu yozib — bu holda AI internetdan qidirib
+/// mavzu bo'yicha savollar tayyorlaydi. Muvaffaqiyatli bo'lsa natija
+/// darhol backend'da saqlanadi (alohida "saqlash" qadami yo'q) va
+/// foydalanuvchi "Mening AI quizlarim" ro'yxatiga qaytariladi.
 class GenerateAiQuizScreen extends ConsumerStatefulWidget {
   const GenerateAiQuizScreen({super.key});
 
@@ -31,12 +34,15 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   static const List<int> _questionCountOptions = [5, 10, 15, 20];
 
   final TextEditingController _instructionController = TextEditingController();
+  final TextEditingController _topicController = TextEditingController();
+  _GenerateMode _mode = _GenerateMode.document;
   PlatformFile? _pickedFile;
   int _questionCount = 10;
 
   @override
   void dispose() {
     _instructionController.dispose();
+    _topicController.dispose();
     super.dispose();
   }
 
@@ -50,23 +56,37 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   }
 
   Future<void> _generate() async {
-    final PlatformFile? file = _pickedFile;
-    final String? path = file?.path;
-    if (file == null || path == null) {
-      context.showSnack(context.t.aiQuiz.pickFileFirst);
-      return;
-    }
-    if (_instructionController.text.trim().isEmpty) {
-      context.showSnack(context.t.aiQuiz.instructionRequired);
-      return;
+    String? filePath;
+    String? fileName;
+    String? instruction;
+    String? topic;
+
+    if (_mode == _GenerateMode.document) {
+      final PlatformFile? file = _pickedFile;
+      final String? path = file?.path;
+      if (file == null || path == null) {
+        context.showSnack(context.t.aiQuiz.pickFileFirst);
+        return;
+      }
+      filePath = path;
+      fileName = file.name;
+      instruction = _instructionController.text.trim();
+    } else {
+      final String topicText = _topicController.text.trim();
+      if (topicText.isEmpty) {
+        context.showSnack(context.t.aiQuiz.topicRequired);
+        return;
+      }
+      topic = topicText;
     }
 
     context.hideKeyboard();
     try {
       await ref.read(aiQuizControllerProvider.notifier).generate(
-            filePath: path,
-            fileName: file.name,
-            instruction: _instructionController.text.trim(),
+            filePath: filePath,
+            fileName: fileName,
+            instruction: instruction,
+            topic: topic,
             questionCount: _questionCount,
           );
       if (!mounted) return;
@@ -106,13 +126,29 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
                 style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
               ),
               AppSpacing.xl.vGap,
-              _FilePickerCard(file: _pickedFile, onTap: isGenerating ? null : _pickFile),
-              AppSpacing.lg.vGap,
-              AppTextField(
-                label: context.t.aiQuiz.instructionLabel,
-                hint: context.t.aiQuiz.instructionHint,
-                controller: _instructionController,
+              PillSegmentControl<_GenerateMode>(
+                values: const [_GenerateMode.document, _GenerateMode.topic],
+                selected: _mode,
+                labelBuilder: (value) => value == _GenerateMode.document
+                    ? context.t.aiQuiz.modeDocumentLabel
+                    : context.t.aiQuiz.modeTopicLabel,
+                onChanged: isGenerating ? (_) {} : (value) => setState(() => _mode = value),
               ),
+              AppSpacing.lg.vGap,
+              if (_mode == _GenerateMode.document) ...[
+                _FilePickerCard(file: _pickedFile, onTap: isGenerating ? null : _pickFile),
+                AppSpacing.lg.vGap,
+                AppTextField(
+                  label: context.t.aiQuiz.instructionLabel,
+                  hint: context.t.aiQuiz.instructionHint,
+                  controller: _instructionController,
+                ),
+              ] else
+                AppTextField(
+                  label: context.t.aiQuiz.topicLabel,
+                  hint: context.t.aiQuiz.topicHint,
+                  controller: _topicController,
+                ),
               AppSpacing.lg.vGap,
               Text(context.t.aiQuiz.questionCountLabel, style: context.textStyles.labelSmall),
               AppSpacing.sm.vGap,

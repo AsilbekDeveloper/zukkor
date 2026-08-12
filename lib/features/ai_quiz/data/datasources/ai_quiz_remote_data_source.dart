@@ -19,16 +19,23 @@ class AiQuizRemoteDataSource {
   static const Duration _generateTimeout = Duration(seconds: 120);
 
   Future<AiQuizModel> generate({
-    required String filePath,
-    required String fileName,
-    required String instruction,
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
     required int questionCount,
   }) async {
-    final FormData formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(filePath, filename: fileName),
-      'instruction': instruction,
-      'question_count': questionCount,
-    });
+    final Map<String, dynamic> fields = {'question_count': questionCount};
+    if (filePath != null && fileName != null) {
+      fields['file'] = await MultipartFile.fromFile(filePath, filename: fileName);
+    }
+    if (instruction != null && instruction.isNotEmpty) {
+      fields['instruction'] = instruction;
+    }
+    if (topic != null && topic.isNotEmpty) {
+      fields['topic'] = topic;
+    }
+    final FormData formData = FormData.fromMap(fields);
     final Response<dynamic> response = await _dio.post(
       ApiEndpoints.aiQuizGenerate,
       data: formData,

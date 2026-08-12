@@ -5,9 +5,10 @@ abstract interface class AiQuizRepository {
   /// generatsiya qilib, darhol shaxsiy quiz sifatida saqlaydi (alohida
   /// "saqlash" qadami yo'q — natija allaqachon saqlangan holda qaytadi).
   Future<AiQuiz> generate({
-    required String filePath,
-    required String fileName,
-    required String instruction,
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
     required int questionCount,
   });
 

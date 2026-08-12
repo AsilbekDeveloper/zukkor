@@ -45,9 +45,10 @@ class AiQuizController extends Notifier<AiQuizState> {
   /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran o'zi ushlab,
   /// xabarni ko'rsatishi kerak (ilovaning boshqa joylaridagi kabi).
   Future<AiQuiz> generate({
-    required String filePath,
-    required String fileName,
-    required String instruction,
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
     required int questionCount,
   }) async {
     state = state.copyWith(isGenerating: true);
@@ -56,6 +57,7 @@ class AiQuizController extends Notifier<AiQuizState> {
             filePath: filePath,
             fileName: fileName,
             instruction: instruction,
+            topic: topic,
             questionCount: questionCount,
           );
       final List<AiQuiz> updated = [quiz, ...?state.quizzes];

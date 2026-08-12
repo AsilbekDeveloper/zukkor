@@ -7,15 +7,17 @@ class GenerateAiQuizUseCase {
   final AiQuizRepository _repository;
 
   Future<AiQuiz> call({
-    required String filePath,
-    required String fileName,
-    required String instruction,
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
     required int questionCount,
   }) =>
       _repository.generate(
         filePath: filePath,
         fileName: fileName,
         instruction: instruction,
+        topic: topic,
         questionCount: questionCount,
       );
 }
