@@ -783,6 +783,8 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get questionCountLabel => 'Savollar soni';
 	@override String get generateButton => 'Generatsiya qilish';
 	@override String get generated => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi';
+	@override String get generatingTitle => 'AI savollar tayyorlamoqda...';
+	@override String get generatingSubtitle => 'Bu biroz vaqt olishi mumkin, iltimos kuting';
 }
 
 /// The flat map containing all translations for locale <uz>.
@@ -1120,6 +1122,8 @@ extension on TranslationsUz {
 			'aiQuiz.questionCountLabel' => 'Savollar soni',
 			'aiQuiz.generateButton' => 'Generatsiya qilish',
 			'aiQuiz.generated' => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi',
+			'aiQuiz.generatingTitle' => 'AI savollar tayyorlamoqda...',
+			'aiQuiz.generatingSubtitle' => 'Bu biroz vaqt olishi mumkin, iltimos kuting',
 			_ => null,
 		};
 	}

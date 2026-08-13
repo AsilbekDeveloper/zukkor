@@ -1440,6 +1440,12 @@ class Translations$aiQuiz$en {
 
 	/// en: 'Done! Saved to "My AI quizzes"'
 	String get generated => 'Done! Saved to "My AI quizzes"';
+
+	/// en: 'AI is generating questions...'
+	String get generatingTitle => 'AI is generating questions...';
+
+	/// en: 'This can take a moment, please wait'
+	String get generatingSubtitle => 'This can take a moment, please wait';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1777,6 +1783,8 @@ extension on Translations {
 			'aiQuiz.questionCountLabel' => 'Number of questions',
 			'aiQuiz.generateButton' => 'Generate',
 			'aiQuiz.generated' => 'Done! Saved to "My AI quizzes"',
+			'aiQuiz.generatingTitle' => 'AI is generating questions...',
+			'aiQuiz.generatingSubtitle' => 'This can take a moment, please wait',
 			_ => null,
 		};
 	}

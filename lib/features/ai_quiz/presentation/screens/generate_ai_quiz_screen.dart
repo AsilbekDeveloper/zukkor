@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,6 +83,14 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
     }
 
     context.hideKeyboard();
+    unawaited(
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const _GeneratingDialog(),
+      ),
+    );
+
     try {
       await ref.read(aiQuizControllerProvider.notifier).generate(
             filePath: filePath,
@@ -90,12 +100,17 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
             questionCount: _questionCount,
           );
       if (!mounted) return;
+      Navigator.of(context).pop();
       context.showSnack(context.t.aiQuiz.generated);
       context.pop();
     } on Failure catch (e) {
-      if (mounted) context.showSnack(e.message);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      context.showSnack(e.message);
     } catch (_) {
-      if (mounted) context.showSnack(t.errors.unknown);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      context.showSnack(t.errors.unknown);
     }
   }
 
@@ -211,6 +226,46 @@ class _FilePickerCard extends StatelessWidget {
                     fontWeight: hasFile ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Generatsiya davomida (odatda 10-60+ soniya - hujjatni o'qish + AI
+/// so'rovi) ko'rsatiladi, foydalanuvchi ilova "osilib qolgan" deb
+/// o'ylamasligi uchun. Orqaga qaytish/tashqarini bosish bilan yopilmaydi -
+/// generatsiyani bekor qilishning hech qanday yo'li yo'q.
+class _GeneratingDialog extends StatelessWidget {
+  const _GeneratingDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Dialog(
+        backgroundColor: context.colors.card,
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: context.colors.coral),
+              AppSpacing.lg.vGap,
+              Text(
+                context.t.aiQuiz.generatingTitle,
+                textAlign: TextAlign.center,
+                style: context.textStyles.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              AppSpacing.xs.vGap,
+              Text(
+                context.t.aiQuiz.generatingSubtitle,
+                textAlign: TextAlign.center,
+                style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
               ),
             ],
           ),

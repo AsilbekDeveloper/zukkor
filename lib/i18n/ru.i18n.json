@@ -421,6 +421,8 @@
     "topicRequired": "Введите тему",
     "questionCountLabel": "Количество вопросов",
     "generateButton": "Сгенерировать",
-    "generated": "Готово! Сохранено в «Мои AI-викторины»"
+    "generated": "Готово! Сохранено в «Мои AI-викторины»",
+    "generatingTitle": "AI генерирует вопросы...",
+    "generatingSubtitle": "Это может занять некоторое время, пожалуйста подождите"
   }
 }

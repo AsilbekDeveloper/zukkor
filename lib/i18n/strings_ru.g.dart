@@ -789,6 +789,8 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get questionCountLabel => 'Количество вопросов';
 	@override String get generateButton => 'Сгенерировать';
 	@override String get generated => 'Готово! Сохранено в «Мои AI-викторины»';
+	@override String get generatingTitle => 'AI генерирует вопросы...';
+	@override String get generatingSubtitle => 'Это может занять некоторое время, пожалуйста подождите';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -1126,6 +1128,8 @@ extension on TranslationsRu {
 			'aiQuiz.questionCountLabel' => 'Количество вопросов',
 			'aiQuiz.generateButton' => 'Сгенерировать',
 			'aiQuiz.generated' => 'Готово! Сохранено в «Мои AI-викторины»',
+			'aiQuiz.generatingTitle' => 'AI генерирует вопросы...',
+			'aiQuiz.generatingSubtitle' => 'Это может занять некоторое время, пожалуйста подождите',
 			_ => null,
 		};
 	}

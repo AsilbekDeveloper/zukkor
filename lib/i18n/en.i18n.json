@@ -406,6 +406,8 @@
     "topicRequired": "Enter a topic",
     "questionCountLabel": "Number of questions",
     "generateButton": "Generate",
-    "generated": "Done! Saved to \"My AI quizzes\""
+    "generated": "Done! Saved to \"My AI quizzes\"",
+    "generatingTitle": "AI is generating questions...",
+    "generatingSubtitle": "This can take a moment, please wait"
   }
 }

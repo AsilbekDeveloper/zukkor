@@ -406,6 +406,8 @@
     "topicRequired": "Mavzuni yozing",
     "questionCountLabel": "Savollar soni",
     "generateButton": "Generatsiya qilish",
-    "generated": "Tayyor! Quiz \"Mening AI quizlarim\"ga saqlandi"
+    "generated": "Tayyor! Quiz \"Mening AI quizlarim\"ga saqlandi",
+    "generatingTitle": "AI savollar tayyorlamoqda...",
+    "generatingSubtitle": "Bu biroz vaqt olishi mumkin, iltimos kuting"
   }
 }
