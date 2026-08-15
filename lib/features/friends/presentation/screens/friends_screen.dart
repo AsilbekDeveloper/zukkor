@@ -145,7 +145,7 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
           AppTab.profile => context.push(AppRoutes.profile),
           AppTab.friends => _comingSoon(context),
         },
-        onPlayTap: () => context.push(AppRoutes.categories),
+        onPlayTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     );
   }

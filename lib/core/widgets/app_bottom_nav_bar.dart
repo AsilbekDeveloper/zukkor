@@ -184,7 +184,7 @@ class _CenterPlayButton extends StatelessWidget {
             child: const SizedBox(
               width: 56,
               height: 56,
-              child: Icon(TablerIcons.playerPlay, color: Colors.white, size: 28),
+              child: Icon(TablerIcons.sparkle, color: Colors.white, size: 28),
             ),
           ),
         ),

@@ -33,6 +33,9 @@ abstract final class AppStrings {
   // Categories screen
   static const String categoriesScreenTitle = 'Choose a category';
 
+  // AI quiz
+  static const String myAiQuizzesScreenTitle = 'My AI quizzes';
+
   // Leaderboard
   static const String leaderboardGreeting = 'Leaderboard';
   static const String leaderboardTitle = "Who's the best?";

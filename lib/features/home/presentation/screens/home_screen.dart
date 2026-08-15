@@ -153,7 +153,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           AppTab.profile => context.push(AppRoutes.profile),
           AppTab.home => _comingSoon(context),
         },
-        onPlayTap: () => context.push(AppRoutes.categories),
+        onPlayTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     );
   }

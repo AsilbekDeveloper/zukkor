@@ -11,6 +11,10 @@ import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/core/utils/formatters.dart';
+import 'package:zukkor/features/ai_quiz/data/repositories/ai_quiz_repository_impl.dart';
+import 'package:zukkor/features/ai_quiz/domain/entities/ai_quiz.dart';
+import 'package:zukkor/features/ai_quiz/domain/repositories/ai_quiz_repository.dart';
+import 'package:zukkor/features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
 import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:zukkor/features/auth/domain/entities/user.dart';
 import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
@@ -80,6 +84,27 @@ class _FakeQuizRepository implements QuizRepository {
     required int? selectedOption,
   }) =>
       throw UnimplementedError();
+}
+
+/// Backendga murojaat qilmaydigan soxta AI quiz repository — markazdagi
+/// tugma bosilganda ochiladigan "Mening AI quizlarim" ekrani ro'yxatni
+/// avtomatik yuklaydi, haqiqiy tarmoqqa bog'liq bo'lmasligi kerak.
+class _FakeAiQuizRepository implements AiQuizRepository {
+  @override
+  Future<AiQuiz> generate({
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
+    required int questionCount,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<List<AiQuiz>> list() async => const [];
+
+  @override
+  Future<void> delete(int id) => throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home
@@ -324,6 +349,10 @@ Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) 
         path: AppRoutes.categories,
         builder: (context, state) => const CategoriesScreen(),
       ),
+      GoRoute(
+        path: AppRoutes.myAiQuizzes,
+        builder: (context, state) => const MyAiQuizzesScreen(),
+      ),
       GoRoute(path: AppRoutes.duel, builder: (context, state) => const DuelScreen()),
       GoRoute(path: AppRoutes.joinCode, builder: (context, state) => const JoinCodeScreen()),
       GoRoute(
@@ -341,6 +370,7 @@ Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) 
         authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
         leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
+        aiQuizRepositoryProvider.overrideWithValue(_FakeAiQuizRepository()),
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
         lobbyRepositoryProvider.overrideWithValue(_FakeLobbyRepository()),
         notificationsRepositoryProvider.overrideWithValue(_FakeNotificationsRepository()),
@@ -496,12 +526,12 @@ void main() {
     expect(find.text(AppStrings.duelHeroTitle), findsNothing);
   });
 
-  testWidgets('the center Play tab navigates to the Categories screen', (tester) async {
+  testWidgets('the center Play tab navigates to the AI quiz screen', (tester) async {
     await _pumpHome(tester);
 
-    await tester.tap(find.byIcon(TablerIcons.playerPlay));
+    await tester.tap(find.byIcon(TablerIcons.sparkle));
     await tester.pumpAndSettle();
 
-    expect(find.text(AppStrings.categoriesScreenTitle), findsOneWidget);
+    expect(find.text(AppStrings.myAiQuizzesScreenTitle), findsOneWidget);
   });
 }

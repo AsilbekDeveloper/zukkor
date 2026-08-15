@@ -141,7 +141,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
           AppTab.profile => context.push(AppRoutes.profile),
           AppTab.leaderboard => _comingSoon(),
         },
-        onPlayTap: () => context.push(AppRoutes.categories),
+        onPlayTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     );
   }
