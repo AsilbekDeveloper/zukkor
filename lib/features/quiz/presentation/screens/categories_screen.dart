@@ -29,9 +29,15 @@ import '../widgets/category_grid_view.dart';
 /// Lobby), the caller supplies [onCategoryPicked] to react to a tap its
 /// own way. Null means the plain solo picker: push Quiz Setup.
 class CategoriesScreen extends ConsumerStatefulWidget {
-  const CategoriesScreen({this.onCategoryPicked, super.key});
+  const CategoriesScreen({this.onCategoryPicked, this.onAiQuizEntryTap, super.key});
 
-  final void Function(BuildContext context, WidgetRef ref, QuizCategory category)? onCategoryPicked;
+  final CategoryPickedCallback? onCategoryPicked;
+
+  /// "Mening AI/qo'lda quizlarim" kartasi bosilganda — berilmasa, oddiy
+  /// `context.push(AppRoutes.myAiQuizzes)` ishlatiladi (Solo). Duel/Lobby
+  /// caller'lari buni "Mening AI quizlarim" ekraniga ham to'g'ri
+  /// `extra`ni yetkazish uchun beradi (router darajasida).
+  final VoidCallback? onAiQuizEntryTap;
 
   @override
   ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
@@ -86,13 +92,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             children: [
               AppSpacing.xs.vGap,
               BackHeader(title: context.t.categories.title, onBack: () => _goBack(context)),
-              // Duel/Lobby'ga chaqiruv sifatida ishlatilganda (o'zga
-              // odamning ekranida ko'rinadi) shaxsiy AI quizlarga havola
-              // ko'rsatilmaydi — hozircha faqat solo o'ynash uchun.
-              if (widget.onCategoryPicked == null) ...[
-                AppSpacing.md.vGap,
-                _AiQuizEntryCard(onTap: () => context.push(AppRoutes.myAiQuizzes)),
-              ],
+              // O'zining AI quizlariga havola — Solo o'yinlarda ham, Duel/Lobby'da
+              // o'zi yaratgan quizni tanlash uchun ham ko'rinadi.
+              AppSpacing.md.vGap,
+              _AiQuizEntryCard(onTap: widget.onAiQuizEntryTap ?? () => context.push(AppRoutes.myAiQuizzes)),
               AppSpacing.lg.vGap,
               Expanded(
                 child: categoriesState.hasError

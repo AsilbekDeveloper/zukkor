@@ -24,7 +24,9 @@ import '../widgets/ai_quiz_list.dart';
 /// quizlar ro'yxati. Bosilsa to'g'ridan-to'g'ri o'ynash boshlanadi
 /// (savollar soni allaqachon generatsiyada belgilangan, qayta so'ralmaydi).
 class MyAiQuizzesScreen extends ConsumerStatefulWidget {
-  const MyAiQuizzesScreen({super.key});
+  const MyAiQuizzesScreen({this.onCategoryPicked, super.key});
+
+  final CategoryPickedCallback? onCategoryPicked;
 
   @override
   ConsumerState<MyAiQuizzesScreen> createState() => _MyAiQuizzesScreenState();
@@ -80,10 +82,15 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
       icon: TablerIcons.sparkle,
       colorKey: CategoryColorKey.coral,
     );
-    context.push(
-      AppRoutes.quizIntro,
-      extra: QuizLaunchArgs(category: category, questionCount: quiz.questionCount),
-    );
+    final CategoryPickedCallback? onPicked = widget.onCategoryPicked;
+    if (onPicked != null) {
+      onPicked(context, ref, category);
+    } else {
+      context.push(
+        AppRoutes.quizIntro,
+        extra: QuizLaunchArgs(category: category, questionCount: quiz.questionCount),
+      );
+    }
   }
 
   Future<void> _confirmDelete(AiQuiz quiz) async {

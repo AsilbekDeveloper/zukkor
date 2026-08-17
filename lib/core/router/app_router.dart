@@ -63,6 +63,28 @@ import 'app_routes.dart';
 /// know about every feature) ever constructs one.
 typedef QuizSetupExtra = ({QuizCategory category, void Function(BuildContext, WidgetRef, int) onStart});
 
+CategoryPickedCallback _duelCategoryPicked(FriendEntry opponent) => (context, ref, category) => context.push(
+      AppRoutes.quizSetup,
+      extra: (
+        category: category,
+        onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
+          AppRoutes.duelWaiting,
+          extra: DuelMatch(opponent: opponent, category: category, questionCount: count),
+        ),
+      ),
+    );
+
+CategoryPickedCallback _lobbyCategoryPicked(String roomId) => (context, ref, category) => context.push(
+      AppRoutes.quizSetup,
+      extra: (
+        category: category,
+        onStart: (BuildContext ctx, WidgetRef ref, int count) {
+          ref.read(lobbyControllerProvider.notifier).startGame(category.id, questionCount: count);
+          ctx.pop();
+        },
+      ),
+    );
+
 /// Marshrutlar. Ilova [SplashScreen]dan boshlanadi: u saqlangan token'ni
 /// tekshirib, tegishli ekranga yo'naltiradi — token bo'lsa Home, aks holda
 /// (Introduction ko'rilmagan bo'lsa) Introduction, yoki Login. Ekranlar
@@ -109,30 +131,14 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
           final Object? extra = state.extra;
           if (extra is FriendEntry) {
             return CategoriesScreen(
-              onCategoryPicked: (context, ref, category) => context.push(
-                AppRoutes.quizSetup,
-                extra: (
-                  category: category,
-                  onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
-                    AppRoutes.duelWaiting,
-                    extra: DuelMatch(opponent: extra, category: category, questionCount: count),
-                  ),
-                ),
-              ),
+              onCategoryPicked: _duelCategoryPicked(extra),
+              onAiQuizEntryTap: () => context.push(AppRoutes.myAiQuizzes, extra: extra),
             );
           }
           if (extra is String) {
             return CategoriesScreen(
-              onCategoryPicked: (context, ref, category) => context.push(
-                AppRoutes.quizSetup,
-                extra: (
-                  category: category,
-                  onStart: (BuildContext ctx, WidgetRef ref, int count) {
-                    ref.read(lobbyControllerProvider.notifier).startGame(category.id, questionCount: count);
-                    ctx.pop();
-                  },
-                ),
-              ),
+              onCategoryPicked: _lobbyCategoryPicked(extra),
+              onAiQuizEntryTap: () => context.push(AppRoutes.myAiQuizzes, extra: extra),
             );
           }
           return const CategoriesScreen();
@@ -140,7 +146,16 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.myAiQuizzes,
-        builder: (context, state) => const MyAiQuizzesScreen(),
+        builder: (context, state) {
+          final Object? extra = state.extra;
+          if (extra is FriendEntry) {
+            return MyAiQuizzesScreen(onCategoryPicked: _duelCategoryPicked(extra));
+          }
+          if (extra is String) {
+            return MyAiQuizzesScreen(onCategoryPicked: _lobbyCategoryPicked(extra));
+          }
+          return const MyAiQuizzesScreen();
+        },
       ),
       GoRoute(
         path: AppRoutes.generateAiQuiz,

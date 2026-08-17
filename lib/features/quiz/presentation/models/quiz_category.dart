@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
@@ -96,3 +97,8 @@ enum CategoryColorKey {
     };
   }
 }
+
+/// Kategoriya (yoki foydalanuvchining o'z quizi) tanlanganda chaqiriladi.
+/// [CategoriesScreen] va [MyAiQuizzesScreen] ikkalasi ham shu turdagi
+/// callback qabul qiladi — Duel/Lobby caller'lari buni o'z oqimiga ulaydi.
+typedef CategoryPickedCallback = void Function(BuildContext context, WidgetRef ref, QuizCategory category);
