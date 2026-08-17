@@ -97,6 +97,10 @@ class AiQuizController extends Notifier<AiQuizState> {
       state = state.copyWith(isGenerating: false);
     }
   }
+
+  /// Failure'ni tashqariga chiqaradi. `state.quizzes`ga ta'sir qilmaydi —
+  /// bu boshqa foydalanuvchining ro'yxati, "mening quizlarim" emas.
+  Future<List<AiQuiz>> listForUser(String userId) => ref.read(listUserQuizzesUseCaseProvider).call(userId);
 }
 
 final NotifierProvider<AiQuizController, AiQuizState> aiQuizControllerProvider =

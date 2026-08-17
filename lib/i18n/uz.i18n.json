@@ -50,7 +50,8 @@
     "rankedLabel": "#$rank o'rin · $xp XP",
     "alreadyFriends": "Siz do'stsiz",
     "acceptRequest": "Qabul qilish",
-    "declineRequest": "Rad etish"
+    "declineRequest": "Rad etish",
+    "aiQuizzesTitle": "Uning quizlari"
   },
   "friends": {
     "addFriend": "Do'st qo'shish",

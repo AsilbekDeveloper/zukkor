@@ -62,4 +62,5 @@ abstract final class ApiEndpoints {
   static String aiQuizDelete(int id) => '/ai-quiz/$id';
   static String aiQuizVisibility(int id) => '/ai-quiz/$id/visibility';
   static const String aiQuizManual = '/ai-quiz/manual';
+  static String aiQuizForUser(String userId) => '/ai-quiz/users/$userId';
 }

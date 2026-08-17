@@ -267,6 +267,9 @@ class Translations$playerDetail$en {
 
 	/// en: 'Decline'
 	String get declineRequest => 'Decline';
+
+	/// en: 'Their quizzes'
+	String get aiQuizzesTitle => 'Their quizzes';
 }
 
 // Path: friends
@@ -1557,6 +1560,7 @@ extension on Translations {
 			'playerDetail.alreadyFriends' => 'You\'re friends',
 			'playerDetail.acceptRequest' => 'Accept',
 			'playerDetail.declineRequest' => 'Decline',
+			'playerDetail.aiQuizzesTitle' => 'Their quizzes',
 			'friends.addFriend' => 'Add friend',
 			'friends.searchPlaceholder' => 'Search friends',
 			'friends.allSection' => 'All friends',

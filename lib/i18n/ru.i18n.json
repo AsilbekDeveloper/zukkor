@@ -65,7 +65,8 @@
     "rankedLabel": "#$rank место · $xp XP",
     "alreadyFriends": "Вы друзья",
     "acceptRequest": "Принять",
-    "declineRequest": "Отклонить"
+    "declineRequest": "Отклонить",
+    "aiQuizzesTitle": "Викторины"
   },
   "friends": {
     "addFriend": "Добавить друга",

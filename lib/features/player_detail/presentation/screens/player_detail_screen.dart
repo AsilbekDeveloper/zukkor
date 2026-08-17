@@ -14,11 +14,15 @@ import '../../../../core/widgets/close_header.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../ai_quiz/domain/entities/ai_quiz.dart';
+import '../../../ai_quiz/presentation/controllers/ai_quiz_controller.dart';
 import '../../../friends/presentation/controllers/friend_requests_controller.dart';
 import '../../../friends/presentation/controllers/send_friend_request_controller.dart';
 import '../../../leaderboard/domain/entities/player_stats.dart';
 import '../../../leaderboard/presentation/controllers/player_stats_controller.dart';
 import '../../../leaderboard/presentation/models/leaderboard_entry.dart';
+import '../../../quiz/presentation/models/quiz_category.dart';
+import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../models/player_detail_args.dart';
 
 /// A read-only profile card for someone else — mirrors the prototype's
@@ -51,11 +55,13 @@ class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
   bool _sendingRequest = false;
   bool _respondingToRequest = false;
   PlayerStats? _stats;
+  List<AiQuiz>? _aiQuizzes;
 
   @override
   void initState() {
     super.initState();
     Future.microtask(_loadStats);
+    Future.microtask(_loadAiQuizzes);
   }
 
   Future<void> _loadStats() async {
@@ -72,6 +78,17 @@ class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
       if (!mounted) return;
       context.showSnack(t.errors.unknown);
       _close(context);
+    }
+  }
+
+  Future<void> _loadAiQuizzes() async {
+    try {
+      final List<AiQuiz> quizzes =
+          await ref.read(aiQuizControllerProvider.notifier).listForUser(widget.args.userId);
+      if (!mounted) return;
+      setState(() => _aiQuizzes = quizzes);
+    } catch (_) {
+      // Ikkinchi darajali bo'lim - xato bo'lsa shunchaki ko'rsatilmaydi.
     }
   }
 
@@ -193,6 +210,10 @@ class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
               ),
               AppSpacing.xl.vGap,
               _actionSection(context),
+              if (_aiQuizzes != null && _aiQuizzes!.isNotEmpty) ...[
+                AppSpacing.xl.vGap,
+                _AiQuizzesSection(quizzes: _aiQuizzes!),
+              ],
             ],
           ),
         ),
@@ -353,3 +374,91 @@ class _Stat extends StatelessWidget {
     );
   }
 }
+
+class _AiQuizzesSection extends StatelessWidget {
+  const _AiQuizzesSection({required this.quizzes});
+
+  final List<AiQuiz> quizzes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.t.playerDetail.aiQuizzesTitle,
+          style: context.textStyles.labelSmall?.copyWith(fontWeight: FontWeight.w700, color: context.colors.ink2),
+        ),
+        AppSpacing.sm.vGap,
+        for (final quiz in quizzes) ...[
+          _PublicAiQuizRow(quiz: quiz),
+          AppSpacing.xs.vGap,
+        ],
+      ],
+    );
+  }
+}
+
+class _PublicAiQuizRow extends StatelessWidget {
+  const _PublicAiQuizRow({required this.quiz});
+
+  final AiQuiz quiz;
+
+  void _play(BuildContext context) {
+    final QuizCategory category = QuizCategory(
+      id: quiz.id,
+      name: quiz.name,
+      questionCount: quiz.questionCount,
+      icon: TablerIcons.sparkle,
+      colorKey: CategoryColorKey.coral,
+    );
+    context.push(
+      AppRoutes.quizIntro,
+      extra: QuizLaunchArgs(category: category, questionCount: quiz.questionCount),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.card,
+      borderRadius: AppRadius.smAll,
+      child: InkWell(
+        onTap: () => _play(context),
+        borderRadius: AppRadius.smAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.smAll,
+            border: Border.all(color: context.colors.line),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(color: context.colors.coral, borderRadius: AppRadius.smAll),
+                alignment: Alignment.center,
+                child: const Icon(TablerIcons.sparkle, color: Colors.white, size: 16),
+              ),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Text(
+                  quiz.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
+              ),
+              Text(
+                context.t.common.questionCount(count: quiz.questionCount),
+                style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

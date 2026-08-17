@@ -9,6 +9,7 @@ import '../../domain/usecases/create_manual_quiz_use_case.dart';
 import '../../domain/usecases/delete_ai_quiz_use_case.dart';
 import '../../domain/usecases/generate_ai_quiz_use_case.dart';
 import '../../domain/usecases/list_ai_quizzes_use_case.dart';
+import '../../domain/usecases/list_user_quizzes_use_case.dart';
 import '../../domain/usecases/update_ai_quiz_visibility_use_case.dart';
 import '../datasources/ai_quiz_remote_data_source.dart';
 
@@ -74,6 +75,15 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
       throw FailureMapper.fromDio(e);
     }
   }
+
+  @override
+  Future<List<AiQuiz>> listForUser(String userId) async {
+    try {
+      return (await _remoteDataSource.listForUser(userId)).map((model) => model.toEntity()).toList();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
 }
 
 final Provider<AiQuizRepository> aiQuizRepositoryProvider = Provider<AiQuizRepository>(
@@ -99,4 +109,8 @@ final Provider<UpdateAiQuizVisibilityUseCase> updateAiQuizVisibilityUseCaseProvi
 
 final Provider<CreateManualQuizUseCase> createManualQuizUseCaseProvider = Provider<CreateManualQuizUseCase>(
   (ref) => CreateManualQuizUseCase(ref.watch(aiQuizRepositoryProvider)),
+);
+
+final Provider<ListUserQuizzesUseCase> listUserQuizzesUseCaseProvider = Provider<ListUserQuizzesUseCase>(
+  (ref) => ListUserQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
 );

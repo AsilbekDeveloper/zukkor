@@ -50,7 +50,8 @@
     "rankedLabel": "Ranked #$rank · $xp XP",
     "alreadyFriends": "You're friends",
     "acceptRequest": "Accept",
-    "declineRequest": "Decline"
+    "declineRequest": "Decline",
+    "aiQuizzesTitle": "Their quizzes"
   },
   "friends": {
     "addFriend": "Add friend",

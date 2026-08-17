@@ -26,4 +26,8 @@ abstract interface class AiQuizRepository {
   /// `POST /ai-quiz/manual` — AI chaqirmasdan, foydalanuvchi o'zi yozgan
   /// savollardan quiz yaratadi.
   Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions});
+
+  /// `GET /ai-quiz/users/{userId}` — shu foydalanuvchining sizga
+  /// ko'rinadigan (ommaviy, yoki do'st bo'lsangiz — do'stlar uchun) quizlari.
+  Future<List<AiQuiz>> listForUser(String userId);
 }

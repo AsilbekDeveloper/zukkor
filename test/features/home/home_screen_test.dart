@@ -113,6 +113,9 @@ class _FakeAiQuizRepository implements AiQuizRepository {
   @override
   Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions}) =>
       throw UnimplementedError();
+
+  @override
+  Future<List<AiQuiz>> listForUser(String userId) => throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home

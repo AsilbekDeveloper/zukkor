@@ -182,6 +182,7 @@ class _Translations$playerDetail$uz implements Translations$playerDetail$en {
 	@override String get alreadyFriends => 'Siz do\'stsiz';
 	@override String get acceptRequest => 'Qabul qilish';
 	@override String get declineRequest => 'Rad etish';
+	@override String get aiQuizzesTitle => 'Uning quizlari';
 }
 
 // Path: friends
@@ -856,6 +857,7 @@ extension on TranslationsUz {
 			'playerDetail.alreadyFriends' => 'Siz do\'stsiz',
 			'playerDetail.acceptRequest' => 'Qabul qilish',
 			'playerDetail.declineRequest' => 'Rad etish',
+			'playerDetail.aiQuizzesTitle' => 'Uning quizlari',
 			'friends.addFriend' => 'Do\'st qo\'shish',
 			'friends.searchPlaceholder' => 'Do\'stlarni qidirish',
 			'friends.allSection' => 'Barcha do\'stlar',

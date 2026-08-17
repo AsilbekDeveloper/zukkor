@@ -80,6 +80,13 @@ class AiQuizRemoteDataSource {
     );
     return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
   }
+
+  Future<List<AiQuizModel>> listForUser(String userId) async {
+    final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuizForUser(userId));
+    return (response.data as List<dynamic>)
+        .map((json) => AiQuizModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
 }
 
 final Provider<AiQuizRemoteDataSource> aiQuizRemoteDataSourceProvider = Provider<AiQuizRemoteDataSource>(

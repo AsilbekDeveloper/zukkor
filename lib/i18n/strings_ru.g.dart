@@ -188,6 +188,7 @@ class _Translations$playerDetail$ru implements Translations$playerDetail$en {
 	@override String get alreadyFriends => 'Вы друзья';
 	@override String get acceptRequest => 'Принять';
 	@override String get declineRequest => 'Отклонить';
+	@override String get aiQuizzesTitle => 'Викторины';
 }
 
 // Path: friends
@@ -862,6 +863,7 @@ extension on TranslationsRu {
 			'playerDetail.alreadyFriends' => 'Вы друзья',
 			'playerDetail.acceptRequest' => 'Принять',
 			'playerDetail.declineRequest' => 'Отклонить',
+			'playerDetail.aiQuizzesTitle' => 'Викторины',
 			'friends.addFriend' => 'Добавить друга',
 			'friends.searchPlaceholder' => 'Поиск друзей',
 			'friends.allSection' => 'Все друзья',
