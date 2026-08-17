@@ -429,6 +429,8 @@
     "manualOptionLabel(param=number)": "Option $number",
     "manualFillAllFields": "Fill in all fields",
     "manualAddQuestion": "+ Add question",
-    "manualSubmit": "Create"
+    "manualSubmit": "Create",
+    "opponentQuizzesEntryLabel": "Opponent's quizzes",
+    "noSharedQuizzes": "This user hasn't shared any quizzes yet"
   }
 }

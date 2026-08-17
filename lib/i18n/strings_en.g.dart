@@ -1509,6 +1509,12 @@ class Translations$aiQuiz$en {
 
 	/// en: 'Create'
 	String get manualSubmit => 'Create';
+
+	/// en: 'Opponent's quizzes'
+	String get opponentQuizzesEntryLabel => 'Opponent\'s quizzes';
+
+	/// en: 'This user hasn't shared any quizzes yet'
+	String get noSharedQuizzes => 'This user hasn\'t shared any quizzes yet';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1869,6 +1875,8 @@ extension on Translations {
 			'aiQuiz.manualFillAllFields' => 'Fill in all fields',
 			'aiQuiz.manualAddQuestion' => '+ Add question',
 			'aiQuiz.manualSubmit' => 'Create',
+			'aiQuiz.opponentQuizzesEntryLabel' => 'Opponent\'s quizzes',
+			'aiQuiz.noSharedQuizzes' => 'This user hasn\'t shared any quizzes yet',
 			_ => null,
 		};
 	}

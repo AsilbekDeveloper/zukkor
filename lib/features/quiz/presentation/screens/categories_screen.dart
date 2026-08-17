@@ -30,9 +30,10 @@ import '../widgets/category_grid_view.dart';
 /// own way. Null means the plain solo picker: push Quiz Setup.
 ///
 /// In Duel/Lobby context, it also shows an entry point to the user's
-/// own AI/manual quizzes, so they can be picked for the match.
+/// own AI/manual quizzes, and potentially the opponent's quizzes in a
+/// duel, so they can be picked for the match.
 class CategoriesScreen extends ConsumerStatefulWidget {
-  const CategoriesScreen({this.onCategoryPicked, this.onAiQuizEntryTap, super.key});
+  const CategoriesScreen({this.onCategoryPicked, this.onAiQuizEntryTap, this.onOpponentQuizEntryTap, super.key});
 
   final CategoryPickedCallback? onCategoryPicked;
 
@@ -41,6 +42,9 @@ class CategoriesScreen extends ConsumerStatefulWidget {
   /// caller'lari buni "Mening AI quizlarim" ekraniga ham to'g'ri
   /// `extra`ni yetkazish uchun beradi (router darajasida).
   final VoidCallback? onAiQuizEntryTap;
+
+  /// Raqibning ommaviy quizlari ro'yxatiga kirish nuqtasi — faqat Duelda.
+  final VoidCallback? onOpponentQuizEntryTap;
 
   @override
   ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
@@ -101,7 +105,17 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               // Oddiy Solo ko'rish/yaratish endi Profile'dan.
               if (widget.onCategoryPicked != null) ...[
                 AppSpacing.md.vGap,
-                _AiQuizEntryCard(onTap: widget.onAiQuizEntryTap ?? () => context.push(AppRoutes.myAiQuizzes)),
+                _AiQuizEntryCard(
+                  label: context.t.aiQuiz.entryCardLabel,
+                  onTap: widget.onAiQuizEntryTap ?? () => context.push(AppRoutes.myAiQuizzes),
+                ),
+                if (widget.onOpponentQuizEntryTap != null) ...[
+                  AppSpacing.sm.vGap,
+                  _AiQuizEntryCard(
+                    label: context.t.aiQuiz.opponentQuizzesEntryLabel,
+                    onTap: widget.onOpponentQuizEntryTap!,
+                  ),
+                ],
               ],
               AppSpacing.lg.vGap,
               Expanded(
@@ -124,12 +138,11 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   }
 }
 
-/// Entry point into "Mening AI quizlarim" — hujjatdan AI orqali yaratilgan
-/// shaxsiy quizlar. Ko'p o'yinchili rejimda o'z quizini tanlash uchun
-/// ishlatiladi.
+/// Entry point into AI/manual quizzes.
 class _AiQuizEntryCard extends StatelessWidget {
-  const _AiQuizEntryCard({required this.onTap});
+  const _AiQuizEntryCard({required this.label, required this.onTap});
 
+  final String label;
   final VoidCallback onTap;
 
   @override
@@ -149,7 +162,7 @@ class _AiQuizEntryCard extends StatelessWidget {
               AppSpacing.sm.hGap,
               Expanded(
                 child: Text(
-                  context.t.aiQuiz.entryCardLabel,
+                  label,
                   style: context.textStyles.bodyMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,

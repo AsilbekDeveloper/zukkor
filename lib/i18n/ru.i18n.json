@@ -444,6 +444,8 @@
     "manualOptionLabel(param=number)": "Вариант $number",
     "manualFillAllFields": "Заполните все поля",
     "manualAddQuestion": "+ Добавить вопрос",
-    "manualSubmit": "Создать"
+    "manualSubmit": "Создать",
+    "opponentQuizzesEntryLabel": "Викторины соперника",
+    "noSharedQuizzes": "Этот пользователь пока не поделился викторинами"
   }
 }

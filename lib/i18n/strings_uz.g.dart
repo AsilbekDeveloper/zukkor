@@ -806,6 +806,8 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get manualFillAllFields => 'Barcha maydonlarni to\'ldiring';
 	@override String get manualAddQuestion => '+ Savol qo\'shish';
 	@override String get manualSubmit => 'Yaratish';
+	@override String get opponentQuizzesEntryLabel => 'Raqibning quizlari';
+	@override String get noSharedQuizzes => 'Bu foydalanuvchi hali quiz ulashmagan';
 }
 
 /// The flat map containing all translations for locale <uz>.
@@ -1166,6 +1168,8 @@ extension on TranslationsUz {
 			'aiQuiz.manualFillAllFields' => 'Barcha maydonlarni to\'ldiring',
 			'aiQuiz.manualAddQuestion' => '+ Savol qo\'shish',
 			'aiQuiz.manualSubmit' => 'Yaratish',
+			'aiQuiz.opponentQuizzesEntryLabel' => 'Raqibning quizlari',
+			'aiQuiz.noSharedQuizzes' => 'Bu foydalanuvchi hali quiz ulashmagan',
 			_ => null,
 		};
 	}

@@ -812,6 +812,8 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get manualFillAllFields => 'Заполните все поля';
 	@override String get manualAddQuestion => '+ Добавить вопрос';
 	@override String get manualSubmit => 'Создать';
+	@override String get opponentQuizzesEntryLabel => 'Викторины соперника';
+	@override String get noSharedQuizzes => 'Этот пользователь пока не поделился викторинами';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -1172,6 +1174,8 @@ extension on TranslationsRu {
 			'aiQuiz.manualFillAllFields' => 'Заполните все поля',
 			'aiQuiz.manualAddQuestion' => '+ Добавить вопрос',
 			'aiQuiz.manualSubmit' => 'Создать',
+			'aiQuiz.opponentQuizzesEntryLabel' => 'Викторины соперника',
+			'aiQuiz.noSharedQuizzes' => 'Этот пользователь пока не поделился викторинами',
 			_ => null,
 		};
 	}

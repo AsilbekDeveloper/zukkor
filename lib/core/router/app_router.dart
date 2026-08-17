@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
+import '../../features/ai_quiz/presentation/screens/user_quizzes_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/duel/domain/entities/duel_invite.dart';
@@ -133,6 +134,12 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
             return CategoriesScreen(
               onCategoryPicked: _duelCategoryPicked(extra),
               onAiQuizEntryTap: () => context.push(AppRoutes.myAiQuizzes, extra: extra),
+              onOpponentQuizEntryTap: extra.id == null
+                  ? null
+                  : () => context.push(
+                        AppRoutes.userQuizzes,
+                        extra: (userId: extra.id!, displayName: extra.name, onPicked: _duelCategoryPicked(extra)),
+                      ),
             );
           }
           if (extra is String) {
@@ -155,6 +162,17 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
             return MyAiQuizzesScreen(onCategoryPicked: _lobbyCategoryPicked(extra));
           }
           return const MyAiQuizzesScreen();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.userQuizzes,
+        builder: (context, state) {
+          final extra = state.extra as ({String userId, String displayName, CategoryPickedCallback onPicked});
+          return UserQuizzesScreen(
+            userId: extra.userId,
+            displayName: extra.displayName,
+            onCategoryPicked: extra.onPicked,
+          );
         },
       ),
       GoRoute(
