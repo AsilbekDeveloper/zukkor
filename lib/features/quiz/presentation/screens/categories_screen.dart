@@ -28,6 +28,9 @@ import '../widgets/category_grid_view.dart';
 /// those features itself (which would tangle Quiz up with Friends and
 /// Lobby), the caller supplies [onCategoryPicked] to react to a tap its
 /// own way. Null means the plain solo picker: push Quiz Setup.
+///
+/// In Duel/Lobby context, it also shows an entry point to the user's
+/// own AI/manual quizzes, so they can be picked for the match.
 class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({this.onCategoryPicked, this.onAiQuizEntryTap, super.key});
 
@@ -92,10 +95,14 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             children: [
               AppSpacing.xs.vGap,
               BackHeader(title: context.t.categories.title, onBack: () => _goBack(context)),
-              // O'zining AI quizlariga havola — Solo o'yinlarda ham, Duel/Lobby'da
-              // o'zi yaratgan quizni tanlash uchun ham ko'rinadi.
-              AppSpacing.md.vGap,
-              _AiQuizEntryCard(onTap: widget.onAiQuizEntryTap ?? () => context.push(AppRoutes.myAiQuizzes)),
+              // Faqat Duel/Lobby kontekstida (kategoriya birovga taklif
+              // qilinganda/o'yin uchun tanlanganda) ko'rinadi — bu holda
+              // foydalanuvchi o'zining quizini ham tanlay olishi kerak.
+              // Oddiy Solo ko'rish/yaratish endi Profile'dan.
+              if (widget.onCategoryPicked != null) ...[
+                AppSpacing.md.vGap,
+                _AiQuizEntryCard(onTap: widget.onAiQuizEntryTap ?? () => context.push(AppRoutes.myAiQuizzes)),
+              ],
               AppSpacing.lg.vGap,
               Expanded(
                 child: categoriesState.hasError
@@ -118,9 +125,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
 }
 
 /// Entry point into "Mening AI quizlarim" — hujjatdan AI orqali yaratilgan
-/// shaxsiy quizlar. Global kategoriyalar bilan bir xil karta ko'rinishida
-/// emas — ular umuman boshqa manbadan (GET /ai-quiz) kelgani va bu ekran
-/// [CategoriesController]dan mustaqil ekanini vizual ajratib turadi.
+/// shaxsiy quizlar. Ko'p o'yinchili rejimda o'z quizini tanlash uchun
+/// ishlatiladi.
 class _AiQuizEntryCard extends StatelessWidget {
   const _AiQuizEntryCard({required this.onTap});
 

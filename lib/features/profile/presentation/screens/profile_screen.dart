@@ -87,6 +87,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           onTap: () => context.push(AppRoutes.history),
         ),
         SettingsRowData(
+          icon: TablerIcons.sparkle,
+          label: context.t.aiQuiz.myQuizzesTitle,
+          onTap: () => context.push(AppRoutes.myAiQuizzes),
+        ),
+        SettingsRowData(
           icon: TablerIcons.settings,
           label: context.t.profile.settingsAndHelp,
           onTap: () => context.push(AppRoutes.settings),
