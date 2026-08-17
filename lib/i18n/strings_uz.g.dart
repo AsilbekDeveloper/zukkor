@@ -785,6 +785,26 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get generated => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi';
 	@override String get generatingTitle => 'AI savollar tayyorlamoqda...';
 	@override String get generatingSubtitle => 'Bu biroz vaqt olishi mumkin, iltimos kuting';
+	@override String get sourceAi => 'AI';
+	@override String get sourceManual => 'Qo\'lda';
+	@override String get visibilityPrivate => 'Hech kim';
+	@override String get visibilityFriends => 'Do\'stlar';
+	@override String get visibilityPublic => 'Hamma';
+	@override String get visibilityDialogTitle => 'Kim ko\'ra oladi?';
+	@override String get visibilityUpdated => 'Ko\'rinish o\'zgartirildi';
+	@override String get createChooseTitle => 'Qanday yaratasiz?';
+	@override String get createViaAi => 'AI orqali';
+	@override String get createManually => 'Qo\'lda';
+	@override String get createManualTitle => 'Qo\'lda quiz yaratish';
+	@override String get manualNameLabel => 'Quiz nomi';
+	@override String get manualNameHint => 'Masalan: Mening geografiya testim';
+	@override String get manualNameRequired => 'Quiz nomini kiriting';
+	@override String manualQuestionLabel({required Object number}) => '${number}-savol';
+	@override String get manualQuestionTextLabel => 'Savol matni';
+	@override String manualOptionLabel({required Object number}) => '${number}-variant';
+	@override String get manualFillAllFields => 'Barcha maydonlarni to\'ldiring';
+	@override String get manualAddQuestion => '+ Savol qo\'shish';
+	@override String get manualSubmit => 'Yaratish';
 }
 
 /// The flat map containing all translations for locale <uz>.
@@ -1124,6 +1144,26 @@ extension on TranslationsUz {
 			'aiQuiz.generated' => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi',
 			'aiQuiz.generatingTitle' => 'AI savollar tayyorlamoqda...',
 			'aiQuiz.generatingSubtitle' => 'Bu biroz vaqt olishi mumkin, iltimos kuting',
+			'aiQuiz.sourceAi' => 'AI',
+			'aiQuiz.sourceManual' => 'Qo\'lda',
+			'aiQuiz.visibilityPrivate' => 'Hech kim',
+			'aiQuiz.visibilityFriends' => 'Do\'stlar',
+			'aiQuiz.visibilityPublic' => 'Hamma',
+			'aiQuiz.visibilityDialogTitle' => 'Kim ko\'ra oladi?',
+			'aiQuiz.visibilityUpdated' => 'Ko\'rinish o\'zgartirildi',
+			'aiQuiz.createChooseTitle' => 'Qanday yaratasiz?',
+			'aiQuiz.createViaAi' => 'AI orqali',
+			'aiQuiz.createManually' => 'Qo\'lda',
+			'aiQuiz.createManualTitle' => 'Qo\'lda quiz yaratish',
+			'aiQuiz.manualNameLabel' => 'Quiz nomi',
+			'aiQuiz.manualNameHint' => 'Masalan: Mening geografiya testim',
+			'aiQuiz.manualNameRequired' => 'Quiz nomini kiriting',
+			'aiQuiz.manualQuestionLabel' => ({required Object number}) => '${number}-savol',
+			'aiQuiz.manualQuestionTextLabel' => 'Savol matni',
+			'aiQuiz.manualOptionLabel' => ({required Object number}) => '${number}-variant',
+			'aiQuiz.manualFillAllFields' => 'Barcha maydonlarni to\'ldiring',
+			'aiQuiz.manualAddQuestion' => '+ Savol qo\'shish',
+			'aiQuiz.manualSubmit' => 'Yaratish',
 			_ => null,
 		};
 	}

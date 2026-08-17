@@ -7,19 +7,30 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/ai_quiz.dart';
 
-/// AI orqali yaratilgan quizlar ro'yxati — [FriendList] bilan bir xil
-/// responsiv grid naqshi (bitta telefonda, 2 ustun kengroq ekranlarda).
+/// AI orqali yoki qo'lda yaratilgan quizlar ro'yxati — [FriendList] bilan
+/// bir xil responsiv grid naqshi (bitta telefonda, 2 ustun kengroq
+/// ekranlarda).
 class AiQuizList extends StatelessWidget {
-  const AiQuizList({required this.quizzes, required this.onTap, required this.onDelete, super.key});
+  const AiQuizList({
+    required this.quizzes,
+    required this.onTap,
+    required this.onDelete,
+    required this.onVisibilityTap,
+    super.key,
+  });
 
   final List<AiQuiz> quizzes;
   final ValueChanged<AiQuiz> onTap;
   final ValueChanged<AiQuiz> onDelete;
+  final ValueChanged<AiQuiz> onVisibilityTap;
 
   double _rowExtent(BuildContext context) {
     final TextScaler scaler = MediaQuery.textScalerOf(context);
-    final double textBlock =
-        (scaler.scale(14) * 1.4).ceilToDouble() + (scaler.scale(11) * 1.2).ceilToDouble() + 2;
+    final double textBlock = (scaler.scale(14) * 1.4).ceilToDouble() +
+        (scaler.scale(11) * 1.2).ceilToDouble() +
+        (scaler.scale(11) * 1.2).ceilToDouble() +
+        AppSpacing.xxs +
+        2;
     const double iconBlock = 40;
     const double verticalPadding = AppSpacing.sm * 2;
     return (textBlock > iconBlock ? textBlock : iconBlock) + verticalPadding;
@@ -39,18 +50,54 @@ class AiQuizList extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final AiQuiz quiz = quizzes[index];
-        return _AiQuizRow(quiz: quiz, onTap: () => onTap(quiz), onDelete: () => onDelete(quiz));
+        return _AiQuizRow(
+          quiz: quiz,
+          onTap: () => onTap(quiz),
+          onDelete: () => onDelete(quiz),
+          onVisibilityTap: () => onVisibilityTap(quiz),
+        );
       },
     );
   }
 }
 
 class _AiQuizRow extends StatelessWidget {
-  const _AiQuizRow({required this.quiz, required this.onTap, required this.onDelete});
+  const _AiQuizRow({
+    required this.quiz,
+    required this.onTap,
+    required this.onDelete,
+    required this.onVisibilityTap,
+  });
 
   final AiQuiz quiz;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final VoidCallback onVisibilityTap;
+
+  String _sourceLabel(BuildContext context) =>
+      quiz.source == 'manual' ? context.t.aiQuiz.sourceManual : context.t.aiQuiz.sourceAi;
+
+  IconData _visibilityIcon() {
+    switch (quiz.visibility) {
+      case 'public':
+        return TablerIcons.world;
+      case 'friends':
+        return TablerIcons.users;
+      default:
+        return TablerIcons.lock;
+    }
+  }
+
+  String _visibilityLabel(BuildContext context) {
+    switch (quiz.visibility) {
+      case 'public':
+        return context.t.aiQuiz.visibilityPublic;
+      case 'friends':
+        return context.t.aiQuiz.visibilityFriends;
+      default:
+        return context.t.aiQuiz.visibilityPrivate;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +144,35 @@ class _AiQuizRow extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                    ),
+                    AppSpacing.xxs.vGap,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _sourceLabel(context),
+                          style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                        ),
+                        Text(
+                          '  •  ',
+                          style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                        ),
+                        InkWell(
+                          onTap: onVisibilityTap,
+                          borderRadius: AppRadius.smAll,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(_visibilityIcon(), size: 12, color: context.colors.muted),
+                              4.hGap,
+                              Text(
+                                _visibilityLabel(context),
+                                style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

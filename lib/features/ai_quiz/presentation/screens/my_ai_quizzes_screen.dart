@@ -47,8 +47,29 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     }
   }
 
-  Future<void> _goToGenerate() async {
-    await context.push(AppRoutes.generateAiQuiz);
+  Future<void> _showCreateOptions() async {
+    final String? choice = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(context.t.aiQuiz.createChooseTitle),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => dialogContext.pop('ai'),
+            child: Text(context.t.aiQuiz.createViaAi),
+          ),
+          SimpleDialogOption(
+            onPressed: () => dialogContext.pop('manual'),
+            child: Text(context.t.aiQuiz.createManually),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || choice == null) return;
+    if (choice == 'ai') {
+      await context.push(AppRoutes.generateAiQuiz);
+    } else {
+      await context.push(AppRoutes.createManualQuiz);
+    }
   }
 
   void _play(AiQuiz quiz) {
@@ -88,6 +109,39 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     }
   }
 
+  Future<void> _changeVisibility(AiQuiz quiz) async {
+    final String? selected = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => SimpleDialog(
+        title: Text(context.t.aiQuiz.visibilityDialogTitle),
+        children: [
+          SimpleDialogOption(
+            onPressed: () => dialogContext.pop('private'),
+            child: Text(context.t.aiQuiz.visibilityPrivate),
+          ),
+          SimpleDialogOption(
+            onPressed: () => dialogContext.pop('friends'),
+            child: Text(context.t.aiQuiz.visibilityFriends),
+          ),
+          SimpleDialogOption(
+            onPressed: () => dialogContext.pop('public'),
+            child: Text(context.t.aiQuiz.visibilityPublic),
+          ),
+        ],
+      ),
+    );
+    if (selected == null || selected == quiz.visibility || !mounted) return;
+
+    try {
+      await ref.read(aiQuizControllerProvider.notifier).updateVisibility(quiz.id, selected);
+      if (mounted) context.showSnack(context.t.aiQuiz.visibilityUpdated);
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+    } catch (_) {
+      if (mounted) context.showSnack(t.errors.unknown);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final AiQuizState state = ref.watch(aiQuizControllerProvider);
@@ -103,7 +157,7 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
               AppSpacing.xs.vGap,
               BackHeader(title: context.t.aiQuiz.myQuizzesTitle, onBack: _goBack),
               AppSpacing.lg.vGap,
-              AppButton.primary(label: context.t.aiQuiz.createButton, onPressed: _goToGenerate),
+              AppButton.primary(label: context.t.aiQuiz.createButton, onPressed: _showCreateOptions),
               AppSpacing.lg.vGap,
               Expanded(
                 child: state.hasListError
@@ -111,9 +165,14 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                     : quizzes == null
                         ? const ShimmerListSkeleton(count: 4, trailingWidth: 36)
                         : quizzes.isEmpty
-                            ? _EmptyState(onCreate: _goToGenerate)
+                            ? _EmptyState(onCreate: _showCreateOptions)
                             : SingleChildScrollView(
-                                child: AiQuizList(quizzes: quizzes, onTap: _play, onDelete: _confirmDelete),
+                                child: AiQuizList(
+                                  quizzes: quizzes,
+                                  onTap: _play,
+                                  onDelete: _confirmDelete,
+                                  onVisibilityTap: _changeVisibility,
+                                ),
                               ),
               ),
             ],

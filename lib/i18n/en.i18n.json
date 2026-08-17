@@ -408,6 +408,26 @@
     "generateButton": "Generate",
     "generated": "Done! Saved to \"My AI quizzes\"",
     "generatingTitle": "AI is generating questions...",
-    "generatingSubtitle": "This can take a moment, please wait"
+    "generatingSubtitle": "This can take a moment, please wait",
+    "sourceAi": "AI",
+    "sourceManual": "Manual",
+    "visibilityPrivate": "Nobody",
+    "visibilityFriends": "Friends",
+    "visibilityPublic": "Everyone",
+    "visibilityDialogTitle": "Who can see this?",
+    "visibilityUpdated": "Visibility updated",
+    "createChooseTitle": "How do you want to create it?",
+    "createViaAi": "With AI",
+    "createManually": "Manually",
+    "createManualTitle": "Create a quiz manually",
+    "manualNameLabel": "Quiz name",
+    "manualNameHint": "E.g.: My geography test",
+    "manualNameRequired": "Enter a quiz name",
+    "manualQuestionLabel(param=number)": "Question $number",
+    "manualQuestionTextLabel": "Question text",
+    "manualOptionLabel(param=number)": "Option $number",
+    "manualFillAllFields": "Fill in all fields",
+    "manualAddQuestion": "+ Add question",
+    "manualSubmit": "Create"
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
+import '../../domain/entities/manual_question_input.dart';
 import '../models/ai_quiz_model.dart';
 
 /// `/ai-quiz/*` endpoint'lariga xom (Dio) so'rovlar. Xatolikni ushlamaydi —
@@ -53,6 +54,31 @@ class AiQuizRemoteDataSource {
 
   Future<void> delete(int id) async {
     await _dio.delete<void>(ApiEndpoints.aiQuizDelete(id));
+  }
+
+  Future<AiQuizModel> updateVisibility(int id, String visibility) async {
+    final Response<dynamic> response = await _dio.patch(
+      ApiEndpoints.aiQuizVisibility(id),
+      data: {'visibility': visibility},
+    );
+    return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<AiQuizModel> createManual({required String name, required List<ManualQuestionInput> questions}) async {
+    final Response<dynamic> response = await _dio.post(
+      ApiEndpoints.aiQuizManual,
+      data: {
+        'name': name,
+        'questions': questions
+            .map((q) => {
+                  'question_text': q.questionText,
+                  'options': q.options,
+                  'correct_option_index': q.correctOptionIndex,
+                })
+            .toList(),
+      },
+    );
+    return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
   }
 }
 

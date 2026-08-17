@@ -791,6 +791,26 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get generated => 'Готово! Сохранено в «Мои AI-викторины»';
 	@override String get generatingTitle => 'AI генерирует вопросы...';
 	@override String get generatingSubtitle => 'Это может занять некоторое время, пожалуйста подождите';
+	@override String get sourceAi => 'AI';
+	@override String get sourceManual => 'Вручную';
+	@override String get visibilityPrivate => 'Никто';
+	@override String get visibilityFriends => 'Друзья';
+	@override String get visibilityPublic => 'Все';
+	@override String get visibilityDialogTitle => 'Кто может видеть?';
+	@override String get visibilityUpdated => 'Видимость изменена';
+	@override String get createChooseTitle => 'Как хотите создать?';
+	@override String get createViaAi => 'С помощью AI';
+	@override String get createManually => 'Вручную';
+	@override String get createManualTitle => 'Создать викторину вручную';
+	@override String get manualNameLabel => 'Название викторины';
+	@override String get manualNameHint => 'Например: Мой тест по географии';
+	@override String get manualNameRequired => 'Введите название';
+	@override String manualQuestionLabel({required Object number}) => 'Вопрос ${number}';
+	@override String get manualQuestionTextLabel => 'Текст вопроса';
+	@override String manualOptionLabel({required Object number}) => 'Вариант ${number}';
+	@override String get manualFillAllFields => 'Заполните все поля';
+	@override String get manualAddQuestion => '+ Добавить вопрос';
+	@override String get manualSubmit => 'Создать';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -1130,6 +1150,26 @@ extension on TranslationsRu {
 			'aiQuiz.generated' => 'Готово! Сохранено в «Мои AI-викторины»',
 			'aiQuiz.generatingTitle' => 'AI генерирует вопросы...',
 			'aiQuiz.generatingSubtitle' => 'Это может занять некоторое время, пожалуйста подождите',
+			'aiQuiz.sourceAi' => 'AI',
+			'aiQuiz.sourceManual' => 'Вручную',
+			'aiQuiz.visibilityPrivate' => 'Никто',
+			'aiQuiz.visibilityFriends' => 'Друзья',
+			'aiQuiz.visibilityPublic' => 'Все',
+			'aiQuiz.visibilityDialogTitle' => 'Кто может видеть?',
+			'aiQuiz.visibilityUpdated' => 'Видимость изменена',
+			'aiQuiz.createChooseTitle' => 'Как хотите создать?',
+			'aiQuiz.createViaAi' => 'С помощью AI',
+			'aiQuiz.createManually' => 'Вручную',
+			'aiQuiz.createManualTitle' => 'Создать викторину вручную',
+			'aiQuiz.manualNameLabel' => 'Название викторины',
+			'aiQuiz.manualNameHint' => 'Например: Мой тест по географии',
+			'aiQuiz.manualNameRequired' => 'Введите название',
+			'aiQuiz.manualQuestionLabel' => ({required Object number}) => 'Вопрос ${number}',
+			'aiQuiz.manualQuestionTextLabel' => 'Текст вопроса',
+			'aiQuiz.manualOptionLabel' => ({required Object number}) => 'Вариант ${number}',
+			'aiQuiz.manualFillAllFields' => 'Заполните все поля',
+			'aiQuiz.manualAddQuestion' => '+ Добавить вопрос',
+			'aiQuiz.manualSubmit' => 'Создать',
 			_ => null,
 		};
 	}

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -144,6 +145,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.generateAiQuiz,
         builder: (context, state) => const GenerateAiQuizScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.createManualQuiz,
+        builder: (context, state) => const CreateManualQuizScreen(),
       ),
       GoRoute(
         path: AppRoutes.leaderboard,

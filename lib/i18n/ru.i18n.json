@@ -423,6 +423,26 @@
     "generateButton": "Сгенерировать",
     "generated": "Готово! Сохранено в «Мои AI-викторины»",
     "generatingTitle": "AI генерирует вопросы...",
-    "generatingSubtitle": "Это может занять некоторое время, пожалуйста подождите"
+    "generatingSubtitle": "Это может занять некоторое время, пожалуйста подождите",
+    "sourceAi": "AI",
+    "sourceManual": "Вручную",
+    "visibilityPrivate": "Никто",
+    "visibilityFriends": "Друзья",
+    "visibilityPublic": "Все",
+    "visibilityDialogTitle": "Кто может видеть?",
+    "visibilityUpdated": "Видимость изменена",
+    "createChooseTitle": "Как хотите создать?",
+    "createViaAi": "С помощью AI",
+    "createManually": "Вручную",
+    "createManualTitle": "Создать викторину вручную",
+    "manualNameLabel": "Название викторины",
+    "manualNameHint": "Например: Мой тест по географии",
+    "manualNameRequired": "Введите название",
+    "manualQuestionLabel(param=number)": "Вопрос $number",
+    "manualQuestionTextLabel": "Текст вопроса",
+    "manualOptionLabel(param=number)": "Вариант $number",
+    "manualFillAllFields": "Заполните все поля",
+    "manualAddQuestion": "+ Добавить вопрос",
+    "manualSubmit": "Создать"
   }
 }

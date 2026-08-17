@@ -60,4 +60,6 @@ abstract final class ApiEndpoints {
   static const String aiQuiz = '/ai-quiz';
   static const String aiQuizGenerate = '/ai-quiz/generate';
   static String aiQuizDelete(int id) => '/ai-quiz/$id';
+  static String aiQuizVisibility(int id) => '/ai-quiz/$id/visibility';
+  static const String aiQuizManual = '/ai-quiz/manual';
 }

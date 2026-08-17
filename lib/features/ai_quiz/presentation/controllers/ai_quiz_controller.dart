@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/ai_quiz_repository_impl.dart';
 import '../../domain/entities/ai_quiz.dart';
+import '../../domain/entities/manual_question_input.dart';
 
 class AiQuizState {
   const AiQuizState({this.quizzes, this.hasListError = false, this.isGenerating = false});
@@ -72,6 +73,29 @@ class AiQuizController extends Notifier<AiQuizState> {
     await ref.read(deleteAiQuizUseCaseProvider).call(id);
     final List<AiQuiz> updated = (state.quizzes ?? const []).where((quiz) => quiz.id != id).toList();
     state = state.copyWith(quizzes: () => updated);
+  }
+
+  /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran ushlab, xabar
+  /// ko'rsatishi kerak.
+  Future<void> updateVisibility(int id, String visibility) async {
+    final AiQuiz updated = await ref.read(updateAiQuizVisibilityUseCaseProvider).call(id, visibility);
+    final List<AiQuiz> list = (state.quizzes ?? const []).map((q) => q.id == id ? updated : q).toList();
+    state = state.copyWith(quizzes: () => list);
+  }
+
+  /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran ushlab, xabar
+  /// ko'rsatishi kerak.
+  Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions}) async {
+    state = state.copyWith(isGenerating: true);
+    try {
+      final AiQuiz quiz =
+          await ref.read(createManualQuizUseCaseProvider).call(name: name, questions: questions);
+      final List<AiQuiz> updated = [quiz, ...?state.quizzes];
+      state = state.copyWith(quizzes: () => updated);
+      return quiz;
+    } finally {
+      state = state.copyWith(isGenerating: false);
+    }
   }
 }
 

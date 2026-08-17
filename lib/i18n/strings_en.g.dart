@@ -1446,6 +1446,66 @@ class Translations$aiQuiz$en {
 
 	/// en: 'This can take a moment, please wait'
 	String get generatingSubtitle => 'This can take a moment, please wait';
+
+	/// en: 'AI'
+	String get sourceAi => 'AI';
+
+	/// en: 'Manual'
+	String get sourceManual => 'Manual';
+
+	/// en: 'Nobody'
+	String get visibilityPrivate => 'Nobody';
+
+	/// en: 'Friends'
+	String get visibilityFriends => 'Friends';
+
+	/// en: 'Everyone'
+	String get visibilityPublic => 'Everyone';
+
+	/// en: 'Who can see this?'
+	String get visibilityDialogTitle => 'Who can see this?';
+
+	/// en: 'Visibility updated'
+	String get visibilityUpdated => 'Visibility updated';
+
+	/// en: 'How do you want to create it?'
+	String get createChooseTitle => 'How do you want to create it?';
+
+	/// en: 'With AI'
+	String get createViaAi => 'With AI';
+
+	/// en: 'Manually'
+	String get createManually => 'Manually';
+
+	/// en: 'Create a quiz manually'
+	String get createManualTitle => 'Create a quiz manually';
+
+	/// en: 'Quiz name'
+	String get manualNameLabel => 'Quiz name';
+
+	/// en: 'E.g.: My geography test'
+	String get manualNameHint => 'E.g.: My geography test';
+
+	/// en: 'Enter a quiz name'
+	String get manualNameRequired => 'Enter a quiz name';
+
+	/// en: 'Question $number'
+	String manualQuestionLabel({required Object number}) => 'Question ${number}';
+
+	/// en: 'Question text'
+	String get manualQuestionTextLabel => 'Question text';
+
+	/// en: 'Option $number'
+	String manualOptionLabel({required Object number}) => 'Option ${number}';
+
+	/// en: 'Fill in all fields'
+	String get manualFillAllFields => 'Fill in all fields';
+
+	/// en: '+ Add question'
+	String get manualAddQuestion => '+ Add question';
+
+	/// en: 'Create'
+	String get manualSubmit => 'Create';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1785,6 +1845,26 @@ extension on Translations {
 			'aiQuiz.generated' => 'Done! Saved to "My AI quizzes"',
 			'aiQuiz.generatingTitle' => 'AI is generating questions...',
 			'aiQuiz.generatingSubtitle' => 'This can take a moment, please wait',
+			'aiQuiz.sourceAi' => 'AI',
+			'aiQuiz.sourceManual' => 'Manual',
+			'aiQuiz.visibilityPrivate' => 'Nobody',
+			'aiQuiz.visibilityFriends' => 'Friends',
+			'aiQuiz.visibilityPublic' => 'Everyone',
+			'aiQuiz.visibilityDialogTitle' => 'Who can see this?',
+			'aiQuiz.visibilityUpdated' => 'Visibility updated',
+			'aiQuiz.createChooseTitle' => 'How do you want to create it?',
+			'aiQuiz.createViaAi' => 'With AI',
+			'aiQuiz.createManually' => 'Manually',
+			'aiQuiz.createManualTitle' => 'Create a quiz manually',
+			'aiQuiz.manualNameLabel' => 'Quiz name',
+			'aiQuiz.manualNameHint' => 'E.g.: My geography test',
+			'aiQuiz.manualNameRequired' => 'Enter a quiz name',
+			'aiQuiz.manualQuestionLabel' => ({required Object number}) => 'Question ${number}',
+			'aiQuiz.manualQuestionTextLabel' => 'Question text',
+			'aiQuiz.manualOptionLabel' => ({required Object number}) => 'Option ${number}',
+			'aiQuiz.manualFillAllFields' => 'Fill in all fields',
+			'aiQuiz.manualAddQuestion' => '+ Add question',
+			'aiQuiz.manualSubmit' => 'Create',
 			_ => null,
 		};
 	}

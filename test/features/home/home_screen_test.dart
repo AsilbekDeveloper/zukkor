@@ -13,6 +13,7 @@ import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/core/utils/formatters.dart';
 import 'package:zukkor/features/ai_quiz/data/repositories/ai_quiz_repository_impl.dart';
 import 'package:zukkor/features/ai_quiz/domain/entities/ai_quiz.dart';
+import 'package:zukkor/features/ai_quiz/domain/entities/manual_question_input.dart';
 import 'package:zukkor/features/ai_quiz/domain/repositories/ai_quiz_repository.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
 import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
@@ -105,6 +106,13 @@ class _FakeAiQuizRepository implements AiQuizRepository {
 
   @override
   Future<void> delete(int id) => throw UnimplementedError();
+
+  @override
+  Future<AiQuiz> updateVisibility(int id, String visibility) => throw UnimplementedError();
+
+  @override
+  Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions}) =>
+      throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home
