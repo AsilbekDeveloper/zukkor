@@ -49,29 +49,8 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     }
   }
 
-  Future<void> _showCreateOptions() async {
-    final String? choice = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) => SimpleDialog(
-        title: Text(context.t.aiQuiz.createChooseTitle),
-        children: [
-          SimpleDialogOption(
-            onPressed: () => dialogContext.pop('ai'),
-            child: Text(context.t.aiQuiz.createViaAi),
-          ),
-          SimpleDialogOption(
-            onPressed: () => dialogContext.pop('manual'),
-            child: Text(context.t.aiQuiz.createManually),
-          ),
-        ],
-      ),
-    );
-    if (!mounted || choice == null) return;
-    if (choice == 'ai') {
-      await context.push(AppRoutes.generateAiQuiz);
-    } else {
-      await context.push(AppRoutes.createManualQuiz);
-    }
+  Future<void> _createViaAi() async {
+    await context.push(AppRoutes.generateAiQuiz);
   }
 
   void _play(AiQuiz quiz) {
@@ -164,7 +143,7 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
               AppSpacing.xs.vGap,
               BackHeader(title: context.t.aiQuiz.myQuizzesTitle, onBack: _goBack),
               AppSpacing.lg.vGap,
-              AppButton.primary(label: context.t.aiQuiz.createButton, onPressed: _showCreateOptions),
+              AppButton.primary(label: context.t.aiQuiz.createButton, onPressed: _createViaAi),
               AppSpacing.lg.vGap,
               Expanded(
                 child: state.hasListError
@@ -172,7 +151,7 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                     : quizzes == null
                         ? const ShimmerListSkeleton(count: 4, trailingWidth: 36)
                         : quizzes.isEmpty
-                            ? _EmptyState(onCreate: _showCreateOptions)
+                            ? _EmptyState(onCreate: _createViaAi)
                             : SingleChildScrollView(
                                 child: AiQuizList(
                                   quizzes: quizzes,
