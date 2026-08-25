@@ -4,13 +4,13 @@
 /// flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
 /// ```
 ///
-/// Hech qanday qiymat berilmasa, production backend (Render) ishlatiladi —
+/// Hech qanday qiymat berilmasa, production backend (Railway) ishlatiladi —
 /// istalgan qurilma, istalgan tarmoqdan ishlaydi, LAN IP/emulator loopback
 /// sozlash shart emas.
 abstract final class AppConfig {
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://zukkor-backend.onrender.com',
+    defaultValue: 'https://zukkorbackend-production.up.railway.app',
   );
 
   /// Tarmoq so'rovlari uchun umumiy timeout.
