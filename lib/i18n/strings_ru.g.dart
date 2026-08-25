@@ -784,8 +784,8 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get pickFileFirst => 'Сначала выберите документ';
 	@override String get instructionLabel => 'Инструкция (необязательно)';
 	@override String get instructionHint => 'Например: 10 вопросов по 3 главе, или по всему документу';
-	@override String get topicLabel => 'Тема';
-	@override String get topicHint => 'Например: задай вопросы по истории Второй мировой войны средней сложности, или вопросы об узбекских фильмах';
+	@override String get topicLabel => 'Тема квиза';
+	@override String get topicHint => 'Например: история Второй мировой войны, или узбекские фильмы';
 	@override String get topicRequired => 'Введите тему';
 	@override String get questionCountLabel => 'Количество вопросов';
 	@override String get generateButton => 'Сгенерировать';
@@ -1146,8 +1146,8 @@ extension on TranslationsRu {
 			'aiQuiz.pickFileFirst' => 'Сначала выберите документ',
 			'aiQuiz.instructionLabel' => 'Инструкция (необязательно)',
 			'aiQuiz.instructionHint' => 'Например: 10 вопросов по 3 главе, или по всему документу',
-			'aiQuiz.topicLabel' => 'Тема',
-			'aiQuiz.topicHint' => 'Например: задай вопросы по истории Второй мировой войны средней сложности, или вопросы об узбекских фильмах',
+			'aiQuiz.topicLabel' => 'Тема квиза',
+			'aiQuiz.topicHint' => 'Например: история Второй мировой войны, или узбекские фильмы',
 			'aiQuiz.topicRequired' => 'Введите тему',
 			'aiQuiz.questionCountLabel' => 'Количество вопросов',
 			'aiQuiz.generateButton' => 'Сгенерировать',

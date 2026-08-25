@@ -1426,11 +1426,11 @@ class Translations$aiQuiz$en {
 	/// en: 'E.g.: 10 questions from chapter 3, or from the whole document'
 	String get instructionHint => 'E.g.: 10 questions from chapter 3, or from the whole document';
 
-	/// en: 'Topic'
-	String get topicLabel => 'Topic';
+	/// en: 'Quiz topic'
+	String get topicLabel => 'Quiz topic';
 
-	/// en: 'E.g.: ask for WWII history questions at medium difficulty, or Uzbek movie questions'
-	String get topicHint => 'E.g.: ask for WWII history questions at medium difficulty, or Uzbek movie questions';
+	/// en: 'E.g.: World War II history, or Uzbek movies'
+	String get topicHint => 'E.g.: World War II history, or Uzbek movies';
 
 	/// en: 'Enter a topic'
 	String get topicRequired => 'Enter a topic';
@@ -1847,8 +1847,8 @@ extension on Translations {
 			'aiQuiz.pickFileFirst' => 'Choose a document first',
 			'aiQuiz.instructionLabel' => 'Instructions (optional)',
 			'aiQuiz.instructionHint' => 'E.g.: 10 questions from chapter 3, or from the whole document',
-			'aiQuiz.topicLabel' => 'Topic',
-			'aiQuiz.topicHint' => 'E.g.: ask for WWII history questions at medium difficulty, or Uzbek movie questions',
+			'aiQuiz.topicLabel' => 'Quiz topic',
+			'aiQuiz.topicHint' => 'E.g.: World War II history, or Uzbek movies',
 			'aiQuiz.topicRequired' => 'Enter a topic',
 			'aiQuiz.questionCountLabel' => 'Number of questions',
 			'aiQuiz.generateButton' => 'Generate',

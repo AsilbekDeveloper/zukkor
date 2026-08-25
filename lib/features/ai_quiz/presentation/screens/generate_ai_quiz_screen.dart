@@ -80,6 +80,7 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
         return;
       }
       topic = topicText;
+      instruction = _instructionController.text.trim();
     }
 
     context.hideKeyboard();
@@ -158,12 +159,19 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
                   hint: context.t.aiQuiz.instructionHint,
                   controller: _instructionController,
                 ),
-              ] else
+              ] else ...[
                 AppTextField(
                   label: context.t.aiQuiz.topicLabel,
                   hint: context.t.aiQuiz.topicHint,
                   controller: _topicController,
                 ),
+                AppSpacing.lg.vGap,
+                AppTextField(
+                  label: context.t.aiQuiz.instructionLabel,
+                  hint: context.t.aiQuiz.instructionHint,
+                  controller: _instructionController,
+                ),
+              ],
               AppSpacing.lg.vGap,
               Text(context.t.aiQuiz.questionCountLabel, style: context.textStyles.labelSmall),
               AppSpacing.sm.vGap,

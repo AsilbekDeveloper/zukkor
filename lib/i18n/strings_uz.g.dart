@@ -778,8 +778,8 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get pickFileFirst => 'Avval hujjat tanlang';
 	@override String get instructionLabel => 'Ko\'rsatma (ixtiyoriy)';
 	@override String get instructionHint => 'Masalan: 3-bobdan 10 ta savol, yoki hammasidan';
-	@override String get topicLabel => 'Mavzu';
-	@override String get topicHint => 'Masalan: 2-jahon tarixidan savollar so\'ra o\'rtacha qiyinchilikda, yoki uzbek kinolaridan savol so\'ra';
+	@override String get topicLabel => 'Quiz mavzusi';
+	@override String get topicHint => 'Masalan: 2-jahon tarixi, yoki O\'zbek kinolari';
 	@override String get topicRequired => 'Mavzuni yozing';
 	@override String get questionCountLabel => 'Savollar soni';
 	@override String get generateButton => 'Generatsiya qilish';
@@ -1140,8 +1140,8 @@ extension on TranslationsUz {
 			'aiQuiz.pickFileFirst' => 'Avval hujjat tanlang',
 			'aiQuiz.instructionLabel' => 'Ko\'rsatma (ixtiyoriy)',
 			'aiQuiz.instructionHint' => 'Masalan: 3-bobdan 10 ta savol, yoki hammasidan',
-			'aiQuiz.topicLabel' => 'Mavzu',
-			'aiQuiz.topicHint' => 'Masalan: 2-jahon tarixidan savollar so\'ra o\'rtacha qiyinchilikda, yoki uzbek kinolaridan savol so\'ra',
+			'aiQuiz.topicLabel' => 'Quiz mavzusi',
+			'aiQuiz.topicHint' => 'Masalan: 2-jahon tarixi, yoki O\'zbek kinolari',
 			'aiQuiz.topicRequired' => 'Mavzuni yozing',
 			'aiQuiz.questionCountLabel' => 'Savollar soni',
 			'aiQuiz.generateButton' => 'Generatsiya qilish',
