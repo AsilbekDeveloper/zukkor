@@ -34,9 +34,6 @@ import 'package:zukkor/features/quiz/domain/repositories/quiz_repository.dart';
 import 'package:zukkor/features/quiz/presentation/screens/categories_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
 
-/// Backendga murojaat qilmaydigan soxta quiz repository — Categories
-/// ekrani (Duel'ning kategoriya tanlagichi) `GET /categories`ni chaqiradi,
-/// haqiqiy tarmoqqa bog'liq bo'lmasligi kerak.
 class _FakeQuizRepository implements QuizRepository {
   @override
   Future<List<Category>> getCategories() async => const [
@@ -57,9 +54,6 @@ class _FakeQuizRepository implements QuizRepository {
       throw UnimplementedError();
 }
 
-/// Backendga murojaat qilmaydigan soxta leaderboard repository —
-/// Leaderboard tab'i `GET /leaderboard`ni chaqiradi, haqiqiy tarmoqqa
-/// bog'liq bo'lmasligi kerak.
 class _FakeLeaderboardRepository implements LeaderboardRepository {
   @override
   Future<LeaderboardData> getLeaderboard({
@@ -117,9 +111,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
       );
 }
 
-/// Backendga murojaat qilmaydigan soxta friends repository — real
-/// `GET /friends` javobiga mos. [incomingRequests] Friends header'dagi
-/// so'rovlar nishonini sinash uchun ishlatiladi.
 class _FakeFriendsRepository implements FriendsRepository {
   _FakeFriendsRepository({this.incomingRequests = const []});
 
@@ -154,10 +145,25 @@ class _FakeFriendsRepository implements FriendsRepository {
       ];
 
   @override
-  Future<List<DiscoveredUser>> searchUsers(String query) => throw UnimplementedError();
+  Future<List<DiscoveredUser>> searchUsers(String query) async {
+    if (query.toLowerCase().contains('q')) {
+      return const [
+        DiscoveredUser(
+          id: '10',
+          username: 'qodir_ali',
+          firstName: 'Qodir',
+          lastName: 'Ali',
+          avatarColor: 'a-blue',
+          avatarImagePath: null,
+          requestPending: false,
+        ),
+      ];
+    }
+    return const [];
+  }
 
   @override
-  Future<void> sendFriendRequest(String userId) => throw UnimplementedError();
+  Future<void> sendFriendRequest(String userId) async {}
 
   @override
   Future<List<FriendRequest>> getIncomingRequests() async => incomingRequests;
@@ -235,7 +241,6 @@ void main() {
   testWidgets('renders header, search bar and friend list with no overflow', (tester) async {
     await _pumpFriends(tester);
 
-    // "Friends" also appears as the (disabled, active) bottom-nav tab label.
     expect(find.text(AppStrings.navFriends), findsWidgets);
     expect(find.text(AppStrings.searchFriendsPlaceholder), findsOneWidget);
     expect(find.text(AppStrings.allFriendsSectionTitle), findsOneWidget);
@@ -256,15 +261,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping the add-friend button navigates to the Add Friend screen', (tester) async {
-    await _pumpFriends(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.userPlus));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.orViaInviteLink), findsOneWidget);
-  });
-
   testWidgets('typing in the search bar filters by name or username', (tester) async {
     await _pumpFriends(tester);
 
@@ -276,13 +272,47 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('a search with no matches shows the empty state', (tester) async {
+  testWidgets('typing "q" shows others section with results from server', (tester) async {
+    await _pumpFriends(tester);
+
+    await tester.enterText(find.byType(TextField), 'q');
+    // Debounce wait
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.otherUsersSectionTitle), findsOneWidget);
+    expect(find.text('Qodir Ali'), findsOneWidget);
+    expect(find.text('@qodir_ali'), findsOneWidget);
+  });
+
+  testWidgets('sending a friend request changes button to requested state', (tester) async {
+    await _pumpFriends(tester);
+
+    await tester.enterText(find.byType(TextField), 'q');
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+
+    final Finder addButton = find.text(AppStrings.addButton);
+    expect(addButton, findsOneWidget);
+
+    await tester.tap(addButton);
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.requestedLabel), findsOneWidget);
+  });
+
+  testWidgets('a search with no matches anywhere shows the discover empty state', (tester) async {
     await _pumpFriends(tester);
 
     await tester.enterText(find.byType(TextField), 'zzz-no-such-friend');
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
 
-    expect(find.text(AppStrings.noFriendsFound), findsOneWidget);
+    // While searching, "no friends" (friends.noneFound) only applies to the
+    // zero-friends-total state (not searching) - a no-match search instead
+    // shows the "other users" section's own empty copy.
+    expect(find.text(AppStrings.noUsersFound), findsOneWidget);
+    expect(find.text(AppStrings.noFriendsFound), findsNothing);
     expect(find.text('Malika Yusupova'), findsNothing);
   });
 

@@ -199,8 +199,9 @@ class _Translations$friends$ru implements Translations$friends$en {
 
 	// Translations
 	@override String get addFriend => 'Добавить друга';
-	@override String get searchPlaceholder => 'Поиск друзей';
+	@override String get searchPlaceholder => 'Поиск по имени или имени пользователя';
 	@override String get allSection => 'Все друзья';
+	@override String get otherUsersSection => 'Другие пользователи';
 	@override String get noneFound => 'Друзья не найдены';
 }
 
@@ -218,6 +219,7 @@ class _Translations$addFriend$ru implements Translations$addFriend$en {
 	@override String get addButton => 'Добавить';
 	@override String get requestedLabel => 'Запрос отправлен';
 	@override String get noUsersFound => 'Пользователи не найдены';
+	@override String get codeCopied => 'Код скопирован';
 }
 
 // Path: friendRequests
@@ -867,8 +869,9 @@ extension on TranslationsRu {
 			'playerDetail.declineRequest' => 'Отклонить',
 			'playerDetail.aiQuizzesTitle' => 'Викторины',
 			'friends.addFriend' => 'Добавить друга',
-			'friends.searchPlaceholder' => 'Поиск друзей',
+			'friends.searchPlaceholder' => 'Поиск по имени или имени пользователя',
 			'friends.allSection' => 'Все друзья',
+			'friends.otherUsersSection' => 'Другие пользователи',
 			'friends.noneFound' => 'Друзья не найдены',
 			'addFriend.searchByUsername' => 'Поиск по имени пользователя',
 			'addFriend.orViaInviteLink' => 'Или по пригласительной ссылке',
@@ -877,6 +880,7 @@ extension on TranslationsRu {
 			'addFriend.addButton' => 'Добавить',
 			'addFriend.requestedLabel' => 'Запрос отправлен',
 			'addFriend.noUsersFound' => 'Пользователи не найдены',
+			'addFriend.codeCopied' => 'Код скопирован',
 			'friendRequests.title' => 'Запросы в друзья',
 			'friendRequests.emptyState' => 'Пока нет запросов',
 			'duelPick.title' => 'Дуэль 1×1',

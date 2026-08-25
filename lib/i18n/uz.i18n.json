@@ -55,8 +55,9 @@
   },
   "friends": {
     "addFriend": "Do'st qo'shish",
-    "searchPlaceholder": "Do'stlarni qidirish",
+    "searchPlaceholder": "Ism yoki foydalanuvchi nomi bo'yicha qidirish",
     "allSection": "Barcha do'stlar",
+    "otherUsersSection": "Boshqa foydalanuvchilar",
     "noneFound": "Do'stlar topilmadi"
   },
   "addFriend": {
@@ -66,7 +67,8 @@
     "shareLink": "Havolani ulashish",
     "addButton": "Qo'shish",
     "requestedLabel": "So'rov yuborildi",
-    "noUsersFound": "Foydalanuvchilar topilmadi"
+    "noUsersFound": "Foydalanuvchilar topilmadi",
+    "codeCopied": "Kod nusxalandi"
   },
   "friendRequests": {
     "title": "Do'stlik so'rovlari",

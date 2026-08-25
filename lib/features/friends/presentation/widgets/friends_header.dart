@@ -2,21 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
-import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
 
-/// "Friends" title + requests/add-friend icon buttons — mirrors the
-/// prototype's `view-friends` `.header`.
+/// "Friends" title + requests icon button — finding and adding friends
+/// is now handled by the search bar in [FriendsScreen].
 class FriendsHeader extends StatelessWidget {
   const FriendsHeader({
-    required this.onAddFriendTap,
     required this.onRequestsTap,
     this.pendingRequestCount = 0,
     super.key,
   });
 
-  final VoidCallback onAddFriendTap;
   final VoidCallback onRequestsTap;
   final int pendingRequestCount;
 
@@ -37,12 +34,6 @@ class FriendsHeader extends StatelessWidget {
           badgeCount: pendingRequestCount,
           onTap: onRequestsTap,
           semanticLabel: context.t.friendRequests.title,
-        ),
-        AppSpacing.xs.hGap,
-        _HeaderIconButton(
-          icon: TablerIcons.userPlus,
-          onTap: onAddFriendTap,
-          semanticLabel: context.t.friends.addFriend,
         ),
       ],
     );

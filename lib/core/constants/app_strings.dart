@@ -62,8 +62,9 @@ abstract final class AppStrings {
 
   // Friends
   static const String addFriend = 'Add friend';
-  static const String searchFriendsPlaceholder = 'Search friends';
+  static const String searchFriendsPlaceholder = 'Search by name or username';
   static const String allFriendsSectionTitle = 'All friends';
+  static const String otherUsersSectionTitle = 'Other users';
   static const String noFriendsFound = 'No friends found';
 
   // Add friend screen
@@ -74,6 +75,7 @@ abstract final class AppStrings {
   static const String addButton = 'Add';
   static const String requestedLabel = 'Requested';
   static const String noUsersFound = 'No users found';
+  static const String codeCopied = 'Code copied';
 
   // Friend requests screen
   static const String friendRequestsTitle = 'Friend requests';

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
@@ -12,21 +15,23 @@ import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/discovered_user.dart';
 import '../controllers/friend_requests_controller.dart';
 import '../controllers/friends_controller.dart';
+import '../controllers/send_friend_request_controller.dart';
+import '../controllers/user_search_controller.dart';
+import '../models/discoverable_user.dart';
 import '../models/friend_entry.dart';
+import '../widgets/compact_invite_card.dart';
+import '../widgets/discoverable_user_list.dart';
 import '../widgets/friend_list.dart';
 import '../widgets/friends_header.dart';
 import '../widgets/friends_search_bar.dart';
 
-/// The Friends tab — mirrors the prototype's `view-friends`: header +
-/// add-friend button, search bar, then the full "All friends" list with
-/// a per-friend duel-challenge button.
-///
-/// CURRENT STATE: real `GET /friends` data. Search filters the fetched
-/// list by name or username client-side. Tapping the duel button on any
-/// friend row starts a duel with that friend directly (same
-/// category-picker flow as the Duel screen).
+/// The Friends tab — search bar now does double duty: filters the
+/// caller's existing friends AND (when there's a query) runs the same
+/// server-side discover search `AddFriendScreen` used to own, so finding
+/// and adding a new person no longer needs a separate page.
 class FriendsScreen extends ConsumerStatefulWidget {
   const FriendsScreen({super.key});
 
@@ -35,16 +40,21 @@ class FriendsScreen extends ConsumerStatefulWidget {
 }
 
 class _FriendsScreenState extends ConsumerState<FriendsScreen> {
+  static const String _mockInviteCode = 'ZKR-AZ312';
+  static const Duration _debounce = Duration(milliseconds: 350);
+
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
+  Timer? _debounceTimer;
+  final Set<String> _addedIds = {};
+
+  /// So'rov hali javob kutayotgan foydalanuvchilar — tugma shu vaqtda
+  /// o'chirilgan turadi (qo'sh so'rov yuborilmasligi uchun).
+  final Set<String> _sendingIds = {};
 
   @override
   void initState() {
     super.initState();
-    // The friend list only changes via this device's own actions
-    // (accepting a request already reloads it directly) — cached for the
-    // session. Pending requests stay unconditional: a new incoming
-    // request has no other signal telling this screen to refresh.
     if (ref.read(friendsControllerProvider).data == null) {
       Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
     }
@@ -54,15 +64,56 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
-  void _openPlayerDetail(BuildContext context, FriendEntry friend) {
+  void _openFriendDetail(BuildContext context, FriendEntry friend) {
     final String? id = friend.id;
     if (id == null) return;
     context.push(AppRoutes.playerDetail, extra: {'userId': id, 'relation': 'friend'});
+  }
+
+  void _openDiscoveredDetail(DiscoverableUser user) {
+    context.push(
+      AppRoutes.playerDetail,
+      extra: {
+        'userId': user.id,
+        if (user.requestPending || _addedIds.contains(user.id)) 'requestSent': true,
+      },
+    );
+  }
+
+  void _onQueryChanged(String value) {
+    setState(() => _query = value);
+    _debounceTimer?.cancel();
+    if (value.isEmpty) {
+      ref.read(userSearchControllerProvider.notifier).clear();
+      return;
+    }
+    _debounceTimer = Timer(_debounce, () {
+      ref.read(userSearchControllerProvider.notifier).search(value);
+    });
+  }
+
+  Future<void> _addFriend(DiscoverableUser user) async {
+    if (_sendingIds.contains(user.id)) return;
+    setState(() => _sendingIds.add(user.id));
+    try {
+      await ref.read(sendFriendRequestControllerProvider.notifier).sendRequest(user.id);
+      if (!mounted) return;
+      setState(() => _addedIds.add(user.id));
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+    } finally {
+      if (mounted) setState(() => _sendingIds.remove(user.id));
+    }
   }
 
   List<FriendEntry> _filteredFriends(List<FriendEntry> friends) {
@@ -81,8 +132,12 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     final bool isSearching = _query.isNotEmpty;
     final friendsState = ref.watch(friendsControllerProvider);
     final List<FriendEntry>? allFriends = friendsState.data?.map(FriendEntry.fromEntity).toList();
-    final List<FriendEntry> results = allFriends == null ? const [] : _filteredFriends(allFriends);
+    final List<FriendEntry> matchedFriends = allFriends == null ? const [] : _filteredFriends(allFriends);
     final int pendingRequestCount = ref.watch(friendRequestsControllerProvider).data?.length ?? 0;
+
+    final List<DiscoveredUser>? searchResults = isSearching ? ref.watch(userSearchControllerProvider) : null;
+    final List<DiscoverableUser> discovered =
+        (searchResults ?? const []).map(DiscoverableUser.fromEntity).toList();
 
     return Scaffold(
       body: SafeArea(
@@ -101,7 +156,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                   padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
                   children: [
                     FriendsHeader(
-                      onAddFriendTap: () => context.push(AppRoutes.addFriend),
                       onRequestsTap: () => context.push(AppRoutes.friendRequests),
                       pendingRequestCount: pendingRequestCount,
                     ),
@@ -109,15 +163,51 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                     FriendsSearchBar(
                       placeholder: context.t.friends.searchPlaceholder,
                       controller: _searchController,
-                      onChanged: (value) => setState(() => _query = value),
+                      onChanged: _onQueryChanged,
                     ),
+                    if (!isSearching) ...[
+                      AppSpacing.md.vGap,
+                      CompactInviteCard(code: _mockInviteCode, onShareTap: () => _comingSoon(context)),
+                    ],
                     AppSpacing.lg.vGap,
-                    SectionHead(
-                      title: context.t.friends.allSection,
-                      trailing: isSearching ? null : '${allFriends.length}',
-                    ),
-                    AppSpacing.sm.vGap,
-                    if (results.isEmpty)
+                    if (matchedFriends.isNotEmpty) ...[
+                      SectionHead(
+                        title: context.t.friends.allSection,
+                        trailing: isSearching ? null : '${allFriends.length}',
+                      ),
+                      AppSpacing.sm.vGap,
+                      FriendList(
+                        entries: matchedFriends,
+                        onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
+                        onRowTap: (friend) => _openFriendDetail(context, friend),
+                      ),
+                    ],
+                    if (isSearching) ...[
+                      if (matchedFriends.isNotEmpty) AppSpacing.lg.vGap,
+                      SectionHead(title: context.t.friends.otherUsersSection),
+                      AppSpacing.sm.vGap,
+                      if (searchResults == null)
+                        const ShimmerListSkeleton(count: 3, trailingWidth: 70)
+                      else if (discovered.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                          child: Center(
+                            child: Text(
+                              context.t.addFriend.noUsersFound,
+                              style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                            ),
+                          ),
+                        )
+                      else
+                        DiscoverableUserList(
+                          users: discovered,
+                          addedIds: _addedIds,
+                          sendingIds: _sendingIds,
+                          onAddTap: _addFriend,
+                          onRowTap: _openDiscoveredDetail,
+                        ),
+                    ],
+                    if (!isSearching && matchedFriends.isEmpty)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                         child: Center(
@@ -126,12 +216,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                             style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                           ),
                         ),
-                      )
-                    else
-                      FriendList(
-                        entries: results,
-                        onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
-                        onRowTap: (friend) => _openPlayerDetail(context, friend),
                       ),
                   ],
                 ),

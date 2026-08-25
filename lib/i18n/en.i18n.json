@@ -55,8 +55,9 @@
   },
   "friends": {
     "addFriend": "Add friend",
-    "searchPlaceholder": "Search friends",
+    "searchPlaceholder": "Search by name or username",
     "allSection": "All friends",
+    "otherUsersSection": "Other users",
     "noneFound": "No friends found"
   },
   "addFriend": {
@@ -66,7 +67,8 @@
     "shareLink": "Share the link",
     "addButton": "Add",
     "requestedLabel": "Requested",
-    "noUsersFound": "No users found"
+    "noUsersFound": "No users found",
+    "codeCopied": "Code copied"
   },
   "friendRequests": {
     "title": "Friend requests",

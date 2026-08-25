@@ -283,11 +283,14 @@ class Translations$friends$en {
 	/// en: 'Add friend'
 	String get addFriend => 'Add friend';
 
-	/// en: 'Search friends'
-	String get searchPlaceholder => 'Search friends';
+	/// en: 'Search by name or username'
+	String get searchPlaceholder => 'Search by name or username';
 
 	/// en: 'All friends'
 	String get allSection => 'All friends';
+
+	/// en: 'Other users'
+	String get otherUsersSection => 'Other users';
 
 	/// en: 'No friends found'
 	String get noneFound => 'No friends found';
@@ -321,6 +324,9 @@ class Translations$addFriend$en {
 
 	/// en: 'No users found'
 	String get noUsersFound => 'No users found';
+
+	/// en: 'Code copied'
+	String get codeCopied => 'Code copied';
 }
 
 // Path: friendRequests
@@ -1568,8 +1574,9 @@ extension on Translations {
 			'playerDetail.declineRequest' => 'Decline',
 			'playerDetail.aiQuizzesTitle' => 'Their quizzes',
 			'friends.addFriend' => 'Add friend',
-			'friends.searchPlaceholder' => 'Search friends',
+			'friends.searchPlaceholder' => 'Search by name or username',
 			'friends.allSection' => 'All friends',
+			'friends.otherUsersSection' => 'Other users',
 			'friends.noneFound' => 'No friends found',
 			'addFriend.searchByUsername' => 'Search by username',
 			'addFriend.orViaInviteLink' => 'Or via invite link',
@@ -1578,6 +1585,7 @@ extension on Translations {
 			'addFriend.addButton' => 'Add',
 			'addFriend.requestedLabel' => 'Requested',
 			'addFriend.noUsersFound' => 'No users found',
+			'addFriend.codeCopied' => 'Code copied',
 			'friendRequests.title' => 'Friend requests',
 			'friendRequests.emptyState' => 'No requests yet',
 			'duelPick.title' => '1v1 Duel',

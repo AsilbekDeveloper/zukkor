@@ -70,8 +70,9 @@
   },
   "friends": {
     "addFriend": "Добавить друга",
-    "searchPlaceholder": "Поиск друзей",
+    "searchPlaceholder": "Поиск по имени или имени пользователя",
     "allSection": "Все друзья",
+    "otherUsersSection": "Другие пользователи",
     "noneFound": "Друзья не найдены"
   },
   "addFriend": {
@@ -81,7 +82,8 @@
     "shareLink": "Поделиться ссылкой",
     "addButton": "Добавить",
     "requestedLabel": "Запрос отправлен",
-    "noUsersFound": "Пользователи не найдены"
+    "noUsersFound": "Пользователи не найдены",
+    "codeCopied": "Код скопирован"
   },
   "friendRequests": {
     "title": "Запросы в друзья",

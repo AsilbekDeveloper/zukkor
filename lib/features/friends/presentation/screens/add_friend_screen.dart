@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
@@ -20,6 +19,7 @@ import '../controllers/user_search_controller.dart';
 import '../models/discoverable_user.dart';
 import '../widgets/discoverable_user_list.dart';
 import '../widgets/friends_search_bar.dart';
+import '../widgets/share_link_button.dart';
 
 /// Add a friend — mirrors the prototype's `view-add-friend`: search by
 /// username or name, or share a static invite code/link.
@@ -161,7 +161,7 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
                 AppSpacing.sm.vGap,
                 InviteCodeCard(label: context.t.addFriend.yourInviteCode, code: _mockInviteCode),
                 AppSpacing.lg.vGap,
-                _ShareLinkButton(onTap: () => _comingSoon(context)),
+                ShareLinkButton(onTap: () => _comingSoon(context)),
               ],
             ],
           ),
@@ -171,44 +171,3 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
   }
 }
 
-class _ShareLinkButton extends StatelessWidget {
-  const _ShareLinkButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  // rgba(33,20,16,.22), matching the prototype's `.mp-btn.dark` box-shadow.
-  static const List<BoxShadow> _shadow = [
-    BoxShadow(color: Color(0x38211410), offset: Offset(0, 10), blurRadius: 22),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.surfaceDark,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
-          decoration: const BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: _shadow),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(TablerIcons.share3, size: 17, color: Colors.white),
-              const SizedBox(width: 6),
-              Text(
-                context.t.addFriend.shareLink,
-                style: context.textStyles.bodySmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

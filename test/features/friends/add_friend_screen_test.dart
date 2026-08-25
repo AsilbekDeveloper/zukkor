@@ -262,6 +262,9 @@ void main() {
     await tester.tap(find.byIcon(TablerIcons.arrowLeft));
     await tester.pumpAndSettle();
 
-    expect(find.text(AppStrings.orViaInviteLink), findsNothing);
+    // "Or via invite link" now also appears on FriendsScreen itself (the
+    // invite section moved there too) - AddFriendScreen's own title is
+    // what actually distinguishes "we've left this screen".
+    expect(find.text(AppStrings.addFriend), findsNothing);
   });
 }

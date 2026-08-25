@@ -193,8 +193,9 @@ class _Translations$friends$uz implements Translations$friends$en {
 
 	// Translations
 	@override String get addFriend => 'Do\'st qo\'shish';
-	@override String get searchPlaceholder => 'Do\'stlarni qidirish';
+	@override String get searchPlaceholder => 'Ism yoki foydalanuvchi nomi bo\'yicha qidirish';
 	@override String get allSection => 'Barcha do\'stlar';
+	@override String get otherUsersSection => 'Boshqa foydalanuvchilar';
 	@override String get noneFound => 'Do\'stlar topilmadi';
 }
 
@@ -212,6 +213,7 @@ class _Translations$addFriend$uz implements Translations$addFriend$en {
 	@override String get addButton => 'Qo\'shish';
 	@override String get requestedLabel => 'So\'rov yuborildi';
 	@override String get noUsersFound => 'Foydalanuvchilar topilmadi';
+	@override String get codeCopied => 'Kod nusxalandi';
 }
 
 // Path: friendRequests
@@ -861,8 +863,9 @@ extension on TranslationsUz {
 			'playerDetail.declineRequest' => 'Rad etish',
 			'playerDetail.aiQuizzesTitle' => 'Uning quizlari',
 			'friends.addFriend' => 'Do\'st qo\'shish',
-			'friends.searchPlaceholder' => 'Do\'stlarni qidirish',
+			'friends.searchPlaceholder' => 'Ism yoki foydalanuvchi nomi bo\'yicha qidirish',
 			'friends.allSection' => 'Barcha do\'stlar',
+			'friends.otherUsersSection' => 'Boshqa foydalanuvchilar',
 			'friends.noneFound' => 'Do\'stlar topilmadi',
 			'addFriend.searchByUsername' => 'Foydalanuvchi nomi bo\'yicha qidirish',
 			'addFriend.orViaInviteLink' => 'Yoki taklif havolasi orqali',
@@ -871,6 +874,7 @@ extension on TranslationsUz {
 			'addFriend.addButton' => 'Qo\'shish',
 			'addFriend.requestedLabel' => 'So\'rov yuborildi',
 			'addFriend.noUsersFound' => 'Foydalanuvchilar topilmadi',
+			'addFriend.codeCopied' => 'Kod nusxalandi',
 			'friendRequests.title' => 'Do\'stlik so\'rovlari',
 			'friendRequests.emptyState' => 'Hozircha so\'rovlar yo\'q',
 			'duelPick.title' => '1v1 Duel',
