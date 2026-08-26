@@ -136,7 +136,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
             AppSpacing.lg.vGap,
             ..._playSection(context),
-            AppSpacing.xl.vGap,
+            AppSpacing.xxs.vGap,
             ..._discoverSection(context),
           ],
         ),
