@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -70,6 +73,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       // Ro'yxatdan o'tgach profil sozlashga (Onboarding) yo'naltiramiz —
       // Register/Login'ga qaytmasin uchun `go` bilan.
       context.go(AppRoutes.onboarding);
+      unawaited(ref.read(analyticsServiceProvider).logSignUp('email'));
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
@@ -81,6 +85,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     try {
       final user = await ref.read(authControllerProvider.notifier).signInWithGoogle();
       if (!mounted || user == null) return; // foydalanuvchi tanlagichni yopdi — bekor qilingan
+      if (!user.onboardingCompleted) {
+        unawaited(ref.read(analyticsServiceProvider).logSignUp('google'));
+      }
       context.go(user.onboardingCompleted ? AppRoutes.home : AppRoutes.onboarding);
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);

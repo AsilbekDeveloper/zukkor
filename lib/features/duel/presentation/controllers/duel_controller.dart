@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../history/presentation/controllers/history_controller.dart';
 import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../../data/repositories/duel_repository_impl.dart';
@@ -173,6 +174,7 @@ class DuelController extends Notifier<DuelState> {
         totalQuestions: info.totalQuestions,
       ),
     );
+    unawaited(ref.read(analyticsServiceProvider).logGameStart(mode: 'duel', categoryId: info.category.id));
   }
 
   void _handleDuelQuestion(DuelQuestionEvent event) {
@@ -214,13 +216,29 @@ class DuelController extends Notifier<DuelState> {
     // cached copies so History/Home/Profile fetch fresh next visit.
     ref.invalidate(historyControllerProvider);
     ref.invalidate(myStatsControllerProvider);
+    unawaited(ref.read(analyticsServiceProvider).logGameComplete(
+          mode: 'duel',
+          categoryId: game.category.id,
+          xpEarned: result.xpEarned,
+          ballEarned: result.ballEarned,
+        ));
   }
 
   /// Locks in an answer for the current question (or `null` on timeout).
   void submitAnswer(int? selectedOption) {
     final DuelGameState? game = state.game;
     if (game == null || game.hasAnswered) return;
-    state = state.copyWith(game: () => game.copyWith(hasAnswered: true));
+    final int correctOption = game.question!.correctOption;
+    final DuelQuestionResult localResult = DuelQuestionResult(
+      duelId: game.duelId,
+      questionIndex: game.questionIndex,
+      correctOption: correctOption,
+      yourSelectedOption: selectedOption,
+      yourCorrect: selectedOption == correctOption,
+    );
+    state = state.copyWith(
+      game: () => game.copyWith(hasAnswered: true, lastResult: () => localResult),
+    );
     ref.read(duelRepositoryProvider).submitAnswer(
           duelId: game.duelId,
           questionIndex: game.questionIndex,

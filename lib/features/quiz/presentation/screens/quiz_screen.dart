@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/audio/app_sound.dart';
 import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/error/failures.dart';
@@ -48,7 +49,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
   static const Duration _fallbackTimeLimit = Duration(seconds: 15);
 
   late final AnimationController _timerController;
-  Timer? _feedbackTimer;
+  Timer? _pauseTimer;
 
   bool _answered = false;
   int? _selectedIndex;
@@ -70,9 +71,20 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
 
   @override
   void dispose() {
-    _feedbackTimer?.cancel();
+    _pauseTimer?.cancel();
     _timerController.dispose();
     super.dispose();
+  }
+
+  /// Like `Future.delayed`, but backed by a cancellable `Timer` — so a
+  /// widget disposed mid-wait (screen popped, test torn down) doesn't
+  /// leave an orphaned timer running with nothing left to observe it.
+  Future<void> _pause(Duration duration) {
+    final Completer<void> completer = Completer<void>();
+    _pauseTimer = Timer(duration, () {
+      if (!completer.isCompleted) completer.complete();
+    });
+    return completer.future;
   }
 
   Future<void> _startSession() async {
@@ -87,6 +99,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
         _currentQuestion = result.question;
         _starting = false;
       });
+      unawaited(ref.read(analyticsServiceProvider).logGameStart(mode: 'solo', categoryId: widget.category.id));
       _timerController.duration = Duration(milliseconds: _currentQuestion!.timeLimitMs);
       unawaited(_timerController.forward());
     } on Failure catch (e) {
@@ -113,25 +126,33 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
 
   Future<void> _lockInAnswerReal(int? pickedIndex) async {
     _timerController.stop();
+    final int correctIndex = _currentQuestion!.correctOptionIndex;
     setState(() {
       _answered = true;
       _selectedIndex = pickedIndex;
+      _lastCorrectIndex = correctIndex;
     });
+    ref.playSound(pickedIndex == correctIndex ? AppSound.correct : AppSound.wrong);
+
+    // The network round trip and the minimum "let the user see the
+    // reveal" pause run CONCURRENTLY, not one after the other — a slow
+    // network no longer stacks on top of the fixed pause (previously the
+    // wait was network_time + 900ms; now it's max(network_time, 900ms)).
+    final Future<AnswerResult> answerFuture = ref.read(quizControllerProvider.notifier).submitAnswer(
+          sessionId: _sessionId!,
+          sessionQuestionId: _currentQuestion!.sessionQuestionId,
+          selectedOption: pickedIndex,
+        );
+    final Future<void> pauseFuture = _pause(_feedbackDelay);
 
     try {
-      final AnswerResult result = await ref.read(quizControllerProvider.notifier).submitAnswer(
-            sessionId: _sessionId!,
-            sessionQuestionId: _currentQuestion!.sessionQuestionId,
-            selectedOption: pickedIndex,
-          );
+      final AnswerResult result = (await Future.wait([answerFuture, pauseFuture]))[0] as AnswerResult;
       if (!mounted) return;
-      ref.playSound(result.isCorrect ? AppSound.correct : AppSound.wrong);
       setState(() {
-        _lastCorrectIndex = result.correctOptionIndex;
         _totalBall += result.ballEarned;
         _pendingAnswerResult = result;
       });
-      _feedbackTimer = Timer(_feedbackDelay, _advanceReal);
+      _advanceReal();
     } on Failure catch (e) {
       if (!mounted) return;
       context.showSnack(e.message);
@@ -162,6 +183,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
       // they're visited, instead of showing the pre-game snapshot.
       ref.invalidate(historyControllerProvider);
       ref.invalidate(myStatsControllerProvider);
+      ref.read(analyticsServiceProvider).logGameComplete(
+            mode: 'solo',
+            categoryId: widget.category.id,
+            xpEarned: summary.xpEarned,
+            ballEarned: summary.totalBall,
+          );
       context.pushReplacement(AppRoutes.ballReveal, extra: quizResult);
       return;
     }

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/constants/app_durations.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
@@ -67,6 +68,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    ref.read(analyticsServiceProvider).logOnboardingStepViewed(1);
     // Foydalanuvchi username'ni tuzatgach, eski "band" xatosi ekranda
     // osilib qolmasin.
     _usernameController.addListener(_clearUsernameTakenError);
@@ -136,6 +138,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     if (_step < _totalSteps) {
       setState(() => _step++);
+      unawaited(ref.read(analyticsServiceProvider).logOnboardingStepViewed(_step));
     } else {
       unawaited(_finish());
     }
@@ -176,6 +179,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
       if (!mounted) return;
       context.go(AppRoutes.home);
+      unawaited(ref.read(analyticsServiceProvider).logOnboardingCompleted());
     } on Failure catch (e) {
       if (!mounted) return;
       context.showSnack(e.message);
