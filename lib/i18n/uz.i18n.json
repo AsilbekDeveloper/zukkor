@@ -143,6 +143,8 @@
     "title": "Nechta savol?",
     "subtitle": "Tezkor variantni tanlang yoki o'zingiz belgilang",
     "customLabel": "O'zi tanlash",
+    "decrement": "Kamaytirish",
+    "increment": "Ko'paytirish",
     "startButton": "Quizni boshlash"
   },
   "quizIntro": {

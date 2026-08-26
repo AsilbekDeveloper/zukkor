@@ -350,6 +350,8 @@ class _Translations$quizSetup$ru implements Translations$quizSetup$en {
 	@override String get title => 'Сколько вопросов?';
 	@override String get subtitle => 'Выберите готовый вариант или укажите своё число';
 	@override String get customLabel => 'Свой вариант';
+	@override String get decrement => 'Уменьшить';
+	@override String get increment => 'Увеличить';
 	@override String get startButton => 'Начать викторину';
 }
 
@@ -941,6 +943,8 @@ extension on TranslationsRu {
 			'quizSetup.title' => 'Сколько вопросов?',
 			'quizSetup.subtitle' => 'Выберите готовый вариант или укажите своё число',
 			'quizSetup.customLabel' => 'Свой вариант',
+			'quizSetup.decrement' => 'Уменьшить',
+			'quizSetup.increment' => 'Увеличить',
 			'quizSetup.startButton' => 'Начать викторину',
 			'quizIntro.startLabel' => 'Старт!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Вопрос ${current} из ${total}',

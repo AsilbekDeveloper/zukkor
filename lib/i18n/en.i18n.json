@@ -143,6 +143,8 @@
     "title": "How many questions?",
     "subtitle": "Pick a quick option or choose your own",
     "customLabel": "Custom",
+    "decrement": "Decrease",
+    "increment": "Increase",
     "startButton": "Start quiz"
   },
   "quizIntro": {

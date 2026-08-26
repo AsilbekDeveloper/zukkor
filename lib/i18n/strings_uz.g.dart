@@ -344,6 +344,8 @@ class _Translations$quizSetup$uz implements Translations$quizSetup$en {
 	@override String get title => 'Nechta savol?';
 	@override String get subtitle => 'Tezkor variantni tanlang yoki o\'zingiz belgilang';
 	@override String get customLabel => 'O\'zi tanlash';
+	@override String get decrement => 'Kamaytirish';
+	@override String get increment => 'Ko\'paytirish';
 	@override String get startButton => 'Quizni boshlash';
 }
 
@@ -935,6 +937,8 @@ extension on TranslationsUz {
 			'quizSetup.title' => 'Nechta savol?',
 			'quizSetup.subtitle' => 'Tezkor variantni tanlang yoki o\'zingiz belgilang',
 			'quizSetup.customLabel' => 'O\'zi tanlash',
+			'quizSetup.decrement' => 'Kamaytirish',
+			'quizSetup.increment' => 'Ko\'paytirish',
 			'quizSetup.startButton' => 'Quizni boshlash',
 			'quizIntro.startLabel' => 'Boshlash!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => '${current}/${total}-savol',

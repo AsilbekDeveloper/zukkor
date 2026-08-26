@@ -574,6 +574,12 @@ class Translations$quizSetup$en {
 	/// en: 'Custom'
 	String get customLabel => 'Custom';
 
+	/// en: 'Decrease'
+	String get decrement => 'Decrease';
+
+	/// en: 'Increase'
+	String get increment => 'Increase';
+
 	/// en: 'Start quiz'
 	String get startButton => 'Start quiz';
 }
@@ -1650,6 +1656,8 @@ extension on Translations {
 			'quizSetup.title' => 'How many questions?',
 			'quizSetup.subtitle' => 'Pick a quick option or choose your own',
 			'quizSetup.customLabel' => 'Custom',
+			'quizSetup.decrement' => 'Decrease',
+			'quizSetup.increment' => 'Increase',
 			'quizSetup.startButton' => 'Start quiz',
 			'quizIntro.startLabel' => 'Start!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Question ${current}/${total}',
