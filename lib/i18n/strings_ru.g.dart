@@ -133,6 +133,8 @@ class _Translations$home$ru implements Translations$home$en {
 	@override String get categoriesTitle => 'Категории';
 	@override String get seeAll => 'Все';
 	@override String get challengeToDuel => 'Вызвать на дуэль';
+	@override String get createQuizTitle => 'Создайте свой квиз';
+	@override String get createQuizSubtitle => 'Составьте вопросы и бросьте вызов друзьям';
 }
 
 // Path: categories
@@ -848,6 +850,8 @@ extension on TranslationsRu {
 			'home.categoriesTitle' => 'Категории',
 			'home.seeAll' => 'Все',
 			'home.challengeToDuel' => 'Вызвать на дуэль',
+			'home.createQuizTitle' => 'Создайте свой квиз',
+			'home.createQuizSubtitle' => 'Составьте вопросы и бросьте вызов друзьям',
 			'categories.title' => 'Выберите категорию',
 			'leaderboard.greeting' => 'Рейтинг',
 			'leaderboard.title' => 'Кто лучший?',

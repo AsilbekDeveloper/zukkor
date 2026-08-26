@@ -23,7 +23,9 @@
     "joinWithCode": "Kod bilan qo'shilish",
     "categoriesTitle": "Kategoriyalar",
     "seeAll": "Barchasi",
-    "challengeToDuel": "Duelga chaqirish"
+    "challengeToDuel": "Duelga chaqirish",
+    "createQuizTitle": "O'z quizingizni yarating",
+    "createQuizSubtitle": "Savollaringizni tuzing va do'stlaringiz bilan bellashing"
   },
   "categories": {
     "title": "Kategoriya tanlang"

@@ -174,6 +174,12 @@ class Translations$home$en {
 
 	/// en: 'Challenge to a duel'
 	String get challengeToDuel => 'Challenge to a duel';
+
+	/// en: 'Create your own quiz'
+	String get createQuizTitle => 'Create your own quiz';
+
+	/// en: 'Write your questions and challenge your friends'
+	String get createQuizSubtitle => 'Write your questions and challenge your friends';
 }
 
 // Path: categories
@@ -1553,6 +1559,8 @@ extension on Translations {
 			'home.categoriesTitle' => 'Categories',
 			'home.seeAll' => 'See all',
 			'home.challengeToDuel' => 'Challenge to a duel',
+			'home.createQuizTitle' => 'Create your own quiz',
+			'home.createQuizSubtitle' => 'Write your questions and challenge your friends',
 			'categories.title' => 'Choose a category',
 			'leaderboard.greeting' => 'Leaderboard',
 			'leaderboard.title' => 'Who\'s the best?',

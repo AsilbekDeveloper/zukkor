@@ -25,6 +25,8 @@ abstract final class AppStrings {
   static const String categoriesTitle = 'Categories';
   static const String seeAll = 'See all';
   static const String challengeToDuel = 'Challenge to a duel';
+  static const String createQuizTitle = 'Create your own quiz';
+  static const String createQuizSubtitle = 'Write your questions and challenge your friends';
 
   static String dayUnit(int count) => count == 1 ? 'day' : 'days';
   static String friendsCount(int count) => '$count friend${count == 1 ? '' : 's'}';
@@ -301,6 +303,7 @@ abstract final class AppStrings {
   static const String navFriends = 'Friends';
   static const String navProfile = 'Profile';
   static const String comingSoon = 'Coming soon';
+  static const String manualQuizScreenTitle = 'Create a quiz manually';
 
   // Onboarding — 3-step wizard (Zukkor_Profil_Yaratish.docx)
   static const String onboardingStepCount = 'Step';

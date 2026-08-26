@@ -15,6 +15,7 @@ import 'package:zukkor/features/ai_quiz/data/repositories/ai_quiz_repository_imp
 import 'package:zukkor/features/ai_quiz/domain/entities/ai_quiz.dart';
 import 'package:zukkor/features/ai_quiz/domain/entities/manual_question_input.dart';
 import 'package:zukkor/features/ai_quiz/domain/repositories/ai_quiz_repository.dart';
+import 'package:zukkor/features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
 import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:zukkor/features/auth/domain/entities/user.dart';
@@ -371,6 +372,10 @@ Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) 
         builder: (context, state) => LobbyScreen(role: state.extra! as LobbyRole),
       ),
       GoRoute(path: AppRoutes.notifications, builder: (context, state) => const NotificationsScreen()),
+      GoRoute(
+        path: AppRoutes.createManualQuiz,
+        builder: (context, state) => const CreateManualQuizScreen(),
+      ),
     ],
   );
 
@@ -406,11 +411,12 @@ void main() {
     expect(find.text(AppStrings.createRoom), findsOneWidget);
     expect(find.text(AppStrings.joinWithCode), findsOneWidget);
     expect(find.text(AppStrings.categoriesTitle), findsOneWidget);
-    expect(find.text(AppStrings.friendsCount(3)), findsOneWidget);
+    expect(find.text(AppStrings.createQuizTitle), findsOneWidget);
 
     // One card per sample category.
     expect(find.text('Math'), findsOneWidget);
-    expect(find.text('Memes'), findsOneWidget);
+    expect(find.text('Movies'), findsOneWidget);
+    expect(find.text('Memes'), findsNothing);
 
     // No RenderFlex overflow (or any other) errors were thrown mid-layout.
     expect(tester.takeException(), isNull);
@@ -515,16 +521,16 @@ void main() {
     expect(find.text(AppStrings.duelScreenTitle), findsOneWidget);
   });
 
-  testWidgets('the friends-online shortcut navigates to the Duel screen', (tester) async {
+  testWidgets('the create-quiz card navigates to manual quiz creation', (tester) async {
     // Tall viewport so the last list item isn't near the bottom nav bar's
     // raised center Play button, whose hit area extends above its own
     // bounding box and can otherwise steal the tap.
     await _pumpHome(tester, size: const Size(390, 1400));
 
-    await tester.tap(find.text(AppStrings.friendsCount(3)));
+    await tester.tap(find.text(AppStrings.createQuizTitle));
     await tester.pumpAndSettle();
 
-    expect(find.text(AppStrings.duelScreenTitle), findsOneWidget);
+    expect(find.text(AppStrings.manualQuizScreenTitle), findsOneWidget);
   });
 
   testWidgets('"See all" navigates to the Categories screen', (tester) async {

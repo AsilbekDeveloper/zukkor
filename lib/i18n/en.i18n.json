@@ -23,7 +23,9 @@
     "joinWithCode": "Join with a code",
     "categoriesTitle": "Categories",
     "seeAll": "See all",
-    "challengeToDuel": "Challenge to a duel"
+    "challengeToDuel": "Challenge to a duel",
+    "createQuizTitle": "Create your own quiz",
+    "createQuizSubtitle": "Write your questions and challenge your friends"
   },
   "categories": {
     "title": "Choose a category"

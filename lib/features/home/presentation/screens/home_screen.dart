@@ -17,7 +17,6 @@ import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../duel/presentation/controllers/duel_controller.dart';
-import '../../../friends/presentation/controllers/friends_controller.dart';
 import '../../../leaderboard/domain/entities/player_stats.dart';
 import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../../../lobby/presentation/controllers/lobby_controller.dart';
@@ -27,21 +26,21 @@ import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../widgets/category_grid.dart';
+import '../widgets/create_quiz_card.dart';
 import '../widgets/duel_hero_card.dart';
-import '../widgets/friends_card.dart';
 import '../widgets/home_header.dart';
 import '../widgets/multiplayer_row.dart';
 import '../widgets/stats_strip.dart';
 
 /// The main screen — mirrors the prototype's `view-home` 1:1: greeting
 /// header, duel hero card, stats strip, create/join room buttons,
-/// category grid, and an online-friends shortcut.
+/// category grid, and a call-to-action for creating your own quiz.
 ///
 /// CURRENT STATE: name/avatar, the unread-notifications dot, and the
 /// stats strip (XP/rank/level) + streak are all real, from
 /// `GET /leaderboard/{my_user_id}` via [MyStatsController] (shared with
-/// [ProfileScreen]). "Start a duel" and the friends-online shortcut both
-/// push the Duel (choose a friend) screen;
+/// [ProfileScreen]). "Start a duel" pushes the Duel (choose a friend)
+/// screen; tapping the create-quiz card goes to manual quiz creation;
 /// "See all", the center Play tab, and tapping a category all go to the
 /// Categories/quiz flow; "Create a room" and "Join with a code" go to
 /// the Lobby flow; the bell opens Notifications, which marks everything
@@ -60,7 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Categories/friends/profile/stats only change via this device's own
+    // Categories/profile/stats only change via this device's own
     // actions (each of those flows refreshes its own provider directly),
     // so re-fetching them on every Home visit is wasted traffic — loaded
     // once per session and reused. Notifications stay unconditional: a
@@ -69,9 +68,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // stale for the rest of the session otherwise.
     if (ref.read(categoriesControllerProvider).data == null) {
       Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
-    }
-    if (ref.read(friendsControllerProvider).data == null) {
-      Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
     }
     if (ref.read(currentUserControllerProvider).data == null || ref.read(myStatsControllerProvider).data == null) {
       Future.microtask(() async {
@@ -183,13 +179,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ];
   }
 
-  /// Categories grid + friends-online shortcut.
+  /// Categories grid + create-quiz shortcut.
   List<Widget> _discoverSection(BuildContext context) {
     final List<QuizCategory> categories = ref
             .watch(categoriesControllerProvider)
             .data
             ?.map(QuizCategory.fromEntity)
-            .take(6)
+            .take(4)
             .toList() ??
         const [];
 
@@ -209,10 +205,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
       ),
       AppSpacing.md.vGap,
-      FriendsCard(
-        friendCount: ref.watch(friendsControllerProvider).data?.length ?? 0,
-        onTap: () => context.push(AppRoutes.duel),
-      ),
+      CreateQuizCard(onTap: () => context.push(AppRoutes.createManualQuiz)),
     ];
   }
 }

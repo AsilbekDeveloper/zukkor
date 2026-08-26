@@ -38,7 +38,9 @@
     "joinWithCode": "Присоединиться по коду",
     "categoriesTitle": "Категории",
     "seeAll": "Все",
-    "challengeToDuel": "Вызвать на дуэль"
+    "challengeToDuel": "Вызвать на дуэль",
+    "createQuizTitle": "Создайте свой квиз",
+    "createQuizSubtitle": "Составьте вопросы и бросьте вызов друзьям"
   },
   "categories": {
     "title": "Выберите категорию"

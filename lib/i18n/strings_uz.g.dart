@@ -127,6 +127,8 @@ class _Translations$home$uz implements Translations$home$en {
 	@override String get categoriesTitle => 'Kategoriyalar';
 	@override String get seeAll => 'Barchasi';
 	@override String get challengeToDuel => 'Duelga chaqirish';
+	@override String get createQuizTitle => 'O\'z quizingizni yarating';
+	@override String get createQuizSubtitle => 'Savollaringizni tuzing va do\'stlaringiz bilan bellashing';
 }
 
 // Path: categories
@@ -842,6 +844,8 @@ extension on TranslationsUz {
 			'home.categoriesTitle' => 'Kategoriyalar',
 			'home.seeAll' => 'Barchasi',
 			'home.challengeToDuel' => 'Duelga chaqirish',
+			'home.createQuizTitle' => 'O\'z quizingizni yarating',
+			'home.createQuizSubtitle' => 'Savollaringizni tuzing va do\'stlaringiz bilan bellashing',
 			'categories.title' => 'Kategoriya tanlang',
 			'leaderboard.greeting' => 'Reyting',
 			'leaderboard.title' => 'Kim eng zo\'r?',
