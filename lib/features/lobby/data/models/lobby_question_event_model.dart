@@ -13,6 +13,7 @@ class LobbyQuestionEventModel {
       question: LobbyQuestion(
         text: questionJson['text'] as String,
         options: (questionJson['options'] as List<dynamic>).cast<String>(),
+        correctOption: questionJson['correct_option'] as int,
         timeLimitMs: questionJson['time_limit_ms'] as int,
       ),
     );

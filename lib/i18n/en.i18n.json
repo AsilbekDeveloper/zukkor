@@ -145,6 +145,8 @@
     "customLabel": "Custom",
     "decrement": "Decrease",
     "increment": "Increase",
+    "availableCount(param=count)": "$count questions available",
+    "noQuestionsAvailable": "No questions in this category yet",
     "startButton": "Start quiz"
   },
   "quizIntro": {

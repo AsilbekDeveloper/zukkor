@@ -346,6 +346,8 @@ class _Translations$quizSetup$uz implements Translations$quizSetup$en {
 	@override String get customLabel => 'O\'zi tanlash';
 	@override String get decrement => 'Kamaytirish';
 	@override String get increment => 'Ko\'paytirish';
+	@override String availableCount({required Object count}) => '${count} ta savol mavjud';
+	@override String get noQuestionsAvailable => 'Bu kategoriyada hali savol yo\'q';
 	@override String get startButton => 'Quizni boshlash';
 }
 
@@ -939,6 +941,8 @@ extension on TranslationsUz {
 			'quizSetup.customLabel' => 'O\'zi tanlash',
 			'quizSetup.decrement' => 'Kamaytirish',
 			'quizSetup.increment' => 'Ko\'paytirish',
+			'quizSetup.availableCount' => ({required Object count}) => '${count} ta savol mavjud',
+			'quizSetup.noQuestionsAvailable' => 'Bu kategoriyada hali savol yo\'q',
 			'quizSetup.startButton' => 'Quizni boshlash',
 			'quizIntro.startLabel' => 'Boshlash!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => '${current}/${total}-savol',

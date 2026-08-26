@@ -81,6 +81,7 @@ class _FakeQuizRepository implements QuizRepository {
         sessionQuestionId: order,
         questionText: 'Question $order',
         options: const ['A', 'B', 'C', 'D'],
+        correctOptionIndex: 0,
         order: order,
         total: 5,
         timeLimitMs: 15000,

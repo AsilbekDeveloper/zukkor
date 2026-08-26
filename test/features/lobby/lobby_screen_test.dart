@@ -204,7 +204,7 @@ class _FakeLobbyRepository implements LobbyRepository {
       const LobbyQuestionEvent(
         roomId: 'room-1',
         questionIndex: 0,
-        question: LobbyQuestion(text: '2 + 2 = ?', options: ['3', '4', '5', '6'], timeLimitMs: 15000),
+        question: LobbyQuestion(text: '2 + 2 = ?', options: ['3', '4', '5', '6'], correctOption: 1, timeLimitMs: 15000),
       ),
     );
   }

@@ -160,6 +160,8 @@
     "customLabel": "Свой вариант",
     "decrement": "Уменьшить",
     "increment": "Увеличить",
+    "availableCount(param=count)": "Доступно $count вопросов",
+    "noQuestionsAvailable": "В этой категории пока нет вопросов",
     "startButton": "Начать викторину"
   },
   "quizIntro": {

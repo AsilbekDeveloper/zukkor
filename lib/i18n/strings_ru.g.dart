@@ -352,6 +352,8 @@ class _Translations$quizSetup$ru implements Translations$quizSetup$en {
 	@override String get customLabel => 'Свой вариант';
 	@override String get decrement => 'Уменьшить';
 	@override String get increment => 'Увеличить';
+	@override String availableCount({required Object count}) => 'Доступно ${count} вопросов';
+	@override String get noQuestionsAvailable => 'В этой категории пока нет вопросов';
 	@override String get startButton => 'Начать викторину';
 }
 
@@ -945,6 +947,8 @@ extension on TranslationsRu {
 			'quizSetup.customLabel' => 'Свой вариант',
 			'quizSetup.decrement' => 'Уменьшить',
 			'quizSetup.increment' => 'Увеличить',
+			'quizSetup.availableCount' => ({required Object count}) => 'Доступно ${count} вопросов',
+			'quizSetup.noQuestionsAvailable' => 'В этой категории пока нет вопросов',
 			'quizSetup.startButton' => 'Начать викторину',
 			'quizIntro.startLabel' => 'Старт!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Вопрос ${current} из ${total}',

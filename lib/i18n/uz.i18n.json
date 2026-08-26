@@ -145,6 +145,8 @@
     "customLabel": "O'zi tanlash",
     "decrement": "Kamaytirish",
     "increment": "Ko'paytirish",
+    "availableCount(param=count)": "$count ta savol mavjud",
+    "noQuestionsAvailable": "Bu kategoriyada hali savol yo'q",
     "startButton": "Quizni boshlash"
   },
   "quizIntro": {

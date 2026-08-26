@@ -503,6 +503,7 @@ class _FakeQuizRepository implements QuizRepository {
           sessionQuestionId: 1,
           questionText: 'What is 2 + 2?',
           options: ['3', '4', '5', '6'],
+          correctOptionIndex: 1,
           order: 1,
           total: 5,
           timeLimitMs: 15000,

@@ -580,6 +580,12 @@ class Translations$quizSetup$en {
 	/// en: 'Increase'
 	String get increment => 'Increase';
 
+	/// en: '$count questions available'
+	String availableCount({required Object count}) => '${count} questions available';
+
+	/// en: 'No questions in this category yet'
+	String get noQuestionsAvailable => 'No questions in this category yet';
+
 	/// en: 'Start quiz'
 	String get startButton => 'Start quiz';
 }
@@ -1658,6 +1664,8 @@ extension on Translations {
 			'quizSetup.customLabel' => 'Custom',
 			'quizSetup.decrement' => 'Decrease',
 			'quizSetup.increment' => 'Increase',
+			'quizSetup.availableCount' => ({required Object count}) => '${count} questions available',
+			'quizSetup.noQuestionsAvailable' => 'No questions in this category yet',
 			'quizSetup.startButton' => 'Start quiz',
 			'quizIntro.startLabel' => 'Start!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Question ${current}/${total}',
