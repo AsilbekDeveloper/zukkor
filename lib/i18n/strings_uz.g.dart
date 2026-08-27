@@ -57,6 +57,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$quiz$uz quiz = _Translations$quiz$uz._(_root);
 	@override late final _Translations$ballReveal$uz ballReveal = _Translations$ballReveal$uz._(_root);
 	@override late final _Translations$result$uz result = _Translations$result$uz._(_root);
+	@override late final _Translations$report$uz report = _Translations$report$uz._(_root);
 	@override late final _Translations$joinCode$uz joinCode = _Translations$joinCode$uz._(_root);
 	@override late final _Translations$lobby$uz lobby = _Translations$lobby$uz._(_root);
 	@override late final _Translations$lobbyGame$uz lobbyGame = _Translations$lobbyGame$uz._(_root);
@@ -397,6 +398,25 @@ class _Translations$result$uz implements Translations$result$en {
 	@override String get challengeAFriend => 'Do\'stni chaqirish';
 	@override String get backToHome => 'Bosh sahifaga';
 	@override String get breakdownTitle => 'Savollar bo\'yicha natija';
+}
+
+// Path: report
+class _Translations$report$uz implements Translations$report$en {
+	_Translations$report$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get buttonTooltip => 'Savolni belgilash';
+	@override String get dialogTitle => 'Nima muammo?';
+	@override String get reasonWrongAnswer => 'Javob noto\'g\'ri';
+	@override String get reasonUnclear => 'Savol tushunarsiz/noaniq';
+	@override String get reasonOffensive => 'Nomaqbul/haqoratli mazmun';
+	@override String get reasonOther => 'Boshqa';
+	@override String get commentLabel => 'Izoh (ixtiyoriy)';
+	@override String get commentHint => 'Batafsilroq yozib bering...';
+	@override String get submit => 'Yuborish';
+	@override String get success => 'Rahmat, savol ko\'rib chiqiladi';
 }
 
 // Path: joinCode
@@ -956,6 +976,16 @@ extension on TranslationsUz {
 			'result.challengeAFriend' => 'Do\'stni chaqirish',
 			'result.backToHome' => 'Bosh sahifaga',
 			'result.breakdownTitle' => 'Savollar bo\'yicha natija',
+			'report.buttonTooltip' => 'Savolni belgilash',
+			'report.dialogTitle' => 'Nima muammo?',
+			'report.reasonWrongAnswer' => 'Javob noto\'g\'ri',
+			'report.reasonUnclear' => 'Savol tushunarsiz/noaniq',
+			'report.reasonOffensive' => 'Nomaqbul/haqoratli mazmun',
+			'report.reasonOther' => 'Boshqa',
+			'report.commentLabel' => 'Izoh (ixtiyoriy)',
+			'report.commentHint' => 'Batafsilroq yozib bering...',
+			'report.submit' => 'Yuborish',
+			'report.success' => 'Rahmat, savol ko\'rib chiqiladi',
 			'joinCode.hint' => 'Do\'stingiz yuborgan 6 xonali xona kodini kiriting',
 			'joinCode.joinButton' => 'Qo\'shilish',
 			'joinCode.codeDigitLabel' => ({required Object position}) => '${position}-raqam',

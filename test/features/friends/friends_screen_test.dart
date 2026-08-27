@@ -52,6 +52,10 @@ class _FakeQuizRepository implements QuizRepository {
     required int? selectedOption,
   }) =>
       throw UnimplementedError();
+
+  @override
+  Future<void> reportQuestion({required int questionId, required String reason, String? comment}) =>
+      throw UnimplementedError();
 }
 
 class _FakeLeaderboardRepository implements LeaderboardRepository {

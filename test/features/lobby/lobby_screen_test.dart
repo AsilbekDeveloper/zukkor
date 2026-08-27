@@ -107,6 +107,10 @@ class _FakeQuizRepository implements QuizRepository {
     required int? selectedOption,
   }) =>
       throw UnimplementedError();
+
+  @override
+  Future<void> reportQuestion({required int questionId, required String reason, String? comment}) =>
+      throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta lobby repository — real xona

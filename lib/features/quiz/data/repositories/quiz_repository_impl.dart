@@ -55,6 +55,19 @@ class QuizRepositoryImpl implements QuizRepository {
       throw FailureMapper.fromDio(e);
     }
   }
+
+  @override
+  Future<void> reportQuestion({
+    required int questionId,
+    required String reason,
+    String? comment,
+  }) async {
+    try {
+      await _remoteDataSource.reportQuestion(questionId: questionId, reason: reason, comment: comment);
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
 }
 
 final Provider<QuizRepository> quizRepositoryProvider = Provider<QuizRepository>(

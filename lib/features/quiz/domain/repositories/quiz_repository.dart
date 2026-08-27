@@ -16,4 +16,8 @@ abstract interface class QuizRepository {
     required int sessionQuestionId,
     required int? selectedOption,
   });
+
+  /// `POST /questions/{question_id}/report`. `reason` is one of
+  /// 'wrong_answer' | 'unclear' | 'offensive' | 'other'.
+  Future<void> reportQuestion({required int questionId, required String reason, String? comment});
 }

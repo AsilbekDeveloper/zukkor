@@ -60,6 +60,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$quiz$en quiz = Translations$quiz$en._(_root);
 	late final Translations$ballReveal$en ballReveal = Translations$ballReveal$en._(_root);
 	late final Translations$result$en result = Translations$result$en._(_root);
+	late final Translations$report$en report = Translations$report$en._(_root);
 	late final Translations$joinCode$en joinCode = Translations$joinCode$en._(_root);
 	late final Translations$lobby$en lobby = Translations$lobby$en._(_root);
 	late final Translations$lobbyGame$en lobbyGame = Translations$lobbyGame$en._(_root);
@@ -660,6 +661,45 @@ class Translations$result$en {
 
 	/// en: 'Question by question'
 	String get breakdownTitle => 'Question by question';
+}
+
+// Path: report
+class Translations$report$en {
+	Translations$report$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Report question'
+	String get buttonTooltip => 'Report question';
+
+	/// en: 'What's the issue?'
+	String get dialogTitle => 'What\'s the issue?';
+
+	/// en: 'Wrong answer'
+	String get reasonWrongAnswer => 'Wrong answer';
+
+	/// en: 'Unclear question'
+	String get reasonUnclear => 'Unclear question';
+
+	/// en: 'Offensive content'
+	String get reasonOffensive => 'Offensive content';
+
+	/// en: 'Other'
+	String get reasonOther => 'Other';
+
+	/// en: 'Comment (optional)'
+	String get commentLabel => 'Comment (optional)';
+
+	/// en: 'Tell us more...'
+	String get commentHint => 'Tell us more...';
+
+	/// en: 'Submit'
+	String get submit => 'Submit';
+
+	/// en: 'Thank you, the question will be reviewed'
+	String get success => 'Thank you, the question will be reviewed';
 }
 
 // Path: joinCode
@@ -1679,6 +1719,16 @@ extension on Translations {
 			'result.challengeAFriend' => 'Challenge a friend',
 			'result.backToHome' => 'Back to home',
 			'result.breakdownTitle' => 'Question by question',
+			'report.buttonTooltip' => 'Report question',
+			'report.dialogTitle' => 'What\'s the issue?',
+			'report.reasonWrongAnswer' => 'Wrong answer',
+			'report.reasonUnclear' => 'Unclear question',
+			'report.reasonOffensive' => 'Offensive content',
+			'report.reasonOther' => 'Other',
+			'report.commentLabel' => 'Comment (optional)',
+			'report.commentHint' => 'Tell us more...',
+			'report.submit' => 'Submit',
+			'report.success' => 'Thank you, the question will be reviewed',
 			'joinCode.hint' => 'Enter the 6-digit room code your friend sent you',
 			'joinCode.joinButton' => 'Join',
 			'joinCode.codeDigitLabel' => ({required Object position}) => 'Code digit ${position}',

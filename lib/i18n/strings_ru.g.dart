@@ -57,6 +57,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$quiz$ru quiz = _Translations$quiz$ru._(_root);
 	@override late final _Translations$ballReveal$ru ballReveal = _Translations$ballReveal$ru._(_root);
 	@override late final _Translations$result$ru result = _Translations$result$ru._(_root);
+	@override late final _Translations$report$ru report = _Translations$report$ru._(_root);
 	@override late final _Translations$joinCode$ru joinCode = _Translations$joinCode$ru._(_root);
 	@override late final _Translations$lobby$ru lobby = _Translations$lobby$ru._(_root);
 	@override late final _Translations$lobbyGame$ru lobbyGame = _Translations$lobbyGame$ru._(_root);
@@ -403,6 +404,25 @@ class _Translations$result$ru implements Translations$result$en {
 	@override String get challengeAFriend => 'Вызвать друга';
 	@override String get backToHome => 'На главную';
 	@override String get breakdownTitle => 'Результаты по вопросам';
+}
+
+// Path: report
+class _Translations$report$ru implements Translations$report$en {
+	_Translations$report$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get buttonTooltip => 'Пожаловаться на вопрос';
+	@override String get dialogTitle => 'В чем проблема?';
+	@override String get reasonWrongAnswer => 'Неправильный ответ';
+	@override String get reasonUnclear => 'Вопрос непонятен/неясен';
+	@override String get reasonOffensive => 'Неприемлемый контент';
+	@override String get reasonOther => 'Другое';
+	@override String get commentLabel => 'Комментарий (необязательно)';
+	@override String get commentHint => 'Опишите подробнее...';
+	@override String get submit => 'Отправить';
+	@override String get success => 'Спасибо, вопрос будет рассмотрен';
 }
 
 // Path: joinCode
@@ -962,6 +982,16 @@ extension on TranslationsRu {
 			'result.challengeAFriend' => 'Вызвать друга',
 			'result.backToHome' => 'На главную',
 			'result.breakdownTitle' => 'Результаты по вопросам',
+			'report.buttonTooltip' => 'Пожаловаться на вопрос',
+			'report.dialogTitle' => 'В чем проблема?',
+			'report.reasonWrongAnswer' => 'Неправильный ответ',
+			'report.reasonUnclear' => 'Вопрос непонятен/неясен',
+			'report.reasonOffensive' => 'Неприемлемый контент',
+			'report.reasonOther' => 'Другое',
+			'report.commentLabel' => 'Комментарий (необязательно)',
+			'report.commentHint' => 'Опишите подробнее...',
+			'report.submit' => 'Отправить',
+			'report.success' => 'Спасибо, вопрос будет рассмотрен',
 			'joinCode.hint' => 'Введите 6-значный код комнаты, который прислал друг',
 			'joinCode.joinButton' => 'Присоединиться',
 			'joinCode.codeDigitLabel' => ({required Object position}) => 'Цифра кода ${position}',

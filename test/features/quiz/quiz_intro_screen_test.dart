@@ -61,6 +61,10 @@ class _FakeQuizRepository implements QuizRepository {
     required int? selectedOption,
   }) =>
       throw UnimplementedError();
+
+  @override
+  Future<void> reportQuestion({required int questionId, required String reason, String? comment}) =>
+      throw UnimplementedError();
 }
 
 Future<void> _pumpIntro(WidgetTester tester, {Size size = const Size(390, 844)}) async {

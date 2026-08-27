@@ -77,6 +77,10 @@ class _FakeQuizRepository implements QuizRepository {
     );
   }
 
+  @override
+  Future<void> reportQuestion({required int questionId, required String reason, String? comment}) =>
+      throw UnimplementedError();
+
   QuizQuestionData _questionFor(int order) => QuizQuestionData(
         sessionQuestionId: order,
         questionText: 'Question $order',

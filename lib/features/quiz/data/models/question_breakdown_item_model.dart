@@ -3,22 +3,26 @@ import '../../domain/entities/question_breakdown_item.dart';
 class QuestionBreakdownItemModel {
   const QuestionBreakdownItemModel({
     required this.order,
+    required this.questionId,
     required this.questionText,
     required this.isCorrect,
   });
 
   factory QuestionBreakdownItemModel.fromJson(Map<String, dynamic> json) => QuestionBreakdownItemModel(
         order: json['order'] as int,
+        questionId: json['question_id'] as int,
         questionText: json['question_text'] as String,
         isCorrect: json['is_correct'] as bool,
       );
 
   final int order;
+  final int questionId;
   final String questionText;
   final bool isCorrect;
 
   QuestionBreakdownItem toEntity() => QuestionBreakdownItem(
         order: order,
+        questionId: questionId,
         questionText: questionText,
         isCorrect: isCorrect,
       );

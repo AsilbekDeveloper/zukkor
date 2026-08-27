@@ -169,6 +169,18 @@
     "backToHome": "Bosh sahifaga",
     "breakdownTitle": "Savollar bo'yicha natija"
   },
+  "report": {
+    "buttonTooltip": "Savolni belgilash",
+    "dialogTitle": "Nima muammo?",
+    "reasonWrongAnswer": "Javob noto'g'ri",
+    "reasonUnclear": "Savol tushunarsiz/noaniq",
+    "reasonOffensive": "Nomaqbul/haqoratli mazmun",
+    "reasonOther": "Boshqa",
+    "commentLabel": "Izoh (ixtiyoriy)",
+    "commentHint": "Batafsilroq yozib bering...",
+    "submit": "Yuborish",
+    "success": "Rahmat, savol ko'rib chiqiladi"
+  },
   "joinCode": {
     "hint": "Do'stingiz yuborgan 6 xonali xona kodini kiriting",
     "joinButton": "Qo'shilish",

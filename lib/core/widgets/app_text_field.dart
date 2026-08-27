@@ -24,11 +24,13 @@ class AppTextField extends StatefulWidget {
     this.onSubmitted,
     this.enabled = true,
     this.maxLength,
+    this.maxLines = 1,
   });
 
   final String label;
   final TextEditingController? controller;
   final String? hint;
+  final int maxLines;
 
   /// Serverdan kelgan maydon xatosi (masalan "Bu email band") —
   /// forma validatoridan mustaqil ko'rsatiladi.
@@ -70,6 +72,7 @@ class _AppTextFieldState extends State<AppTextField> {
           controller: widget.controller,
           enabled: widget.enabled,
           obscureText: _obscured,
+          maxLines: widget.maxLines,
           keyboardType: widget.keyboardType,
           textInputAction: widget.textInputAction,
           autofillHints: widget.autofillHints,

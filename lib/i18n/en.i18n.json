@@ -169,6 +169,18 @@
     "backToHome": "Back to home",
     "breakdownTitle": "Question by question"
   },
+  "report": {
+    "buttonTooltip": "Report question",
+    "dialogTitle": "What's the issue?",
+    "reasonWrongAnswer": "Wrong answer",
+    "reasonUnclear": "Unclear question",
+    "reasonOffensive": "Offensive content",
+    "reasonOther": "Other",
+    "commentLabel": "Comment (optional)",
+    "commentHint": "Tell us more...",
+    "submit": "Submit",
+    "success": "Thank you, the question will be reviewed"
+  },
   "joinCode": {
     "hint": "Enter the 6-digit room code your friend sent you",
     "joinButton": "Join",

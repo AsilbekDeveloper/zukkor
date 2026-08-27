@@ -44,6 +44,17 @@ class QuizRemoteDataSource {
     );
     return AnswerResponseModel.fromJson(response.data as Map<String, dynamic>);
   }
+
+  Future<void> reportQuestion({
+    required int questionId,
+    required String reason,
+    String? comment,
+  }) async {
+    await _dio.post<dynamic>(
+      ApiEndpoints.reportQuestion(questionId),
+      data: {'reason': reason, 'comment': comment},
+    );
+  }
 }
 
 final Provider<QuizRemoteDataSource> quizRemoteDataSourceProvider = Provider<QuizRemoteDataSource>(
