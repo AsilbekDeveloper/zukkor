@@ -110,6 +110,16 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> deleteAccount(String? password) => throw UnimplementedError();
+
+  @override
+  Future<void> forgotPassword(String email) async {}
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {}
 }
 
 /// The onboarding wizard has no entry point wired up yet (login/register

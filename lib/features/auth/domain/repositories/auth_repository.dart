@@ -86,4 +86,17 @@ abstract interface class AuthRepository {
   /// foydalanuvchiga bog'laydi. Best-effort: muvaffaqiyatsiz bo'lsa xato
   /// tashlamaydi (push bildirishnoma ilovaning asosiy funksiyasi emas).
   Future<void> registerPushToken(String token);
+
+  /// `POST /auth/forgot-password`. Always succeeds (204) regardless of
+  /// whether the email is registered — never throws for an unknown email.
+  Future<void> forgotPassword(String email);
+
+  /// `POST /auth/reset-password`. Throws a [Failure] with a generic
+  /// "code noto'g'ri yoki muddati o'tgan" message for any wrong/expired/
+  /// exhausted code — the backend deliberately doesn't distinguish why.
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  });
 }

@@ -130,6 +130,21 @@ class AuthRemoteDataSource {
       data: {'token': token, 'platform': 'android'},
     );
   }
+
+  Future<void> forgotPassword(String email) async {
+    await _dio.post<void>(ApiEndpoints.forgotPassword, data: {'email': email});
+  }
+
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    await _dio.post<void>(
+      ApiEndpoints.resetPassword,
+      data: {'email': email, 'code': code, 'new_password': newPassword},
+    );
+  }
 }
 
 final Provider<AuthRemoteDataSource> authRemoteDataSourceProvider =

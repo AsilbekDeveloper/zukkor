@@ -10,11 +10,13 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/change_password_use_case.dart';
 import '../../domain/usecases/check_username_available_use_case.dart';
 import '../../domain/usecases/delete_account_use_case.dart';
+import '../../domain/usecases/forgot_password_use_case.dart';
 import '../../domain/usecases/get_current_user_use_case.dart';
 import '../../domain/usecases/login_use_case.dart';
 import '../../domain/usecases/logout_use_case.dart';
 import '../../domain/usecases/register_push_token_use_case.dart';
 import '../../domain/usecases/register_use_case.dart';
+import '../../domain/usecases/reset_password_use_case.dart';
 import '../../domain/usecases/sign_in_with_google_use_case.dart';
 import '../../domain/usecases/update_profile_use_case.dart';
 import '../../domain/usecases/upload_avatar_image_use_case.dart';
@@ -192,6 +194,32 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _remoteDataSource.forgotPassword(email);
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    try {
+      await _remoteDataSource.resetPassword(
+        email: email,
+        code: code,
+        newPassword: newPassword,
+      );
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
   Future<void> _saveTokens(AuthTokensModel tokens) => _tokenStorage.saveTokens(
         access: tokens.accessToken,
         refresh: tokens.refreshToken,
@@ -249,6 +277,14 @@ final Provider<ChangePasswordUseCase> changePasswordUseCaseProvider = Provider<C
 
 final Provider<DeleteAccountUseCase> deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>(
   (ref) => DeleteAccountUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<ForgotPasswordUseCase> forgotPasswordUseCaseProvider = Provider<ForgotPasswordUseCase>(
+  (ref) => ForgotPasswordUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<ResetPasswordUseCase> resetPasswordUseCaseProvider = Provider<ResetPasswordUseCase>(
+  (ref) => ResetPasswordUseCase(ref.watch(authRepositoryProvider)),
 );
 
 final Provider<RegisterPushTokenUseCase> registerPushTokenUseCaseProvider =

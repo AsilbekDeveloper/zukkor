@@ -383,7 +383,8 @@
     "noAccountPrompt": "Don't have an account?",
     "haveAccountPrompt": "Already have an account?",
     "switchToRegister": "Sign up",
-    "switchToLogin": "Sign in"
+    "switchToLogin": "Sign in",
+    "forgotPasswordLink": "Forgot password?"
   },
   "authValidation": {
     "emailRequired": "Email is required",
@@ -395,7 +396,9 @@
     "usernameInvalid": "Username may only contain letters, numbers and underscores (3–30 characters)",
     "usernameTaken": "This username is already taken",
     "nameRequired": "This field is required",
-    "nameTooLong": "Too long (maximum 50 characters)"
+    "nameTooLong": "Too long (maximum 50 characters)",
+    "codeRequired": "Code is required",
+    "codeInvalid": "Code must be 6 digits"
   },
   "errors": {
     "noConnection": "No internet connection. Please check your connection and try again.",
@@ -452,5 +455,24 @@
     "manualSubmit": "Create",
     "opponentQuizzesEntryLabel": "Opponent's quizzes",
     "noSharedQuizzes": "This user hasn't shared any quizzes yet"
+  },
+  "forgotPassword": {
+    "title": "Reset password",
+    "subtitle": "Enter your registered email - we will send you a reset code",
+    "sendCodeButton": "Send code",
+    "codeSent": "Code resent"
+  },
+  "resetPassword": {
+    "title": "Enter code",
+    "subtitle": "Enter the 6-digit code sent to $email",
+    "codeLabel": "Verification code",
+    "codeHint": "123456",
+    "newPasswordLabel": "New password",
+    "newPasswordHint": "At least 8 characters",
+    "confirmPasswordLabel": "Confirm new password",
+    "confirmPasswordHint": "Re-enter your new password",
+    "resendCode": "Resend code",
+    "resetButton": "Reset password",
+    "success": "Password reset successfully"
   }
 }

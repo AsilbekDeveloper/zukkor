@@ -130,6 +130,32 @@ class AuthController extends Notifier<bool> {
       state = false;
     }
   }
+
+  Future<void> forgotPassword(String email) async {
+    state = true;
+    try {
+      await ref.read(forgotPasswordUseCaseProvider).call(email);
+    } finally {
+      state = false;
+    }
+  }
+
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {
+    state = true;
+    try {
+      await ref.read(resetPasswordUseCaseProvider).call(
+            email: email,
+            code: code,
+            newPassword: newPassword,
+          );
+    } finally {
+      state = false;
+    }
+  }
 }
 
 final NotifierProvider<AuthController, bool> authControllerProvider =

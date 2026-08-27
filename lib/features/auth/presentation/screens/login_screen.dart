@@ -135,6 +135,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             validator: Validators.currentPassword,
                             onSubmitted: (_) => _submit(),
                           ),
+                          AppSpacing.sm.vGap,
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () => context.push(AppRoutes.forgotPassword),
+                              child: Text(context.t.auth.forgotPasswordLink),
+                            ),
+                          ),
                         ],
                       ),
                     ),

@@ -398,19 +398,22 @@
     "noAccountPrompt": "Нет аккаунта?",
     "haveAccountPrompt": "Уже есть аккаунт?",
     "switchToRegister": "Зарегистрироваться",
-    "switchToLogin": "Войти"
+    "switchToLogin": "Войти",
+    "forgotPasswordLink": "Забыли пароль?"
   },
   "authValidation": {
     "emailRequired": "Введите email",
     "emailInvalid": "Неверный формат email",
     "passwordRequired": "Введите пароль",
-    "passwordTooShort": "Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру",
+    "passwordTooShort": "Пароль должен содержаer минимум 8 символов, 1 заглавную букву и 1 цифру",
     "passwordMismatch": "Пароли не совпадают",
     "usernameRequired": "Введите имя пользователя",
     "usernameInvalid": "Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)",
     "usernameTaken": "Это имя пользователя уже занято",
     "nameRequired": "Это поле обязательно",
-    "nameTooLong": "Слишком длинно (максимум 50 символов)"
+    "nameTooLong": "Слишком длинно (максимум 50 символов)",
+    "codeRequired": "Введите код",
+    "codeInvalid": "Код должен состоять из 6 цифр"
   },
   "errors": {
     "noConnection": "Нет подключения к интернету. Проверьте соединение и попробуйте снова.",
@@ -467,5 +470,24 @@
     "manualSubmit": "Создать",
     "opponentQuizzesEntryLabel": "Викторины соперника",
     "noSharedQuizzes": "Этот пользователь пока не поделился викторинами"
+  },
+  "forgotPassword": {
+    "title": "Восстановление пароля",
+    "subtitle": "Введите ваш зарегистрированный email - мы отправим вам код для сброса пароля",
+    "sendCodeButton": "Отправить код",
+    "codeSent": "Код отправлен повторно"
+  },
+  "resetPassword": {
+    "title": "Введите код",
+    "subtitle": "Введите 6-значный код, отправленный на $email",
+    "codeLabel": "Код подтверждения",
+    "codeHint": "123456",
+    "newPasswordLabel": "Новый пароль",
+    "newPasswordHint": "Минимум 8 символов",
+    "confirmPasswordLabel": "Подтвердите новый пароль",
+    "confirmPasswordHint": "Введите новый пароль ещё раз",
+    "resendCode": "Отправить код еще раз",
+    "resetButton": "Восстановить пароль",
+    "success": "Пароль успешно восстановлен"
   }
 }

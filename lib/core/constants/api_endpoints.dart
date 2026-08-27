@@ -19,6 +19,8 @@ abstract final class ApiEndpoints {
   // backend'da yo'q).
   static const String changePassword = '/auth/change-password';
   static const String deleteAccount = '/auth/me';
+  static const String forgotPassword = '/auth/forgot-password';
+  static const String resetPassword = '/auth/reset-password';
 
   // Bildirishnoma sozlamalari (2026-07-18'da qo'shildi, hali backend'da yo'q).
   static const String notificationPreferences = '/users/me/notification-preferences';

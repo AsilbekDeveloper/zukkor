@@ -106,6 +106,16 @@ class _FakeAuthRepository implements AuthRepository {
     if (deleteAccountFails) throw AuthFailure('Wrong password');
     deletedWithPassword = password;
   }
+
+  @override
+  Future<void> forgotPassword(String email) async {}
+
+  @override
+  Future<void> resetPassword({
+    required String email,
+    required String code,
+    required String newPassword,
+  }) async {}
 }
 
 /// Backendga murojaat qilmaydigan soxta repository — Notifications testi

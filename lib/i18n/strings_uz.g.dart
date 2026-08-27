@@ -79,6 +79,8 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$authValidation$uz authValidation = _Translations$authValidation$uz._(_root);
 	@override late final _Translations$errors$uz errors = _Translations$errors$uz._(_root);
 	@override late final _Translations$aiQuiz$uz aiQuiz = _Translations$aiQuiz$uz._(_root);
+	@override late final _Translations$forgotPassword$uz forgotPassword = _Translations$forgotPassword$uz._(_root);
+	@override late final _Translations$resetPassword$uz resetPassword = _Translations$resetPassword$uz._(_root);
 }
 
 // Path: common
@@ -747,6 +749,7 @@ class _Translations$auth$uz implements Translations$auth$en {
 	@override String get haveAccountPrompt => 'Hisobingiz bormi?';
 	@override String get switchToRegister => 'Ro\'yxatdan o\'tish';
 	@override String get switchToLogin => 'Kirish';
+	@override String get forgotPasswordLink => 'Parolni unutdingizmi?';
 }
 
 // Path: authValidation
@@ -766,6 +769,8 @@ class _Translations$authValidation$uz implements Translations$authValidation$en 
 	@override String get usernameTaken => 'Bu foydalanuvchi nomi band';
 	@override String get nameRequired => 'Bu maydon to\'ldirilishi shart';
 	@override String get nameTooLong => 'Juda uzun (maksimal 50 belgi)';
+	@override String get codeRequired => 'Kod kiritilishi shart';
+	@override String get codeInvalid => 'Kod 6 ta raqamdan iborat bo\'lishi kerak';
 }
 
 // Path: errors
@@ -836,6 +841,39 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get manualSubmit => 'Yaratish';
 	@override String get opponentQuizzesEntryLabel => 'Raqibning quizlari';
 	@override String get noSharedQuizzes => 'Bu foydalanuvchi hali quiz ulashmagan';
+}
+
+// Path: forgotPassword
+class _Translations$forgotPassword$uz implements Translations$forgotPassword$en {
+	_Translations$forgotPassword$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Parolni tiklash';
+	@override String get subtitle => 'Ro\'yxatdan o\'tgan emailingizni kiriting - biz sizga tiklash kodini yuboramiz';
+	@override String get sendCodeButton => 'Kod yuborish';
+	@override String get codeSent => 'Kod qayta yuborildi';
+}
+
+// Path: resetPassword
+class _Translations$resetPassword$uz implements Translations$resetPassword$en {
+	_Translations$resetPassword$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Kodni kiriting';
+	@override String subtitle({required Object email}) => '${email} manziliga yuborilgan 6 xonali kodni kiriting';
+	@override String get codeLabel => 'Tasdiqlash kodi';
+	@override String get codeHint => '123456';
+	@override String get newPasswordLabel => 'Yangi parol';
+	@override String get newPasswordHint => 'Kamida 8 ta belgi';
+	@override String get confirmPasswordLabel => 'Yangi parolni tasdiqlang';
+	@override String get confirmPasswordHint => 'Yangi parolni qayta kiriting';
+	@override String get resendCode => 'Kodni qayta yuborish';
+	@override String get resetButton => 'Parolni tiklash';
+	@override String get success => 'Parol muvaffaqiyatli tiklandi';
 }
 
 /// The flat map containing all translations for locale <uz>.
@@ -1154,6 +1192,7 @@ extension on TranslationsUz {
 			'auth.haveAccountPrompt' => 'Hisobingiz bormi?',
 			'auth.switchToRegister' => 'Ro\'yxatdan o\'tish',
 			'auth.switchToLogin' => 'Kirish',
+			'auth.forgotPasswordLink' => 'Parolni unutdingizmi?',
 			'authValidation.emailRequired' => 'Email kiritilishi shart',
 			'authValidation.emailInvalid' => 'Email formati noto\'g\'ri',
 			'authValidation.passwordRequired' => 'Parol kiritilishi shart',
@@ -1164,6 +1203,8 @@ extension on TranslationsUz {
 			'authValidation.usernameTaken' => 'Bu foydalanuvchi nomi band',
 			'authValidation.nameRequired' => 'Bu maydon to\'ldirilishi shart',
 			'authValidation.nameTooLong' => 'Juda uzun (maksimal 50 belgi)',
+			'authValidation.codeRequired' => 'Kod kiritilishi shart',
+			'authValidation.codeInvalid' => 'Kod 6 ta raqamdan iborat bo\'lishi kerak',
 			'errors.noConnection' => 'Internet aloqasi yo\'q. Ulanishingizni tekshirib, qayta urinib ko\'ring.',
 			'errors.timeout' => 'Server javob bermayapti. Birozdan so\'ng qayta urinib ko\'ring.',
 			'errors.server' => 'Server xatoligi yuz berdi. Birozdan so\'ng qayta urinib ko\'ring.',
@@ -1216,6 +1257,21 @@ extension on TranslationsUz {
 			'aiQuiz.manualSubmit' => 'Yaratish',
 			'aiQuiz.opponentQuizzesEntryLabel' => 'Raqibning quizlari',
 			'aiQuiz.noSharedQuizzes' => 'Bu foydalanuvchi hali quiz ulashmagan',
+			'forgotPassword.title' => 'Parolni tiklash',
+			'forgotPassword.subtitle' => 'Ro\'yxatdan o\'tgan emailingizni kiriting - biz sizga tiklash kodini yuboramiz',
+			'forgotPassword.sendCodeButton' => 'Kod yuborish',
+			'forgotPassword.codeSent' => 'Kod qayta yuborildi',
+			'resetPassword.title' => 'Kodni kiriting',
+			'resetPassword.subtitle' => ({required Object email}) => '${email} manziliga yuborilgan 6 xonali kodni kiriting',
+			'resetPassword.codeLabel' => 'Tasdiqlash kodi',
+			'resetPassword.codeHint' => '123456',
+			'resetPassword.newPasswordLabel' => 'Yangi parol',
+			'resetPassword.newPasswordHint' => 'Kamida 8 ta belgi',
+			'resetPassword.confirmPasswordLabel' => 'Yangi parolni tasdiqlang',
+			'resetPassword.confirmPasswordHint' => 'Yangi parolni qayta kiriting',
+			'resetPassword.resendCode' => 'Kodni qayta yuborish',
+			'resetPassword.resetButton' => 'Parolni tiklash',
+			'resetPassword.success' => 'Parol muvaffaqiyatli tiklandi',
 			_ => null,
 		};
 	}

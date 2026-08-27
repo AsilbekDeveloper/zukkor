@@ -79,6 +79,8 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$authValidation$ru authValidation = _Translations$authValidation$ru._(_root);
 	@override late final _Translations$errors$ru errors = _Translations$errors$ru._(_root);
 	@override late final _Translations$aiQuiz$ru aiQuiz = _Translations$aiQuiz$ru._(_root);
+	@override late final _Translations$forgotPassword$ru forgotPassword = _Translations$forgotPassword$ru._(_root);
+	@override late final _Translations$resetPassword$ru resetPassword = _Translations$resetPassword$ru._(_root);
 }
 
 // Path: common
@@ -753,6 +755,7 @@ class _Translations$auth$ru implements Translations$auth$en {
 	@override String get haveAccountPrompt => 'Уже есть аккаунт?';
 	@override String get switchToRegister => 'Зарегистрироваться';
 	@override String get switchToLogin => 'Войти';
+	@override String get forgotPasswordLink => 'Забыли пароль?';
 }
 
 // Path: authValidation
@@ -765,13 +768,15 @@ class _Translations$authValidation$ru implements Translations$authValidation$en 
 	@override String get emailRequired => 'Введите email';
 	@override String get emailInvalid => 'Неверный формат email';
 	@override String get passwordRequired => 'Введите пароль';
-	@override String get passwordTooShort => 'Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру';
+	@override String get passwordTooShort => 'Пароль должен содержаer минимум 8 символов, 1 заглавную букву и 1 цифру';
 	@override String get passwordMismatch => 'Пароли не совпадают';
 	@override String get usernameRequired => 'Введите имя пользователя';
 	@override String get usernameInvalid => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)';
 	@override String get usernameTaken => 'Это имя пользователя уже занято';
 	@override String get nameRequired => 'Это поле обязательно';
 	@override String get nameTooLong => 'Слишком длинно (максимум 50 символов)';
+	@override String get codeRequired => 'Введите код';
+	@override String get codeInvalid => 'Код должен состоять из 6 цифр';
 }
 
 // Path: errors
@@ -842,6 +847,39 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get manualSubmit => 'Создать';
 	@override String get opponentQuizzesEntryLabel => 'Викторины соперника';
 	@override String get noSharedQuizzes => 'Этот пользователь пока не поделился викторинами';
+}
+
+// Path: forgotPassword
+class _Translations$forgotPassword$ru implements Translations$forgotPassword$en {
+	_Translations$forgotPassword$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Восстановление пароля';
+	@override String get subtitle => 'Введите ваш зарегистрированный email - мы отправим вам код для сброса пароля';
+	@override String get sendCodeButton => 'Отправить код';
+	@override String get codeSent => 'Код отправлен повторно';
+}
+
+// Path: resetPassword
+class _Translations$resetPassword$ru implements Translations$resetPassword$en {
+	_Translations$resetPassword$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Введите код';
+	@override String subtitle({required Object email}) => 'Введите 6-значный код, отправленный на ${email}';
+	@override String get codeLabel => 'Код подтверждения';
+	@override String get codeHint => '123456';
+	@override String get newPasswordLabel => 'Новый пароль';
+	@override String get newPasswordHint => 'Минимум 8 символов';
+	@override String get confirmPasswordLabel => 'Подтвердите новый пароль';
+	@override String get confirmPasswordHint => 'Введите новый пароль ещё раз';
+	@override String get resendCode => 'Отправить код еще раз';
+	@override String get resetButton => 'Восстановить пароль';
+	@override String get success => 'Пароль успешно восстановлен';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -1160,16 +1198,19 @@ extension on TranslationsRu {
 			'auth.haveAccountPrompt' => 'Уже есть аккаунт?',
 			'auth.switchToRegister' => 'Зарегистрироваться',
 			'auth.switchToLogin' => 'Войти',
+			'auth.forgotPasswordLink' => 'Забыли пароль?',
 			'authValidation.emailRequired' => 'Введите email',
 			'authValidation.emailInvalid' => 'Неверный формат email',
 			'authValidation.passwordRequired' => 'Введите пароль',
-			'authValidation.passwordTooShort' => 'Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру',
+			'authValidation.passwordTooShort' => 'Пароль должен содержаer минимум 8 символов, 1 заглавную букву и 1 цифру',
 			'authValidation.passwordMismatch' => 'Пароли не совпадают',
 			'authValidation.usernameRequired' => 'Введите имя пользователя',
 			'authValidation.usernameInvalid' => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)',
 			'authValidation.usernameTaken' => 'Это имя пользователя уже занято',
 			'authValidation.nameRequired' => 'Это поле обязательно',
 			'authValidation.nameTooLong' => 'Слишком длинно (максимум 50 символов)',
+			'authValidation.codeRequired' => 'Введите код',
+			'authValidation.codeInvalid' => 'Код должен состоять из 6 цифр',
 			'errors.noConnection' => 'Нет подключения к интернету. Проверьте соединение и попробуйте снова.',
 			'errors.timeout' => 'Сервер не отвечает. Попробуйте ещё раз чуть позже.',
 			'errors.server' => 'Произошла ошибка сервера. Попробуйте ещё раз чуть позже.',
@@ -1222,6 +1263,21 @@ extension on TranslationsRu {
 			'aiQuiz.manualSubmit' => 'Создать',
 			'aiQuiz.opponentQuizzesEntryLabel' => 'Викторины соперника',
 			'aiQuiz.noSharedQuizzes' => 'Этот пользователь пока не поделился викторинами',
+			'forgotPassword.title' => 'Восстановление пароля',
+			'forgotPassword.subtitle' => 'Введите ваш зарегистрированный email - мы отправим вам код для сброса пароля',
+			'forgotPassword.sendCodeButton' => 'Отправить код',
+			'forgotPassword.codeSent' => 'Код отправлен повторно',
+			'resetPassword.title' => 'Введите код',
+			'resetPassword.subtitle' => ({required Object email}) => 'Введите 6-значный код, отправленный на ${email}',
+			'resetPassword.codeLabel' => 'Код подтверждения',
+			'resetPassword.codeHint' => '123456',
+			'resetPassword.newPasswordLabel' => 'Новый пароль',
+			'resetPassword.newPasswordHint' => 'Минимум 8 символов',
+			'resetPassword.confirmPasswordLabel' => 'Подтвердите новый пароль',
+			'resetPassword.confirmPasswordHint' => 'Введите новый пароль ещё раз',
+			'resetPassword.resendCode' => 'Отправить код еще раз',
+			'resetPassword.resetButton' => 'Восстановить пароль',
+			'resetPassword.success' => 'Пароль успешно восстановлен',
 			_ => null,
 		};
 	}

@@ -25,6 +25,7 @@ abstract final class Validators {
   static final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,30}$');
   static final RegExp _uppercaseRegex = RegExp(r'[A-Z]');
   static final RegExp _digitRegex = RegExp(r'[0-9]');
+  static final RegExp _resetCodeRegex = RegExp(r'^\d{6}$');
 
   static String? email(String? value) {
     final String v = value?.trim() ?? '';
@@ -74,6 +75,13 @@ abstract final class Validators {
     final String v = value?.trim() ?? '';
     if (v.isEmpty) return t.authValidation.nameRequired;
     if (v.length > 50) return t.authValidation.nameTooLong;
+    return null;
+  }
+
+  static String? resetCode(String? value) {
+    final String v = value?.trim() ?? '';
+    if (v.isEmpty) return t.authValidation.codeRequired;
+    if (!_resetCodeRegex.hasMatch(v)) return t.authValidation.codeInvalid;
     return null;
   }
 }

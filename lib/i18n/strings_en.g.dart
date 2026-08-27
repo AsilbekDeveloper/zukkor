@@ -82,6 +82,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$authValidation$en authValidation = Translations$authValidation$en._(_root);
 	late final Translations$errors$en errors = Translations$errors$en._(_root);
 	late final Translations$aiQuiz$en aiQuiz = Translations$aiQuiz$en._(_root);
+	late final Translations$forgotPassword$en forgotPassword = Translations$forgotPassword$en._(_root);
+	late final Translations$resetPassword$en resetPassword = Translations$resetPassword$en._(_root);
 }
 
 // Path: common
@@ -1366,6 +1368,9 @@ class Translations$auth$en {
 
 	/// en: 'Sign in'
 	String get switchToLogin => 'Sign in';
+
+	/// en: 'Forgot password?'
+	String get forgotPasswordLink => 'Forgot password?';
 }
 
 // Path: authValidation
@@ -1405,6 +1410,12 @@ class Translations$authValidation$en {
 
 	/// en: 'Too long (maximum 50 characters)'
 	String get nameTooLong => 'Too long (maximum 50 characters)';
+
+	/// en: 'Code is required'
+	String get codeRequired => 'Code is required';
+
+	/// en: 'Code must be 6 digits'
+	String get codeInvalid => 'Code must be 6 digits';
 }
 
 // Path: errors
@@ -1579,6 +1590,69 @@ class Translations$aiQuiz$en {
 
 	/// en: 'This user hasn't shared any quizzes yet'
 	String get noSharedQuizzes => 'This user hasn\'t shared any quizzes yet';
+}
+
+// Path: forgotPassword
+class Translations$forgotPassword$en {
+	Translations$forgotPassword$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Reset password'
+	String get title => 'Reset password';
+
+	/// en: 'Enter your registered email - we will send you a reset code'
+	String get subtitle => 'Enter your registered email - we will send you a reset code';
+
+	/// en: 'Send code'
+	String get sendCodeButton => 'Send code';
+
+	/// en: 'Code resent'
+	String get codeSent => 'Code resent';
+}
+
+// Path: resetPassword
+class Translations$resetPassword$en {
+	Translations$resetPassword$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Enter code'
+	String get title => 'Enter code';
+
+	/// en: 'Enter the 6-digit code sent to $email'
+	String subtitle({required Object email}) => 'Enter the 6-digit code sent to ${email}';
+
+	/// en: 'Verification code'
+	String get codeLabel => 'Verification code';
+
+	/// en: '123456'
+	String get codeHint => '123456';
+
+	/// en: 'New password'
+	String get newPasswordLabel => 'New password';
+
+	/// en: 'At least 8 characters'
+	String get newPasswordHint => 'At least 8 characters';
+
+	/// en: 'Confirm new password'
+	String get confirmPasswordLabel => 'Confirm new password';
+
+	/// en: 'Re-enter your new password'
+	String get confirmPasswordHint => 'Re-enter your new password';
+
+	/// en: 'Resend code'
+	String get resendCode => 'Resend code';
+
+	/// en: 'Reset password'
+	String get resetButton => 'Reset password';
+
+	/// en: 'Password reset successfully'
+	String get success => 'Password reset successfully';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1897,6 +1971,7 @@ extension on Translations {
 			'auth.haveAccountPrompt' => 'Already have an account?',
 			'auth.switchToRegister' => 'Sign up',
 			'auth.switchToLogin' => 'Sign in',
+			'auth.forgotPasswordLink' => 'Forgot password?',
 			'authValidation.emailRequired' => 'Email is required',
 			'authValidation.emailInvalid' => 'Invalid email format',
 			'authValidation.passwordRequired' => 'Password is required',
@@ -1907,6 +1982,8 @@ extension on Translations {
 			'authValidation.usernameTaken' => 'This username is already taken',
 			'authValidation.nameRequired' => 'This field is required',
 			'authValidation.nameTooLong' => 'Too long (maximum 50 characters)',
+			'authValidation.codeRequired' => 'Code is required',
+			'authValidation.codeInvalid' => 'Code must be 6 digits',
 			'errors.noConnection' => 'No internet connection. Please check your connection and try again.',
 			'errors.timeout' => 'The server is not responding. Please try again shortly.',
 			'errors.server' => 'A server error occurred. Please try again shortly.',
@@ -1959,6 +2036,21 @@ extension on Translations {
 			'aiQuiz.manualSubmit' => 'Create',
 			'aiQuiz.opponentQuizzesEntryLabel' => 'Opponent\'s quizzes',
 			'aiQuiz.noSharedQuizzes' => 'This user hasn\'t shared any quizzes yet',
+			'forgotPassword.title' => 'Reset password',
+			'forgotPassword.subtitle' => 'Enter your registered email - we will send you a reset code',
+			'forgotPassword.sendCodeButton' => 'Send code',
+			'forgotPassword.codeSent' => 'Code resent',
+			'resetPassword.title' => 'Enter code',
+			'resetPassword.subtitle' => ({required Object email}) => 'Enter the 6-digit code sent to ${email}',
+			'resetPassword.codeLabel' => 'Verification code',
+			'resetPassword.codeHint' => '123456',
+			'resetPassword.newPasswordLabel' => 'New password',
+			'resetPassword.newPasswordHint' => 'At least 8 characters',
+			'resetPassword.confirmPasswordLabel' => 'Confirm new password',
+			'resetPassword.confirmPasswordHint' => 'Re-enter your new password',
+			'resetPassword.resendCode' => 'Resend code',
+			'resetPassword.resetButton' => 'Reset password',
+			'resetPassword.success' => 'Password reset successfully',
 			_ => null,
 		};
 	}

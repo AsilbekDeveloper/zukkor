@@ -6,8 +6,10 @@ import '../../features/ai_quiz/presentation/screens/create_manual_quiz_screen.da
 import '../../features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
 import '../../features/ai_quiz/presentation/screens/user_quizzes_screen.dart';
+import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../features/duel/domain/entities/duel_invite.dart';
 import '../../features/duel/presentation/models/duel_game_state.dart';
 import '../../features/duel/presentation/screens/duel_game_screen.dart';
@@ -110,6 +112,14 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.register,
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPasswordScreen,
+        builder: (context, state) => ResetPasswordScreen(email: state.extra! as String),
       ),
       GoRoute(
         path: AppRoutes.onboarding,

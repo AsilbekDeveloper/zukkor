@@ -383,7 +383,8 @@
     "noAccountPrompt": "Hisobingiz yo'qmi?",
     "haveAccountPrompt": "Hisobingiz bormi?",
     "switchToRegister": "Ro'yxatdan o'tish",
-    "switchToLogin": "Kirish"
+    "switchToLogin": "Kirish",
+    "forgotPasswordLink": "Parolni unutdingizmi?"
   },
   "authValidation": {
     "emailRequired": "Email kiritilishi shart",
@@ -395,7 +396,9 @@
     "usernameInvalid": "Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo'lishi mumkin (3–30 belgi)",
     "usernameTaken": "Bu foydalanuvchi nomi band",
     "nameRequired": "Bu maydon to'ldirilishi shart",
-    "nameTooLong": "Juda uzun (maksimal 50 belgi)"
+    "nameTooLong": "Juda uzun (maksimal 50 belgi)",
+    "codeRequired": "Kod kiritilishi shart",
+    "codeInvalid": "Kod 6 ta raqamdan iborat bo'lishi kerak"
   },
   "errors": {
     "noConnection": "Internet aloqasi yo'q. Ulanishingizni tekshirib, qayta urinib ko'ring.",
@@ -452,5 +455,24 @@
     "manualSubmit": "Yaratish",
     "opponentQuizzesEntryLabel": "Raqibning quizlari",
     "noSharedQuizzes": "Bu foydalanuvchi hali quiz ulashmagan"
+  },
+  "forgotPassword": {
+    "title": "Parolni tiklash",
+    "subtitle": "Ro'yxatdan o'tgan emailingizni kiriting - biz sizga tiklash kodini yuboramiz",
+    "sendCodeButton": "Kod yuborish",
+    "codeSent": "Kod qayta yuborildi"
+  },
+  "resetPassword": {
+    "title": "Kodni kiriting",
+    "subtitle": "$email manziliga yuborilgan 6 xonali kodni kiriting",
+    "codeLabel": "Tasdiqlash kodi",
+    "codeHint": "123456",
+    "newPasswordLabel": "Yangi parol",
+    "newPasswordHint": "Kamida 8 ta belgi",
+    "confirmPasswordLabel": "Yangi parolni tasdiqlang",
+    "confirmPasswordHint": "Yangi parolni qayta kiriting",
+    "resendCode": "Kodni qayta yuborish",
+    "resetButton": "Parolni tiklash",
+    "success": "Parol muvaffaqiyatli tiklandi"
   }
 }
