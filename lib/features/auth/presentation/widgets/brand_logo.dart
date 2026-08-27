@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
 
-/// Zukkor brend belgisi — prototipdagi coral kvadrat ichida chaqmoq
-/// ikonkasi + ilova nomi.
+/// Zukkor brend belgisi — "Z" belgisi (orange diagonal + ikkita gorizontal
+/// chiziq) to'g'ridan-to'g'ri ekran foniga chiziladi (o'ziga xos rangli
+/// quti yo'q). Chiziqlar rangi joriy mavzuga moslashadi — och mavzuda
+/// quyuq, quyuq mavzuda och — orange diagonal esa har doim bir xil qoladi.
+/// Ilova belgisi (launcher icon) esa har doim quyuq fonli statik versiya
+/// (do'kon/telefon shaffof fonni qo'llab-quvvatlamaydi, [pubspec.yaml]dagi
+/// `flutter_launcher_icons` konfiguratsiyasiga qarang).
 class BrandLogo extends StatelessWidget {
   const BrandLogo({super.key, this.compact = false});
 
@@ -16,21 +20,16 @@ class BrandLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double boxSize = compact ? 34 : 56;
-    final double iconSize = compact ? 20 : 32;
+    final String markAsset = context.isDark
+        ? 'assets/branding/zukkor_mark_on_dark.png'
+        : 'assets/branding/zukkor_mark_on_light.png';
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: context.colors.coral,
-            borderRadius: BorderRadius.circular(compact ? 10 : AppRadius.sm),
-            boxShadow: compact ? null : context.colors.shadowCoral,
-          ),
-          child: SizedBox.square(
-            dimension: boxSize,
-            child: Icon(TablerIcons.bolt, color: Colors.white, size: iconSize),
-          ),
+        SizedBox.square(
+          dimension: boxSize,
+          child: Image.asset(markAsset),
         ),
         const SizedBox(width: AppSpacing.sm),
         // Flexible + ellipsis: on an extremely narrow width (split-screen,

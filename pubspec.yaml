@@ -62,11 +62,18 @@ dev_dependencies:
 
   flutter_lints: ^6.0.0
 
+  # Ilova belgisini (launcher icon) bitta manba rasmdan Android/iOS uchun
+  # kerakli barcha o'lchamlarda generatsiya qiladi — `dart run
+  # flutter_launcher_icons` orqali ishga tushiriladi, konfiguratsiya
+  # pastdagi `flutter_launcher_icons:` bo'limida.
+  flutter_launcher_icons: ^0.14.4
+
 flutter:
   uses-material-design: true
 
   assets:
     - assets/sounds/
+    - assets/branding/
 
   fonts:
     - family: PlusJakartaSans
@@ -81,3 +88,22 @@ flutter:
           weight: 700
         - asset: assets/fonts/PlusJakartaSans-ExtraBold.ttf
           weight: 800
+
+# `dart run flutter_launcher_icons` shu konfiguratsiyadan Android/iOS
+# uchun barcha kerakli o'lchamlarni generatsiya qiladi. Manba —
+# assets/icon/zukkor_launcher_icon.png (1024px, dizayner tomonidan
+# to'g'ridan-to'g'ri shu o'lchamda eksport qilingan — kattalashtirish yo'q,
+# App Store'ning 1024px talabi uchun ham xiralik xavfsiz).
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/zukkor_launcher_icon.png"
+  remove_alpha_ios: true
+  # Without these, Android (8+) synthesizes its own adaptive icon from the
+  # flat square/circle source above — it shrinks it and pads it onto a
+  # white card, which is why the icon showed up with an unwanted white
+  # border on-device. Providing the real background/foreground layers
+  # (dark fill + the Z-mark alone, transparent elsewhere) makes Android
+  # composite it correctly, filling the full adaptive shape edge-to-edge.
+  adaptive_icon_background: "#1E140F"
+  adaptive_icon_foreground: "assets/icon/zukkor_adaptive_foreground.png"
