@@ -218,10 +218,10 @@ class _VisibilityButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: context.colors.line,
+        color: enabled ? context.colors.coral.withValues(alpha: 0.12) : context.colors.line,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(11),
-          side: BorderSide(color: context.colors.coral.withValues(alpha: enabled ? 0.4 : 0)),
+          side: BorderSide(color: enabled ? context.colors.coralDeep : Colors.transparent),
         ),
         child: InkWell(
           onTap: enabled ? onTap : null,
@@ -229,7 +229,7 @@ class _VisibilityButton extends StatelessWidget {
           child: SizedBox(
             width: 40,
             height: 40,
-            child: Icon(icon, color: enabled ? context.colors.coral : context.colors.muted, size: 18),
+            child: Icon(icon, color: enabled ? context.colors.coralDeep : context.colors.muted, size: 18),
           ),
         ),
       ),

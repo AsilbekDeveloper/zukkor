@@ -135,23 +135,7 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
   Future<void> _changeVisibility(AiQuiz quiz) async {
     final String? selected = await showDialog<String>(
       context: context,
-      builder: (dialogContext) => SimpleDialog(
-        title: Text(context.t.aiQuiz.visibilityDialogTitle),
-        children: [
-          SimpleDialogOption(
-            onPressed: () => dialogContext.pop('private'),
-            child: Text(context.t.aiQuiz.visibilityPrivate),
-          ),
-          SimpleDialogOption(
-            onPressed: () => dialogContext.pop('friends'),
-            child: Text(context.t.aiQuiz.visibilityFriends),
-          ),
-          SimpleDialogOption(
-            onPressed: () => dialogContext.pop('public'),
-            child: Text(context.t.aiQuiz.visibilityPublic),
-          ),
-        ],
-      ),
+      builder: (dialogContext) => _VisibilityDialog(current: quiz.visibility),
     );
     if (selected == null || selected == quiz.visibility || !mounted) return;
 
@@ -311,6 +295,114 @@ class _EmptyState extends StatelessWidget {
               style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// "Kim ko'ra oladi?" — plain [SimpleDialogOption]s used to sit close
+/// enough together that a "Friends" tap could land on "Everyone" (real
+/// user report). Each option is now its own well-padded, clearly bordered
+/// row with real spacing between them, and the currently-active one is
+/// visually distinct (coral fill/border) instead of looking identical to
+/// the others.
+class _VisibilityDialog extends StatelessWidget {
+  const _VisibilityDialog({required this.current});
+
+  final String current;
+
+  static const List<(String value, IconData icon)> _options = [
+    ('private', TablerIcons.lock),
+    ('friends', TablerIcons.users),
+    ('public', TablerIcons.world),
+  ];
+
+  String _labelFor(BuildContext context, String value) {
+    switch (value) {
+      case 'friends':
+        return context.t.aiQuiz.visibilityFriends;
+      case 'public':
+        return context.t.aiQuiz.visibilityPublic;
+      default:
+        return context.t.aiQuiz.visibilityPrivate;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(context.t.aiQuiz.visibilityDialogTitle, style: context.textStyles.titleLarge),
+            AppSpacing.lg.vGap,
+            for (final (value, icon) in _options) ...[
+              _VisibilityOption(
+                icon: icon,
+                label: _labelFor(context, value),
+                selected: value == current,
+                onTap: () => context.pop(value),
+              ),
+              if (value != _options.last.$1) AppSpacing.sm.vGap,
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VisibilityOption extends StatelessWidget {
+  const _VisibilityOption({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: selected ? context.colors.coral.withValues(alpha: 0.12) : context.colors.card,
+      borderRadius: AppRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.mdAll,
+            border: Border.all(
+              color: selected ? context.colors.coralDeep : context.colors.line,
+              width: selected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: selected ? context.colors.coralDeep : context.colors.muted),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Text(
+                  label,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    color: selected ? context.colors.coralDeep : context.colors.ink,
+                  ),
+                ),
+              ),
+              if (selected) Icon(TablerIcons.check, size: 20, color: context.colors.coralDeep),
+            ],
+          ),
         ),
       ),
     );
