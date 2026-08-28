@@ -1,4 +1,5 @@
 import '../entities/ai_quiz.dart';
+import '../entities/discover_quiz.dart';
 import '../entities/manual_question_input.dart';
 
 abstract interface class AiQuizRepository {
@@ -30,4 +31,11 @@ abstract interface class AiQuizRepository {
   /// `GET /ai-quiz/users/{userId}` — shu foydalanuvchining sizga
   /// ko'rinadigan (ommaviy, yoki do'st bo'lsangiz — do'stlar uchun) quizlari.
   Future<List<AiQuiz>> listForUser(String userId);
+
+  /// `GET /ai-quiz/discover` — boshqa foydalanuvchilarning ommaviy va
+  /// do'stlar uchun (agar do'st bo'lsangiz) quizlari feed'i.
+  Future<List<DiscoverQuiz>> discover();
+
+  /// `GET /ai-quiz/discover/search?q=...` — quiz nomi bo'yicha qidiruv.
+  Future<List<DiscoverQuiz>> searchDiscover(String query);
 }

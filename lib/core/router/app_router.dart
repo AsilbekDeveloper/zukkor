@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
+import '../../features/ai_quiz/presentation/screens/discover_screen.dart';
 import '../../features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
 import '../../features/ai_quiz/presentation/screens/user_quizzes_screen.dart';
@@ -177,7 +178,7 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.userQuizzes,
         builder: (context, state) {
-          final extra = state.extra as ({String userId, String displayName, CategoryPickedCallback onPicked});
+          final extra = state.extra as ({String userId, String displayName, CategoryPickedCallback? onPicked});
           return UserQuizzesScreen(
             userId: extra.userId,
             displayName: extra.displayName,
@@ -188,6 +189,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.generateAiQuiz,
         builder: (context, state) => const GenerateAiQuizScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.discover,
+        builder: (context, state) => const DiscoverScreen(),
       ),
       GoRoute(
         path: AppRoutes.createManualQuiz,

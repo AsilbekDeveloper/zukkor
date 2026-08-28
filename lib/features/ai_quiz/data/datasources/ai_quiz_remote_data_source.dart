@@ -5,6 +5,7 @@ import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/manual_question_input.dart';
 import '../models/ai_quiz_model.dart';
+import '../models/discover_quiz_model.dart';
 
 /// `/ai-quiz/*` endpoint'lariga xom (Dio) so'rovlar. Xatolikni ushlamaydi —
 /// [DioException] to'g'ridan-to'g'ri tashqariga chiqadi, uni [Failure]ga
@@ -85,6 +86,20 @@ class AiQuizRemoteDataSource {
     final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuizForUser(userId));
     return (response.data as List<dynamic>)
         .map((json) => AiQuizModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<DiscoverQuizModel>> discover() async {
+    final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuizDiscover);
+    return (response.data as List<dynamic>)
+        .map((json) => DiscoverQuizModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<DiscoverQuizModel>> searchDiscover(String query) async {
+    final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuizDiscoverSearch(query));
+    return (response.data as List<dynamic>)
+        .map((json) => DiscoverQuizModel.fromJson(json as Map<String, dynamic>))
         .toList();
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -95,6 +96,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     service.listenTokenRefresh(
       (newToken) => ref.read(registerPushTokenUseCaseProvider).call(newToken),
     );
+    service.listenForeground();
   }
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
@@ -157,20 +159,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// Hero card + stats + create/join room buttons.
   List<Widget> _playSection(BuildContext context) {
     final PlayerStats? stats = ref.watch(myStatsControllerProvider).data;
-    final int levelSpan = (stats == null) ? 0 : stats.nextLevelXp - stats.currentLevelXp;
-    final double xpProgress = (stats == null || levelSpan == 0)
-        ? 0
-        : ((stats.totalXp - stats.currentLevelXp) / levelSpan).clamp(0, 1).toDouble();
 
     return [
       DuelHeroCard(streakDays: stats?.currentStreak ?? 0, onStartDuel: () => context.push(AppRoutes.duel)),
       AppSpacing.md.vGap,
-      StatsStrip(
-        totalXp: stats?.totalXp ?? 0,
-        xpProgress: xpProgress,
-        rank: stats?.rank ?? 0,
-        level: stats?.level ?? 0,
-      ),
+      StatsStrip(totalXp: stats?.totalXp ?? 0, rank: stats?.rank ?? 0),
       AppSpacing.md.vGap,
       MultiplayerRow(
         onCreateRoom: () => context.push(AppRoutes.lobby, extra: LobbyRole.host),
@@ -206,6 +199,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       AppSpacing.md.vGap,
       CreateQuizCard(onTap: () => context.push(AppRoutes.createManualQuiz)),
+      AppSpacing.md.vGap,
+      _DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover)),
     ];
+  }
+}
+
+class _DiscoverFeedCard extends StatelessWidget {
+  const _DiscoverFeedCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.card,
+      borderRadius: AppRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.mdAll,
+            border: Border.all(color: context.colors.line),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: context.colors.teal,
+                  borderRadius: AppRadius.smAll,
+                ),
+                alignment: Alignment.center,
+                child: const Icon(TablerIcons.world, color: Colors.white, size: 20),
+              ),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      context.t.discover.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      context.t.discover.homeCardSubtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(TablerIcons.chevronRight, color: Colors.grey, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

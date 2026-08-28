@@ -14,7 +14,7 @@ class DiscoverableUserList extends StatelessWidget {
   const DiscoverableUserList({
     required this.users,
     required this.addedIds,
-    required this.onAddTap,
+    this.onAddTap,
     required this.onRowTap,
     this.sendingIds = const {},
     super.key,
@@ -26,7 +26,7 @@ class DiscoverableUserList extends StatelessWidget {
   /// So'rov hozir yuborilayotgan foydalanuvchilar — shu ID'lar uchun
   /// tugma o'chirilgan turadi (qo'sh so'rov yuborilmasligi uchun).
   final Set<String> sendingIds;
-  final ValueChanged<DiscoverableUser> onAddTap;
+  final ValueChanged<DiscoverableUser>? onAddTap;
   final ValueChanged<DiscoverableUser> onRowTap;
 
   @override
@@ -38,7 +38,7 @@ class DiscoverableUserList extends StatelessWidget {
             user: users[i],
             isAdded: users[i].requestPending || addedIds.contains(users[i].id),
             isSending: sendingIds.contains(users[i].id),
-            onAddTap: () => onAddTap(users[i]),
+            onAddTap: onAddTap != null ? () => onAddTap!(users[i]) : null,
             onRowTap: () => onRowTap(users[i]),
           ),
           if (i < users.length - 1) AppSpacing.xs.vGap,
@@ -53,14 +53,14 @@ class _ResultRow extends StatelessWidget {
     required this.user,
     required this.isAdded,
     required this.isSending,
-    required this.onAddTap,
+    this.onAddTap,
     required this.onRowTap,
   });
 
   final DiscoverableUser user;
   final bool isAdded;
   final bool isSending;
-  final VoidCallback onAddTap;
+  final VoidCallback? onAddTap;
   final VoidCallback onRowTap;
 
   @override
@@ -109,8 +109,10 @@ class _ResultRow extends StatelessWidget {
                   ],
                 ),
               ),
-              AppSpacing.sm.hGap,
-              _AddButton(isAdded: isAdded, isSending: isSending, onTap: onAddTap),
+              if (onAddTap != null) ...[
+                AppSpacing.sm.hGap,
+                _AddButton(isAdded: isAdded, isSending: isSending, onTap: onAddTap!),
+              ],
             ],
           ),
         ),

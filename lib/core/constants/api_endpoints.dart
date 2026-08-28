@@ -67,4 +67,6 @@ abstract final class ApiEndpoints {
   static String aiQuizVisibility(int id) => '/ai-quiz/$id/visibility';
   static const String aiQuizManual = '/ai-quiz/manual';
   static String aiQuizForUser(String userId) => '/ai-quiz/users/$userId';
+  static const String aiQuizDiscover = '/ai-quiz/discover';
+  static String aiQuizDiscoverSearch(String query) => '/ai-quiz/discover/search?q=${Uri.encodeQueryComponent(query)}';
 }

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
@@ -151,7 +150,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       extra: (
         userId: user.id,
         displayName: user.name,
-        onCategoryPicked: null, // use default behavior (quizIntro)
+        onPicked: null, // use default behavior (quizIntro)
       ),
     );
   }
@@ -249,7 +248,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         child: DiscoverableUserList(
           users: users,
           addedIds: const {}, // we don't care about friendship status here
-          onAddTap: (_) {}, // we don't show the add button here ideally, but for now it's okay
           onRowTap: _openUserQuizzes,
         ),
       );
@@ -283,7 +281,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       child: ListView.separated(
         padding: EdgeInsets.fromLTRB(context.screenHPad, 0, context.screenHPad, AppSpacing.lg),
         itemCount: quizzes.length,
-        separatorBuilder: (_, __) => AppSpacing.xs.vGap,
+        separatorBuilder: (_, _) => AppSpacing.xs.vGap,
         itemBuilder: (context, index) {
           final quiz = quizzes[index];
           return QuizCard(

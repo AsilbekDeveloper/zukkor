@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/ai_quiz_repository_impl.dart';
 import '../../domain/entities/ai_quiz.dart';
+import '../../domain/entities/discover_quiz.dart';
 import '../../domain/entities/manual_question_input.dart';
 
 class AiQuizState {
@@ -101,6 +102,11 @@ class AiQuizController extends Notifier<AiQuizState> {
   /// Failure'ni tashqariga chiqaradi. `state.quizzes`ga ta'sir qilmaydi —
   /// bu boshqa foydalanuvchining ro'yxati, "mening quizlarim" emas.
   Future<List<AiQuiz>> listForUser(String userId) => ref.read(listUserQuizzesUseCaseProvider).call(userId);
+
+  Future<List<DiscoverQuiz>> discover() => ref.read(discoverQuizzesUseCaseProvider).call();
+
+  Future<List<DiscoverQuiz>> searchDiscover(String query) =>
+      ref.read(searchDiscoverQuizzesUseCaseProvider).call(query);
 }
 
 final NotifierProvider<AiQuizController, AiQuizState> aiQuizControllerProvider =
