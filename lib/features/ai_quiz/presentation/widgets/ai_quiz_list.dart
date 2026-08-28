@@ -157,19 +157,36 @@ class _AiQuizRow extends StatelessWidget {
                           '  •  ',
                           style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
                         ),
+                        // A subtle chip (not just plain muted text like the
+                        // "Manual"/"AI" label beside it) so it's visually
+                        // obvious this one is tappable — otherwise it reads
+                        // as inert metadata and the visibility control is
+                        // easy to miss entirely (reported by the user).
                         InkWell(
                           onTap: onVisibilityTap,
                           borderRadius: AppRadius.smAll,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(_visibilityIcon(), size: 12, color: context.colors.muted),
-                              4.hGap,
-                              Text(
-                                _visibilityLabel(context),
-                                style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                              ),
-                            ],
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: context.colors.line,
+                              borderRadius: AppRadius.smAll,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(_visibilityIcon(), size: 12, color: context.colors.coral),
+                                4.hGap,
+                                Text(
+                                  _visibilityLabel(context),
+                                  style: context.textStyles.labelSmall?.copyWith(
+                                    color: context.colors.coral,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                2.hGap,
+                                Icon(TablerIcons.chevronDown, size: 10, color: context.colors.coral),
+                              ],
+                            ),
                           ),
                         ),
                       ],
