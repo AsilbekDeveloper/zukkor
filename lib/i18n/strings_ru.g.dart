@@ -808,6 +808,10 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get emptySubtitle => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе';
 	@override String get deleteConfirmTitle => 'Удалить викторину';
 	@override String deleteConfirmMessage({required Object name}) => 'Удалить «${name}»? Это действие необратимо.';
+	@override String get selectAction => 'Выбрать';
+	@override String selectedCount({required Object count}) => 'Выбрано: ${count}';
+	@override String get deleteSelectedConfirmTitle => 'Удалить выбранные викторины';
+	@override String deleteSelectedConfirmMessage({required Object count}) => 'Удалить ${count} викторин(ы)? Это действие необратимо.';
 	@override String get generateTitle => 'Создать викторину с AI';
 	@override String get generateSubtitle => 'Создайте викторину с помощью AI из документа или темы';
 	@override String get modeDocumentLabel => 'Документ';
@@ -821,7 +825,7 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get topicRequired => 'Введите тему';
 	@override String get questionCountLabel => 'Количество вопросов';
 	@override String get generateButton => 'Сгенерировать';
-	@override String get generated => 'Готово! Сохранено в «Мои AI-викторины»';
+	@override String get generated => 'Готово! Сохранено в «Мои викторины»';
 	@override String get generatingTitle => 'AI генерирует вопросы...';
 	@override String get generatingSubtitle => 'Это может занять некоторое время, пожалуйста подождите';
 	@override String get sourceAi => 'AI';
@@ -1256,6 +1260,10 @@ extension on TranslationsRu {
 			'aiQuiz.emptySubtitle' => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе',
 			'aiQuiz.deleteConfirmTitle' => 'Удалить викторину',
 			'aiQuiz.deleteConfirmMessage' => ({required Object name}) => 'Удалить «${name}»? Это действие необратимо.',
+			'aiQuiz.selectAction' => 'Выбрать',
+			'aiQuiz.selectedCount' => ({required Object count}) => 'Выбрано: ${count}',
+			'aiQuiz.deleteSelectedConfirmTitle' => 'Удалить выбранные викторины',
+			'aiQuiz.deleteSelectedConfirmMessage' => ({required Object count}) => 'Удалить ${count} викторин(ы)? Это действие необратимо.',
 			'aiQuiz.generateTitle' => 'Создать викторину с AI',
 			'aiQuiz.generateSubtitle' => 'Создайте викторину с помощью AI из документа или темы',
 			'aiQuiz.modeDocumentLabel' => 'Документ',
@@ -1269,7 +1277,7 @@ extension on TranslationsRu {
 			'aiQuiz.topicRequired' => 'Введите тему',
 			'aiQuiz.questionCountLabel' => 'Количество вопросов',
 			'aiQuiz.generateButton' => 'Сгенерировать',
-			'aiQuiz.generated' => 'Готово! Сохранено в «Мои AI-викторины»',
+			'aiQuiz.generated' => 'Готово! Сохранено в «Мои викторины»',
 			'aiQuiz.generatingTitle' => 'AI генерирует вопросы...',
 			'aiQuiz.generatingSubtitle' => 'Это может занять некоторое время, пожалуйста подождите',
 			'aiQuiz.sourceAi' => 'AI',

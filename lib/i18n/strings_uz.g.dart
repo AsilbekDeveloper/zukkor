@@ -802,6 +802,10 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get emptySubtitle => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating';
 	@override String get deleteConfirmTitle => 'Quizni o\'chirish';
 	@override String deleteConfirmMessage({required Object name}) => '"${name}" o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.';
+	@override String get selectAction => 'Tanlash';
+	@override String selectedCount({required Object count}) => '${count} ta tanlandi';
+	@override String get deleteSelectedConfirmTitle => 'Tanlangan quizlarni o\'chirish';
+	@override String deleteSelectedConfirmMessage({required Object count}) => '${count} ta quiz o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.';
 	@override String get generateTitle => 'AI orqali quiz yaratish';
 	@override String get generateSubtitle => 'Hujjatdan yoki mavzudan AI orqali quiz yarating';
 	@override String get modeDocumentLabel => 'Hujjat';
@@ -815,7 +819,7 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get topicRequired => 'Mavzuni yozing';
 	@override String get questionCountLabel => 'Savollar soni';
 	@override String get generateButton => 'Generatsiya qilish';
-	@override String get generated => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi';
+	@override String get generated => 'Tayyor! Quiz "Mening quizlarim"ga saqlandi';
 	@override String get generatingTitle => 'AI savollar tayyorlamoqda...';
 	@override String get generatingSubtitle => 'Bu biroz vaqt olishi mumkin, iltimos kuting';
 	@override String get sourceAi => 'AI';
@@ -1250,6 +1254,10 @@ extension on TranslationsUz {
 			'aiQuiz.emptySubtitle' => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating',
 			'aiQuiz.deleteConfirmTitle' => 'Quizni o\'chirish',
 			'aiQuiz.deleteConfirmMessage' => ({required Object name}) => '"${name}" o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.',
+			'aiQuiz.selectAction' => 'Tanlash',
+			'aiQuiz.selectedCount' => ({required Object count}) => '${count} ta tanlandi',
+			'aiQuiz.deleteSelectedConfirmTitle' => 'Tanlangan quizlarni o\'chirish',
+			'aiQuiz.deleteSelectedConfirmMessage' => ({required Object count}) => '${count} ta quiz o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.',
 			'aiQuiz.generateTitle' => 'AI orqali quiz yaratish',
 			'aiQuiz.generateSubtitle' => 'Hujjatdan yoki mavzudan AI orqali quiz yarating',
 			'aiQuiz.modeDocumentLabel' => 'Hujjat',
@@ -1263,7 +1271,7 @@ extension on TranslationsUz {
 			'aiQuiz.topicRequired' => 'Mavzuni yozing',
 			'aiQuiz.questionCountLabel' => 'Savollar soni',
 			'aiQuiz.generateButton' => 'Generatsiya qilish',
-			'aiQuiz.generated' => 'Tayyor! Quiz "Mening AI quizlarim"ga saqlandi',
+			'aiQuiz.generated' => 'Tayyor! Quiz "Mening quizlarim"ga saqlandi',
 			'aiQuiz.generatingTitle' => 'AI savollar tayyorlamoqda...',
 			'aiQuiz.generatingSubtitle' => 'Bu biroz vaqt olishi mumkin, iltimos kuting',
 			'aiQuiz.sourceAi' => 'AI',

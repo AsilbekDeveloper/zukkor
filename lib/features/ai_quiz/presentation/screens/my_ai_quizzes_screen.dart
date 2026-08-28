@@ -10,7 +10,6 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
-import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -33,6 +32,9 @@ class MyAiQuizzesScreen extends ConsumerStatefulWidget {
 }
 
 class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
+  bool _selectionMode = false;
+  final Set<int> _selectedIds = {};
+
   @override
   void initState() {
     super.initState();
@@ -49,8 +51,29 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     }
   }
 
+  void _enterSelectionMode() => setState(() => _selectionMode = true);
+
+  void _exitSelectionMode() => setState(() {
+        _selectionMode = false;
+        _selectedIds.clear();
+      });
+
+  void _toggleSelect(AiQuiz quiz) {
+    setState(() {
+      if (!_selectedIds.remove(quiz.id)) _selectedIds.add(quiz.id);
+    });
+  }
+
   Future<void> _createViaAi() async {
     await context.push(AppRoutes.generateAiQuiz);
+  }
+
+  void _rowTapped(AiQuiz quiz) {
+    if (_selectionMode) {
+      _toggleSelect(quiz);
+    } else {
+      _play(quiz);
+    }
   }
 
   void _play(AiQuiz quiz) {
@@ -72,12 +95,15 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     }
   }
 
-  Future<void> _confirmDelete(AiQuiz quiz) async {
+  Future<void> _confirmDeleteSelected() async {
+    if (_selectedIds.isEmpty) return;
+    final int count = _selectedIds.length;
+
     final bool? confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(context.t.aiQuiz.deleteConfirmTitle),
-        content: Text(context.t.aiQuiz.deleteConfirmMessage(name: quiz.name)),
+        title: Text(context.t.aiQuiz.deleteSelectedConfirmTitle),
+        content: Text(context.t.aiQuiz.deleteSelectedConfirmMessage(count: count)),
         actions: [
           TextButton(onPressed: () => dialogContext.pop(false), child: Text(context.t.common.cancel)),
           TextButton(onPressed: () => dialogContext.pop(true), child: Text(context.t.common.delete)),
@@ -86,13 +112,24 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     );
     if (confirmed != true || !mounted) return;
 
-    try {
-      await ref.read(aiQuizControllerProvider.notifier).delete(quiz.id);
-    } on Failure catch (e) {
-      if (mounted) context.showSnack(e.message);
-    } catch (_) {
-      if (mounted) context.showSnack(t.errors.unknown);
+    // Sequential, not Future.wait — AiQuizController.delete() updates
+    // state.quizzes by filtering whatever the CURRENT state.quizzes is at
+    // the time it runs. Firing all the deletes concurrently would have
+    // every call read the same stale snapshot and each write back a list
+    // missing only its own id - the last write would win, silently
+    // "undoing" the others from the local list (the backend would still
+    // have deleted them all, but the UI wouldn't reflect it without a
+    // full reload).
+    for (final int id in _selectedIds.toList()) {
+      try {
+        await ref.read(aiQuizControllerProvider.notifier).delete(id);
+      } on Failure catch (e) {
+        if (mounted) context.showSnack(e.message);
+      } catch (_) {
+        if (mounted) context.showSnack(t.errors.unknown);
+      }
     }
+    if (mounted) _exitSelectionMode();
   }
 
   Future<void> _changeVisibility(AiQuiz quiz) async {
@@ -128,10 +165,57 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     }
   }
 
+  Widget _buildHeader(BuildContext context, {required bool canSelect}) {
+    if (_selectionMode) {
+      final bool hasSelection = _selectedIds.isNotEmpty;
+      return Row(
+        children: [
+          _HeaderIconButton(icon: TablerIcons.x, onTap: _exitSelectionMode),
+          Expanded(
+            child: Text(
+              context.t.aiQuiz.selectedCount(count: _selectedIds.length),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.textStyles.titleLarge,
+            ),
+          ),
+          _HeaderIconButton(
+            icon: TablerIcons.trash,
+            color: hasSelection ? context.colors.coralDeep : context.colors.muted,
+            onTap: hasSelection ? _confirmDeleteSelected : null,
+          ),
+        ],
+      );
+    }
+
+    return Row(
+      children: [
+        _HeaderIconButton(icon: TablerIcons.arrowLeft, onTap: _goBack),
+        Expanded(
+          child: Text(
+            context.t.aiQuiz.myQuizzesTitle,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: context.textStyles.titleLarge,
+          ),
+        ),
+        TextButton(
+          onPressed: canSelect ? _enterSelectionMode : null,
+          child: Text(context.t.aiQuiz.selectAction),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AiQuizState state = ref.watch(aiQuizControllerProvider);
     final List<AiQuiz>? quizzes = state.quizzes;
+    // Nothing to select once the list is empty (or still loading) - the
+    // "Select" action would just open selection mode with nothing to act on.
+    final bool canSelect = quizzes != null && quizzes.isNotEmpty;
 
     return Scaffold(
       body: SafeArea(
@@ -141,10 +225,12 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.aiQuiz.myQuizzesTitle, onBack: _goBack),
+              _buildHeader(context, canSelect: canSelect),
               AppSpacing.lg.vGap,
-              AppButton.primary(label: context.t.aiQuiz.createButton, onPressed: _createViaAi),
-              AppSpacing.lg.vGap,
+              if (!_selectionMode) ...[
+                AppButton.primary(label: context.t.aiQuiz.createButton, onPressed: _createViaAi),
+                AppSpacing.lg.vGap,
+              ],
               Expanded(
                 child: state.hasListError
                     ? ErrorRetryView(onRetry: () => ref.read(aiQuizControllerProvider.notifier).loadList())
@@ -155,14 +241,43 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                             : SingleChildScrollView(
                                 child: AiQuizList(
                                   quizzes: quizzes,
-                                  onTap: _play,
-                                  onDelete: _confirmDelete,
+                                  onTap: _rowTapped,
                                   onVisibilityTap: _changeVisibility,
+                                  selectionMode: _selectionMode,
+                                  selectedIds: _selectedIds,
                                 ),
                               ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeaderIconButton extends StatelessWidget {
+  const _HeaderIconButton({required this.icon, required this.onTap, this.color});
+
+  final IconData icon;
+  final VoidCallback? onTap;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.card,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppRadius.smAll,
+        side: BorderSide(color: context.colors.line),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.smAll,
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(icon, color: color ?? context.colors.ink, size: 20),
         ),
       ),
     );

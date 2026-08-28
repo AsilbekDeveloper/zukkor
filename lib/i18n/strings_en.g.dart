@@ -1470,6 +1470,18 @@ class Translations$aiQuiz$en {
 	/// en: 'Delete "$name"? This can't be undone.'
 	String deleteConfirmMessage({required Object name}) => 'Delete "${name}"? This can\'t be undone.';
 
+	/// en: 'Select'
+	String get selectAction => 'Select';
+
+	/// en: '$count selected'
+	String selectedCount({required Object count}) => '${count} selected';
+
+	/// en: 'Delete selected quizzes'
+	String get deleteSelectedConfirmTitle => 'Delete selected quizzes';
+
+	/// en: 'Delete $count quiz(zes)? This can't be undone.'
+	String deleteSelectedConfirmMessage({required Object count}) => 'Delete ${count} quiz(zes)? This can\'t be undone.';
+
 	/// en: 'Create a quiz with AI'
 	String get generateTitle => 'Create a quiz with AI';
 
@@ -1509,8 +1521,8 @@ class Translations$aiQuiz$en {
 	/// en: 'Generate'
 	String get generateButton => 'Generate';
 
-	/// en: 'Done! Saved to "My AI quizzes"'
-	String get generated => 'Done! Saved to "My AI quizzes"';
+	/// en: 'Done! Saved to "My quizzes"'
+	String get generated => 'Done! Saved to "My quizzes"';
 
 	/// en: 'AI is generating questions...'
 	String get generatingTitle => 'AI is generating questions...';
@@ -2057,6 +2069,10 @@ extension on Translations {
 			'aiQuiz.emptySubtitle' => 'Upload a document (PDF, Word, or text) and get a quiz generated from it',
 			'aiQuiz.deleteConfirmTitle' => 'Delete quiz',
 			'aiQuiz.deleteConfirmMessage' => ({required Object name}) => 'Delete "${name}"? This can\'t be undone.',
+			'aiQuiz.selectAction' => 'Select',
+			'aiQuiz.selectedCount' => ({required Object count}) => '${count} selected',
+			'aiQuiz.deleteSelectedConfirmTitle' => 'Delete selected quizzes',
+			'aiQuiz.deleteSelectedConfirmMessage' => ({required Object count}) => 'Delete ${count} quiz(zes)? This can\'t be undone.',
 			'aiQuiz.generateTitle' => 'Create a quiz with AI',
 			'aiQuiz.generateSubtitle' => 'Create a quiz with AI from a document or a topic',
 			'aiQuiz.modeDocumentLabel' => 'Document',
@@ -2070,7 +2086,7 @@ extension on Translations {
 			'aiQuiz.topicRequired' => 'Enter a topic',
 			'aiQuiz.questionCountLabel' => 'Number of questions',
 			'aiQuiz.generateButton' => 'Generate',
-			'aiQuiz.generated' => 'Done! Saved to "My AI quizzes"',
+			'aiQuiz.generated' => 'Done! Saved to "My quizzes"',
 			'aiQuiz.generatingTitle' => 'AI is generating questions...',
 			'aiQuiz.generatingSubtitle' => 'This can take a moment, please wait',
 			'aiQuiz.sourceAi' => 'AI',
