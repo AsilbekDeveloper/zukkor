@@ -33,14 +33,11 @@ class AiQuizList extends StatelessWidget {
   double _rowExtent(BuildContext context) {
     final TextScaler scaler = MediaQuery.textScalerOf(context);
     final double titleLine = (scaler.scale(14) * 1.4).ceilToDouble();
-    final double countLine = (scaler.scale(11) * 1.2).ceilToDouble();
-    // The visibility button has its own explicit padding independent of
-    // scaled text (12/11px content + 8px vertical padding), plus a couple
-    // of px of slack — a real device rendered 2px taller than this
-    // block's old plain-text estimate, so this is deliberately generous
-    // rather than shaving it as tight as possible again.
-    final double visibilityButton = (scaler.scale(12) * 1.2).ceilToDouble() + 10;
-    final double textBlock = titleLine + countLine + AppSpacing.xxs + visibilityButton + AppSpacing.xxs;
+    final double subLine = (scaler.scale(11) * 1.2).ceilToDouble();
+    // Back to just 2 text lines (title + question-count/source) now that
+    // the visibility control moved out to its own trailing button, sized
+    // against the fixed 40px icon block instead of stacking under the text.
+    final double textBlock = titleLine + subLine;
     const double iconBlock = 40;
     const double verticalPadding = AppSpacing.sm * 2;
     return (textBlock > iconBlock ? textBlock : iconBlock) + verticalPadding;
@@ -181,48 +178,58 @@ class _AiQuizRow extends StatelessWidget {
                         ),
                       ],
                     ),
-                    AppSpacing.xxs.vGap,
-                    // A proper button (not a bare inline chip) — bigger,
-                    // clearly tappable, and no longer sharing the row with
-                    // a delete icon (that moved to the app bar's "select"
-                    // mode, freeing up this whole width for it).
-                    IgnorePointer(
-                      ignoring: selectionMode,
-                      child: Opacity(
-                        opacity: selectionMode ? 0.5 : 1,
-                        child: Material(
-                          color: context.colors.line,
-                          borderRadius: AppRadius.smAll,
-                          child: InkWell(
-                            onTap: onVisibilityTap,
-                            borderRadius: AppRadius.smAll,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(_visibilityIcon(), size: 14, color: context.colors.coral),
-                                  4.hGap,
-                                  Text(
-                                    _visibilityLabel(context),
-                                    style: context.textStyles.labelSmall?.copyWith(
-                                      color: context.colors.coral,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  2.hGap,
-                                  Icon(TablerIcons.chevronDown, size: 12, color: context.colors.coral),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
+              AppSpacing.sm.hGap,
+              // Icon-only, right where the old delete button used to be —
+              // a real (40x40) tap target, not a cramped inline chip.
+              // Tooltip carries the word (Nobody/Friends/Everyone) for
+              // anyone who taps-and-holds or uses a screen reader.
+              _VisibilityButton(
+                icon: _visibilityIcon(),
+                tooltip: _visibilityLabel(context),
+                enabled: !selectionMode,
+                onTap: onVisibilityTap,
+              ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _VisibilityButton extends StatelessWidget {
+  const _VisibilityButton({
+    required this.icon,
+    required this.tooltip,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: context.colors.line,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(11),
+          side: BorderSide(color: context.colors.coral.withValues(alpha: enabled ? 0.4 : 0)),
+        ),
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(11),
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: Icon(icon, color: enabled ? context.colors.coral : context.colors.muted, size: 18),
           ),
         ),
       ),
