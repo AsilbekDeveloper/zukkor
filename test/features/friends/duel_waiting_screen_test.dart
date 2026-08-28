@@ -83,6 +83,9 @@ class _FakeDuelRepository implements DuelRepository {
   Stream<DuelFinalResult> get duelFinished => const Stream.empty();
 
   @override
+  Stream<String> get duelCancelled => const Stream.empty();
+
+  @override
   Future<void> connect() async {}
 
   @override
@@ -105,6 +108,9 @@ class _FakeDuelRepository implements DuelRepository {
 
   @override
   void submitAnswer({required String duelId, required int questionIndex, required int? selectedOption}) {}
+
+  @override
+  void forfeitDuel(String duelId) {}
 
   void emitOutcome(DuelInviteOutcomeStatus status) {
     final String? clientId = lastClientInviteId;

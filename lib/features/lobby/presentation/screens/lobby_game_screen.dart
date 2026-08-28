@@ -135,6 +135,34 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
     ref.read(lobbyControllerProvider.notifier).submitAnswer(index);
   }
 
+  Future<void> _onBack() async {
+    final bool? leave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.t.gameLeave.lobbyTitle),
+        content: Text(context.t.gameLeave.lobbyMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.t.gameLeave.stay),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              context.t.gameLeave.leave,
+              style: TextStyle(color: context.colors.error, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (leave == true && mounted) {
+      ref.read(lobbyControllerProvider.notifier).leaveRoom();
+      context.go(AppRoutes.home);
+    }
+  }
+
   AnswerVisualState _stateFor(int optionIndex, LobbyGameState game) {
     final LobbyQuestionResult? result = game.lastResult;
     if (result == null) return AnswerVisualState.idle;
@@ -151,32 +179,39 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
     final LobbyGameState? game = ref.watch(lobbyControllerProvider).game;
 
     if (game != null && game.waitingForOthers && game.finalResult == null) {
-      return Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: AppSpacing.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppSpacing.xs.vGap,
-                CloseHeader(title: context.t.lobbyGame.title, onClose: () => context.go(AppRoutes.home)),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircularProgressIndicator(),
-                        AppSpacing.lg.vGap,
-                        Text(
-                          context.t.lobbyGame.waitingForOthers,
-                          textAlign: TextAlign.center,
-                          style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ],
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          _onBack();
+        },
+        child: Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: AppSpacing.screenPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppSpacing.xs.vGap,
+                  CloseHeader(title: context.t.lobbyGame.title, onClose: _onBack),
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircularProgressIndicator(),
+                          AppSpacing.lg.vGap,
+                          Text(
+                            context.t.lobbyGame.waitingForOthers,
+                            textAlign: TextAlign.center,
+                            style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -241,41 +276,48 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
       );
     }
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: QuizProgressHeader(
-                      questionNumber: game.questionIndex + 1,
-                      totalQuestions: game.totalQuestions,
-                      score: _correctCount,
-                      onBack: () => context.go(AppRoutes.home),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _onBack();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: QuizProgressHeader(
+                        questionNumber: game.questionIndex + 1,
+                        totalQuestions: game.totalQuestions,
+                        score: _correctCount,
+                        onBack: _onBack,
+                      ),
                     ),
-                  ),
-                  AppSpacing.sm.hGap,
-                  QuestionTimer(controller: _timerController),
-                ],
-              ),
-              AppSpacing.lg.vGap,
-              QuestionCard(categoryName: game.category.name, question: game.question!.text),
-              AppSpacing.sm.vGap,
-              for (int i = 0; i < game.question!.options.length; i++) ...[
-                AnswerButton(
-                  letter: String.fromCharCode(65 + i),
-                  text: game.question!.options[i],
-                  state: _stateFor(i, game),
-                  onTap: game.hasAnswered ? null : () => _selectAnswer(i),
+                    AppSpacing.sm.hGap,
+                    QuestionTimer(controller: _timerController),
+                  ],
                 ),
-                if (i < game.question!.options.length - 1) AppSpacing.sm.vGap,
+                AppSpacing.lg.vGap,
+                QuestionCard(categoryName: game.category.name, question: game.question!.text),
+                AppSpacing.sm.vGap,
+                for (int i = 0; i < game.question!.options.length; i++) ...[
+                  AnswerButton(
+                    letter: String.fromCharCode(65 + i),
+                    text: game.question!.options[i],
+                    state: _stateFor(i, game),
+                    onTap: game.hasAnswered ? null : () => _selectAnswer(i),
+                  ),
+                  if (i < game.question!.options.length - 1) AppSpacing.sm.vGap,
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),

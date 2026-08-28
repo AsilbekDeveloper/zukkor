@@ -67,6 +67,8 @@ class DuelSocketDataSource {
       StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _duelFinishedController =
       StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<Map<String, dynamic>> _duelCancelledController =
+      StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _errorController =
       StreamController<Map<String, dynamic>>.broadcast();
 
@@ -82,6 +84,7 @@ class DuelSocketDataSource {
   Stream<Map<String, dynamic>> get duelQuestionResult => _duelQuestionResultController.stream;
   Stream<Map<String, dynamic>> get waitingForOpponent => _waitingForOpponentController.stream;
   Stream<Map<String, dynamic>> get duelFinished => _duelFinishedController.stream;
+  Stream<Map<String, dynamic>> get duelCancelled => _duelCancelledController.stream;
 
   /// `{"type": "error", "detail": ..., "client_invite_id": ...?}` — sent
   /// when the server rejects an outgoing `duel_invite` (e.g. the other
@@ -193,6 +196,8 @@ class DuelSocketDataSource {
         _waitingForOpponentController.add(json);
       case 'duel_finished':
         _duelFinishedController.add(json);
+      case 'duel_cancelled':
+        _duelCancelledController.add(json);
       case 'error':
         _errorController.add(json);
     }

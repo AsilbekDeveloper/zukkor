@@ -211,12 +211,34 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('the back button abandons the quiz and returns to Home', (tester) async {
+  testWidgets('the back button shows a confirm dialog, and leaving returns to Home', (tester) async {
     await _pumpQuiz(tester);
 
     await tester.tap(find.byIcon(TablerIcons.arrowLeft));
     await tester.pumpAndSettle();
 
+    // The confirm dialog is up — the quiz screen (and Home) aren't
+    // reachable yet until the user actually confirms leaving.
+    expect(find.text(t.gameLeave.soloTitle), findsOneWidget);
+    expect(find.text(AppStrings.duelHeroTitle), findsNothing);
+
+    await tester.tap(find.text(t.gameLeave.leave));
+    await tester.pumpAndSettle();
+
     expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
+  });
+
+  testWidgets('the back button dialog: staying keeps the quiz open', (tester) async {
+    await _pumpQuiz(tester);
+
+    await tester.tap(find.byIcon(TablerIcons.arrowLeft));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(t.gameLeave.stay));
+    await tester.pumpAndSettle();
+
+    // Dismissed without leaving - still on the quiz, not Home.
+    expect(find.byType(AnswerButton), findsWidgets);
+    expect(find.text(AppStrings.duelHeroTitle), findsNothing);
   });
 }

@@ -131,6 +131,53 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
     ref.read(duelControllerProvider.notifier).submitAnswer(index);
   }
 
+  Future<void> _onBack() async {
+    final bool? leave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.t.gameLeave.duelTitle),
+        content: Text(context.t.gameLeave.duelMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.t.gameLeave.stay),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              context.t.gameLeave.leave,
+              style: TextStyle(color: context.colors.error, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (leave == true && mounted) {
+      ref.read(duelControllerProvider.notifier).leaveDuel();
+      context.go(AppRoutes.home);
+    }
+  }
+
+  Future<void> _onCancelled() async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.t.gameLeave.opponentLeft),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(context.t.common.ok),
+          ),
+        ],
+      ),
+    );
+    if (mounted) {
+      ref.read(duelControllerProvider.notifier).clearGame();
+      context.go(AppRoutes.home);
+    }
+  }
+
   AnswerVisualState _stateFor(int optionIndex, DuelGameState game) {
     final DuelQuestionResult? result = game.lastResult;
     if (result == null) return AnswerVisualState.idle;
@@ -143,36 +190,48 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(duelControllerProvider, (previous, next) => _sync(next.game));
+    ref.listen(duelControllerProvider, (previous, next) {
+      _sync(next.game);
+      if (next.wasCancelled && !(previous?.wasCancelled ?? false)) {
+        _onCancelled();
+      }
+    });
     final DuelGameState? game = ref.watch(duelControllerProvider).game;
 
     if (game != null && game.waitingForOpponent && game.finalResult == null) {
-      return Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: AppSpacing.screenPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppSpacing.xs.vGap,
-                CloseHeader(title: context.t.duelGame.title, onClose: () => context.go(AppRoutes.home)),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircularProgressIndicator(),
-                        AppSpacing.lg.vGap,
-                        Text(
-                          context.t.duelGame.waitingForOpponent,
-                          textAlign: TextAlign.center,
-                          style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ],
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          _onBack();
+        },
+        child: Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: AppSpacing.screenPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppSpacing.xs.vGap,
+                  CloseHeader(title: context.t.duelGame.title, onClose: _onBack),
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircularProgressIndicator(),
+                          AppSpacing.lg.vGap,
+                          Text(
+                            context.t.duelGame.waitingForOpponent,
+                            textAlign: TextAlign.center,
+                            style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -237,52 +296,59 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
       );
     }
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: QuizProgressHeader(
-                      questionNumber: game.questionIndex + 1,
-                      totalQuestions: game.totalQuestions,
-                      score: _correctCount,
-                      onBack: () => context.go(AppRoutes.home),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _onBack();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: QuizProgressHeader(
+                        questionNumber: game.questionIndex + 1,
+                        totalQuestions: game.totalQuestions,
+                        score: _correctCount,
+                        onBack: _onBack,
+                      ),
+                    ),
+                    AppSpacing.sm.hGap,
+                    QuestionTimer(controller: _timerController),
+                  ],
+                ),
+                AppSpacing.lg.vGap,
+                QuestionCard(categoryName: game.category.name, question: game.question!.text),
+                AppSpacing.sm.vGap,
+                if (game.opponentQuestionIndex != null)
+                  Center(
+                    child: Text(
+                      context.t.duelGame.opponentProgress(
+                        index: game.opponentQuestionIndex! + 1,
+                        total: game.totalQuestions,
+                      ),
+                      style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
                     ),
                   ),
-                  AppSpacing.sm.hGap,
-                  QuestionTimer(controller: _timerController),
+                AppSpacing.sm.vGap,
+                for (int i = 0; i < game.question!.options.length; i++) ...[
+                  AnswerButton(
+                    letter: String.fromCharCode(65 + i),
+                    text: game.question!.options[i],
+                    state: _stateFor(i, game),
+                    onTap: game.hasAnswered ? null : () => _selectAnswer(i),
+                  ),
+                  if (i < game.question!.options.length - 1) AppSpacing.sm.vGap,
                 ],
-              ),
-              AppSpacing.lg.vGap,
-              QuestionCard(categoryName: game.category.name, question: game.question!.text),
-              AppSpacing.sm.vGap,
-              if (game.opponentQuestionIndex != null)
-                Center(
-                  child: Text(
-                    context.t.duelGame.opponentProgress(
-                      index: game.opponentQuestionIndex! + 1,
-                      total: game.totalQuestions,
-                    ),
-                    style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-                  ),
-                ),
-              AppSpacing.sm.vGap,
-              for (int i = 0; i < game.question!.options.length; i++) ...[
-                AnswerButton(
-                  letter: String.fromCharCode(65 + i),
-                  text: game.question!.options[i],
-                  state: _stateFor(i, game),
-                  onTap: game.hasAnswered ? null : () => _selectAnswer(i),
-                ),
-                if (i < game.question!.options.length - 1) AppSpacing.sm.vGap,
               ],
-            ],
+            ),
           ),
         ),
       ),

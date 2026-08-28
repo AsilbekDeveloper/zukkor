@@ -42,6 +42,10 @@ abstract interface class DuelRepository {
   /// Fires once the duel is over.
   Stream<DuelFinalResult> get duelFinished;
 
+  /// Fires (with the duel id) if the opponent leaves or the game is
+  /// otherwise voided.
+  Stream<String> get duelCancelled;
+
   /// Opens the WebSocket connection (no-op if already connected).
   Future<void> connect();
 
@@ -68,4 +72,7 @@ abstract interface class DuelRepository {
     required int questionIndex,
     required int? selectedOption,
   });
+
+  /// Volunteers to forfeit the duel.
+  void forfeitDuel(String duelId);
 }

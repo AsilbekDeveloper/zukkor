@@ -110,6 +110,9 @@ class DuelRepositoryImpl implements DuelRepository {
       _dataSource.duelFinished.map((json) => DuelFinalResultModel.fromJson(json).toEntity());
 
   @override
+  Stream<String> get duelCancelled => _dataSource.duelCancelled.map((json) => json['duel_id'] as String);
+
+  @override
   Future<void> connect() => _dataSource.connect();
 
   @override
@@ -147,6 +150,14 @@ class DuelRepositoryImpl implements DuelRepository {
       'duel_id': duelId,
       'question_index': questionIndex,
       'selected_option': selectedOption,
+    }));
+  }
+
+  @override
+  void forfeitDuel(String duelId) {
+    unawaited(_dataSource.send({
+      'type': 'duel_leave',
+      'duel_id': duelId,
     }));
   }
 }

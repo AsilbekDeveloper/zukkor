@@ -25,6 +25,7 @@ class DuelState {
     this.outgoingStatus = OutgoingDuelStatus.idle,
     this.outgoingErrorMessage,
     this.game,
+    this.wasCancelled = false,
   });
 
   final bool isConnected;
@@ -47,12 +48,15 @@ class DuelState {
   /// started` has arrived for either side of an accepted invite.
   final DuelGameState? game;
 
+  final bool wasCancelled;
+
   DuelState copyWith({
     bool? isConnected,
     DuelInvite? Function()? incomingInvite,
     OutgoingDuelStatus? outgoingStatus,
     String? Function()? outgoingErrorMessage,
     DuelGameState? Function()? game,
+    bool? wasCancelled,
   }) =>
       DuelState(
         isConnected: isConnected ?? this.isConnected,
@@ -60,6 +64,7 @@ class DuelState {
         outgoingStatus: outgoingStatus ?? this.outgoingStatus,
         outgoingErrorMessage: outgoingErrorMessage != null ? outgoingErrorMessage() : this.outgoingErrorMessage,
         game: game != null ? game() : this.game,
+        wasCancelled: wasCancelled ?? this.wasCancelled,
       );
 }
 
@@ -99,6 +104,7 @@ class DuelController extends Notifier<DuelState> {
       repository.duelQuestionResult.listen(_handleDuelQuestionResult);
       repository.waitingForOpponent.listen(_handleWaitingForOpponent);
       repository.duelFinished.listen(_handleDuelFinished);
+      repository.duelCancelled.listen(_handleDuelCancelled);
     }
     await repository.connect();
   }
@@ -173,6 +179,11 @@ class DuelController extends Notifier<DuelState> {
         opponent: info.opponent,
         totalQuestions: info.totalQuestions,
       ),
+      // A leftover `wasCancelled: true` from a previous duel should never
+      // bleed into a brand new one - defense in depth alongside
+      // clearGame() already resetting it on the normal cancelled-dialog
+      // path.
+      wasCancelled: false,
     );
     unawaited(ref.read(analyticsServiceProvider).logGameStart(mode: 'duel', categoryId: info.category.id));
   }
@@ -224,6 +235,12 @@ class DuelController extends Notifier<DuelState> {
         ));
   }
 
+  void _handleDuelCancelled(String duelId) {
+    final DuelGameState? game = state.game;
+    if (game == null || game.duelId != duelId) return;
+    state = state.copyWith(wasCancelled: true);
+  }
+
   /// Locks in an answer for the current question (or `null` on timeout).
   void submitAnswer(int? selectedOption) {
     final DuelGameState? game = state.game;
@@ -246,10 +263,18 @@ class DuelController extends Notifier<DuelState> {
         );
   }
 
+  void leaveDuel() {
+    final DuelGameState? game = state.game;
+    if (game != null) {
+      ref.read(duelRepositoryProvider).forfeitDuel(game.duelId);
+    }
+    state = state.copyWith(game: () => null);
+  }
+
   /// Called once the duel result screen is left, so a later duel starts
   /// clean.
   void clearGame() {
-    state = state.copyWith(game: () => null);
+    state = state.copyWith(game: () => null, wasCancelled: false);
   }
 }
 

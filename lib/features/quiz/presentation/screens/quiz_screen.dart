@@ -215,6 +215,33 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
     return AnswerVisualState.idle;
   }
 
+  Future<void> _onBack() async {
+    final bool? leave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.t.gameLeave.soloTitle),
+        content: Text(context.t.gameLeave.soloMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.t.gameLeave.stay),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              context.t.gameLeave.leave,
+              style: TextStyle(color: context.colors.error, fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (leave == true && mounted) {
+      context.go(AppRoutes.home);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_starting) {
@@ -229,41 +256,48 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
     final int score = _totalBall;
     final int? correctIndexForDisplay = _lastCorrectIndex;
 
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: QuizProgressHeader(
-                      questionNumber: questionNumber,
-                      totalQuestions: totalQuestions,
-                      score: score,
-                      onBack: () => context.go(AppRoutes.home),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _onBack();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: QuizProgressHeader(
+                        questionNumber: questionNumber,
+                        totalQuestions: totalQuestions,
+                        score: score,
+                        onBack: _onBack,
+                      ),
                     ),
-                  ),
-                  AppSpacing.sm.hGap,
-                  QuestionTimer(controller: _timerController),
-                ],
-              ),
-              AppSpacing.lg.vGap,
-              QuestionCard(categoryName: widget.category.name, question: questionText),
-              AppSpacing.lg.vGap,
-              for (int i = 0; i < options.length; i++) ...[
-                AnswerButton(
-                  letter: String.fromCharCode(65 + i),
-                  text: options[i],
-                  state: _stateFor(i, correctIndexForDisplay),
-                  onTap: _answered ? null : () => _lockInAnswer(i),
+                    AppSpacing.sm.hGap,
+                    QuestionTimer(controller: _timerController),
+                  ],
                 ),
-                if (i < options.length - 1) AppSpacing.sm.vGap,
+                AppSpacing.lg.vGap,
+                QuestionCard(categoryName: widget.category.name, question: questionText),
+                AppSpacing.lg.vGap,
+                for (int i = 0; i < options.length; i++) ...[
+                  AnswerButton(
+                    letter: String.fromCharCode(65 + i),
+                    text: options[i],
+                    state: _stateFor(i, correctIndexForDisplay),
+                    onTap: _answered ? null : () => _lockInAnswer(i),
+                  ),
+                  if (i < options.length - 1) AppSpacing.sm.vGap,
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
