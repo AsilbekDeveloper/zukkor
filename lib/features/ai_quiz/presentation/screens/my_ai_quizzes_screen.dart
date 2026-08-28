@@ -372,8 +372,29 @@ class _VisibilityOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: selected ? context.colors.coral.withValues(alpha: 0.12) : context.colors.card,
+    // Selected = the same solid-coral-fill + white-content language as
+    // the app's real buttons ("+ Create a new AI quiz"), not a pale tint
+    // — a tinted/bordered version read as off-brand/washed-out. Unselected
+    // stays a plain neutral card (no complaint about that one).
+    final Widget row = Row(
+      children: [
+        Icon(icon, size: 20, color: selected ? Colors.white : context.colors.muted),
+        AppSpacing.sm.hGap,
+        Expanded(
+          child: Text(
+            label,
+            style: context.textStyles.bodyMedium?.copyWith(
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              color: selected ? Colors.white : context.colors.ink,
+            ),
+          ),
+        ),
+        if (selected) const Icon(TablerIcons.check, size: 20, color: Colors.white),
+      ],
+    );
+
+    final Widget card = Material(
+      color: selected ? context.colors.coral : context.colors.card,
       borderRadius: AppRadius.mdAll,
       child: InkWell(
         onTap: onTap,
@@ -382,29 +403,20 @@ class _VisibilityOption extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
           decoration: BoxDecoration(
             borderRadius: AppRadius.mdAll,
-            border: Border.all(
-              color: selected ? context.colors.coralDeep : context.colors.line,
-              width: selected ? 1.5 : 1,
-            ),
+            border: selected ? null : Border.all(color: context.colors.line),
           ),
-          child: Row(
-            children: [
-              Icon(icon, size: 20, color: selected ? context.colors.coralDeep : context.colors.muted),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Text(
-                  label,
-                  style: context.textStyles.bodyMedium?.copyWith(
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                    color: selected ? context.colors.coralDeep : context.colors.ink,
-                  ),
-                ),
-              ),
-              if (selected) Icon(TablerIcons.check, size: 20, color: context.colors.coralDeep),
-            ],
-          ),
+          child: row,
         ),
       ),
+    );
+
+    // Same coral glow the "+ Create a new AI quiz" button has — only on
+    // the selected option, matching how AppButton.primary only shows it
+    // while active.
+    if (!selected) return card;
+    return DecoratedBox(
+      decoration: BoxDecoration(borderRadius: AppRadius.mdAll, boxShadow: context.colors.shadowCoral),
+      child: card,
     );
   }
 }

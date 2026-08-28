@@ -215,21 +215,22 @@ class _VisibilityButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Same solid-coral-fill + white-icon language as the app's actual
+    // primary buttons (e.g. "+ Create a new AI quiz") and the row's own
+    // coral sparkle-icon square right next to this one — not a pale
+    // tint, which read as off-brand/washed-out.
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: enabled ? context.colors.coral.withValues(alpha: 0.12) : context.colors.line,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(11),
-          side: BorderSide(color: enabled ? context.colors.coralDeep : Colors.transparent),
-        ),
+        color: enabled ? context.colors.coral : context.colors.line,
+        borderRadius: BorderRadius.circular(11),
         child: InkWell(
           onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(11),
           child: SizedBox(
             width: 40,
             height: 40,
-            child: Icon(icon, color: enabled ? context.colors.coralDeep : context.colors.muted, size: 18),
+            child: Icon(icon, color: enabled ? Colors.white : context.colors.muted, size: 18),
           ),
         ),
       ),
