@@ -84,6 +84,8 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$aiQuiz$en aiQuiz = Translations$aiQuiz$en._(_root);
 	late final Translations$forgotPassword$en forgotPassword = Translations$forgotPassword$en._(_root);
 	late final Translations$resetPassword$en resetPassword = Translations$resetPassword$en._(_root);
+	late final Translations$discover$en discover = Translations$discover$en._(_root);
+	late final Translations$gameLeave$en gameLeave = Translations$gameLeave$en._(_root);
 }
 
 // Path: common
@@ -159,9 +161,6 @@ class Translations$home$en {
 
 	/// en: 'Rank'
 	String get rankLabel => 'Rank';
-
-	/// en: 'Level'
-	String get levelLabel => 'Level';
 
 	/// en: 'Create a room'
 	String get createRoom => 'Create a room';
@@ -396,12 +395,6 @@ class Translations$profile$en {
 
 	/// en: 'Settings & help'
 	String get settingsAndHelp => 'Settings & help';
-
-	/// en: 'Level $level · $title'
-	String levelWithTitle({required Object level, required Object title}) => 'Level ${level} · ${title}';
-
-	/// en: '$current / $target XP · $remaining to next level'
-	String xpProgressLabel({required Object current, required Object target, required Object remaining}) => '${current} / ${target} XP · ${remaining} to next level';
 }
 
 // Path: settings
@@ -478,8 +471,8 @@ class Translations$changePassword$en {
 	/// en: 'New password'
 	String get newPasswordLabel => 'New password';
 
-	/// en: 'At least 8 characters'
-	String get newPasswordHint => 'At least 8 characters';
+	/// en: 'At least 6 characters'
+	String get newPasswordHint => 'At least 6 characters';
 
 	/// en: 'Confirm new password'
 	String get confirmNewPasswordLabel => 'Confirm new password';
@@ -1336,8 +1329,8 @@ class Translations$auth$en {
 	/// en: 'Password'
 	String get passwordLabel => 'Password';
 
-	/// en: 'At least 8 characters'
-	String get passwordHint => 'At least 8 characters';
+	/// en: 'At least 6 characters'
+	String get passwordHint => 'At least 6 characters';
 
 	/// en: 'Confirm password'
 	String get confirmPasswordLabel => 'Confirm password';
@@ -1390,8 +1383,8 @@ class Translations$authValidation$en {
 	/// en: 'Password is required'
 	String get passwordRequired => 'Password is required';
 
-	/// en: 'Password must be at least 8 characters, with 1 uppercase letter and 1 number'
-	String get passwordTooShort => 'Password must be at least 8 characters, with 1 uppercase letter and 1 number';
+	/// en: 'Password must be at least 6 characters and include at least 1 number'
+	String get passwordTooShort => 'Password must be at least 6 characters and include at least 1 number';
 
 	/// en: 'Passwords don't match'
 	String get passwordMismatch => 'Passwords don\'t match';
@@ -1459,8 +1452,8 @@ class Translations$aiQuiz$en {
 	/// en: 'Create a quiz from a document with AI'
 	String get entryCardLabel => 'Create a quiz from a document with AI';
 
-	/// en: 'My AI quizzes'
-	String get myQuizzesTitle => 'My AI quizzes';
+	/// en: 'My quizzes'
+	String get myQuizzesTitle => 'My quizzes';
 
 	/// en: '+ Create a new AI quiz'
 	String get createButton => '+ Create a new AI quiz';
@@ -1636,8 +1629,8 @@ class Translations$resetPassword$en {
 	/// en: 'New password'
 	String get newPasswordLabel => 'New password';
 
-	/// en: 'At least 8 characters'
-	String get newPasswordHint => 'At least 8 characters';
+	/// en: 'At least 6 characters'
+	String get newPasswordHint => 'At least 6 characters';
 
 	/// en: 'Confirm new password'
 	String get confirmPasswordLabel => 'Confirm new password';
@@ -1653,6 +1646,75 @@ class Translations$resetPassword$en {
 
 	/// en: 'Password reset successfully'
 	String get success => 'Password reset successfully';
+}
+
+// Path: discover
+class Translations$discover$en {
+	Translations$discover$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Discover'
+	String get title => 'Discover';
+
+	/// en: 'Browse public quizzes from others'
+	String get homeCardSubtitle => 'Browse public quizzes from others';
+
+	/// en: 'Search by quiz name'
+	String get searchQuizHint => 'Search by quiz name';
+
+	/// en: 'Search by user'
+	String get searchUserHint => 'Search by user';
+
+	/// en: 'No public quizzes available yet'
+	String get emptyFeed => 'No public quizzes available yet';
+
+	/// en: 'No results found'
+	String get noResults => 'No results found';
+
+	/// en: 'by $name'
+	String byCreator({required Object name}) => 'by ${name}';
+
+	/// en: 'Filter by user'
+	String get userFilter => 'Filter by user';
+}
+
+// Path: gameLeave
+class Translations$gameLeave$en {
+	Translations$gameLeave$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Are you sure you want to leave?'
+	String get soloTitle => 'Are you sure you want to leave?';
+
+	/// en: 'This game won't be counted and no points will be awarded.'
+	String get soloMessage => 'This game won\'t be counted and no points will be awarded.';
+
+	/// en: 'Quit the duel?'
+	String get duelTitle => 'Quit the duel?';
+
+	/// en: 'Your opponent will be notified, and no points will be counted.'
+	String get duelMessage => 'Your opponent will be notified, and no points will be counted.';
+
+	/// en: 'Leave the room?'
+	String get lobbyTitle => 'Leave the room?';
+
+	/// en: 'The game will continue, but no points will be counted for you.'
+	String get lobbyMessage => 'The game will continue, but no points will be counted for you.';
+
+	/// en: 'Your opponent has left the duel'
+	String get opponentLeft => 'Your opponent has left the duel';
+
+	/// en: 'Stay'
+	String get stay => 'Stay';
+
+	/// en: 'Leave'
+	String get leave => 'Leave';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1679,7 +1741,6 @@ extension on Translations {
 			'home.startDuel' => 'Start a duel',
 			'home.totalXpLabel' => 'Total XP',
 			'home.rankLabel' => 'Rank',
-			'home.levelLabel' => 'Level',
 			'home.createRoom' => 'Create a room',
 			'home.joinWithCode' => 'Join with a code',
 			'home.categoriesTitle' => 'Categories',
@@ -1731,8 +1792,6 @@ extension on Translations {
 			'profile.statLongestStreak' => 'Longest streak',
 			'profile.gameHistory' => 'Game history',
 			'profile.settingsAndHelp' => 'Settings & help',
-			'profile.levelWithTitle' => ({required Object level, required Object title}) => 'Level ${level} · ${title}',
-			'profile.xpProgressLabel' => ({required Object current, required Object target, required Object remaining}) => '${current} / ${target} XP · ${remaining} to next level',
 			'settings.groupGeneral' => 'General',
 			'settings.language' => 'Language',
 			'settings.notifications' => 'Notifications',
@@ -1752,7 +1811,7 @@ extension on Translations {
 			'changePassword.currentPasswordLabel' => 'Current password',
 			'changePassword.currentPasswordHint' => 'Enter your current password',
 			'changePassword.newPasswordLabel' => 'New password',
-			'changePassword.newPasswordHint' => 'At least 8 characters',
+			'changePassword.newPasswordHint' => 'At least 6 characters',
 			'changePassword.confirmNewPasswordLabel' => 'Confirm new password',
 			'changePassword.confirmNewPasswordHint' => 'Re-enter your new password',
 			'changePassword.saveButton' => 'Save',
@@ -1960,7 +2019,7 @@ extension on Translations {
 			'auth.emailLabel' => 'Email',
 			'auth.emailHint' => 'you@example.com',
 			'auth.passwordLabel' => 'Password',
-			'auth.passwordHint' => 'At least 8 characters',
+			'auth.passwordHint' => 'At least 6 characters',
 			'auth.confirmPasswordLabel' => 'Confirm password',
 			'auth.confirmPasswordHint' => 'Re-enter your password',
 			'auth.loginButton' => 'Sign in',
@@ -1975,7 +2034,7 @@ extension on Translations {
 			'authValidation.emailRequired' => 'Email is required',
 			'authValidation.emailInvalid' => 'Invalid email format',
 			'authValidation.passwordRequired' => 'Password is required',
-			'authValidation.passwordTooShort' => 'Password must be at least 8 characters, with 1 uppercase letter and 1 number',
+			'authValidation.passwordTooShort' => 'Password must be at least 6 characters and include at least 1 number',
 			'authValidation.passwordMismatch' => 'Passwords don\'t match',
 			'authValidation.usernameRequired' => 'Username is required',
 			'authValidation.usernameInvalid' => 'Username may only contain letters, numbers and underscores (3–30 characters)',
@@ -1992,7 +2051,7 @@ extension on Translations {
 			'errors.sessionExpired' => 'Your session has expired. Please sign in again.',
 			'errors.googleCancelled' => 'Google sign-in was cancelled.',
 			'aiQuiz.entryCardLabel' => 'Create a quiz from a document with AI',
-			'aiQuiz.myQuizzesTitle' => 'My AI quizzes',
+			'aiQuiz.myQuizzesTitle' => 'My quizzes',
 			'aiQuiz.createButton' => '+ Create a new AI quiz',
 			'aiQuiz.emptyTitle' => 'You haven\'t created an AI quiz yet',
 			'aiQuiz.emptySubtitle' => 'Upload a document (PDF, Word, or text) and get a quiz generated from it',
@@ -2045,12 +2104,29 @@ extension on Translations {
 			'resetPassword.codeLabel' => 'Verification code',
 			'resetPassword.codeHint' => '123456',
 			'resetPassword.newPasswordLabel' => 'New password',
-			'resetPassword.newPasswordHint' => 'At least 8 characters',
+			'resetPassword.newPasswordHint' => 'At least 6 characters',
 			'resetPassword.confirmPasswordLabel' => 'Confirm new password',
 			'resetPassword.confirmPasswordHint' => 'Re-enter your new password',
 			'resetPassword.resendCode' => 'Resend code',
 			'resetPassword.resetButton' => 'Reset password',
 			'resetPassword.success' => 'Password reset successfully',
+			'discover.title' => 'Discover',
+			'discover.homeCardSubtitle' => 'Browse public quizzes from others',
+			'discover.searchQuizHint' => 'Search by quiz name',
+			'discover.searchUserHint' => 'Search by user',
+			'discover.emptyFeed' => 'No public quizzes available yet',
+			'discover.noResults' => 'No results found',
+			'discover.byCreator' => ({required Object name}) => 'by ${name}',
+			'discover.userFilter' => 'Filter by user',
+			'gameLeave.soloTitle' => 'Are you sure you want to leave?',
+			'gameLeave.soloMessage' => 'This game won\'t be counted and no points will be awarded.',
+			'gameLeave.duelTitle' => 'Quit the duel?',
+			'gameLeave.duelMessage' => 'Your opponent will be notified, and no points will be counted.',
+			'gameLeave.lobbyTitle' => 'Leave the room?',
+			'gameLeave.lobbyMessage' => 'The game will continue, but no points will be counted for you.',
+			'gameLeave.opponentLeft' => 'Your opponent has left the duel',
+			'gameLeave.stay' => 'Stay',
+			'gameLeave.leave' => 'Leave',
 			_ => null,
 		};
 	}

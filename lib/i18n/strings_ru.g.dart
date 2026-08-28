@@ -81,6 +81,8 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$aiQuiz$ru aiQuiz = _Translations$aiQuiz$ru._(_root);
 	@override late final _Translations$forgotPassword$ru forgotPassword = _Translations$forgotPassword$ru._(_root);
 	@override late final _Translations$resetPassword$ru resetPassword = _Translations$resetPassword$ru._(_root);
+	@override late final _Translations$discover$ru discover = _Translations$discover$ru._(_root);
+	@override late final _Translations$gameLeave$ru gameLeave = _Translations$gameLeave$ru._(_root);
 }
 
 // Path: common
@@ -130,7 +132,6 @@ class _Translations$home$ru implements Translations$home$en {
 	@override String get startDuel => 'Начать дуэль';
 	@override String get totalXpLabel => 'Всего XP';
 	@override String get rankLabel => 'Ранг';
-	@override String get levelLabel => 'Уровень';
 	@override String get createRoom => 'Создать комнату';
 	@override String get joinWithCode => 'Присоединиться по коду';
 	@override String get categoriesTitle => 'Категории';
@@ -263,8 +264,6 @@ class _Translations$profile$ru implements Translations$profile$en {
 	@override String get statLongestStreak => 'Самая длинная серия';
 	@override String get gameHistory => 'История игр';
 	@override String get settingsAndHelp => 'Настройки и помощь';
-	@override String levelWithTitle({required Object level, required Object title}) => 'Уровень ${level} · ${title}';
-	@override String xpProgressLabel({required Object current, required Object target, required Object remaining}) => '${current} / ${target} XP · до следующего уровня ${remaining}';
 }
 
 // Path: settings
@@ -302,7 +301,7 @@ class _Translations$changePassword$ru implements Translations$changePassword$en 
 	@override String get currentPasswordLabel => 'Текущий пароль';
 	@override String get currentPasswordHint => 'Введите текущий пароль';
 	@override String get newPasswordLabel => 'Новый пароль';
-	@override String get newPasswordHint => 'Минимум 8 символов';
+	@override String get newPasswordHint => 'Минимум 6 символов';
 	@override String get confirmNewPasswordLabel => 'Подтвердите новый пароль';
 	@override String get confirmNewPasswordHint => 'Введите новый пароль ещё раз';
 	@override String get saveButton => 'Сохранить';
@@ -744,7 +743,7 @@ class _Translations$auth$ru implements Translations$auth$en {
 	@override String get emailLabel => 'Email';
 	@override String get emailHint => 'you@example.com';
 	@override String get passwordLabel => 'Пароль';
-	@override String get passwordHint => 'Минимум 8 символов';
+	@override String get passwordHint => 'Минимум 6 символов';
 	@override String get confirmPasswordLabel => 'Подтвердите пароль';
 	@override String get confirmPasswordHint => 'Введите пароль ещё раз';
 	@override String get loginButton => 'Войти';
@@ -768,7 +767,7 @@ class _Translations$authValidation$ru implements Translations$authValidation$en 
 	@override String get emailRequired => 'Введите email';
 	@override String get emailInvalid => 'Неверный формат email';
 	@override String get passwordRequired => 'Введите пароль';
-	@override String get passwordTooShort => 'Пароль должен содержаer минимум 8 символов, 1 заглавную букву и 1 цифру';
+	@override String get passwordTooShort => 'Пароль должен содержать минимум 6 символов и 1 цифру';
 	@override String get passwordMismatch => 'Пароли не совпадают';
 	@override String get usernameRequired => 'Введите имя пользователя';
 	@override String get usernameInvalid => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)';
@@ -803,7 +802,7 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 
 	// Translations
 	@override String get entryCardLabel => 'Создать викторину из документа с помощью AI';
-	@override String get myQuizzesTitle => 'Мои AI-викторины';
+	@override String get myQuizzesTitle => 'Мои викторины';
 	@override String get createButton => '+ Создать новую AI-викторину';
 	@override String get emptyTitle => 'У вас пока нет AI-викторин';
 	@override String get emptySubtitle => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе';
@@ -874,12 +873,47 @@ class _Translations$resetPassword$ru implements Translations$resetPassword$en {
 	@override String get codeLabel => 'Код подтверждения';
 	@override String get codeHint => '123456';
 	@override String get newPasswordLabel => 'Новый пароль';
-	@override String get newPasswordHint => 'Минимум 8 символов';
+	@override String get newPasswordHint => 'Минимум 6 символов';
 	@override String get confirmPasswordLabel => 'Подтвердите новый пароль';
 	@override String get confirmPasswordHint => 'Введите новый пароль ещё раз';
 	@override String get resendCode => 'Отправить код еще раз';
 	@override String get resetButton => 'Восстановить пароль';
 	@override String get success => 'Пароль успешно восстановлен';
+}
+
+// Path: discover
+class _Translations$discover$ru implements Translations$discover$en {
+	_Translations$discover$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Обзор';
+	@override String get homeCardSubtitle => 'Смотрите публичные квизы других';
+	@override String get searchQuizHint => 'Поиск по названию квиза';
+	@override String get searchUserHint => 'Поиск по пользователю';
+	@override String get emptyFeed => 'Пока нет общедоступных квизов';
+	@override String get noResults => 'Ничего не найдено';
+	@override String byCreator({required Object name}) => 'от ${name}';
+	@override String get userFilter => 'Фильтр по автору';
+}
+
+// Path: gameLeave
+class _Translations$gameLeave$ru implements Translations$gameLeave$en {
+	_Translations$gameLeave$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get soloTitle => 'Вы уверены, что хотите выйти?';
+	@override String get soloMessage => 'Эта игра не будет засчитана, и баллы не будут начислены.';
+	@override String get duelTitle => 'Покинуть дуэль?';
+	@override String get duelMessage => 'Ваш противник будет уведомлен, баллы не будут засчитаны.';
+	@override String get lobbyTitle => 'Покинуть комнату?';
+	@override String get lobbyMessage => 'Игра продолжится, но баллы вам не будут начислены.';
+	@override String get opponentLeft => 'Ваш противник покинул дуэль';
+	@override String get stay => 'Остаться';
+	@override String get leave => 'Выйти';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -906,7 +940,6 @@ extension on TranslationsRu {
 			'home.startDuel' => 'Начать дуэль',
 			'home.totalXpLabel' => 'Всего XP',
 			'home.rankLabel' => 'Ранг',
-			'home.levelLabel' => 'Уровень',
 			'home.createRoom' => 'Создать комнату',
 			'home.joinWithCode' => 'Присоединиться по коду',
 			'home.categoriesTitle' => 'Категории',
@@ -958,8 +991,6 @@ extension on TranslationsRu {
 			'profile.statLongestStreak' => 'Самая длинная серия',
 			'profile.gameHistory' => 'История игр',
 			'profile.settingsAndHelp' => 'Настройки и помощь',
-			'profile.levelWithTitle' => ({required Object level, required Object title}) => 'Уровень ${level} · ${title}',
-			'profile.xpProgressLabel' => ({required Object current, required Object target, required Object remaining}) => '${current} / ${target} XP · до следующего уровня ${remaining}',
 			'settings.groupGeneral' => 'Общее',
 			'settings.language' => 'Язык',
 			'settings.notifications' => 'Уведомления',
@@ -979,7 +1010,7 @@ extension on TranslationsRu {
 			'changePassword.currentPasswordLabel' => 'Текущий пароль',
 			'changePassword.currentPasswordHint' => 'Введите текущий пароль',
 			'changePassword.newPasswordLabel' => 'Новый пароль',
-			'changePassword.newPasswordHint' => 'Минимум 8 символов',
+			'changePassword.newPasswordHint' => 'Минимум 6 символов',
 			'changePassword.confirmNewPasswordLabel' => 'Подтвердите новый пароль',
 			'changePassword.confirmNewPasswordHint' => 'Введите новый пароль ещё раз',
 			'changePassword.saveButton' => 'Сохранить',
@@ -1187,7 +1218,7 @@ extension on TranslationsRu {
 			'auth.emailLabel' => 'Email',
 			'auth.emailHint' => 'you@example.com',
 			'auth.passwordLabel' => 'Пароль',
-			'auth.passwordHint' => 'Минимум 8 символов',
+			'auth.passwordHint' => 'Минимум 6 символов',
 			'auth.confirmPasswordLabel' => 'Подтвердите пароль',
 			'auth.confirmPasswordHint' => 'Введите пароль ещё раз',
 			'auth.loginButton' => 'Войти',
@@ -1202,7 +1233,7 @@ extension on TranslationsRu {
 			'authValidation.emailRequired' => 'Введите email',
 			'authValidation.emailInvalid' => 'Неверный формат email',
 			'authValidation.passwordRequired' => 'Введите пароль',
-			'authValidation.passwordTooShort' => 'Пароль должен содержаer минимум 8 символов, 1 заглавную букву и 1 цифру',
+			'authValidation.passwordTooShort' => 'Пароль должен содержать минимум 6 символов и 1 цифру',
 			'authValidation.passwordMismatch' => 'Пароли не совпадают',
 			'authValidation.usernameRequired' => 'Введите имя пользователя',
 			'authValidation.usernameInvalid' => 'Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)',
@@ -1219,7 +1250,7 @@ extension on TranslationsRu {
 			'errors.sessionExpired' => 'Сессия истекла. Пожалуйста, войдите снова.',
 			'errors.googleCancelled' => 'Вход через Google отменён.',
 			'aiQuiz.entryCardLabel' => 'Создать викторину из документа с помощью AI',
-			'aiQuiz.myQuizzesTitle' => 'Мои AI-викторины',
+			'aiQuiz.myQuizzesTitle' => 'Мои викторины',
 			'aiQuiz.createButton' => '+ Создать новую AI-викторину',
 			'aiQuiz.emptyTitle' => 'У вас пока нет AI-викторин',
 			'aiQuiz.emptySubtitle' => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе',
@@ -1272,12 +1303,29 @@ extension on TranslationsRu {
 			'resetPassword.codeLabel' => 'Код подтверждения',
 			'resetPassword.codeHint' => '123456',
 			'resetPassword.newPasswordLabel' => 'Новый пароль',
-			'resetPassword.newPasswordHint' => 'Минимум 8 символов',
+			'resetPassword.newPasswordHint' => 'Минимум 6 символов',
 			'resetPassword.confirmPasswordLabel' => 'Подтвердите новый пароль',
 			'resetPassword.confirmPasswordHint' => 'Введите новый пароль ещё раз',
 			'resetPassword.resendCode' => 'Отправить код еще раз',
 			'resetPassword.resetButton' => 'Восстановить пароль',
 			'resetPassword.success' => 'Пароль успешно восстановлен',
+			'discover.title' => 'Обзор',
+			'discover.homeCardSubtitle' => 'Смотрите публичные квизы других',
+			'discover.searchQuizHint' => 'Поиск по названию квиза',
+			'discover.searchUserHint' => 'Поиск по пользователю',
+			'discover.emptyFeed' => 'Пока нет общедоступных квизов',
+			'discover.noResults' => 'Ничего не найдено',
+			'discover.byCreator' => ({required Object name}) => 'от ${name}',
+			'discover.userFilter' => 'Фильтр по автору',
+			'gameLeave.soloTitle' => 'Вы уверены, что хотите выйти?',
+			'gameLeave.soloMessage' => 'Эта игра не будет засчитана, и баллы не будут начислены.',
+			'gameLeave.duelTitle' => 'Покинуть дуэль?',
+			'gameLeave.duelMessage' => 'Ваш противник будет уведомлен, баллы не будут засчитаны.',
+			'gameLeave.lobbyTitle' => 'Покинуть комнату?',
+			'gameLeave.lobbyMessage' => 'Игра продолжится, но баллы вам не будут начислены.',
+			'gameLeave.opponentLeft' => 'Ваш противник покинул дуэль',
+			'gameLeave.stay' => 'Остаться',
+			'gameLeave.leave' => 'Выйти',
 			_ => null,
 		};
 	}

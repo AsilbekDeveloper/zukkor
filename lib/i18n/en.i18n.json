@@ -18,7 +18,6 @@
     "startDuel": "Start a duel",
     "totalXpLabel": "Total XP",
     "rankLabel": "Rank",
-    "levelLabel": "Level",
     "createRoom": "Create a room",
     "joinWithCode": "Join with a code",
     "categoriesTitle": "Categories",
@@ -87,9 +86,7 @@
     "statWinRate": "Win rate",
     "statLongestStreak": "Longest streak",
     "gameHistory": "Game history",
-    "settingsAndHelp": "Settings & help",
-    "levelWithTitle": "Level $level · $title",
-    "xpProgressLabel": "$current / $target XP · $remaining to next level"
+    "settingsAndHelp": "Settings & help"
   },
   "settings": {
     "groupGeneral": "General",
@@ -113,7 +110,7 @@
     "currentPasswordLabel": "Current password",
     "currentPasswordHint": "Enter your current password",
     "newPasswordLabel": "New password",
-    "newPasswordHint": "At least 8 characters",
+    "newPasswordHint": "At least 6 characters",
     "confirmNewPasswordLabel": "Confirm new password",
     "confirmNewPasswordHint": "Re-enter your new password",
     "saveButton": "Save",
@@ -373,7 +370,7 @@
     "emailLabel": "Email",
     "emailHint": "you@example.com",
     "passwordLabel": "Password",
-    "passwordHint": "At least 8 characters",
+    "passwordHint": "At least 6 characters",
     "confirmPasswordLabel": "Confirm password",
     "confirmPasswordHint": "Re-enter your password",
     "loginButton": "Sign in",
@@ -390,7 +387,7 @@
     "emailRequired": "Email is required",
     "emailInvalid": "Invalid email format",
     "passwordRequired": "Password is required",
-    "passwordTooShort": "Password must be at least 8 characters, with 1 uppercase letter and 1 number",
+    "passwordTooShort": "Password must be at least 6 characters and include at least 1 number",
     "passwordMismatch": "Passwords don't match",
     "usernameRequired": "Username is required",
     "usernameInvalid": "Username may only contain letters, numbers and underscores (3–30 characters)",
@@ -411,7 +408,7 @@
   },
   "aiQuiz": {
     "entryCardLabel": "Create a quiz from a document with AI",
-    "myQuizzesTitle": "My AI quizzes",
+    "myQuizzesTitle": "My quizzes",
     "createButton": "+ Create a new AI quiz",
     "emptyTitle": "You haven't created an AI quiz yet",
     "emptySubtitle": "Upload a document (PDF, Word, or text) and get a quiz generated from it",
@@ -468,11 +465,32 @@
     "codeLabel": "Verification code",
     "codeHint": "123456",
     "newPasswordLabel": "New password",
-    "newPasswordHint": "At least 8 characters",
+    "newPasswordHint": "At least 6 characters",
     "confirmPasswordLabel": "Confirm new password",
     "confirmPasswordHint": "Re-enter your new password",
     "resendCode": "Resend code",
     "resetButton": "Reset password",
     "success": "Password reset successfully"
+  },
+  "discover": {
+    "title": "Discover",
+    "homeCardSubtitle": "Browse public quizzes from others",
+    "searchQuizHint": "Search by quiz name",
+    "searchUserHint": "Search by user",
+    "emptyFeed": "No public quizzes available yet",
+    "noResults": "No results found",
+    "byCreator": "by $name",
+    "userFilter": "Filter by user"
+  },
+  "gameLeave": {
+    "soloTitle": "Are you sure you want to leave?",
+    "soloMessage": "This game won't be counted and no points will be awarded.",
+    "duelTitle": "Quit the duel?",
+    "duelMessage": "Your opponent will be notified, and no points will be counted.",
+    "lobbyTitle": "Leave the room?",
+    "lobbyMessage": "The game will continue, but no points will be counted for you.",
+    "opponentLeft": "Your opponent has left the duel",
+    "stay": "Stay",
+    "leave": "Leave"
   }
 }

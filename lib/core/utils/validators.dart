@@ -23,7 +23,6 @@ abstract final class Validators {
       RegExp(r'^[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
 
   static final RegExp _usernameRegex = RegExp(r'^[a-zA-Z0-9_]{3,30}$');
-  static final RegExp _uppercaseRegex = RegExp(r'[A-Z]');
   static final RegExp _digitRegex = RegExp(r'[0-9]');
   static final RegExp _resetCodeRegex = RegExp(r'^\d{6}$');
 
@@ -37,9 +36,7 @@ abstract final class Validators {
   static String? password(String? value) {
     final String v = value ?? '';
     if (v.isEmpty) return t.authValidation.passwordRequired;
-    if (v.length < 8 ||
-        !_uppercaseRegex.hasMatch(v) ||
-        !_digitRegex.hasMatch(v)) {
+    if (v.length < 6 || !_digitRegex.hasMatch(v)) {
       return t.authValidation.passwordTooShort;
     }
     return null;

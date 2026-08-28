@@ -13,6 +13,7 @@ import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/core/utils/formatters.dart';
 import 'package:zukkor/features/ai_quiz/data/repositories/ai_quiz_repository_impl.dart';
 import 'package:zukkor/features/ai_quiz/domain/entities/ai_quiz.dart';
+import 'package:zukkor/features/ai_quiz/domain/entities/discover_quiz.dart';
 import 'package:zukkor/features/ai_quiz/domain/entities/manual_question_input.dart';
 import 'package:zukkor/features/ai_quiz/domain/repositories/ai_quiz_repository.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
@@ -121,6 +122,12 @@ class _FakeAiQuizRepository implements AiQuizRepository {
 
   @override
   Future<List<AiQuiz>> listForUser(String userId) => throw UnimplementedError();
+
+  @override
+  Future<List<DiscoverQuiz>> discover() async => const [];
+
+  @override
+  Future<List<DiscoverQuiz>> searchDiscover(String query) async => const [];
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home
@@ -262,10 +269,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         avatarColor: 'a-coral',
         avatarImagePath: null,
         totalXp: 2140,
-        level: 12,
-        levelTitle: 'Scholar',
-        nextLevelXp: 3000,
-        currentLevelXp: 2750,
         currentStreak: 5,
         longestStreak: 15,
         gamesPlayed: 40,
@@ -421,7 +424,6 @@ void main() {
     expect(find.text(AppStrings.startDuel), findsOneWidget);
     expect(find.text(AppStrings.totalXpLabel), findsOneWidget);
     expect(find.text(AppStrings.rankLabel), findsOneWidget);
-    expect(find.text(AppStrings.levelLabel), findsOneWidget);
     expect(find.text(AppStrings.createRoom), findsOneWidget);
     expect(find.text(AppStrings.joinWithCode), findsOneWidget);
     expect(find.text(AppStrings.categoriesTitle), findsOneWidget);
@@ -436,12 +438,11 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('shows real XP/rank/level/streak from GET /leaderboard/{my_user_id}', (tester) async {
+  testWidgets('shows real XP/rank/streak from GET /leaderboard/{my_user_id}', (tester) async {
     await _pumpHome(tester);
 
     expect(find.text(formatThousands(2140)), findsOneWidget);
     expect(find.text('#312'), findsOneWidget);
-    expect(find.text('12'), findsOneWidget);
     expect(find.text('5'), findsOneWidget); // the duel-hero streak chip
   });
 

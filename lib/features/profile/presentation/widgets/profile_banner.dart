@@ -91,7 +91,7 @@ class ProfileBanner extends StatelessWidget {
                   initials: initials,
                   avatarImagePath: avatarImagePath,
                   backgroundColor: avatarColor.resolve(context),
-                  borderRadius: AppRadius.mdAll,
+                  borderRadius: const BorderRadius.all(Radius.circular(AppRadius.md - 4)),
                   fontSize: 21,
                 ),
               ),

@@ -88,6 +88,10 @@ class _AppTextFieldState extends State<AppTextField> {
           style: context.textStyles.bodyMedium?.copyWith(
             color: context.colors.ink,
             fontWeight: FontWeight.w600,
+            // Setting height to 1.0 or null prevents visual clipping in some
+            // font/obscureText combinations where the line height was too
+            // aggressive for the available field height.
+            height: 1.0,
           ),
           decoration: InputDecoration(
             hintText: widget.hint,

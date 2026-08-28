@@ -46,6 +46,7 @@ dependencies:
 
   # UI sound effects
   audioplayers: ^6.5.1
+  flutter_local_notifications: ^18.0.1
 
   # Skeleton loading placeholders
   shimmer: ^3.0.0

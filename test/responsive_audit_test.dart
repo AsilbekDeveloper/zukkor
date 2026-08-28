@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/models/avatar_color_option.dart';
+import 'package:zukkor/core/notifications/push_notification_service.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
@@ -411,6 +412,17 @@ class _FakeAuthRepository implements AuthRepository {
   }) async {}
 }
 
+class _FakePushNotificationService implements PushNotificationService {
+  @override
+  Future<String?> requestTokenOrNull() async => 'fake-token';
+
+  @override
+  void listenTokenRefresh(void Function(String token) onToken) {}
+
+  @override
+  void listenForeground() {}
+}
+
 /// Backendga murojaat qilmaydigan soxta leaderboard repository —
 /// Leaderboard/FullLeaderboard/PlayerDetail audit testlari haqiqiy
 /// tarmoqqa bog'liq bo'lmasligi, va PlayerDetail'ning xato bo'lganda
@@ -434,7 +446,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-coral',
             avatarImagePath: null,
             totalXp: 4820,
-            level: 12,
             isMe: false,
           ),
           RankEntry(
@@ -446,7 +457,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-teal',
             avatarImagePath: null,
             totalXp: 4510,
-            level: 11,
             isMe: false,
           ),
           RankEntry(
@@ -458,7 +468,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-terra',
             avatarImagePath: null,
             totalXp: 4290,
-            level: 10,
             isMe: false,
           ),
         ],
@@ -471,7 +480,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
           avatarColor: 'a-coral',
           avatarImagePath: null,
           totalXp: 2140,
-          level: 5,
           isMe: true,
         ),
       );
@@ -486,10 +494,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         avatarColor: 'a-coral',
         avatarImagePath: null,
         totalXp: 4820,
-        level: 12,
-        levelTitle: 'Scholar',
-        nextLevelXp: 5000,
-        currentLevelXp: 4750,
         currentStreak: 5,
         longestStreak: 15,
         gamesPlayed: 40,
@@ -656,6 +660,7 @@ Future<void> _pumpAt(
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
         historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
+        pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         notificationPreferencesRepositoryProvider.overrideWithValue(_FakeNotificationPreferencesRepository()),
         if (useFakeAuthRepository)
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),

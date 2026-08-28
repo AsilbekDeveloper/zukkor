@@ -1,5 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Android 13+ (API 33) requires this to be declared AND granted at
+         runtime before any notification - local (flutter_local_notifications)
+         or OS-shown - can appear at all. FirebaseMessaging.requestPermission()
+         (called from PushNotificationService.requestTokenOrNull) triggers the
+         runtime prompt, but only if this manifest entry exists. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="Zukkor"
         android:name="${applicationName}"

@@ -19,7 +19,6 @@ abstract final class AppStrings {
   static const String startDuel = 'Start a duel';
   static const String totalXpLabel = 'Total XP';
   static const String rankLabel = 'Rank';
-  static const String levelLabel = 'Level';
   static const String createRoom = 'Create a room';
   static const String joinWithCode = 'Join with a code';
   static const String categoriesTitle = 'Categories';
@@ -36,7 +35,7 @@ abstract final class AppStrings {
   static const String categoriesScreenTitle = 'Choose a category';
 
   // AI quiz
-  static const String myAiQuizzesScreenTitle = 'My AI quizzes';
+  static const String myAiQuizzesScreenTitle = 'My quizzes';
 
   // Leaderboard
   static const String leaderboardGreeting = 'Leaderboard';
@@ -95,10 +94,6 @@ abstract final class AppStrings {
   static const String statLongestStreak = 'Longest streak';
   static const String gameHistory = 'Game history';
   static const String settingsAndHelp = 'Settings & help';
-
-  static String levelWithTitle(int level, String title) => 'Level $level · $title';
-  static String xpProgressLabel(int current, int target, int remaining) =>
-      '${formatThousands(current)} / ${formatThousands(target)} XP · $remaining to next level';
 
   // Settings screen
   static const String settingsGroupGeneral = 'General';
@@ -391,7 +386,7 @@ abstract final class AppStrings {
   static const String emailLabel = 'Email';
   static const String emailHint = 'you@example.com';
   static const String passwordLabel = 'Password';
-  static const String passwordHint = 'At least 8 characters';
+  static const String passwordHint = 'At least 6 characters';
   static const String confirmPasswordLabel = 'Confirm password';
   static const String confirmPasswordHint = 'Re-enter your password';
   static const String loginButton = 'Sign in';
@@ -407,7 +402,7 @@ abstract final class AppStrings {
   static const String emailRequired = 'Email is required';
   static const String emailInvalid = 'Invalid email format';
   static const String passwordRequired = 'Password is required';
-  static const String passwordTooShort = 'Password must be at least 8 characters';
+  static const String passwordTooShort = 'Password must be at least 6 characters and include at least 1 number';
   static const String passwordMismatch = "Passwords don't match";
   static const String usernameRequired = 'Username is required';
   static const String usernameInvalid =

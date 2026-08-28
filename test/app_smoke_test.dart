@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zukkor/app.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
+import 'package:zukkor/core/notifications/push_notification_service.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/storage/token_storage.dart';
@@ -110,6 +111,17 @@ class _FakeAuthRepository implements AuthRepository {
   }) async {}
 }
 
+class _FakePushNotificationService implements PushNotificationService {
+  @override
+  Future<String?> requestTokenOrNull() async => 'fake-token';
+
+  @override
+  void listenTokenRefresh(void Function(String token) onToken) {}
+
+  @override
+  void listenForeground() {}
+}
+
 /// Butun ilova ulanishining smoke testi: ProviderScope + tema + router
 /// birgalikda ishga tushadi, ilova to'g'ridan-to'g'ri Login ekranida ochiladi
 /// (auth qatlami hali qurilmagani uchun sessiya tiklash yo'q).
@@ -127,6 +139,7 @@ void main() {
         overrides: [
           appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
+          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],
         child: const ZukkorApp(),
       ),
@@ -159,6 +172,7 @@ void main() {
         overrides: [
           appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
+          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],
         child: const ZukkorApp(),
       ),
@@ -177,14 +191,8 @@ void main() {
     expect(find.text(AppStrings.loginTitle), findsNothing);
 
     // Parollar mos kelmasa xato ko'rsatiladi.
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.passwordHint),
-      'Parol12345',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.confirmPasswordHint),
-      'boshqaParol',
-    );
+    await tester.enterText(find.byType(TextFormField).at(1), 'Parol12345');
+    await tester.enterText(find.byType(TextFormField).at(2), 'boshqaParol');
     await tester.tap(find.text(AppStrings.registerButton));
     await tester.pumpAndSettle();
 
@@ -219,6 +227,7 @@ void main() {
           appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],
         child: const ZukkorApp(),
       ),
@@ -231,18 +240,9 @@ void main() {
     unawaited(context.push(AppRoutes.register));
     await tester.pumpAndSettle();
 
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.emailHint),
-      'aziz@example.com',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.passwordHint),
-      'Parol12345',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.confirmPasswordHint),
-      'Parol12345',
-    );
+    await tester.enterText(find.byType(TextFormField).at(0), 'aziz@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Parol12345');
+    await tester.enterText(find.byType(TextFormField).at(2), 'Parol12345');
     await tester.tap(find.text(AppStrings.registerButton));
     await tester.pumpAndSettle();
 
@@ -267,6 +267,7 @@ void main() {
           appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
+          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],
         child: const ZukkorApp(),
       ),
@@ -277,14 +278,8 @@ void main() {
     unawaited(context.push(AppRoutes.login));
     await tester.pumpAndSettle();
 
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.emailHint),
-      'aziz@example.com',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.passwordHint),
-      'Parol12345',
-    );
+    await tester.enterText(find.byType(TextFormField).at(0), 'aziz@example.com');
+    await tester.enterText(find.byType(TextFormField).at(1), 'Parol12345');
     await tester.tap(find.text(AppStrings.loginButton).first);
     await tester.pumpAndSettle();
 
@@ -310,6 +305,7 @@ void main() {
         overrides: [
           appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
+          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],
         child: const ZukkorApp(),
       ),

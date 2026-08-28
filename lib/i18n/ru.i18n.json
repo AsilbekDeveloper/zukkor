@@ -33,7 +33,6 @@
     "startDuel": "Начать дуэль",
     "totalXpLabel": "Всего XP",
     "rankLabel": "Ранг",
-    "levelLabel": "Уровень",
     "createRoom": "Создать комнату",
     "joinWithCode": "Присоединиться по коду",
     "categoriesTitle": "Категории",
@@ -102,9 +101,7 @@
     "statWinRate": "Процент побед",
     "statLongestStreak": "Самая длинная серия",
     "gameHistory": "История игр",
-    "settingsAndHelp": "Настройки и помощь",
-    "levelWithTitle": "Уровень $level · $title",
-    "xpProgressLabel": "$current / $target XP · до следующего уровня $remaining"
+    "settingsAndHelp": "Настройки и помощь"
   },
   "settings": {
     "groupGeneral": "Общее",
@@ -128,7 +125,7 @@
     "currentPasswordLabel": "Текущий пароль",
     "currentPasswordHint": "Введите текущий пароль",
     "newPasswordLabel": "Новый пароль",
-    "newPasswordHint": "Минимум 8 символов",
+    "newPasswordHint": "Минимум 6 символов",
     "confirmNewPasswordLabel": "Подтвердите новый пароль",
     "confirmNewPasswordHint": "Введите новый пароль ещё раз",
     "saveButton": "Сохранить",
@@ -388,7 +385,7 @@
     "emailLabel": "Email",
     "emailHint": "you@example.com",
     "passwordLabel": "Пароль",
-    "passwordHint": "Минимум 8 символов",
+    "passwordHint": "Минимум 6 символов",
     "confirmPasswordLabel": "Подтвердите пароль",
     "confirmPasswordHint": "Введите пароль ещё раз",
     "loginButton": "Войти",
@@ -405,7 +402,7 @@
     "emailRequired": "Введите email",
     "emailInvalid": "Неверный формат email",
     "passwordRequired": "Введите пароль",
-    "passwordTooShort": "Пароль должен содержаer минимум 8 символов, 1 заглавную букву и 1 цифру",
+    "passwordTooShort": "Пароль должен содержать минимум 6 символов и 1 цифру",
     "passwordMismatch": "Пароли не совпадают",
     "usernameRequired": "Введите имя пользователя",
     "usernameInvalid": "Имя пользователя может содержать только буквы, цифры и нижнее подчёркивание (3–30 символов)",
@@ -426,7 +423,7 @@
   },
   "aiQuiz": {
     "entryCardLabel": "Создать викторину из документа с помощью AI",
-    "myQuizzesTitle": "Мои AI-викторины",
+    "myQuizzesTitle": "Мои викторины",
     "createButton": "+ Создать новую AI-викторину",
     "emptyTitle": "У вас пока нет AI-викторин",
     "emptySubtitle": "Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе",
@@ -483,11 +480,32 @@
     "codeLabel": "Код подтверждения",
     "codeHint": "123456",
     "newPasswordLabel": "Новый пароль",
-    "newPasswordHint": "Минимум 8 символов",
+    "newPasswordHint": "Минимум 6 символов",
     "confirmPasswordLabel": "Подтвердите новый пароль",
     "confirmPasswordHint": "Введите новый пароль ещё раз",
     "resendCode": "Отправить код еще раз",
     "resetButton": "Восстановить пароль",
     "success": "Пароль успешно восстановлен"
+  },
+  "discover": {
+    "title": "Обзор",
+    "homeCardSubtitle": "Смотрите публичные квизы других",
+    "searchQuizHint": "Поиск по названию квиза",
+    "searchUserHint": "Поиск по пользователю",
+    "emptyFeed": "Пока нет общедоступных квизов",
+    "noResults": "Ничего не найдено",
+    "byCreator": "от $name",
+    "userFilter": "Фильтр по автору"
+  },
+  "gameLeave": {
+    "soloTitle": "Вы уверены, что хотите выйти?",
+    "soloMessage": "Эта игра не будет засчитана, и баллы не будут начислены.",
+    "duelTitle": "Покинуть дуэль?",
+    "duelMessage": "Ваш противник будет уведомлен, баллы не будут засчитаны.",
+    "lobbyTitle": "Покинуть комнату?",
+    "lobbyMessage": "Игра продолжится, но баллы вам не будут начислены.",
+    "opponentLeft": "Ваш противник покинул дуэль",
+    "stay": "Остаться",
+    "leave": "Выйти"
   }
 }

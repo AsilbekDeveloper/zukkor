@@ -81,6 +81,8 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$aiQuiz$uz aiQuiz = _Translations$aiQuiz$uz._(_root);
 	@override late final _Translations$forgotPassword$uz forgotPassword = _Translations$forgotPassword$uz._(_root);
 	@override late final _Translations$resetPassword$uz resetPassword = _Translations$resetPassword$uz._(_root);
+	@override late final _Translations$discover$uz discover = _Translations$discover$uz._(_root);
+	@override late final _Translations$gameLeave$uz gameLeave = _Translations$gameLeave$uz._(_root);
 }
 
 // Path: common
@@ -124,7 +126,6 @@ class _Translations$home$uz implements Translations$home$en {
 	@override String get startDuel => 'Duel boshlash';
 	@override String get totalXpLabel => 'Jami XP';
 	@override String get rankLabel => 'O\'rin';
-	@override String get levelLabel => 'Daraja';
 	@override String get createRoom => 'Xona yaratish';
 	@override String get joinWithCode => 'Kod bilan qo\'shilish';
 	@override String get categoriesTitle => 'Kategoriyalar';
@@ -257,8 +258,6 @@ class _Translations$profile$uz implements Translations$profile$en {
 	@override String get statLongestStreak => 'Eng uzun seriya';
 	@override String get gameHistory => 'O\'yinlar tarixi';
 	@override String get settingsAndHelp => 'Sozlamalar va yordam';
-	@override String levelWithTitle({required Object level, required Object title}) => '${level}-daraja · ${title}';
-	@override String xpProgressLabel({required Object current, required Object target, required Object remaining}) => '${current} / ${target} XP · keyingi darajagacha ${remaining}';
 }
 
 // Path: settings
@@ -296,7 +295,7 @@ class _Translations$changePassword$uz implements Translations$changePassword$en 
 	@override String get currentPasswordLabel => 'Joriy parol';
 	@override String get currentPasswordHint => 'Joriy parolingizni kiriting';
 	@override String get newPasswordLabel => 'Yangi parol';
-	@override String get newPasswordHint => 'Kamida 8 ta belgi';
+	@override String get newPasswordHint => 'Kamida 6 ta belgi';
 	@override String get confirmNewPasswordLabel => 'Yangi parolni tasdiqlang';
 	@override String get confirmNewPasswordHint => 'Yangi parolni qayta kiriting';
 	@override String get saveButton => 'Saqlash';
@@ -738,7 +737,7 @@ class _Translations$auth$uz implements Translations$auth$en {
 	@override String get emailLabel => 'Email';
 	@override String get emailHint => 'siz@misol.com';
 	@override String get passwordLabel => 'Parol';
-	@override String get passwordHint => 'Kamida 8 ta belgi';
+	@override String get passwordHint => 'Kamida 6 ta belgi';
 	@override String get confirmPasswordLabel => 'Parolni tasdiqlang';
 	@override String get confirmPasswordHint => 'Parolingizni qayta kiriting';
 	@override String get loginButton => 'Kirish';
@@ -762,7 +761,7 @@ class _Translations$authValidation$uz implements Translations$authValidation$en 
 	@override String get emailRequired => 'Email kiritilishi shart';
 	@override String get emailInvalid => 'Email formati noto\'g\'ri';
 	@override String get passwordRequired => 'Parol kiritilishi shart';
-	@override String get passwordTooShort => 'Parol kamida 8 ta belgi, 1 ta katta harf va 1 ta raqamdan iborat bo\'lishi kerak';
+	@override String get passwordTooShort => 'Parol kamida 6 ta belgi va 1 ta raqamdan iborat bo\'lishi kerak';
 	@override String get passwordMismatch => 'Parollar mos kelmadi';
 	@override String get usernameRequired => 'Foydalanuvchi nomi kiritilishi shart';
 	@override String get usernameInvalid => 'Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo\'lishi mumkin (3–30 belgi)';
@@ -797,7 +796,7 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 
 	// Translations
 	@override String get entryCardLabel => 'AI orqali hujjatdan quiz yaratish';
-	@override String get myQuizzesTitle => 'Mening AI quizlarim';
+	@override String get myQuizzesTitle => 'Mening quizlarim';
 	@override String get createButton => '+ Yangi AI quiz yaratish';
 	@override String get emptyTitle => 'Hali AI quiz yaratmagansiz';
 	@override String get emptySubtitle => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating';
@@ -868,12 +867,47 @@ class _Translations$resetPassword$uz implements Translations$resetPassword$en {
 	@override String get codeLabel => 'Tasdiqlash kodi';
 	@override String get codeHint => '123456';
 	@override String get newPasswordLabel => 'Yangi parol';
-	@override String get newPasswordHint => 'Kamida 8 ta belgi';
+	@override String get newPasswordHint => 'Kamida 6 ta belgi';
 	@override String get confirmPasswordLabel => 'Yangi parolni tasdiqlang';
 	@override String get confirmPasswordHint => 'Yangi parolni qayta kiriting';
 	@override String get resendCode => 'Kodni qayta yuborish';
 	@override String get resetButton => 'Parolni tiklash';
 	@override String get success => 'Parol muvaffaqiyatli tiklandi';
+}
+
+// Path: discover
+class _Translations$discover$uz implements Translations$discover$en {
+	_Translations$discover$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Kashf qiling';
+	@override String get homeCardSubtitle => 'Boshqalarning ommaviy quizlarini ko\'ring';
+	@override String get searchQuizHint => 'Quiz nomi bo\'yicha qidirish';
+	@override String get searchUserHint => 'Foydalanuvchi bo\'yicha qidirish';
+	@override String get emptyFeed => 'Hozircha hech qanday ommaviy quiz yo\'q';
+	@override String get noResults => 'Hech narsa topilmadi';
+	@override String byCreator({required Object name}) => '${name} tomonidan';
+	@override String get userFilter => 'Foydalanuvchini tanlang';
+}
+
+// Path: gameLeave
+class _Translations$gameLeave$uz implements Translations$gameLeave$en {
+	_Translations$gameLeave$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get soloTitle => 'Chiqishni xohlaysizmi?';
+	@override String get soloMessage => 'Bu o\'yin hisoblanmaydi va ball berilmaydi.';
+	@override String get duelTitle => 'Duelni tark etmoqchimisiz?';
+	@override String get duelMessage => 'Raqibingizga xabar beriladi, ball hisoblanmaydi.';
+	@override String get lobbyTitle => 'Xonani tark etmoqchimisiz?';
+	@override String get lobbyMessage => 'O\'yin davom etadi, lekin siz uchun ball hisoblanmaydi.';
+	@override String get opponentLeft => 'Raqibingiz duelni tark etdi';
+	@override String get stay => 'Qolish';
+	@override String get leave => 'Chiqish';
 }
 
 /// The flat map containing all translations for locale <uz>.
@@ -900,7 +934,6 @@ extension on TranslationsUz {
 			'home.startDuel' => 'Duel boshlash',
 			'home.totalXpLabel' => 'Jami XP',
 			'home.rankLabel' => 'O\'rin',
-			'home.levelLabel' => 'Daraja',
 			'home.createRoom' => 'Xona yaratish',
 			'home.joinWithCode' => 'Kod bilan qo\'shilish',
 			'home.categoriesTitle' => 'Kategoriyalar',
@@ -952,8 +985,6 @@ extension on TranslationsUz {
 			'profile.statLongestStreak' => 'Eng uzun seriya',
 			'profile.gameHistory' => 'O\'yinlar tarixi',
 			'profile.settingsAndHelp' => 'Sozlamalar va yordam',
-			'profile.levelWithTitle' => ({required Object level, required Object title}) => '${level}-daraja · ${title}',
-			'profile.xpProgressLabel' => ({required Object current, required Object target, required Object remaining}) => '${current} / ${target} XP · keyingi darajagacha ${remaining}',
 			'settings.groupGeneral' => 'Umumiy',
 			'settings.language' => 'Til',
 			'settings.notifications' => 'Bildirishnomalar',
@@ -973,7 +1004,7 @@ extension on TranslationsUz {
 			'changePassword.currentPasswordLabel' => 'Joriy parol',
 			'changePassword.currentPasswordHint' => 'Joriy parolingizni kiriting',
 			'changePassword.newPasswordLabel' => 'Yangi parol',
-			'changePassword.newPasswordHint' => 'Kamida 8 ta belgi',
+			'changePassword.newPasswordHint' => 'Kamida 6 ta belgi',
 			'changePassword.confirmNewPasswordLabel' => 'Yangi parolni tasdiqlang',
 			'changePassword.confirmNewPasswordHint' => 'Yangi parolni qayta kiriting',
 			'changePassword.saveButton' => 'Saqlash',
@@ -1181,7 +1212,7 @@ extension on TranslationsUz {
 			'auth.emailLabel' => 'Email',
 			'auth.emailHint' => 'siz@misol.com',
 			'auth.passwordLabel' => 'Parol',
-			'auth.passwordHint' => 'Kamida 8 ta belgi',
+			'auth.passwordHint' => 'Kamida 6 ta belgi',
 			'auth.confirmPasswordLabel' => 'Parolni tasdiqlang',
 			'auth.confirmPasswordHint' => 'Parolingizni qayta kiriting',
 			'auth.loginButton' => 'Kirish',
@@ -1196,7 +1227,7 @@ extension on TranslationsUz {
 			'authValidation.emailRequired' => 'Email kiritilishi shart',
 			'authValidation.emailInvalid' => 'Email formati noto\'g\'ri',
 			'authValidation.passwordRequired' => 'Parol kiritilishi shart',
-			'authValidation.passwordTooShort' => 'Parol kamida 8 ta belgi, 1 ta katta harf va 1 ta raqamdan iborat bo\'lishi kerak',
+			'authValidation.passwordTooShort' => 'Parol kamida 6 ta belgi va 1 ta raqamdan iborat bo\'lishi kerak',
 			'authValidation.passwordMismatch' => 'Parollar mos kelmadi',
 			'authValidation.usernameRequired' => 'Foydalanuvchi nomi kiritilishi shart',
 			'authValidation.usernameInvalid' => 'Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo\'lishi mumkin (3–30 belgi)',
@@ -1213,7 +1244,7 @@ extension on TranslationsUz {
 			'errors.sessionExpired' => 'Sessiyangiz muddati tugadi. Qaytadan tizimga kiring.',
 			'errors.googleCancelled' => 'Google orqali kirish bekor qilindi.',
 			'aiQuiz.entryCardLabel' => 'AI orqali hujjatdan quiz yaratish',
-			'aiQuiz.myQuizzesTitle' => 'Mening AI quizlarim',
+			'aiQuiz.myQuizzesTitle' => 'Mening quizlarim',
 			'aiQuiz.createButton' => '+ Yangi AI quiz yaratish',
 			'aiQuiz.emptyTitle' => 'Hali AI quiz yaratmagansiz',
 			'aiQuiz.emptySubtitle' => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating',
@@ -1266,12 +1297,29 @@ extension on TranslationsUz {
 			'resetPassword.codeLabel' => 'Tasdiqlash kodi',
 			'resetPassword.codeHint' => '123456',
 			'resetPassword.newPasswordLabel' => 'Yangi parol',
-			'resetPassword.newPasswordHint' => 'Kamida 8 ta belgi',
+			'resetPassword.newPasswordHint' => 'Kamida 6 ta belgi',
 			'resetPassword.confirmPasswordLabel' => 'Yangi parolni tasdiqlang',
 			'resetPassword.confirmPasswordHint' => 'Yangi parolni qayta kiriting',
 			'resetPassword.resendCode' => 'Kodni qayta yuborish',
 			'resetPassword.resetButton' => 'Parolni tiklash',
 			'resetPassword.success' => 'Parol muvaffaqiyatli tiklandi',
+			'discover.title' => 'Kashf qiling',
+			'discover.homeCardSubtitle' => 'Boshqalarning ommaviy quizlarini ko\'ring',
+			'discover.searchQuizHint' => 'Quiz nomi bo\'yicha qidirish',
+			'discover.searchUserHint' => 'Foydalanuvchi bo\'yicha qidirish',
+			'discover.emptyFeed' => 'Hozircha hech qanday ommaviy quiz yo\'q',
+			'discover.noResults' => 'Hech narsa topilmadi',
+			'discover.byCreator' => ({required Object name}) => '${name} tomonidan',
+			'discover.userFilter' => 'Foydalanuvchini tanlang',
+			'gameLeave.soloTitle' => 'Chiqishni xohlaysizmi?',
+			'gameLeave.soloMessage' => 'Bu o\'yin hisoblanmaydi va ball berilmaydi.',
+			'gameLeave.duelTitle' => 'Duelni tark etmoqchimisiz?',
+			'gameLeave.duelMessage' => 'Raqibingizga xabar beriladi, ball hisoblanmaydi.',
+			'gameLeave.lobbyTitle' => 'Xonani tark etmoqchimisiz?',
+			'gameLeave.lobbyMessage' => 'O\'yin davom etadi, lekin siz uchun ball hisoblanmaydi.',
+			'gameLeave.opponentLeft' => 'Raqibingiz duelni tark etdi',
+			'gameLeave.stay' => 'Qolish',
+			'gameLeave.leave' => 'Chiqish',
 			_ => null,
 		};
 	}

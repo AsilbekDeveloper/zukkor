@@ -18,7 +18,6 @@
     "startDuel": "Duel boshlash",
     "totalXpLabel": "Jami XP",
     "rankLabel": "O'rin",
-    "levelLabel": "Daraja",
     "createRoom": "Xona yaratish",
     "joinWithCode": "Kod bilan qo'shilish",
     "categoriesTitle": "Kategoriyalar",
@@ -87,9 +86,7 @@
     "statWinRate": "G'alaba foizi",
     "statLongestStreak": "Eng uzun seriya",
     "gameHistory": "O'yinlar tarixi",
-    "settingsAndHelp": "Sozlamalar va yordam",
-    "levelWithTitle": "$level-daraja · $title",
-    "xpProgressLabel": "$current / $target XP · keyingi darajagacha $remaining"
+    "settingsAndHelp": "Sozlamalar va yordam"
   },
   "settings": {
     "groupGeneral": "Umumiy",
@@ -113,7 +110,7 @@
     "currentPasswordLabel": "Joriy parol",
     "currentPasswordHint": "Joriy parolingizni kiriting",
     "newPasswordLabel": "Yangi parol",
-    "newPasswordHint": "Kamida 8 ta belgi",
+    "newPasswordHint": "Kamida 6 ta belgi",
     "confirmNewPasswordLabel": "Yangi parolni tasdiqlang",
     "confirmNewPasswordHint": "Yangi parolni qayta kiriting",
     "saveButton": "Saqlash",
@@ -373,7 +370,7 @@
     "emailLabel": "Email",
     "emailHint": "siz@misol.com",
     "passwordLabel": "Parol",
-    "passwordHint": "Kamida 8 ta belgi",
+    "passwordHint": "Kamida 6 ta belgi",
     "confirmPasswordLabel": "Parolni tasdiqlang",
     "confirmPasswordHint": "Parolingizni qayta kiriting",
     "loginButton": "Kirish",
@@ -390,7 +387,7 @@
     "emailRequired": "Email kiritilishi shart",
     "emailInvalid": "Email formati noto'g'ri",
     "passwordRequired": "Parol kiritilishi shart",
-    "passwordTooShort": "Parol kamida 8 ta belgi, 1 ta katta harf va 1 ta raqamdan iborat bo'lishi kerak",
+    "passwordTooShort": "Parol kamida 6 ta belgi va 1 ta raqamdan iborat bo'lishi kerak",
     "passwordMismatch": "Parollar mos kelmadi",
     "usernameRequired": "Foydalanuvchi nomi kiritilishi shart",
     "usernameInvalid": "Foydalanuvchi nomi faqat harflar, raqamlar va pastki chiziqdan iborat bo'lishi mumkin (3–30 belgi)",
@@ -411,7 +408,7 @@
   },
   "aiQuiz": {
     "entryCardLabel": "AI orqali hujjatdan quiz yaratish",
-    "myQuizzesTitle": "Mening AI quizlarim",
+    "myQuizzesTitle": "Mening quizlarim",
     "createButton": "+ Yangi AI quiz yaratish",
     "emptyTitle": "Hali AI quiz yaratmagansiz",
     "emptySubtitle": "Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating",
@@ -468,11 +465,32 @@
     "codeLabel": "Tasdiqlash kodi",
     "codeHint": "123456",
     "newPasswordLabel": "Yangi parol",
-    "newPasswordHint": "Kamida 8 ta belgi",
+    "newPasswordHint": "Kamida 6 ta belgi",
     "confirmPasswordLabel": "Yangi parolni tasdiqlang",
     "confirmPasswordHint": "Yangi parolni qayta kiriting",
     "resendCode": "Kodni qayta yuborish",
     "resetButton": "Parolni tiklash",
     "success": "Parol muvaffaqiyatli tiklandi"
+  },
+  "discover": {
+    "title": "Kashf qiling",
+    "homeCardSubtitle": "Boshqalarning ommaviy quizlarini ko'ring",
+    "searchQuizHint": "Quiz nomi bo'yicha qidirish",
+    "searchUserHint": "Foydalanuvchi bo'yicha qidirish",
+    "emptyFeed": "Hozircha hech qanday ommaviy quiz yo'q",
+    "noResults": "Hech narsa topilmadi",
+    "byCreator": "$name tomonidan",
+    "userFilter": "Foydalanuvchini tanlang"
+  },
+  "gameLeave": {
+    "soloTitle": "Chiqishni xohlaysizmi?",
+    "soloMessage": "Bu o'yin hisoblanmaydi va ball berilmaydi.",
+    "duelTitle": "Duelni tark etmoqchimisiz?",
+    "duelMessage": "Raqibingizga xabar beriladi, ball hisoblanmaydi.",
+    "lobbyTitle": "Xonani tark etmoqchimisiz?",
+    "lobbyMessage": "O'yin davom etadi, lekin siz uchun ball hisoblanmaydi.",
+    "opponentLeft": "Raqibingiz duelni tark etdi",
+    "stay": "Qolish",
+    "leave": "Chiqish"
   }
 }
