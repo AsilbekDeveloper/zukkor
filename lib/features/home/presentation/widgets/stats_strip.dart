@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/extensions/context_x.dart';
-import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../i18n/strings.g.dart';
 
-/// The 3-stat strip (Total XP with progress bar, Rank, Level) — mirrors
-/// the prototype's `.stats`.
+/// The 2-stat strip (Total XP, Rank) — mirrors the prototype's `.stats`
+/// (originally had a third "Level" stat and an XP progress bar toward the
+/// next level; both were level-derived and removed with the level concept).
 class StatsStrip extends StatelessWidget {
   const StatsStrip({
     required this.totalXp,
-    required this.xpProgress,
     required this.rank,
-    required this.level,
     super.key,
   });
 
   final int totalXp;
-
-  /// 0.0–1.0 progress toward the next level, drives the small bar under
-  /// the XP number.
-  final double xpProgress;
   final int rank;
-  final int level;
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +30,9 @@ class StatsStrip extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(
-            child: _Stat(
-              value: formatThousands(totalXp),
-              label: context.t.home.totalXpLabel,
-              progress: xpProgress,
-            ),
-          ),
+          Expanded(child: _Stat(value: formatThousands(totalXp), label: context.t.home.totalXpLabel)),
           _divider(context),
           Expanded(child: _Stat(value: '#$rank', label: context.t.home.rankLabel)),
-          _divider(context),
-          Expanded(child: _Stat(value: '$level', label: context.t.home.levelLabel)),
         ],
       ),
     );
@@ -59,11 +44,10 @@ class StatsStrip extends StatelessWidget {
 }
 
 class _Stat extends StatelessWidget {
-  const _Stat({required this.value, required this.label, this.progress});
+  const _Stat({required this.value, required this.label});
 
   final String value;
   final String label;
-  final double? progress;
 
   @override
   Widget build(BuildContext context) {
@@ -74,21 +58,6 @@ class _Stat extends StatelessWidget {
           style: context.textStyles.titleMedium?.copyWith(fontSize: 18, fontWeight: FontWeight.w700),
         ),
         Text(label, style: context.textStyles.labelSmall),
-        if (progress != null) ...[
-          AppSpacing.xxs.vGap,
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: SizedBox(
-              width: 64,
-              height: 5,
-              child: LinearProgressIndicator(
-                value: progress!.clamp(0, 1),
-                backgroundColor: context.colors.line,
-                valueColor: AlwaysStoppedAnimation(context.colors.coralDeep),
-              ),
-            ),
-          ),
-        ],
       ],
     );
   }

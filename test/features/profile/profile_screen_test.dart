@@ -124,7 +124,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-coral',
             avatarImagePath: null,
             totalXp: 4820,
-            level: 12,
             isMe: false,
           ),
         ],
@@ -137,7 +136,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
           avatarColor: 'a-coral',
           avatarImagePath: null,
           totalXp: 2140,
-          level: 5,
           isMe: true,
         ),
       );
@@ -152,10 +150,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         avatarColor: 'a-coral',
         avatarImagePath: null,
         totalXp: 2140,
-        level: 12,
-        levelTitle: 'Scholar',
-        nextLevelXp: 3000,
-        currentLevelXp: 2750,
         currentStreak: 8,
         longestStreak: 12,
         gamesPlayed: 184,
@@ -263,22 +257,19 @@ Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 
 }
 
 void main() {
-  testWidgets('renders banner, name, level card, stats and settings with no overflow', (tester) async {
+  testWidgets('renders banner, name, stats and settings with no overflow', (tester) async {
     await _pumpProfile(tester);
 
     // "Profile" also appears as the (disabled, active) bottom-nav tab label.
     expect(find.text(AppStrings.navProfile), findsWidgets);
     expect(find.text('Aziz Karimov'), findsOneWidget);
     expect(find.text('@aziz_karimov'), findsOneWidget);
-    expect(find.text(AppStrings.levelWithTitle(12, 'Scholar')), findsOneWidget);
-    expect(find.text(AppStrings.xpProgressLabel(2140, 3000, 860)), findsOneWidget);
     expect(find.text(AppStrings.statTotalGames), findsOneWidget);
     expect(find.text(AppStrings.statWinRate), findsOneWidget);
     expect(find.text(AppStrings.statLongestStreak), findsOneWidget);
     expect(find.text('184'), findsOneWidget);
     expect(find.text('68%'), findsOneWidget);
-    // "12" appears both as the level-ring label and the longest-streak value.
-    expect(find.text('12'), findsWidgets);
+    expect(find.text('12'), findsOneWidget); // longest-streak value
     expect(find.text(AppStrings.gameHistory), findsOneWidget);
     expect(find.text(AppStrings.settingsAndHelp), findsOneWidget);
 

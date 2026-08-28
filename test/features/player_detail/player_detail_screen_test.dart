@@ -46,10 +46,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         avatarColor: 'a-teal',
         avatarImagePath: null,
         totalXp: 4510,
-        level: 15,
-        levelTitle: 'Scholar',
-        nextLevelXp: 5000,
-        currentLevelXp: 4750,
         currentStreak: 8,
         longestStreak: 20,
         gamesPlayed: 40,
@@ -128,7 +124,6 @@ void main() {
 
     expect(find.text('Malika Yusupova'), findsOneWidget);
     expect(find.text(AppStrings.rankedLabel(2, 4510)), findsOneWidget);
-    expect(find.text('15'), findsOneWidget); // level
     expect(find.text('62%'), findsOneWidget); // win rate
     expect(find.text('8'), findsOneWidget); // streak
     expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);

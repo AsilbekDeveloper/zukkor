@@ -15,7 +15,6 @@ import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../leaderboard/domain/entities/player_stats.dart';
 import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
-import '../widgets/level_card.dart';
 import '../widgets/profile_banner.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_name_block.dart';
@@ -57,18 +56,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
-  /// Level ring + 3-stat strip.
+  /// Stats row (games/win-rate/streak).
   List<Widget> _progressSection(BuildContext context) {
     final PlayerStats? stats = ref.watch(myStatsControllerProvider).data;
     return [
-      LevelCard(
-        level: stats?.level ?? 0,
-        levelTitle: stats?.levelTitle ?? '',
-        currentXp: stats?.totalXp ?? 0,
-        targetXp: stats?.nextLevelXp ?? 0,
-        levelStartXp: stats?.currentLevelXp ?? 0,
-      ),
-      AppSpacing.sm.vGap,
       ProfileStatsRow(
         totalGames: stats?.gamesPlayed ?? 0,
         winRatePercent: stats?.winRatePercent ?? 0,

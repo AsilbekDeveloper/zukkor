@@ -10,7 +10,6 @@ class RankEntryModel {
     required this.avatarColor,
     required this.avatarImagePath,
     required this.totalXp,
-    required this.level,
     required this.isMe,
   });
 
@@ -23,7 +22,6 @@ class RankEntryModel {
         avatarColor: json['avatar_color'] as String?,
         avatarImagePath: json['avatar_image_path'] as String?,
         totalXp: json['total_xp'] as int,
-        level: json['level'] as int,
         isMe: json['is_me'] as bool,
       );
 
@@ -35,7 +33,6 @@ class RankEntryModel {
   final String? avatarColor;
   final String? avatarImagePath;
   final int totalXp;
-  final int level;
   final bool isMe;
 
   RankEntry toEntity() => RankEntry(
@@ -47,7 +44,6 @@ class RankEntryModel {
         avatarColor: avatarColor,
         avatarImagePath: avatarImagePath,
         totalXp: totalXp,
-        level: level,
         isMe: isMe,
       );
 }

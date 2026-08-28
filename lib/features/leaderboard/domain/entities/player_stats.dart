@@ -10,10 +10,6 @@ class PlayerStats {
     required this.avatarColor,
     required this.avatarImagePath,
     required this.totalXp,
-    required this.level,
-    required this.levelTitle,
-    required this.nextLevelXp,
-    required this.currentLevelXp,
     required this.currentStreak,
     required this.longestStreak,
     required this.gamesPlayed,
@@ -31,17 +27,6 @@ class PlayerStats {
   final String? avatarColor;
   final String? avatarImagePath;
   final int totalXp;
-  final int level;
-  final String levelTitle;
-
-  // Absolute XP threshold to reach [level] + 1.
-  final int nextLevelXp;
-
-  // Absolute XP threshold where [level] itself started — progress within
-  // the current level is `(totalXp - currentLevelXp) / (nextLevelXp -
-  // currentLevelXp)`, NOT `totalXp / nextLevelXp` (that treats every level
-  // as starting from 0 XP, inflating the bar for anyone above level 1).
-  final int currentLevelXp;
   final int currentStreak;
   final int longestStreak;
   final int gamesPlayed;

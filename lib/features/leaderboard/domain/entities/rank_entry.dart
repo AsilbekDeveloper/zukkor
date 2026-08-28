@@ -11,7 +11,6 @@ class RankEntry {
     required this.avatarColor,
     required this.avatarImagePath,
     required this.totalXp,
-    required this.level,
     required this.isMe,
   });
 
@@ -26,6 +25,5 @@ class RankEntry {
   final String? avatarColor;
   final String? avatarImagePath;
   final int totalXp;
-  final int level;
   final bool isMe;
 }

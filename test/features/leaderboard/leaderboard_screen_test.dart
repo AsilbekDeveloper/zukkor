@@ -53,7 +53,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         avatarColor: 'a-green',
         avatarImagePath: null,
         totalXp: 640,
-        level: 3,
         isMe: false,
       ),
     ],
@@ -66,7 +65,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
       avatarColor: 'a-coral',
       avatarImagePath: null,
       totalXp: 210,
-      level: 1,
       isMe: true,
     ),
   );
@@ -82,7 +80,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         avatarColor: 'a-blue',
         avatarImagePath: null,
         totalXp: 1500,
-        level: 6,
         isMe: false,
       ),
     ],
@@ -95,7 +92,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
       avatarColor: 'a-coral',
       avatarImagePath: null,
       totalXp: 2140,
-      level: 5,
       isMe: true,
     ),
   );
@@ -111,7 +107,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-coral',
             avatarImagePath: null,
             totalXp: 4820,
-            level: 12,
             isMe: false,
           ),
           RankEntry(
@@ -123,7 +118,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-teal',
             avatarImagePath: null,
             totalXp: 4510,
-            level: 11,
             isMe: false,
           ),
           RankEntry(
@@ -135,7 +129,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-terra',
             avatarImagePath: null,
             totalXp: 4290,
-            level: 10,
             isMe: false,
           ),
           RankEntry(
@@ -147,7 +140,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-teal',
             avatarImagePath: null,
             totalXp: 3980,
-            level: 9,
             isMe: false,
           ),
           RankEntry(
@@ -159,7 +151,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-terra',
             avatarImagePath: null,
             totalXp: 3840,
-            level: 9,
             isMe: false,
           ),
           RankEntry(
@@ -171,7 +162,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
             avatarColor: 'a-pink',
             avatarImagePath: null,
             totalXp: 3710,
-            level: 8,
             isMe: false,
           ),
         ],
@@ -184,7 +174,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
           avatarColor: 'a-coral',
           avatarImagePath: null,
           totalXp: 2140,
-          level: 5,
           isMe: true,
         ),
       );
@@ -201,10 +190,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
       avatarColor: entry.avatarColor,
       avatarImagePath: entry.avatarImagePath,
       totalXp: entry.totalXp,
-      level: entry.level,
-      levelTitle: 'Scholar',
-      nextLevelXp: entry.totalXp + 500,
-      currentLevelXp: entry.totalXp + 250,
       currentStreak: 8,
       longestStreak: 15,
       gamesPlayed: 40,
