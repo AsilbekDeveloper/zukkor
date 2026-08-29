@@ -7,6 +7,10 @@ class CreateManualQuizUseCase {
 
   final AiQuizRepository _repository;
 
-  Future<AiQuiz> call({required String name, required List<ManualQuestionInput> questions}) =>
-      _repository.createManual(name: name, questions: questions);
+  Future<AiQuiz> call({
+    required String name,
+    required List<ManualQuestionInput> questions,
+    int? topicCategoryId,
+  }) =>
+      _repository.createManual(name: name, questions: questions, topicCategoryId: topicCategoryId);
 }

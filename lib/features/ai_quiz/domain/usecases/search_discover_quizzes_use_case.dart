@@ -6,5 +6,6 @@ class SearchDiscoverQuizzesUseCase {
 
   final AiQuizRepository _repository;
 
-  Future<List<DiscoverQuiz>> call(String query) => _repository.searchDiscover(query);
+  Future<List<DiscoverQuiz>> call(String query, {int? categoryId}) =>
+      _repository.searchDiscover(query, categoryId: categoryId);
 }

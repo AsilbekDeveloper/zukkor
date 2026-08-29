@@ -19,6 +19,7 @@ class AiQuizList extends StatelessWidget {
     required this.quizzes,
     required this.onTap,
     required this.onVisibilityTap,
+    required this.onTopicTap,
     this.selectionMode = false,
     this.selectedIds = const {},
     super.key,
@@ -27,6 +28,7 @@ class AiQuizList extends StatelessWidget {
   final List<AiQuiz> quizzes;
   final ValueChanged<AiQuiz> onTap;
   final ValueChanged<AiQuiz> onVisibilityTap;
+  final ValueChanged<AiQuiz> onTopicTap;
   final bool selectionMode;
   final Set<int> selectedIds;
 
@@ -34,10 +36,8 @@ class AiQuizList extends StatelessWidget {
     final TextScaler scaler = MediaQuery.textScalerOf(context);
     final double titleLine = (scaler.scale(14) * 1.4).ceilToDouble();
     final double subLine = (scaler.scale(11) * 1.2).ceilToDouble();
-    // Back to just 2 text lines (title + question-count/source) now that
-    // the visibility control moved out to its own trailing button, sized
-    // against the fixed 40px icon block instead of stacking under the text.
-    final double textBlock = titleLine + subLine;
+    // Accommodate potential topic badge.
+    final double textBlock = titleLine + subLine + (scaler.scale(18));
     const double iconBlock = 40;
     const double verticalPadding = AppSpacing.sm * 2;
     return (textBlock > iconBlock ? textBlock : iconBlock) + verticalPadding;
@@ -61,6 +61,7 @@ class AiQuizList extends StatelessWidget {
           quiz: quiz,
           onTap: () => onTap(quiz),
           onVisibilityTap: () => onVisibilityTap(quiz),
+          onTopicTap: () => onTopicTap(quiz),
           selectionMode: selectionMode,
           selected: selectedIds.contains(quiz.id),
         );
@@ -74,6 +75,7 @@ class _AiQuizRow extends StatelessWidget {
     required this.quiz,
     required this.onTap,
     required this.onVisibilityTap,
+    required this.onTopicTap,
     required this.selectionMode,
     required this.selected,
   });
@@ -81,6 +83,7 @@ class _AiQuizRow extends StatelessWidget {
   final AiQuiz quiz;
   final VoidCallback onTap;
   final VoidCallback onVisibilityTap;
+  final VoidCallback onTopicTap;
   final bool selectionMode;
   final bool selected;
 
@@ -178,19 +181,42 @@ class _AiQuizRow extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (quiz.topicCategoryName != null) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: context.colors.teal.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          quiz.topicCategoryName!,
+                          style: context.textStyles.labelSmall?.copyWith(
+                            color: context.colors.teal,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
               AppSpacing.sm.hGap,
-              // Icon-only, right where the old delete button used to be —
-              // a real (40x40) tap target, not a cramped inline chip.
-              // Tooltip carries the word (Nobody/Friends/Everyone) for
-              // anyone who taps-and-holds or uses a screen reader.
-              _VisibilityButton(
+              _ActionButton(
+                icon: TablerIcons.tags,
+                tooltip: context.t.aiQuiz.changeTopicTitle,
+                enabled: !selectionMode,
+                onTap: onTopicTap,
+                color: context.colors.teal,
+              ),
+              AppSpacing.xs.hGap,
+              _ActionButton(
                 icon: _visibilityIcon(),
                 tooltip: _visibilityLabel(context),
                 enabled: !selectionMode,
                 onTap: onVisibilityTap,
+                color: context.colors.coral,
               ),
             ],
           ),
@@ -200,29 +226,27 @@ class _AiQuizRow extends StatelessWidget {
   }
 }
 
-class _VisibilityButton extends StatelessWidget {
-  const _VisibilityButton({
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
     required this.icon,
     required this.tooltip,
     required this.enabled,
     required this.onTap,
+    required this.color,
   });
 
   final IconData icon;
   final String tooltip;
   final bool enabled;
   final VoidCallback onTap;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    // Same solid-coral-fill + white-icon language as the app's actual
-    // primary buttons (e.g. "+ Create a new AI quiz") and the row's own
-    // coral sparkle-icon square right next to this one — not a pale
-    // tint, which read as off-brand/washed-out.
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: enabled ? context.colors.coral : context.colors.line,
+        color: enabled ? color : context.colors.line,
         borderRadius: BorderRadius.circular(11),
         child: InkWell(
           onTap: enabled ? onTap : null,

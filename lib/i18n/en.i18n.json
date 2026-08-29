@@ -454,8 +454,10 @@
     "manualFillAllFields": "Fill in all fields",
     "manualAddQuestion": "+ Add question",
     "manualSubmit": "Create",
-    "opponentQuizzesEntryLabel": "Opponent's quizzes",
-    "noSharedQuizzes": "This user hasn't shared any quizzes yet"
+    "noSharedQuizzes": "This user hasn't shared any quizzes yet",
+    "topicSelectionLabel": "Topic (optional)",
+    "topicSelectionHint": "Choose a topic",
+    "changeTopicTitle": "Change topic"
   },
   "forgotPassword": {
     "title": "Reset password",
@@ -484,7 +486,8 @@
     "emptyFeed": "No public quizzes available yet",
     "noResults": "No results found",
     "byCreator": "by $name",
-    "userFilter": "Filter by user"
+    "userFilter": "Filter by user",
+    "categoryAll": "All"
   },
   "gameLeave": {
     "soloTitle": "Are you sure you want to leave?",

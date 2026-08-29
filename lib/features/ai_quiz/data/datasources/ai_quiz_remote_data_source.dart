@@ -26,6 +26,7 @@ class AiQuizRemoteDataSource {
     String? instruction,
     String? topic,
     required int questionCount,
+    int? topicCategoryId,
   }) async {
     final Map<String, dynamic> fields = {'question_count': questionCount};
     if (filePath != null && fileName != null) {
@@ -36,6 +37,9 @@ class AiQuizRemoteDataSource {
     }
     if (topic != null && topic.isNotEmpty) {
       fields['topic'] = topic;
+    }
+    if (topicCategoryId != null) {
+      fields['topic_category_id'] = topicCategoryId;
     }
     final FormData formData = FormData.fromMap(fields);
     final Response<dynamic> response = await _dio.post(
@@ -65,11 +69,24 @@ class AiQuizRemoteDataSource {
     return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
   }
 
-  Future<AiQuizModel> createManual({required String name, required List<ManualQuestionInput> questions}) async {
+  Future<AiQuizModel> updateTopic(int id, int? topicCategoryId) async {
+    final Response<dynamic> response = await _dio.patch(
+      '${ApiEndpoints.aiQuiz}/$id/topic',
+      data: {'topic_category_id': topicCategoryId},
+    );
+    return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<AiQuizModel> createManual({
+    required String name,
+    required List<ManualQuestionInput> questions,
+    int? topicCategoryId,
+  }) async {
     final Response<dynamic> response = await _dio.post(
       ApiEndpoints.aiQuizManual,
       data: {
         'name': name,
+        'topic_category_id': topicCategoryId,
         'questions': questions
             .map((q) => {
                   'question_text': q.questionText,
@@ -89,15 +106,25 @@ class AiQuizRemoteDataSource {
         .toList();
   }
 
-  Future<List<DiscoverQuizModel>> discover() async {
-    final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuizDiscover);
+  Future<List<DiscoverQuizModel>> discover({int? categoryId}) async {
+    final Response<dynamic> response = await _dio.get(
+      ApiEndpoints.aiQuizDiscover,
+      queryParameters: categoryId != null ? {'category_id': categoryId} : null,
+    );
     return (response.data as List<dynamic>)
         .map((json) => DiscoverQuizModel.fromJson(json as Map<String, dynamic>))
         .toList();
   }
 
-  Future<List<DiscoverQuizModel>> searchDiscover(String query) async {
-    final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuizDiscoverSearch(query));
+  Future<List<DiscoverQuizModel>> searchDiscover(String query, {int? categoryId}) async {
+    final Map<String, dynamic> params = {'q': query};
+    if (categoryId != null) {
+      params['category_id'] = categoryId;
+    }
+    final Response<dynamic> response = await _dio.get(
+      '${ApiEndpoints.aiQuizDiscover}/search',
+      queryParameters: params,
+    );
     return (response.data as List<dynamic>)
         .map((json) => DiscoverQuizModel.fromJson(json as Map<String, dynamic>))
         .toList();

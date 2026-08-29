@@ -33,7 +33,7 @@ import '../widgets/category_grid_view.dart';
 /// own AI/manual quizzes, and potentially the opponent's quizzes in a
 /// duel, so they can be picked for the match.
 class CategoriesScreen extends ConsumerStatefulWidget {
-  const CategoriesScreen({this.onCategoryPicked, this.onAiQuizEntryTap, this.onOpponentQuizEntryTap, super.key});
+  const CategoriesScreen({this.onCategoryPicked, this.onAiQuizEntryTap, super.key});
 
   final CategoryPickedCallback? onCategoryPicked;
 
@@ -42,9 +42,6 @@ class CategoriesScreen extends ConsumerStatefulWidget {
   /// caller'lari buni "Mening AI quizlarim" ekraniga ham to'g'ri
   /// `extra`ni yetkazish uchun beradi (router darajasida).
   final VoidCallback? onAiQuizEntryTap;
-
-  /// Raqibning ommaviy quizlari ro'yxatiga kirish nuqtasi — faqat Duelda.
-  final VoidCallback? onOpponentQuizEntryTap;
 
   @override
   ConsumerState<CategoriesScreen> createState() => _CategoriesScreenState();
@@ -109,13 +106,6 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   label: context.t.aiQuiz.entryCardLabel,
                   onTap: widget.onAiQuizEntryTap ?? () => context.push(AppRoutes.myAiQuizzes),
                 ),
-                if (widget.onOpponentQuizEntryTap != null) ...[
-                  AppSpacing.sm.vGap,
-                  _AiQuizEntryCard(
-                    label: context.t.aiQuiz.opponentQuizzesEntryLabel,
-                    onTap: widget.onOpponentQuizEntryTap!,
-                  ),
-                ],
               ],
               AppSpacing.lg.vGap,
               Expanded(

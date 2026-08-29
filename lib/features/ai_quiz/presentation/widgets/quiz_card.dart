@@ -12,12 +12,14 @@ class QuizCard extends StatelessWidget {
     required this.questionCount,
     required this.creatorName,
     required this.onTap,
+    this.topicName,
     super.key,
   });
 
   final String name;
   final int questionCount;
   final String creatorName;
+  final String? topicName;
   final VoidCallback onTap;
 
   @override
@@ -61,6 +63,24 @@ class QuizCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
                     ),
+                    if (topicName != null) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: context.colors.teal.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          topicName!,
+                          style: context.textStyles.labelSmall?.copyWith(
+                            color: context.colors.teal,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

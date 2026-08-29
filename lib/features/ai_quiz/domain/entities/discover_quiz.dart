@@ -9,6 +9,8 @@ class DiscoverQuiz {
     required this.visibility,
     required this.ownerUserId,
     this.ownerUsername,
+    this.topicCategoryId,
+    this.topicCategoryName,
   });
 
   final int id;
@@ -24,4 +26,7 @@ class DiscoverQuiz {
 
   final String ownerUserId;
   final String? ownerUsername;
+
+  final int? topicCategoryId;
+  final String? topicCategoryName;
 }

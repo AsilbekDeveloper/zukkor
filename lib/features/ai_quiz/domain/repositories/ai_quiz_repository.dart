@@ -12,6 +12,7 @@ abstract interface class AiQuizRepository {
     String? instruction,
     String? topic,
     required int questionCount,
+    int? topicCategoryId,
   });
 
   /// `GET /ai-quiz` — joriy foydalanuvchining o'z AI quizlari, eng
@@ -24,9 +25,16 @@ abstract interface class AiQuizRepository {
   /// `PATCH /ai-quiz/{id}/visibility`.
   Future<AiQuiz> updateVisibility(int id, String visibility);
 
+  /// `PATCH /ai-quiz/{id}/topic`.
+  Future<AiQuiz> updateTopic(int id, int? topicCategoryId);
+
   /// `POST /ai-quiz/manual` — AI chaqirmasdan, foydalanuvchi o'zi yozgan
   /// savollardan quiz yaratadi.
-  Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions});
+  Future<AiQuiz> createManual({
+    required String name,
+    required List<ManualQuestionInput> questions,
+    int? topicCategoryId,
+  });
 
   /// `GET /ai-quiz/users/{userId}` — shu foydalanuvchining sizga
   /// ko'rinadigan (ommaviy, yoki do'st bo'lsangiz — do'stlar uchun) quizlari.
@@ -34,8 +42,8 @@ abstract interface class AiQuizRepository {
 
   /// `GET /ai-quiz/discover` — boshqa foydalanuvchilarning ommaviy va
   /// do'stlar uchun (agar do'st bo'lsangiz) quizlari feed'i.
-  Future<List<DiscoverQuiz>> discover();
+  Future<List<DiscoverQuiz>> discover({int? categoryId});
 
   /// `GET /ai-quiz/discover/search?q=...` — quiz nomi bo'yicha qidiruv.
-  Future<List<DiscoverQuiz>> searchDiscover(String query);
+  Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId});
 }

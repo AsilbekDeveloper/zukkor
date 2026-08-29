@@ -1590,11 +1590,17 @@ class Translations$aiQuiz$en {
 	/// en: 'Create'
 	String get manualSubmit => 'Create';
 
-	/// en: 'Opponent's quizzes'
-	String get opponentQuizzesEntryLabel => 'Opponent\'s quizzes';
-
 	/// en: 'This user hasn't shared any quizzes yet'
 	String get noSharedQuizzes => 'This user hasn\'t shared any quizzes yet';
+
+	/// en: 'Topic (optional)'
+	String get topicSelectionLabel => 'Topic (optional)';
+
+	/// en: 'Choose a topic'
+	String get topicSelectionHint => 'Choose a topic';
+
+	/// en: 'Change topic'
+	String get changeTopicTitle => 'Change topic';
 }
 
 // Path: forgotPassword
@@ -1691,6 +1697,9 @@ class Translations$discover$en {
 
 	/// en: 'Filter by user'
 	String get userFilter => 'Filter by user';
+
+	/// en: 'All'
+	String get categoryAll => 'All';
 }
 
 // Path: gameLeave
@@ -2109,8 +2118,10 @@ extension on Translations {
 			'aiQuiz.manualFillAllFields' => 'Fill in all fields',
 			'aiQuiz.manualAddQuestion' => '+ Add question',
 			'aiQuiz.manualSubmit' => 'Create',
-			'aiQuiz.opponentQuizzesEntryLabel' => 'Opponent\'s quizzes',
 			'aiQuiz.noSharedQuizzes' => 'This user hasn\'t shared any quizzes yet',
+			'aiQuiz.topicSelectionLabel' => 'Topic (optional)',
+			'aiQuiz.topicSelectionHint' => 'Choose a topic',
+			'aiQuiz.changeTopicTitle' => 'Change topic',
 			'forgotPassword.title' => 'Reset password',
 			'forgotPassword.subtitle' => 'Enter your registered email - we will send you a reset code',
 			'forgotPassword.sendCodeButton' => 'Send code',
@@ -2134,6 +2145,7 @@ extension on Translations {
 			'discover.noResults' => 'No results found',
 			'discover.byCreator' => ({required Object name}) => 'by ${name}',
 			'discover.userFilter' => 'Filter by user',
+			'discover.categoryAll' => 'All',
 			'gameLeave.soloTitle' => 'Are you sure you want to leave?',
 			'gameLeave.soloMessage' => 'This game won\'t be counted and no points will be awarded.',
 			'gameLeave.duelTitle' => 'Quit the duel?',

@@ -16,7 +16,9 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../controllers/ai_quiz_controller.dart';
+import '../widgets/topic_selection_row.dart';
 
 enum _GenerateMode { document, topic }
 
@@ -40,6 +42,13 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   _GenerateMode _mode = _GenerateMode.document;
   PlatformFile? _pickedFile;
   int _questionCount = 10;
+  int? _topicCategoryId;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+  }
 
   @override
   void dispose() {
@@ -99,6 +108,7 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
             instruction: instruction,
             topic: topic,
             questionCount: _questionCount,
+            topicCategoryId: _topicCategoryId,
           );
       if (!mounted) return;
       Navigator.of(context).pop();
@@ -172,6 +182,11 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
                   controller: _instructionController,
                 ),
               ],
+              AppSpacing.lg.vGap,
+              TopicSelectionRow(
+                selectedId: _topicCategoryId,
+                onChanged: (id) => setState(() => _topicCategoryId = id),
+              ),
               AppSpacing.lg.vGap,
               Text(context.t.aiQuiz.questionCountLabel, style: context.textStyles.labelSmall),
               AppSpacing.sm.vGap,

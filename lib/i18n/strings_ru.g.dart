@@ -848,8 +848,10 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get manualFillAllFields => 'Заполните все поля';
 	@override String get manualAddQuestion => '+ Добавить вопрос';
 	@override String get manualSubmit => 'Создать';
-	@override String get opponentQuizzesEntryLabel => 'Викторины соперника';
 	@override String get noSharedQuizzes => 'Этот пользователь пока не поделился викторинами';
+	@override String get topicSelectionLabel => 'Тема (необязательно)';
+	@override String get topicSelectionHint => 'Выберите тему';
+	@override String get changeTopicTitle => 'Изменить тему';
 }
 
 // Path: forgotPassword
@@ -900,6 +902,7 @@ class _Translations$discover$ru implements Translations$discover$en {
 	@override String get noResults => 'Ничего не найдено';
 	@override String byCreator({required Object name}) => 'от ${name}';
 	@override String get userFilter => 'Фильтр по автору';
+	@override String get categoryAll => 'Все';
 }
 
 // Path: gameLeave
@@ -1300,8 +1303,10 @@ extension on TranslationsRu {
 			'aiQuiz.manualFillAllFields' => 'Заполните все поля',
 			'aiQuiz.manualAddQuestion' => '+ Добавить вопрос',
 			'aiQuiz.manualSubmit' => 'Создать',
-			'aiQuiz.opponentQuizzesEntryLabel' => 'Викторины соперника',
 			'aiQuiz.noSharedQuizzes' => 'Этот пользователь пока не поделился викторинами',
+			'aiQuiz.topicSelectionLabel' => 'Тема (необязательно)',
+			'aiQuiz.topicSelectionHint' => 'Выберите тему',
+			'aiQuiz.changeTopicTitle' => 'Изменить тему',
 			'forgotPassword.title' => 'Восстановление пароля',
 			'forgotPassword.subtitle' => 'Введите ваш зарегистрированный email - мы отправим вам код для сброса пароля',
 			'forgotPassword.sendCodeButton' => 'Отправить код',
@@ -1325,6 +1330,7 @@ extension on TranslationsRu {
 			'discover.noResults' => 'Ничего не найдено',
 			'discover.byCreator' => ({required Object name}) => 'от ${name}',
 			'discover.userFilter' => 'Фильтр по автору',
+			'discover.categoryAll' => 'Все',
 			'gameLeave.soloTitle' => 'Вы уверены, что хотите выйти?',
 			'gameLeave.soloMessage' => 'Эта игра не будет засчитана, и баллы не будут начислены.',
 			'gameLeave.duelTitle' => 'Покинуть дуэль?',

@@ -12,6 +12,7 @@ class GenerateAiQuizUseCase {
     String? instruction,
     String? topic,
     required int questionCount,
+    int? topicCategoryId,
   }) =>
       _repository.generate(
         filePath: filePath,
@@ -19,5 +20,6 @@ class GenerateAiQuizUseCase {
         instruction: instruction,
         topic: topic,
         questionCount: questionCount,
+        topicCategoryId: topicCategoryId,
       );
 }

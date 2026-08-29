@@ -14,6 +14,7 @@ import '../../domain/usecases/list_ai_quizzes_use_case.dart';
 import '../../domain/usecases/list_user_quizzes_use_case.dart';
 import '../../domain/usecases/search_discover_quizzes_use_case.dart';
 import '../../domain/usecases/update_ai_quiz_visibility_use_case.dart';
+import '../../domain/usecases/update_quiz_topic_use_case.dart';
 import '../datasources/ai_quiz_remote_data_source.dart';
 
 class AiQuizRepositoryImpl implements AiQuizRepository {
@@ -28,6 +29,7 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
     String? instruction,
     String? topic,
     required int questionCount,
+    int? topicCategoryId,
   }) async {
     try {
       return (await _remoteDataSource.generate(
@@ -36,6 +38,7 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
         instruction: instruction,
         topic: topic,
         questionCount: questionCount,
+        topicCategoryId: topicCategoryId,
       ))
           .toEntity();
     } on DioException catch (e) {
@@ -71,9 +74,26 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   }
 
   @override
-  Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions}) async {
+  Future<AiQuiz> updateTopic(int id, int? topicCategoryId) async {
     try {
-      return (await _remoteDataSource.createManual(name: name, questions: questions)).toEntity();
+      return (await _remoteDataSource.updateTopic(id, topicCategoryId)).toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<AiQuiz> createManual({
+    required String name,
+    required List<ManualQuestionInput> questions,
+    int? topicCategoryId,
+  }) async {
+    try {
+      return (await _remoteDataSource.createManual(
+        name: name,
+        questions: questions,
+        topicCategoryId: topicCategoryId,
+      )).toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -89,18 +109,20 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   }
 
   @override
-  Future<List<DiscoverQuiz>> discover() async {
+  Future<List<DiscoverQuiz>> discover({int? categoryId}) async {
     try {
-      return (await _remoteDataSource.discover()).map((model) => model.toEntity()).toList();
+      return (await _remoteDataSource.discover(categoryId: categoryId)).map((model) => model.toEntity()).toList();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
   }
 
   @override
-  Future<List<DiscoverQuiz>> searchDiscover(String query) async {
+  Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId}) async {
     try {
-      return (await _remoteDataSource.searchDiscover(query)).map((model) => model.toEntity()).toList();
+      return (await _remoteDataSource.searchDiscover(query, categoryId: categoryId))
+          .map((model) => model.toEntity())
+          .toList();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -126,6 +148,10 @@ final Provider<DeleteAiQuizUseCase> deleteAiQuizUseCaseProvider = Provider<Delet
 final Provider<UpdateAiQuizVisibilityUseCase> updateAiQuizVisibilityUseCaseProvider =
     Provider<UpdateAiQuizVisibilityUseCase>(
   (ref) => UpdateAiQuizVisibilityUseCase(ref.watch(aiQuizRepositoryProvider)),
+);
+
+final Provider<UpdateQuizTopicUseCase> updateQuizTopicUseCaseProvider = Provider<UpdateQuizTopicUseCase>(
+  (ref) => UpdateQuizTopicUseCase(ref.watch(aiQuizRepositoryProvider)),
 );
 
 final Provider<CreateManualQuizUseCase> createManualQuizUseCaseProvider = Provider<CreateManualQuizUseCase>(

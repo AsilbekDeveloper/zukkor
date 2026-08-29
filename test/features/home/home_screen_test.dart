@@ -104,6 +104,7 @@ class _FakeAiQuizRepository implements AiQuizRepository {
     String? instruction,
     String? topic,
     required int questionCount,
+    int? topicCategoryId,
   }) =>
       throw UnimplementedError();
 
@@ -117,17 +118,24 @@ class _FakeAiQuizRepository implements AiQuizRepository {
   Future<AiQuiz> updateVisibility(int id, String visibility) => throw UnimplementedError();
 
   @override
-  Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions}) =>
+  Future<AiQuiz> updateTopic(int id, int? topicCategoryId) => throw UnimplementedError();
+
+  @override
+  Future<AiQuiz> createManual({
+    required String name,
+    required List<ManualQuestionInput> questions,
+    int? topicCategoryId,
+  }) =>
       throw UnimplementedError();
 
   @override
   Future<List<AiQuiz>> listForUser(String userId) => throw UnimplementedError();
 
   @override
-  Future<List<DiscoverQuiz>> discover() async => const [];
+  Future<List<DiscoverQuiz>> discover({int? categoryId}) async => const [];
 
   @override
-  Future<List<DiscoverQuiz>> searchDiscover(String query) async => const [];
+  Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId}) async => const [];
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home

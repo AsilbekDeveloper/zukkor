@@ -842,8 +842,10 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get manualFillAllFields => 'Barcha maydonlarni to\'ldiring';
 	@override String get manualAddQuestion => '+ Savol qo\'shish';
 	@override String get manualSubmit => 'Yaratish';
-	@override String get opponentQuizzesEntryLabel => 'Raqibning quizlari';
 	@override String get noSharedQuizzes => 'Bu foydalanuvchi hali quiz ulashmagan';
+	@override String get topicSelectionLabel => 'Mavzu (ixtiyoriy)';
+	@override String get topicSelectionHint => 'Mavzu tanlang';
+	@override String get changeTopicTitle => 'Mavzuni o\'zgartirish';
 }
 
 // Path: forgotPassword
@@ -894,6 +896,7 @@ class _Translations$discover$uz implements Translations$discover$en {
 	@override String get noResults => 'Hech narsa topilmadi';
 	@override String byCreator({required Object name}) => '${name} tomonidan';
 	@override String get userFilter => 'Foydalanuvchini tanlang';
+	@override String get categoryAll => 'Hammasi';
 }
 
 // Path: gameLeave
@@ -1294,8 +1297,10 @@ extension on TranslationsUz {
 			'aiQuiz.manualFillAllFields' => 'Barcha maydonlarni to\'ldiring',
 			'aiQuiz.manualAddQuestion' => '+ Savol qo\'shish',
 			'aiQuiz.manualSubmit' => 'Yaratish',
-			'aiQuiz.opponentQuizzesEntryLabel' => 'Raqibning quizlari',
 			'aiQuiz.noSharedQuizzes' => 'Bu foydalanuvchi hali quiz ulashmagan',
+			'aiQuiz.topicSelectionLabel' => 'Mavzu (ixtiyoriy)',
+			'aiQuiz.topicSelectionHint' => 'Mavzu tanlang',
+			'aiQuiz.changeTopicTitle' => 'Mavzuni o\'zgartirish',
 			'forgotPassword.title' => 'Parolni tiklash',
 			'forgotPassword.subtitle' => 'Ro\'yxatdan o\'tgan emailingizni kiriting - biz sizga tiklash kodini yuboramiz',
 			'forgotPassword.sendCodeButton' => 'Kod yuborish',
@@ -1319,6 +1324,7 @@ extension on TranslationsUz {
 			'discover.noResults' => 'Hech narsa topilmadi',
 			'discover.byCreator' => ({required Object name}) => '${name} tomonidan',
 			'discover.userFilter' => 'Foydalanuvchini tanlang',
+			'discover.categoryAll' => 'Hammasi',
 			'gameLeave.soloTitle' => 'Chiqishni xohlaysizmi?',
 			'gameLeave.soloMessage' => 'Bu o\'yin hisoblanmaydi va ball berilmaydi.',
 			'gameLeave.duelTitle' => 'Duelni tark etmoqchimisiz?',

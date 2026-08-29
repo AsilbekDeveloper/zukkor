@@ -12,8 +12,10 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../domain/entities/manual_question_input.dart';
 import '../controllers/ai_quiz_controller.dart';
+import '../widgets/topic_selection_row.dart';
 
 class _DraftQuestion {
   _DraftQuestion()
@@ -45,6 +47,13 @@ class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen>
   final TextEditingController _nameController = TextEditingController();
   final List<_DraftQuestion> _questions = [_DraftQuestion()];
   bool _isSubmitting = false;
+  int? _topicCategoryId;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+  }
 
   @override
   void dispose() {
@@ -96,7 +105,9 @@ class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen>
     context.hideKeyboard();
     setState(() => _isSubmitting = true);
     try {
-      await ref.read(aiQuizControllerProvider.notifier).createManual(name: name, questions: questions);
+      await ref
+          .read(aiQuizControllerProvider.notifier)
+          .createManual(name: name, questions: questions, topicCategoryId: _topicCategoryId);
       if (!mounted) return;
       context.showSnack(context.t.aiQuiz.generated);
       context.pop();
@@ -126,6 +137,11 @@ class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen>
                 hint: context.t.aiQuiz.manualNameHint,
                 controller: _nameController,
                 enabled: !_isSubmitting,
+              ),
+              AppSpacing.lg.vGap,
+              TopicSelectionRow(
+                selectedId: _topicCategoryId,
+                onChanged: (id) => setState(() => _topicCategoryId = id),
               ),
               AppSpacing.lg.vGap,
               for (int i = 0; i < _questions.length; i++) ...[

@@ -11,7 +11,6 @@ import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
-import 'package:zukkor/features/ai_quiz/presentation/screens/user_quizzes_screen.dart';
 import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:zukkor/features/auth/domain/entities/user.dart';
 import 'package:zukkor/features/auth/domain/repositories/auth_repository.dart';
@@ -331,7 +330,6 @@ final List<_ScreenCase> _screens = [
   (name: 'MyAiQuizzes', builder: (_) => const MyAiQuizzesScreen()),
   (name: 'GenerateAiQuiz', builder: (_) => const GenerateAiQuizScreen()),
   (name: 'CreateManualQuiz', builder: (_) => const CreateManualQuizScreen()),
-  (name: 'UserQuizzes', builder: (_) => const UserQuizzesScreen(userId: 'u1', displayName: 'Malika Yusupova')),
 ];
 
 /// Backendga murojaat qilmaydigan soxta auth repository — Onboarding

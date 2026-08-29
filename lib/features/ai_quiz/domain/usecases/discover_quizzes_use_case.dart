@@ -6,5 +6,5 @@ class DiscoverQuizzesUseCase {
 
   final AiQuizRepository _repository;
 
-  Future<List<DiscoverQuiz>> call() => _repository.discover();
+  Future<List<DiscoverQuiz>> call({int? categoryId}) => _repository.discover(categoryId: categoryId);
 }

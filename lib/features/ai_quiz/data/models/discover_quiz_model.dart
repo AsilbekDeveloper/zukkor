@@ -10,6 +10,8 @@ class DiscoverQuizModel {
     required this.visibility,
     required this.ownerUserId,
     this.ownerUsername,
+    this.topicCategoryId,
+    this.topicCategoryName,
   });
 
   factory DiscoverQuizModel.fromJson(Map<String, dynamic> json) => DiscoverQuizModel(
@@ -21,6 +23,8 @@ class DiscoverQuizModel {
         visibility: json['visibility'] as String,
         ownerUserId: json['owner_user_id'] as String,
         ownerUsername: json['owner_username'] as String?,
+        topicCategoryId: json['topic_category_id'] as int?,
+        topicCategoryName: json['topic_category_name'] as String?,
       );
 
   final int id;
@@ -31,6 +35,8 @@ class DiscoverQuizModel {
   final String visibility;
   final String ownerUserId;
   final String? ownerUsername;
+  final int? topicCategoryId;
+  final String? topicCategoryName;
 
   DiscoverQuiz toEntity() => DiscoverQuiz(
         id: id,
@@ -41,5 +47,7 @@ class DiscoverQuizModel {
         visibility: visibility,
         ownerUserId: ownerUserId,
         ownerUsername: ownerUsername,
+        topicCategoryId: topicCategoryId,
+        topicCategoryName: topicCategoryName,
       );
 }

@@ -8,6 +8,8 @@ class AiQuiz {
     required this.createdAt,
     required this.source,
     required this.visibility,
+    this.topicCategoryId,
+    this.topicCategoryName,
   });
 
   final int id;
@@ -20,4 +22,7 @@ class AiQuiz {
 
   /// 'private' | 'friends' | 'public'
   final String visibility;
+
+  final int? topicCategoryId;
+  final String? topicCategoryName;
 }

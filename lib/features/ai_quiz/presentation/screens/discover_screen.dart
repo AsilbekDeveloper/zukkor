@@ -13,17 +13,16 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
-import '../../../friends/presentation/controllers/user_search_controller.dart';
-import '../../../friends/presentation/models/discoverable_user.dart';
-import '../../../friends/presentation/widgets/discoverable_user_list.dart';
 import '../../../friends/presentation/widgets/friends_search_bar.dart';
+import '../../../quiz/domain/entities/category.dart';
+import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../../domain/entities/discover_quiz.dart';
 import '../controllers/ai_quiz_controller.dart';
 import '../widgets/quiz_card.dart';
 
-enum _DiscoverMode { feed, searchQuiz, searchUser }
+enum _DiscoverMode { feed, search }
 
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
@@ -39,6 +38,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
 
+  int? _selectedCategoryId;
   List<DiscoverQuiz>? _feed;
   List<DiscoverQuiz>? _searchResults;
   bool _hasError = false;
@@ -46,7 +46,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(_loadFeed);
+    Future.microtask(() {
+      _loadFeed();
+      ref.read(categoriesControllerProvider.notifier).load();
+    });
   }
 
   @override
@@ -62,7 +65,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       _feed = null;
     });
     try {
-      final quizzes = await ref.read(aiQuizControllerProvider.notifier).discover();
+      final quizzes = await ref.read(aiQuizControllerProvider.notifier).discover(
+            categoryId: _selectedCategoryId,
+          );
       if (!mounted) return;
       setState(() => _feed = quizzes);
     } catch (_) {
@@ -74,60 +79,42 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   void _onQueryChanged(String value) {
     _debounceTimer?.cancel();
     if (value.isEmpty) {
-      if (_mode == _DiscoverMode.searchUser) {
-        ref.read(userSearchControllerProvider.notifier).clear();
-      } else {
-        setState(() => _searchResults = null);
-      }
+      setState(() {
+        _mode = _DiscoverMode.feed;
+        _searchResults = null;
+      });
+      _loadFeed();
       return;
     }
 
     _debounceTimer = Timer(_debounce, () {
-      if (_mode == _DiscoverMode.searchQuiz) {
-        _searchQuizzes(value);
-      } else if (_mode == _DiscoverMode.searchUser) {
-        ref.read(userSearchControllerProvider.notifier).search(value);
-      }
+      setState(() => _mode = _DiscoverMode.search);
+      _searchQuizzes(value);
     });
   }
 
   Future<void> _searchQuizzes(String query) async {
     setState(() => _searchResults = null);
     try {
-      final results = await ref.read(aiQuizControllerProvider.notifier).searchDiscover(query);
+      final results = await ref.read(aiQuizControllerProvider.notifier).searchDiscover(
+            query,
+            categoryId: _selectedCategoryId,
+          );
       if (!mounted) return;
       setState(() => _searchResults = results);
     } catch (_) {
-      // Search errors are handled gracefully by showing "no results"
-      // or similar, rather than a full retry screen.
       if (mounted) setState(() => _searchResults = []);
     }
   }
 
-  void _toggleSearchQuiz() {
-    setState(() {
-      if (_mode == _DiscoverMode.searchQuiz) {
-        _mode = _DiscoverMode.feed;
-        _searchController.clear();
-        _searchResults = null;
-      } else {
-        _mode = _DiscoverMode.searchQuiz;
-        _searchController.clear();
-      }
-    });
-  }
-
-  void _toggleSearchUser() {
-    setState(() {
-      if (_mode == _DiscoverMode.searchUser) {
-        _mode = _DiscoverMode.feed;
-        _searchController.clear();
-        ref.read(userSearchControllerProvider.notifier).clear();
-      } else {
-        _mode = _DiscoverMode.searchUser;
-        _searchController.clear();
-      }
-    });
+  void _selectCategory(int? id) {
+    if (_selectedCategoryId == id) return;
+    setState(() => _selectedCategoryId = id);
+    if (_mode == _DiscoverMode.search && _searchController.text.isNotEmpty) {
+      _searchQuizzes(_searchController.text);
+    } else {
+      _loadFeed();
+    }
   }
 
   void _pick(DiscoverQuiz quiz) {
@@ -141,17 +128,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     context.push(
       AppRoutes.quizIntro,
       extra: QuizLaunchArgs(category: category, questionCount: quiz.questionCount),
-    );
-  }
-
-  void _openUserQuizzes(DiscoverableUser user) {
-    context.push(
-      AppRoutes.userQuizzes,
-      extra: (
-        userId: user.id,
-        displayName: user.name,
-        onPicked: null, // use default behavior (quizIntro)
-      ),
     );
   }
 
@@ -169,6 +145,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               padding: EdgeInsets.symmetric(horizontal: hPad),
               child: _buildHeader(),
             ),
+            AppSpacing.md.vGap,
+            _CategoryFilterRow(
+              selectedId: _selectedCategoryId,
+              onSelected: _selectCategory,
+            ),
             AppSpacing.lg.vGap,
             Expanded(
               child: _buildBody(),
@@ -180,31 +161,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   Widget _buildHeader() {
-    if (_mode == _DiscoverMode.searchQuiz || _mode == _DiscoverMode.searchUser) {
-      return Row(
-        children: [
-          IconButton(
-            onPressed: () => setState(() {
-              _mode = _DiscoverMode.feed;
-              _searchController.clear();
-              _searchResults = null;
-              ref.read(userSearchControllerProvider.notifier).clear();
-            }),
-            icon: const Icon(TablerIcons.arrowLeft),
-          ),
-          Expanded(
-            child: FriendsSearchBar(
-              placeholder: _mode == _DiscoverMode.searchQuiz
-                  ? context.t.discover.searchQuizHint
-                  : context.t.discover.searchUserHint,
-              controller: _searchController,
-              onChanged: _onQueryChanged,
-            ),
-          ),
-        ],
-      );
-    }
-
     return Row(
       children: [
         IconButton(
@@ -212,47 +168,17 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           icon: const Icon(TablerIcons.arrowLeft),
         ),
         Expanded(
-          child: Text(
-            context.t.discover.title,
-            style: context.textStyles.titleLarge,
+          child: FriendsSearchBar(
+            placeholder: context.t.discover.searchQuizHint,
+            controller: _searchController,
+            onChanged: _onQueryChanged,
           ),
-        ),
-        IconButton(
-          onPressed: _toggleSearchUser,
-          icon: const Icon(TablerIcons.userSearch),
-          tooltip: context.t.discover.userFilter,
-        ),
-        IconButton(
-          onPressed: _toggleSearchQuiz,
-          icon: const Icon(TablerIcons.search),
         ),
       ],
     );
   }
 
   Widget _buildBody() {
-    if (_mode == _DiscoverMode.searchUser) {
-      final results = ref.watch(userSearchControllerProvider);
-      if (results == null && _searchController.text.isNotEmpty) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.screenHPad),
-          child: const ShimmerListSkeleton(count: 4, trailingWidth: 70),
-        );
-      }
-      final users = (results ?? []).map(DiscoverableUser.fromEntity).toList();
-      if (users.isEmpty && _searchController.text.isNotEmpty) {
-        return Center(child: Text(context.t.discover.noResults));
-      }
-      return SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: context.screenHPad),
-        child: DiscoverableUserList(
-          users: users,
-          addedIds: const {}, // we don't care about friendship status here
-          onRowTap: _openUserQuizzes,
-        ),
-      );
-    }
-
     final quizzes = _mode == _DiscoverMode.feed ? _feed : _searchResults;
 
     if (_hasError && _mode == _DiscoverMode.feed) {
@@ -288,9 +214,103 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             name: quiz.name,
             questionCount: quiz.questionCount,
             creatorName: context.t.discover.byCreator(name: quiz.ownerUsername ?? 'user'),
+            topicName: quiz.topicCategoryName,
             onTap: () => _pick(quiz),
           );
         },
+      ),
+    );
+  }
+}
+
+class _CategoryFilterRow extends ConsumerWidget {
+  const _CategoryFilterRow({required this.selectedId, required this.onSelected});
+
+  final int? selectedId;
+  final ValueChanged<int?> onSelected;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoriesState = ref.watch(categoriesControllerProvider);
+    final List<Category>? categories = categoriesState.data;
+
+    if (categories == null) return const SizedBox.shrink();
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.symmetric(horizontal: context.screenHPad),
+      child: Row(
+        children: [
+          _FilterChip(
+            label: context.t.discover.categoryAll,
+            isSelected: selectedId == null,
+            onTap: () => onSelected(null),
+          ),
+          AppSpacing.sm.hGap,
+          for (final cat in categories) ...[
+            _FilterChip(
+              label: cat.name,
+              icon: QuizCategory.fromEntity(cat).icon,
+              isSelected: cat.id == selectedId,
+              onTap: () => onSelected(cat.id),
+              activeColor: QuizCategory.fromEntity(cat).color(context),
+            ),
+            if (cat != categories.last) AppSpacing.sm.hGap,
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterChip extends StatelessWidget {
+  const _FilterChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    this.icon,
+    this.activeColor,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final IconData? icon;
+  final Color? activeColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color color = activeColor ?? context.colors.coral;
+
+    return Material(
+      color: isSelected ? color : context.colors.card,
+      borderRadius: AppRadius.smAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.smAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 2),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.smAll,
+            border: Border.all(color: isSelected ? color : context.colors.line),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 16, color: isSelected ? Colors.white : color),
+                AppSpacing.xs.hGap,
+              ],
+              Text(
+                label,
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: isSelected ? Colors.white : context.colors.ink,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

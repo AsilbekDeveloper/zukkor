@@ -8,6 +8,8 @@ class AiQuizModel {
     required this.createdAt,
     required this.source,
     required this.visibility,
+    this.topicCategoryId,
+    this.topicCategoryName,
   });
 
   factory AiQuizModel.fromJson(Map<String, dynamic> json) => AiQuizModel(
@@ -17,6 +19,8 @@ class AiQuizModel {
         createdAt: DateTime.parse(json['created_at'] as String),
         source: json['source'] as String,
         visibility: json['visibility'] as String,
+        topicCategoryId: json['topic_category_id'] as int?,
+        topicCategoryName: json['topic_category_name'] as String?,
       );
 
   final int id;
@@ -25,6 +29,8 @@ class AiQuizModel {
   final DateTime createdAt;
   final String source;
   final String visibility;
+  final int? topicCategoryId;
+  final String? topicCategoryName;
 
   AiQuiz toEntity() => AiQuiz(
         id: id,
@@ -33,5 +39,7 @@ class AiQuizModel {
         createdAt: createdAt,
         source: source,
         visibility: visibility,
+        topicCategoryId: topicCategoryId,
+        topicCategoryName: topicCategoryName,
       );
 }

@@ -454,8 +454,10 @@
     "manualFillAllFields": "Barcha maydonlarni to'ldiring",
     "manualAddQuestion": "+ Savol qo'shish",
     "manualSubmit": "Yaratish",
-    "opponentQuizzesEntryLabel": "Raqibning quizlari",
-    "noSharedQuizzes": "Bu foydalanuvchi hali quiz ulashmagan"
+    "noSharedQuizzes": "Bu foydalanuvchi hali quiz ulashmagan",
+    "topicSelectionLabel": "Mavzu (ixtiyoriy)",
+    "topicSelectionHint": "Mavzu tanlang",
+    "changeTopicTitle": "Mavzuni o'zgartirish"
   },
   "forgotPassword": {
     "title": "Parolni tiklash",
@@ -484,7 +486,8 @@
     "emptyFeed": "Hozircha hech qanday ommaviy quiz yo'q",
     "noResults": "Hech narsa topilmadi",
     "byCreator": "$name tomonidan",
-    "userFilter": "Foydalanuvchini tanlang"
+    "userFilter": "Foydalanuvchini tanlang",
+    "categoryAll": "Hammasi"
   },
   "gameLeave": {
     "soloTitle": "Chiqishni xohlaysizmi?",

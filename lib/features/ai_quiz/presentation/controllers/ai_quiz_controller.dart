@@ -52,6 +52,7 @@ class AiQuizController extends Notifier<AiQuizState> {
     String? instruction,
     String? topic,
     required int questionCount,
+    int? topicCategoryId,
   }) async {
     state = state.copyWith(isGenerating: true);
     try {
@@ -61,6 +62,7 @@ class AiQuizController extends Notifier<AiQuizState> {
             instruction: instruction,
             topic: topic,
             questionCount: questionCount,
+            topicCategoryId: topicCategoryId,
           );
       final List<AiQuiz> updated = [quiz, ...?state.quizzes];
       state = state.copyWith(quizzes: () => updated);
@@ -86,11 +88,24 @@ class AiQuizController extends Notifier<AiQuizState> {
 
   /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran ushlab, xabar
   /// ko'rsatishi kerak.
-  Future<AiQuiz> createManual({required String name, required List<ManualQuestionInput> questions}) async {
+  Future<void> updateTopic(int id, int? topicCategoryId) async {
+    final AiQuiz updated = await ref.read(updateQuizTopicUseCaseProvider).call(id, topicCategoryId);
+    final List<AiQuiz> list = (state.quizzes ?? const []).map((q) => q.id == id ? updated : q).toList();
+    state = state.copyWith(quizzes: () => list);
+  }
+
+  /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran ushlab, xabar
+  /// ko'rsatishi kerak.
+  Future<AiQuiz> createManual({
+    required String name,
+    required List<ManualQuestionInput> questions,
+    int? topicCategoryId,
+  }) async {
     state = state.copyWith(isGenerating: true);
     try {
-      final AiQuiz quiz =
-          await ref.read(createManualQuizUseCaseProvider).call(name: name, questions: questions);
+      final AiQuiz quiz = await ref
+          .read(createManualQuizUseCaseProvider)
+          .call(name: name, questions: questions, topicCategoryId: topicCategoryId);
       final List<AiQuiz> updated = [quiz, ...?state.quizzes];
       state = state.copyWith(quizzes: () => updated);
       return quiz;
@@ -103,10 +118,11 @@ class AiQuizController extends Notifier<AiQuizState> {
   /// bu boshqa foydalanuvchining ro'yxati, "mening quizlarim" emas.
   Future<List<AiQuiz>> listForUser(String userId) => ref.read(listUserQuizzesUseCaseProvider).call(userId);
 
-  Future<List<DiscoverQuiz>> discover() => ref.read(discoverQuizzesUseCaseProvider).call();
+  Future<List<DiscoverQuiz>> discover({int? categoryId}) =>
+      ref.read(discoverQuizzesUseCaseProvider).call(categoryId: categoryId);
 
-  Future<List<DiscoverQuiz>> searchDiscover(String query) =>
-      ref.read(searchDiscoverQuizzesUseCaseProvider).call(query);
+  Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId}) =>
+      ref.read(searchDiscoverQuizzesUseCaseProvider).call(query, categoryId: categoryId);
 }
 
 final NotifierProvider<AiQuizController, AiQuizState> aiQuizControllerProvider =

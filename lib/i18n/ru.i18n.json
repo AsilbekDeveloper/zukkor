@@ -469,8 +469,10 @@
     "manualFillAllFields": "Заполните все поля",
     "manualAddQuestion": "+ Добавить вопрос",
     "manualSubmit": "Создать",
-    "opponentQuizzesEntryLabel": "Викторины соперника",
-    "noSharedQuizzes": "Этот пользователь пока не поделился викторинами"
+    "noSharedQuizzes": "Этот пользователь пока не поделился викторинами",
+    "topicSelectionLabel": "Тема (необязательно)",
+    "topicSelectionHint": "Выберите тему",
+    "changeTopicTitle": "Изменить тему"
   },
   "forgotPassword": {
     "title": "Восстановление пароля",
@@ -499,7 +501,8 @@
     "emptyFeed": "Пока нет общедоступных квизов",
     "noResults": "Ничего не найдено",
     "byCreator": "от $name",
-    "userFilter": "Фильтр по автору"
+    "userFilter": "Фильтр по автору",
+    "categoryAll": "Все"
   },
   "gameLeave": {
     "soloTitle": "Вы уверены, что хотите выйти?",

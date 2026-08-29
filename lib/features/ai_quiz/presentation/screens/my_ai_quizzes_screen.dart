@@ -13,6 +13,8 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../quiz/domain/entities/category.dart';
+import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../../domain/entities/ai_quiz.dart';
@@ -149,6 +151,23 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     }
   }
 
+  Future<void> _changeTopic(AiQuiz quiz) async {
+    final int? selected = await showDialog<int?>(
+      context: context,
+      builder: (dialogContext) => _TopicDialog(currentId: quiz.topicCategoryId),
+    );
+    if (selected == quiz.topicCategoryId || !mounted) return;
+
+    try {
+      await ref.read(aiQuizControllerProvider.notifier).updateTopic(quiz.id, selected);
+      if (mounted) context.showSnack(context.t.aiQuiz.visibilityUpdated); // Reusing message is okay, or add new one
+    } on Failure catch (e) {
+      if (mounted) context.showSnack(e.message);
+    } catch (_) {
+      if (mounted) context.showSnack(t.errors.unknown);
+    }
+  }
+
   Widget _buildHeader(BuildContext context, {required bool canSelect}) {
     if (_selectionMode) {
       final bool hasSelection = _selectedIds.isNotEmpty;
@@ -227,6 +246,7 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                                   quizzes: quizzes,
                                   onTap: _rowTapped,
                                   onVisibilityTap: _changeVisibility,
+                                  onTopicTap: _changeTopic,
                                   selectionMode: _selectionMode,
                                   selectedIds: _selectedIds,
                                 ),
@@ -307,6 +327,133 @@ class _EmptyState extends StatelessWidget {
 /// row with real spacing between them, and the currently-active one is
 /// visually distinct (coral fill/border) instead of looking identical to
 /// the others.
+class _TopicDialog extends ConsumerWidget {
+  const _TopicDialog({required this.currentId});
+
+  final int? currentId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoriesState = ref.watch(categoriesControllerProvider);
+    final List<Category>? categories = categoriesState.data;
+
+    if (categories == null) {
+      Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Dialog(
+      shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(context.t.aiQuiz.changeTopicTitle, style: context.textStyles.titleLarge),
+            AppSpacing.lg.vGap,
+            _TopicOption(
+              label: context.t.discover.categoryAll,
+              icon: TablerIcons.category,
+              color: context.colors.muted,
+              selected: currentId == null,
+              onTap: () => context.pop(null),
+            ),
+            AppSpacing.sm.vGap,
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.4),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    for (final cat in categories) ...[
+                      _TopicOption(
+                        label: cat.name,
+                        icon: QuizCategory.fromEntity(cat).icon,
+                        color: QuizCategory.fromEntity(cat).color(context),
+                        selected: cat.id == currentId,
+                        onTap: () => context.pop(cat.id),
+                      ),
+                      if (cat != categories.last) AppSpacing.sm.vGap,
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TopicOption extends StatelessWidget {
+  const _TopicOption({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget row = Row(
+      children: [
+        Icon(icon, size: 20, color: selected ? Colors.white : color),
+        AppSpacing.sm.hGap,
+        Expanded(
+          child: Text(
+            label,
+            style: context.textStyles.bodyMedium?.copyWith(
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              color: selected ? Colors.white : context.colors.ink,
+            ),
+          ),
+        ),
+        if (selected) const Icon(TablerIcons.check, size: 20, color: Colors.white),
+      ],
+    );
+
+    final Widget card = Material(
+      color: selected ? color : context.colors.card,
+      borderRadius: AppRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.mdAll,
+            border: selected ? null : Border.all(color: context.colors.line),
+          ),
+          child: row,
+        ),
+      ),
+    );
+
+    if (!selected) return card;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: AppRadius.mdAll,
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: card,
+    );
+  }
+}
+
 class _VisibilityDialog extends StatelessWidget {
   const _VisibilityDialog({required this.current});
 
