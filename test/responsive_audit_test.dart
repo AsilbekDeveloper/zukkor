@@ -408,6 +408,16 @@ class _FakeAuthRepository implements AuthRepository {
     required String code,
     required String newPassword,
   }) async {}
+
+  @override
+  Future<User> addAccount({required String email, required String password}) => throw UnimplementedError();
+
+  @override
+  Future<User> addAccountViaRegister({required String email, required String password}) =>
+      throw UnimplementedError();
+
+  @override
+  Future<User?> addAccountWithGoogle() => throw UnimplementedError();
 }
 
 class _FakePushNotificationService implements PushNotificationService {

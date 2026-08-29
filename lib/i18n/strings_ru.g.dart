@@ -755,6 +755,7 @@ class _Translations$auth$ru implements Translations$auth$en {
 	@override String get switchToRegister => 'Зарегистрироваться';
 	@override String get switchToLogin => 'Войти';
 	@override String get forgotPasswordLink => 'Забыли пароль?';
+	@override String get addAccount => 'Добавить аккаунт';
 }
 
 // Path: authValidation
@@ -1237,6 +1238,7 @@ extension on TranslationsRu {
 			'auth.switchToRegister' => 'Зарегистрироваться',
 			'auth.switchToLogin' => 'Войти',
 			'auth.forgotPasswordLink' => 'Забыли пароль?',
+			'auth.addAccount' => 'Добавить аккаунт',
 			'authValidation.emailRequired' => 'Введите email',
 			'authValidation.emailInvalid' => 'Неверный формат email',
 			'authValidation.passwordRequired' => 'Введите пароль',

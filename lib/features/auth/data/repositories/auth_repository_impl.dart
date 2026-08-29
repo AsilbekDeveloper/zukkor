@@ -220,6 +220,77 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<User> addAccount({required String email, required String password}) async {
+    try {
+      final AuthTokensModel tokens = await _remoteDataSource.login(email: email, password: password);
+      final User user = (await _remoteDataSource.getCurrentUserForToken(tokens.accessToken)).toEntity();
+      await _tokenStorage.savePendingLoginTokens(access: tokens.accessToken, refresh: tokens.refreshToken);
+      await _tokenStorage.registerActiveSession(
+        userId: user.id,
+        info: StoredAccountInfo(
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+          avatarUrl: user.avatarImagePath,
+        ),
+      );
+      return user;
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<User> addAccountViaRegister({required String email, required String password}) async {
+    try {
+      final AuthTokensModel tokens = await _remoteDataSource.register(email: email, password: password);
+      final User user = (await _remoteDataSource.getCurrentUserForToken(tokens.accessToken)).toEntity();
+      await _tokenStorage.savePendingLoginTokens(access: tokens.accessToken, refresh: tokens.refreshToken);
+      await _tokenStorage.registerActiveSession(
+        userId: user.id,
+        info: StoredAccountInfo(
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+          avatarUrl: user.avatarImagePath,
+        ),
+      );
+      return user;
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<User?> addAccountWithGoogle() async {
+    final String? idToken;
+    try {
+      idToken = await _googleAuthDataSource.signIn();
+    } on GoogleSignInException {
+      throw UnknownFailure();
+    }
+    if (idToken == null) return null;
+
+    try {
+      final AuthTokensModel tokens = await _remoteDataSource.signInWithGoogle(idToken);
+      final User user = (await _remoteDataSource.getCurrentUserForToken(tokens.accessToken)).toEntity();
+      await _tokenStorage.savePendingLoginTokens(access: tokens.accessToken, refresh: tokens.refreshToken);
+      await _tokenStorage.registerActiveSession(
+        userId: user.id,
+        info: StoredAccountInfo(
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+          avatarUrl: user.avatarImagePath,
+        ),
+      );
+      return user;
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
   Future<void> _saveTokens(AuthTokensModel tokens) => _tokenStorage.saveTokens(
         access: tokens.accessToken,
         refresh: tokens.refreshToken,

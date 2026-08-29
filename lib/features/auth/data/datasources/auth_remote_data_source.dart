@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/config/app_config.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/auth_tokens_model.dart';
@@ -46,6 +47,22 @@ class AuthRemoteDataSource {
 
   Future<UserModel> getCurrentUser() async {
     final Response<dynamic> response = await _dio.get(ApiEndpoints.me);
+    return UserModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  /// [accessToken] orqali /auth/me'ni chaqiradi — joriy faol sessiyadan
+  /// mustaqil. "Akkaunt qo'shish" oqimida yangi login qilingan tokenning
+  /// egasini bilish uchun, uni hali faol qilmasdan turib ishlatiladi.
+  Future<UserModel> getCurrentUserForToken(String accessToken) async {
+    final Dio oneOffDio = Dio(BaseOptions(
+      baseUrl: AppConfig.apiBaseUrl,
+      connectTimeout: AppConfig.connectTimeout,
+      receiveTimeout: AppConfig.receiveTimeout,
+    ));
+    final Response<dynamic> response = await oneOffDio.get(
+      ApiEndpoints.me,
+      options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+    );
     return UserModel.fromJson(response.data as Map<String, dynamic>);
   }
 

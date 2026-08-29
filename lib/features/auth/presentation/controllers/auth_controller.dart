@@ -34,6 +34,40 @@ class AuthController extends Notifier<bool> {
     }
   }
 
+  Future<User> addAccount({required String email, required String password}) async {
+    state = true;
+    try {
+      final User user = await ref.read(authRepositoryProvider).addAccount(email: email, password: password);
+      resetUserScopedState(ref);
+      return user;
+    } finally {
+      state = false;
+    }
+  }
+
+  Future<User> addAccountViaRegister({required String email, required String password}) async {
+    state = true;
+    try {
+      final User user =
+          await ref.read(authRepositoryProvider).addAccountViaRegister(email: email, password: password);
+      resetUserScopedState(ref);
+      return user;
+    } finally {
+      state = false;
+    }
+  }
+
+  Future<User?> addAccountWithGoogle() async {
+    state = true;
+    try {
+      final User? user = await ref.read(authRepositoryProvider).addAccountWithGoogle();
+      if (user != null) resetUserScopedState(ref);
+      return user;
+    } finally {
+      state = false;
+    }
+  }
+
   /// Google hisob tanlagichini ochadi. Foydalanuvchi hech kimni
   /// tanlamasdan yopsa `null` qaytaradi (xato emas, chaqiruvchi hech
   /// narsa qilmasligi kerak).

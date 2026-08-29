@@ -381,7 +381,8 @@
     "haveAccountPrompt": "Already have an account?",
     "switchToRegister": "Sign up",
     "switchToLogin": "Sign in",
-    "forgotPasswordLink": "Forgot password?"
+    "forgotPasswordLink": "Forgot password?",
+    "addAccount": "Add account"
   },
   "authValidation": {
     "emailRequired": "Email is required",

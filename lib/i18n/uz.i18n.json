@@ -381,7 +381,8 @@
     "haveAccountPrompt": "Hisobingiz bormi?",
     "switchToRegister": "Ro'yxatdan o'tish",
     "switchToLogin": "Kirish",
-    "forgotPasswordLink": "Parolni unutdingizmi?"
+    "forgotPasswordLink": "Parolni unutdingizmi?",
+    "addAccount": "Akkaunt qo'shish"
   },
   "authValidation": {
     "emailRequired": "Email kiritilishi shart",

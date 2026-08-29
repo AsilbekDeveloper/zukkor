@@ -749,6 +749,7 @@ class _Translations$auth$uz implements Translations$auth$en {
 	@override String get switchToRegister => 'Ro\'yxatdan o\'tish';
 	@override String get switchToLogin => 'Kirish';
 	@override String get forgotPasswordLink => 'Parolni unutdingizmi?';
+	@override String get addAccount => 'Akkaunt qo\'shish';
 }
 
 // Path: authValidation
@@ -1231,6 +1232,7 @@ extension on TranslationsUz {
 			'auth.switchToRegister' => 'Ro\'yxatdan o\'tish',
 			'auth.switchToLogin' => 'Kirish',
 			'auth.forgotPasswordLink' => 'Parolni unutdingizmi?',
+			'auth.addAccount' => 'Akkaunt qo\'shish',
 			'authValidation.emailRequired' => 'Email kiritilishi shart',
 			'authValidation.emailInvalid' => 'Email formati noto\'g\'ri',
 			'authValidation.passwordRequired' => 'Parol kiritilishi shart',

@@ -110,6 +110,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 label: context.t.settings.changePassword,
                 onTap: () => context.push(AppRoutes.changePassword),
               ),
+            SettingsRowData(
+              icon: TablerIcons.userPlus,
+              label: context.t.auth.addAccount,
+              onTap: () => context.push(AppRoutes.login, extra: true),
+            ),
           ],
         ),
       ];

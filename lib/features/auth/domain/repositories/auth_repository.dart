@@ -99,4 +99,15 @@ abstract interface class AuthRepository {
     required String code,
     required String newPassword,
   });
+
+  /// "Akkaunt qo'shish" oqimi: yangi login qiladi, uning egasini aniqlaydi,
+  /// va joriy faol sessiyani buzg'un qilmasdan tokenlarni ro'yxatga
+  /// o'tkazadi. Muvaffaqiyatli bo'lsa yangi foydalanuvchini qaytaradi.
+  Future<User> addAccount({required String email, required String password});
+
+  /// Ro'yxatdan o'tish orqali yangi akkaunt qo'shish.
+  Future<User> addAccountViaRegister({required String email, required String password});
+
+  /// Google orqali yangi akkaunt qo'shish.
+  Future<User?> addAccountWithGoogle();
 }

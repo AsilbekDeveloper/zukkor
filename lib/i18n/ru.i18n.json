@@ -396,7 +396,8 @@
     "haveAccountPrompt": "Уже есть аккаунт?",
     "switchToRegister": "Зарегистрироваться",
     "switchToLogin": "Войти",
-    "forgotPasswordLink": "Забыли пароль?"
+    "forgotPasswordLink": "Забыли пароль?",
+    "addAccount": "Добавить аккаунт"
   },
   "authValidation": {
     "emailRequired": "Введите email",

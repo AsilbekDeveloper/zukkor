@@ -1364,6 +1364,9 @@ class Translations$auth$en {
 
 	/// en: 'Forgot password?'
 	String get forgotPasswordLink => 'Forgot password?';
+
+	/// en: 'Add account'
+	String get addAccount => 'Add account';
 }
 
 // Path: authValidation
@@ -2052,6 +2055,7 @@ extension on Translations {
 			'auth.switchToRegister' => 'Sign up',
 			'auth.switchToLogin' => 'Sign in',
 			'auth.forgotPasswordLink' => 'Forgot password?',
+			'auth.addAccount' => 'Add account',
 			'authValidation.emailRequired' => 'Email is required',
 			'authValidation.emailInvalid' => 'Invalid email format',
 			'authValidation.passwordRequired' => 'Password is required',
