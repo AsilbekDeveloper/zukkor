@@ -31,6 +31,27 @@ class _FakeTokenStorage implements TokenStorage {
 
   @override
   Future<void> clear() async {}
+
+  @override
+  Future<String?> activeAccountId() async => null;
+
+  @override
+  Future<List<StoredAccountInfo>> listAccounts() async => const [];
+
+  @override
+  Future<void> registerActiveSession({
+    required String userId,
+    required StoredAccountInfo info,
+  }) async {}
+
+  @override
+  Future<void> setActiveAccount(String userId) async {}
+
+  @override
+  Future<void> removeAccount(String userId) async {}
+
+  @override
+  Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
 }
 
 /// Backendga murojaat qilmaydigan soxta auth repository — "happy path"
