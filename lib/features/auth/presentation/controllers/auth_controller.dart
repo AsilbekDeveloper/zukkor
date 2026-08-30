@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/storage/app_preferences.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user.dart';
 import '../user_session.dart';
@@ -39,6 +40,7 @@ class AuthController extends Notifier<bool> {
     try {
       final User user = await ref.read(authRepositoryProvider).addAccount(email: email, password: password);
       resetUserScopedState(ref);
+      await _clearStaleIntroSurvey();
       return user;
     } finally {
       state = false;
@@ -51,6 +53,7 @@ class AuthController extends Notifier<bool> {
       final User user =
           await ref.read(authRepositoryProvider).addAccountViaRegister(email: email, password: password);
       resetUserScopedState(ref);
+      await _clearStaleIntroSurvey();
       return user;
     } finally {
       state = false;
@@ -61,12 +64,23 @@ class AuthController extends Notifier<bool> {
     state = true;
     try {
       final User? user = await ref.read(authRepositoryProvider).addAccountWithGoogle();
-      if (user != null) resetUserScopedState(ref);
+      if (user != null) {
+        resetUserScopedState(ref);
+        await _clearStaleIntroSurvey();
+      }
       return user;
     } finally {
       state = false;
     }
   }
+
+  // Introduction so'rovnomasi javoblari ("qurilma"da, birinchi hech qanday
+  // akkaunt yo'q paytda to'planadi) qaysidir OLDINGI akkauntning tugallanmagan
+  // Onboarding'idan qolib ketgan bo'lishi mumkin. Akkaunt QO'SHISHDA (bu
+  // metodlar FAQAT shu oqim uchun) buni ehtiyot chorasi sifatida tozalab
+  // qo'yamiz — aks holda yangi qo'shilgan akkauntning Onboarding'i boshqa
+  // (eski) akkauntning javoblarini "meros qilib olishi" mumkin edi.
+  Future<void> _clearStaleIntroSurvey() => ref.read(appPreferencesProvider).clearIntroSurvey();
 
   /// Google hisob tanlagichini ochadi. Foydalanuvchi hech kimni
   /// tanlamasdan yopsa `null` qaytaradi (xato emas, chaqiruvchi hech
