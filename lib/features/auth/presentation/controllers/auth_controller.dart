@@ -41,6 +41,7 @@ class AuthController extends Notifier<bool> {
       final User user = await ref.read(authRepositoryProvider).addAccount(email: email, password: password);
       resetUserScopedState(ref);
       await _clearStaleIntroSurvey();
+      await syncPushTokenForActiveAccount(ref);
       return user;
     } finally {
       state = false;
@@ -54,6 +55,7 @@ class AuthController extends Notifier<bool> {
           await ref.read(authRepositoryProvider).addAccountViaRegister(email: email, password: password);
       resetUserScopedState(ref);
       await _clearStaleIntroSurvey();
+      await syncPushTokenForActiveAccount(ref);
       return user;
     } finally {
       state = false;
@@ -67,6 +69,7 @@ class AuthController extends Notifier<bool> {
       if (user != null) {
         resetUserScopedState(ref);
         await _clearStaleIntroSurvey();
+        await syncPushTokenForActiveAccount(ref);
       }
       return user;
     } finally {

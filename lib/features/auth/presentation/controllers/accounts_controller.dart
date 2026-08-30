@@ -26,6 +26,7 @@ class AccountsController extends AsyncNotifier<List<AccountEntry>> {
     try {
       await ref.read(authRepositoryProvider).switchAccount(userId);
       resetUserScopedState(ref);
+      await syncPushTokenForActiveAccount(ref);
       ref.invalidateSelf();
       return true;
     } catch (_) {

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/session_expired_notifier.dart';
+import '../../../core/notifications/push_notification_service.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/router/app_routes.dart';
 import '../../duel/presentation/controllers/duel_controller.dart';
@@ -15,6 +16,7 @@ import '../../leaderboard/presentation/controllers/player_stats_controller.dart'
 import '../../lobby/presentation/controllers/lobby_controller.dart';
 import '../../notifications/presentation/controllers/notifications_controller.dart';
 import '../../settings/presentation/controllers/notification_preferences_controller.dart';
+import '../data/repositories/auth_repository_impl.dart';
 import 'controllers/current_user_controller.dart';
 
 /// Foydalanuvchiga bog'liq barcha keshlangan holatni dastlabki holatiga
@@ -55,6 +57,27 @@ void resetUserScopedState(Ref ref) {
   // keyingi hisobda qayta ulanishi kerak.
   ref.invalidate(duelControllerProvider);
   ref.invalidate(lobbyControllerProvider);
+}
+
+/// Bir necha akkaunt orasida almashtirilganda (yoki yangi akkaunt
+/// qo'shilib, u darhol faol bo'lganda) FCM push-tokenni ENDI FAOL bo'lgan
+/// akkauntga qayta bog'laydi.
+///
+/// `PUT /users/me/push-token` allaqachon "token boshqa userga bog'langan
+/// bo'lsa, undan olib qayta bog'laydi" mantig'iga ega (bitta qurilma
+/// tokeni bir vaqtda faqat bitta userga tegishli bo'ladi) — shuning uchun
+/// bu yerda faqat SHU SO'ROVNI QAYTA YUBORISH kifoya, alohida
+/// "unregister" chaqiruvi shart emas.
+///
+/// `HomeScreen._syncPushToken` buni ilova sessiyasi davomida FAQAT BIR
+/// MARTA (birinchi Home ochilganda) qiladi — akkaunt almashtirish/qo'shish
+/// esa Home'ni qayta ochmasdan sodir bo'lishi mumkin, shuning uchun bu
+/// alohida, aniq chaqiriladigan funksiya kerak.
+Future<void> syncPushTokenForActiveAccount(Ref ref) async {
+  final String? token = await ref.read(pushNotificationServiceProvider).requestTokenOrNull();
+  if (token != null) {
+    await ref.read(registerPushTokenUseCaseProvider).call(token);
+  }
 }
 
 /// Sessiya majburan tugaganini ushlaydigan provider. Interceptor refresh
