@@ -382,7 +382,10 @@
     "switchToRegister": "Ro'yxatdan o'tish",
     "switchToLogin": "Kirish",
     "forgotPasswordLink": "Parolni unutdingizmi?",
-    "addAccount": "Akkaunt qo'shish"
+    "addAccount": "Akkaunt qo'shish",
+    "accounts": "Akkauntlar",
+    "removeAccountConfirmTitle": "Akkauntni o'chirish",
+    "removeAccountConfirmMessage": "Bu akkauntni ro'yxatdan olib tashlaysizmi?"
   },
   "authValidation": {
     "emailRequired": "Email kiritilishi shart",

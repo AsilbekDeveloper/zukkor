@@ -44,6 +44,9 @@ class _FakeTokenStorage implements TokenStorage {
 
   @override
   Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
+
+  @override
+  Future<String?> readRefreshTokenFor(String userId) async => null;
 }
 
 /// A fresh install has no `hasSeenIntroduction` flag, so the app's own

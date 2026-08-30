@@ -291,6 +291,29 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<List<StoredAccountInfo>> listAccounts() => _tokenStorage.listAccounts();
+
+  @override
+  Future<String?> activeAccountId() => _tokenStorage.activeAccountId();
+
+  @override
+  Future<void> switchAccount(String userId) => _tokenStorage.setActiveAccount(userId);
+
+  @override
+  Future<void> removeAccount(String userId) async {
+    final String? refreshToken = await _tokenStorage.readRefreshTokenFor(userId);
+    if (refreshToken != null) {
+      try {
+        await _remoteDataSource.logout(refreshToken);
+      } on DioException {
+        // Best-effort — server logout muvaffaqiyatsiz bo'lsa ham lokal
+        // o'chirish davom etadi (foydalanuvchi qurilmada baribir chiqadi).
+      }
+    }
+    await _tokenStorage.removeAccount(userId);
+  }
+
   Future<void> _saveTokens(AuthTokensModel tokens) => _tokenStorage.saveTokens(
         access: tokens.accessToken,
         refresh: tokens.refreshToken,

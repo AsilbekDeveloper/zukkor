@@ -397,7 +397,10 @@
     "switchToRegister": "Зарегистрироваться",
     "switchToLogin": "Войти",
     "forgotPasswordLink": "Забыли пароль?",
-    "addAccount": "Добавить аккаунт"
+    "addAccount": "Добавить аккаунт",
+    "accounts": "Аккаунты",
+    "removeAccountConfirmTitle": "Удалить аккаунт",
+    "removeAccountConfirmMessage": "Вы хотите удалить этот аккаунт из списка?"
   },
   "authValidation": {
     "emailRequired": "Введите email",

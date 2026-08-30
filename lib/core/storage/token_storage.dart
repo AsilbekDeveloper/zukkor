@@ -79,6 +79,10 @@ abstract interface class TokenStorage {
 
   /// Berilgan akkauntning tokenlari + metama'lumotini butunlay o'chiradi.
   Future<void> removeAccount(String userId);
+
+  /// Berilgan akkauntning (albatta FAOL bo'lishi shart emas) refresh tokenini
+  /// o'qiydi — uni serverdan chiqarish (logout) uchun kerak.
+  Future<String?> readRefreshTokenFor(String userId);
 }
 
 /// Ishlab chiqarish implementatsiyasi — platformaning xavfsiz omboridan
@@ -259,6 +263,17 @@ class SecureTokenStorage implements TokenStorage {
     final String? activeId = await _storage.read(key: _activeAccountIdKey);
     if (activeId == userId) {
       await _storage.delete(key: _activeAccountIdKey);
+    }
+  }
+
+  @override
+  Future<String?> readRefreshTokenFor(String userId) async {
+    final String? json = await _storage.read(key: _tokenKey(userId));
+    if (json == null) return null;
+    try {
+      return (jsonDecode(json) as Map<String, dynamic>)['refresh'] as String?;
+    } catch (_) {
+      return null;
     }
   }
 }

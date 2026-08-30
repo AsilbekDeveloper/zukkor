@@ -28,12 +28,17 @@ class _FakeAuthRemoteDataSource extends Fake implements AuthRemoteDataSource {
     if (nextError != null) throw nextError!;
     return nextUser!;
   }
+  @override
+  Future<void> logout(String refreshToken) async {
+    if (nextError != null) throw nextError!;
+  }
 }
 
 class _FakeTokenStorage extends Fake implements TokenStorage {
   final List<String> calls = [];
   String? pendingAccess;
   String? registeredUserId;
+  String? removedUserId;
 
   @override
   Future<void> savePendingLoginTokens({required String access, String? refresh}) async {
@@ -45,6 +50,15 @@ class _FakeTokenStorage extends Fake implements TokenStorage {
   Future<void> registerActiveSession({required String userId, required StoredAccountInfo info}) async {
     calls.add('registerActiveSession');
     registeredUserId = userId;
+  }
+
+  @override
+  Future<String?> readRefreshTokenFor(String userId) async => 'rt-$userId';
+
+  @override
+  Future<void> removeAccount(String userId) async {
+    calls.add('removeAccount');
+    removedUserId = userId;
   }
 }
 
@@ -103,6 +117,22 @@ void main() {
     expect(() => repository.addAccount(email: 'e', password: 'p'), throwsA(isA<Exception>()));
     expect(loginCalled, isTrue);
     expect(storage.calls, isEmpty);
+  });
+
+  test('removeAccount: calls server logout (best-effort) and storage remove', () async {
+    await repository.removeAccount('u1');
+
+    expect(storage.calls, contains('removeAccount'));
+    expect(storage.removedUserId, 'u1');
+  });
+
+  test('removeAccount: continues even if server logout fails', () async {
+    remote.nextError = DioException(requestOptions: RequestOptions());
+
+    await repository.removeAccount('u1');
+
+    expect(storage.calls, contains('removeAccount'));
+    expect(storage.removedUserId, 'u1');
   });
 }
 

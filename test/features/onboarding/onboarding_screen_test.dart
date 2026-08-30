@@ -52,6 +52,9 @@ class _FakeTokenStorage implements TokenStorage {
 
   @override
   Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
+
+  @override
+  Future<String?> readRefreshTokenFor(String userId) async => null;
 }
 
 /// Backendga murojaat qilmaydigan soxta auth repository — "happy path"
@@ -141,6 +144,18 @@ class _FakeAuthRepository implements AuthRepository {
     required String code,
     required String newPassword,
   }) async {}
+
+  @override
+  Future<List<StoredAccountInfo>> listAccounts() async => const [];
+
+  @override
+  Future<String?> activeAccountId() async => null;
+
+  @override
+  Future<void> switchAccount(String userId) async {}
+
+  @override
+  Future<void> removeAccount(String userId) async {}
 
   @override
   Future<User> addAccount({required String email, required String password}) => throw UnimplementedError();

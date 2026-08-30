@@ -750,6 +750,9 @@ class _Translations$auth$uz implements Translations$auth$en {
 	@override String get switchToLogin => 'Kirish';
 	@override String get forgotPasswordLink => 'Parolni unutdingizmi?';
 	@override String get addAccount => 'Akkaunt qo\'shish';
+	@override String get accounts => 'Akkauntlar';
+	@override String get removeAccountConfirmTitle => 'Akkauntni o\'chirish';
+	@override String get removeAccountConfirmMessage => 'Bu akkauntni ro\'yxatdan olib tashlaysizmi?';
 }
 
 // Path: authValidation
@@ -1233,6 +1236,9 @@ extension on TranslationsUz {
 			'auth.switchToLogin' => 'Kirish',
 			'auth.forgotPasswordLink' => 'Parolni unutdingizmi?',
 			'auth.addAccount' => 'Akkaunt qo\'shish',
+			'auth.accounts' => 'Akkauntlar',
+			'auth.removeAccountConfirmTitle' => 'Akkauntni o\'chirish',
+			'auth.removeAccountConfirmMessage' => 'Bu akkauntni ro\'yxatdan olib tashlaysizmi?',
 			'authValidation.emailRequired' => 'Email kiritilishi shart',
 			'authValidation.emailInvalid' => 'Email formati noto\'g\'ri',
 			'authValidation.passwordRequired' => 'Parol kiritilishi shart',

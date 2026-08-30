@@ -1,3 +1,4 @@
+import '../../../../core/storage/token_storage.dart';
 import '../entities/user.dart';
 
 /// Auth backend bilan ishlash shartnomasi — amalga oshirilishi
@@ -110,4 +111,13 @@ abstract interface class AuthRepository {
 
   /// Google orqali yangi akkaunt qo'shish.
   Future<User?> addAccountWithGoogle();
+
+  Future<List<StoredAccountInfo>> listAccounts();
+  Future<String?> activeAccountId();
+
+  /// Boshqa (albatta joriy faol bo'lmagan) akkauntga o'tadi.
+  Future<void> switchAccount(String userId);
+
+  /// Akkauntni butunlay o'chiradi.
+  Future<void> removeAccount(String userId);
 }

@@ -1367,6 +1367,15 @@ class Translations$auth$en {
 
 	/// en: 'Add account'
 	String get addAccount => 'Add account';
+
+	/// en: 'Accounts'
+	String get accounts => 'Accounts';
+
+	/// en: 'Remove account'
+	String get removeAccountConfirmTitle => 'Remove account';
+
+	/// en: 'Do you want to remove this account from the registry?'
+	String get removeAccountConfirmMessage => 'Do you want to remove this account from the registry?';
 }
 
 // Path: authValidation
@@ -2056,6 +2065,9 @@ extension on Translations {
 			'auth.switchToLogin' => 'Sign in',
 			'auth.forgotPasswordLink' => 'Forgot password?',
 			'auth.addAccount' => 'Add account',
+			'auth.accounts' => 'Accounts',
+			'auth.removeAccountConfirmTitle' => 'Remove account',
+			'auth.removeAccountConfirmMessage' => 'Do you want to remove this account from the registry?',
 			'authValidation.emailRequired' => 'Email is required',
 			'authValidation.emailInvalid' => 'Invalid email format',
 			'authValidation.passwordRequired' => 'Password is required',

@@ -382,7 +382,10 @@
     "switchToRegister": "Sign up",
     "switchToLogin": "Sign in",
     "forgotPasswordLink": "Forgot password?",
-    "addAccount": "Add account"
+    "addAccount": "Add account",
+    "accounts": "Accounts",
+    "removeAccountConfirmTitle": "Remove account",
+    "removeAccountConfirmMessage": "Do you want to remove this account from the registry?"
   },
   "authValidation": {
     "emailRequired": "Email is required",

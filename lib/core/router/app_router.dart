@@ -6,6 +6,7 @@ import '../../features/ai_quiz/presentation/screens/create_manual_quiz_screen.da
 import '../../features/ai_quiz/presentation/screens/discover_screen.dart';
 import '../../features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
+import '../../features/auth/presentation/screens/account_switcher_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -348,6 +349,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.changePassword,
         builder: (context, state) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.accounts,
+        builder: (context, state) => const AccountSwitcherScreen(),
       ),
     ],
   );
