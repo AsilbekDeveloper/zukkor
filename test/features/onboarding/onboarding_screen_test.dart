@@ -51,6 +51,9 @@ class _FakeTokenStorage implements TokenStorage {
   Future<void> removeAccount(String userId) async {}
 
   @override
+  Future<void> updateAccountInfo(String userId, StoredAccountInfo info) async {}
+
+  @override
   Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
 
   @override
@@ -193,7 +196,7 @@ Future<SharedPreferences> _pumpAppOnOnboarding(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         authRepositoryProvider.overrideWithValue(authRepository ?? _FakeAuthRepository()),
         tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
       ],

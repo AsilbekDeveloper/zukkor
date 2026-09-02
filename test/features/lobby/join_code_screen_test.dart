@@ -136,7 +136,7 @@ Future<({GoRouter router, _FakeLobbyRepository repository})> _pumpJoinCode(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         lobbyRepositoryProvider.overrideWithValue(repository),
       ],
       child: TranslationProvider(

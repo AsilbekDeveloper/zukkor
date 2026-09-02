@@ -97,7 +97,7 @@ Future<GoRouter> _pumpResult(WidgetTester tester, {Size size = const Size(390, 8
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
       ],
       child: TranslationProvider(

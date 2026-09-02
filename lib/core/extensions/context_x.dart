@@ -25,9 +25,12 @@ extension ContextX on BuildContext {
 
   void hideKeyboard() => FocusScope.of(this).unfocus();
 
-  void showSnack(String message) {
+  void showSnack(String message, {SnackBarAction? action}) {
     ScaffoldMessenger.of(this)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(SnackBar(
+        content: Text(message),
+        action: action,
+      ));
   }
 }

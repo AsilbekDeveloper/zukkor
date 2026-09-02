@@ -46,7 +46,7 @@ Future<void> main() async {
       runApp(
         ProviderScope(
           overrides: [
-            appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+            sharedPreferencesProvider.overrideWithValue(prefs),
           ],
           child: const ZukkorApp(),
         ),

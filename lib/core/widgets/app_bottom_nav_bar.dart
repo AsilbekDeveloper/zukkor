@@ -71,7 +71,7 @@ class AppBottomNavBar extends ConsumerWidget {
                     icon: TablerIcons.home,
                     label: context.t.bottomNav.home,
                     isActive: current == AppTab.home,
-                    onTap: current == AppTab.home ? null : () => tap(() => onTabTap(AppTab.home)),
+                    onTap: () => tap(() => onTabTap(AppTab.home)),
                   ),
                 ),
                 Expanded(
@@ -79,9 +79,7 @@ class AppBottomNavBar extends ConsumerWidget {
                     icon: TablerIcons.trophy,
                     label: context.t.bottomNav.leaderboard,
                     isActive: current == AppTab.leaderboard,
-                    onTap: current == AppTab.leaderboard
-                        ? null
-                        : () => tap(() => onTabTap(AppTab.leaderboard)),
+                    onTap: () => tap(() => onTabTap(AppTab.leaderboard)),
                   ),
                 ),
                 _CenterPlayButton(onTap: () => tap(onPlayTap)),
@@ -90,7 +88,7 @@ class AppBottomNavBar extends ConsumerWidget {
                     icon: TablerIcons.users,
                     label: context.t.bottomNav.friends,
                     isActive: current == AppTab.friends,
-                    onTap: current == AppTab.friends ? null : () => tap(() => onTabTap(AppTab.friends)),
+                    onTap: () => tap(() => onTabTap(AppTab.friends)),
                   ),
                 ),
                 Expanded(
@@ -98,7 +96,7 @@ class AppBottomNavBar extends ConsumerWidget {
                     icon: TablerIcons.user,
                     label: context.t.bottomNav.profile,
                     isActive: current == AppTab.profile,
-                    onTap: current == AppTab.profile ? null : () => tap(() => onTabTap(AppTab.profile)),
+                    onTap: () => tap(() => onTabTap(AppTab.profile)),
                   ),
                 ),
               ],
@@ -126,6 +124,7 @@ class _TabItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color = isActive ? context.colors.coralDeep : context.colors.muted;
+
     return InkWell(
       onTap: onTap,
       customBorder: const CircleBorder(),

@@ -286,7 +286,7 @@ Future<({GoRouter router, _FakeLobbyRepository repository})> _pumpLobby(
   final _FakeLobbyRepository repository = _FakeLobbyRepository();
   final ProviderContainer container = ProviderContainer(
     overrides: [
-      appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+      sharedPreferencesProvider.overrideWithValue(prefs),
       lobbyRepositoryProvider.overrideWithValue(repository),
       quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
     ],

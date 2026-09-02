@@ -14,6 +14,7 @@ class PushNotificationService {
 
   StreamSubscription<String>? _tokenRefreshSub;
   StreamSubscription<RemoteMessage>? _foregroundSub;
+  final StreamController<RemoteMessage> _tapController = StreamController<RemoteMessage>.broadcast();
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'zukkor_main',
@@ -55,13 +56,24 @@ class PushNotificationService {
     } catch (_) {}
   }
 
+  /// Bildirishnoma bosilganda (tap) RemoteMessage yuboradigan oqim.
+  Stream<RemoteMessage> get onTap => _tapController.stream;
+
   /// Ilova ochiq turganda (foreground) kelgan xabarlarni tutib, lokal
   /// bildirishnoma sifatida ko'rsatadi — aks holda Firebase ularni
-  /// jimgina yutib yuboradi.
+  /// jimgina yutib yuboradi. Shuningdek, xabar bosilishini ham tinglaydi.
   void listenForeground() {
     _initLocal();
     _foregroundSub?.cancel();
     try {
+      // 1. Ilova fonda bo'lsa va push bosilsa.
+      FirebaseMessaging.onMessageOpenedApp.listen((msg) => _tapController.add(msg));
+
+      // 2. Ilova butunlay o'chirilgan bo'lsa va push orqali ochilsa.
+      _messaging.getInitialMessage().then((msg) {
+        if (msg != null) _tapController.add(msg);
+      });
+
       _foregroundSub = FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         final RemoteNotification? notification = message.notification;
         final AndroidNotification? android = message.notification?.android;

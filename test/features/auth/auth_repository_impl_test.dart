@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/storage/token_storage.dart';
 import 'package:zukkor/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:zukkor/features/auth/data/datasources/google_auth_data_source.dart';
@@ -60,20 +61,37 @@ class _FakeTokenStorage extends Fake implements TokenStorage {
     calls.add('removeAccount');
     removedUserId = userId;
   }
+
+  @override
+  Future<void> updateAccountInfo(String userId, StoredAccountInfo info) async {
+    calls.add('updateAccountInfo');
+  }
+}
+
+class _FakeAppPreferences extends Fake implements AppPreferences {
+  String? clearedUserId;
+
+  @override
+  Future<void> clearUserData(String userId) async {
+    clearedUserId = userId;
+  }
 }
 
 void main() {
   late _FakeAuthRemoteDataSource remote;
   late _FakeTokenStorage storage;
+  late _FakeAppPreferences preferences;
   late AuthRepositoryImpl repository;
 
   setUp(() {
     remote = _FakeAuthRemoteDataSource();
     storage = _FakeTokenStorage();
+    preferences = _FakeAppPreferences();
     repository = AuthRepositoryImpl(
       remoteDataSource: remote,
       googleAuthDataSource: FakeGoogleAuthDataSource(),
       tokenStorage: storage,
+      preferences: preferences,
     );
   });
 
@@ -119,11 +137,12 @@ void main() {
     expect(storage.calls, isEmpty);
   });
 
-  test('removeAccount: calls server logout (best-effort) and storage remove', () async {
+  test('removeAccount: calls server logout (best-effort), pref cleanup and storage remove', () async {
     await repository.removeAccount('u1');
 
     expect(storage.calls, contains('removeAccount'));
     expect(storage.removedUserId, 'u1');
+    expect(preferences.clearedUserId, 'u1');
   });
 
   test('removeAccount: continues even if server logout fails', () async {

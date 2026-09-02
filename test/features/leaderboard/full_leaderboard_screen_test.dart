@@ -129,7 +129,7 @@ Future<GoRouter> _pumpFullLeaderboard(WidgetTester tester, {Size size = const Si
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
       ],
       child: TranslationProvider(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,6 +49,9 @@ class _FakeTokenStorage implements TokenStorage {
 
   @override
   Future<void> removeAccount(String userId) async {}
+
+  @override
+  Future<void> updateAccountInfo(String userId, StoredAccountInfo info) async {}
 
   @override
   Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
@@ -166,6 +170,9 @@ class _FakePushNotificationService implements PushNotificationService {
 
   @override
   void listenForeground() {}
+
+  @override
+  Stream<RemoteMessage> get onTap => const Stream.empty();
 }
 
 /// Butun ilova ulanishining smoke testi: ProviderScope + tema + router
@@ -183,7 +190,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],
@@ -216,7 +223,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],
@@ -270,7 +277,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
           pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
@@ -310,7 +317,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
           pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
@@ -349,7 +356,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
         ],

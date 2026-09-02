@@ -119,7 +119,7 @@ Future<({GoRouter router, _FakeNotificationsRepository repository})> _pumpNotifi
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         notificationsRepositoryProvider.overrideWithValue(repository),
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
       ],

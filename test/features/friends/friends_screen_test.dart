@@ -221,7 +221,7 @@ Future<GoRouter> _pumpFriends(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
         leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
         friendsRepositoryProvider.overrideWithValue(repository ?? _FakeFriendsRepository()),
@@ -345,24 +345,6 @@ void main() {
     expect(find.text(AppStrings.alreadyFriendsLabel), findsOneWidget);
     expect(find.text(AppStrings.addToFriendsButton), findsNothing);
     expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('the bottom nav Home tab navigates back to Home', (tester) async {
-    await _pumpFriends(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.home));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
-  });
-
-  testWidgets('the bottom nav Leaderboard tab navigates to Leaderboard', (tester) async {
-    await _pumpFriends(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.trophy));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.leaderboardTitle), findsOneWidget);
   });
 
   testWidgets('tapping the requests button navigates to Friend Requests', (tester) async {

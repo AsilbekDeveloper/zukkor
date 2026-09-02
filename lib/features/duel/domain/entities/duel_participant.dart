@@ -17,4 +17,12 @@ class DuelParticipant {
   final String? lastName;
   final String? avatarColor;
   final String? avatarImagePath;
+
+  /// To'liq ism ("Ism Familiya"); bo'sh bo'lsa username; u ham bo'lmasa ID.
+  String get displayName {
+    final String name = [firstName, lastName]
+        .where((part) => part != null && part.isNotEmpty)
+        .join(' ');
+    return name.isNotEmpty ? name : (username ?? id);
+  }
 }

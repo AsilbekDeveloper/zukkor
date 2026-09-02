@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -442,6 +443,9 @@ class _FakePushNotificationService implements PushNotificationService {
 
   @override
   void listenForeground() {}
+
+  @override
+  Stream<RemoteMessage> get onTap => const Stream.empty();
 }
 
 /// Backendga murojaat qilmaydigan soxta leaderboard repository —
@@ -676,7 +680,7 @@ Future<void> _pumpAt(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
         historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),

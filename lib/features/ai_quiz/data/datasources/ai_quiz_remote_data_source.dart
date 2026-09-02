@@ -50,6 +50,40 @@ class AiQuizRemoteDataSource {
     return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
   }
 
+  Future<String> generateAsync({
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
+    required int questionCount,
+    int? topicCategoryId,
+  }) async {
+    final Map<String, dynamic> fields = {'question_count': questionCount};
+    if (filePath != null && fileName != null) {
+      fields['file'] = await MultipartFile.fromFile(filePath, filename: fileName);
+    }
+    if (instruction != null && instruction.isNotEmpty) {
+      fields['instruction'] = instruction;
+    }
+    if (topic != null && topic.isNotEmpty) {
+      fields['topic'] = topic;
+    }
+    if (topicCategoryId != null) {
+      fields['topic_category_id'] = topicCategoryId;
+    }
+    final FormData formData = FormData.fromMap(fields);
+    final Response<dynamic> response = await _dio.post(
+      '${ApiEndpoints.aiQuiz}/generate-async',
+      data: formData,
+    );
+    return (response.data as Map<String, dynamic>)['job_id'] as String;
+  }
+
+  Future<Map<String, dynamic>> getAsyncJobStatus(String jobId) async {
+    final Response<dynamic> response = await _dio.get('${ApiEndpoints.aiQuiz}/generate-async/$jobId');
+    return response.data as Map<String, dynamic>;
+  }
+
   Future<List<AiQuizModel>> list() async {
     final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuiz);
     return (response.data as List<dynamic>)

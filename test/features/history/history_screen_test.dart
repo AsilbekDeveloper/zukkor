@@ -151,7 +151,7 @@ Future<GoRouter> _pumpHistory(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         historyRepositoryProvider.overrideWithValue(repository ?? _FakeHistoryRepository()),
       ],
       child: TranslationProvider(

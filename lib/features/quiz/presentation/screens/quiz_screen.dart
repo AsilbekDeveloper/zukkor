@@ -12,6 +12,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../history/presentation/controllers/history_controller.dart';
@@ -66,11 +67,19 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
     super.initState();
     _timerController = AnimationController(vsync: this, duration: _fallbackTimeLimit)
       ..addStatusListener(_onTimerStatusChanged);
-    Future.microtask(_startSession);
+    Future.microtask(() {
+      ref.read(isInActiveGameProvider.notifier).setInGame(true);
+      _startSession();
+    });
   }
 
   @override
   void dispose() {
+    Future.microtask(() {
+      if (mounted) {
+        ref.read(isInActiveGameProvider.notifier).setInGame(false);
+      }
+    });
     _pauseTimer?.cancel();
     _timerController.dispose();
     super.dispose();

@@ -36,7 +36,7 @@ Future<GoRouter> _pumpPrivacyPolicy(WidgetTester tester, {Size size = const Size
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       ),

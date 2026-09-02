@@ -43,6 +43,9 @@ class _FakeTokenStorage implements TokenStorage {
   Future<void> removeAccount(String userId) async {}
 
   @override
+  Future<void> updateAccountInfo(String userId, StoredAccountInfo info) async {}
+
+  @override
   Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
 
   @override
@@ -69,7 +72,7 @@ Future<SharedPreferences> _pumpAppOnIntroduction(WidgetTester tester) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
       ],
       child: const ZukkorApp(),

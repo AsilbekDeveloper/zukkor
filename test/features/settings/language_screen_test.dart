@@ -38,7 +38,7 @@ Future<GoRouter> _pumpLanguage(WidgetTester tester, {Size size = const Size(390,
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appPreferencesProvider.overrideWithValue(AppPreferences(prefs))],
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       ),

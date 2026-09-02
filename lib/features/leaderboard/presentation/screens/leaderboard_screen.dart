@@ -3,12 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -66,8 +64,6 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
     setState(() => _scope = scope);
     ref.read(leaderboardControllerProvider.notifier).load(scope: scope);
   }
-
-  void _comingSoon() => context.showSnack(context.t.bottomNav.comingSoon);
 
   void _openPlayerDetail(LeaderboardEntry entry) {
     if (entry.isCurrentUser || entry.id == null) return;
@@ -132,16 +128,6 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
                   ],
                 ),
               ),
-      ),
-      bottomNavigationBar: AppBottomNavBar(
-        current: AppTab.leaderboard,
-        onTabTap: (tab) => switch (tab) {
-          AppTab.home => context.go(AppRoutes.home),
-          AppTab.friends => context.push(AppRoutes.friends),
-          AppTab.profile => context.push(AppRoutes.profile),
-          AppTab.leaderboard => _comingSoon(),
-        },
-        onPlayTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     );
   }

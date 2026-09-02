@@ -188,5 +188,9 @@ class LobbySocketDataSource {
 }
 
 final Provider<LobbySocketDataSource> lobbySocketDataSourceProvider = Provider<LobbySocketDataSource>(
-  (ref) => LobbySocketDataSource(ref.watch(tokenStorageProvider)),
+  (ref) {
+    final ds = LobbySocketDataSource(ref.watch(tokenStorageProvider));
+    ref.onDispose(() => ds.disconnect());
+    return ds;
+  },
 );

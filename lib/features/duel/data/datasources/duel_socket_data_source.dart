@@ -224,5 +224,9 @@ class DuelSocketDataSource {
 }
 
 final Provider<DuelSocketDataSource> duelSocketDataSourceProvider = Provider<DuelSocketDataSource>(
-  (ref) => DuelSocketDataSource(ref.watch(tokenStorageProvider)),
+  (ref) {
+    final ds = DuelSocketDataSource(ref.watch(tokenStorageProvider));
+    ref.onDispose(() => ds.disconnect());
+    return ds;
+  },
 );

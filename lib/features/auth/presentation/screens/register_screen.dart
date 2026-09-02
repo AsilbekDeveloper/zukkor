@@ -81,7 +81,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (!mounted) return;
       // Ro'yxatdan o'tgach profil sozlashga (Onboarding) yo'naltiramiz —
       // Register/Login'ga qaytmasin uchun `go` bilan.
-      context.go(AppRoutes.onboarding);
+      if (widget.isAddingAccount) {
+        context.go(AppRoutes.splash);
+      } else {
+        context.go(AppRoutes.onboarding);
+      }
       if (!widget.isAddingAccount) {
         unawaited(ref.read(analyticsServiceProvider).logSignUp('email'));
       }

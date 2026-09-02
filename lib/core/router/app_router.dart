@@ -57,6 +57,7 @@ import '../../features/settings/presentation/screens/privacy_policy_screen.dart'
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/settings/presentation/screens/terms_of_use_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../widgets/main_shell.dart';
 import 'app_routes.dart';
 
 /// [QuizSetupScreen]'s route `extra` — the category just picked, plus a
@@ -126,9 +127,42 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.onboarding,
         builder: (context, state) => const OnboardingScreen(),
       ),
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (context, state) => const HomeScreen(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.home,
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.leaderboard,
+                builder: (context, state) => const LeaderboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.friends,
+                builder: (context, state) => const FriendsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.profile,
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
       // `extra` carries the pending duel opponent (a FriendEntry) or a
       // pending Lobby room id (a String) when reached from those flows;
@@ -182,14 +216,6 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const CreateManualQuizScreen(),
       ),
       GoRoute(
-        path: AppRoutes.leaderboard,
-        builder: (context, state) => const LeaderboardScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.friends,
-        builder: (context, state) => const FriendsScreen(),
-      ),
-      GoRoute(
         path: AppRoutes.addFriend,
         builder: (context, state) => const AddFriendScreen(),
       ),
@@ -200,10 +226,6 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.duel,
         builder: (context, state) => const DuelScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.profile,
-        builder: (context, state) => const ProfileScreen(),
       ),
       // The quiz-flow routes carry non-serializable data via `extra` —
       // if it's missing or the wrong type (e.g. a deep link, or state

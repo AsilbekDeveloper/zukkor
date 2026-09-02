@@ -124,7 +124,7 @@ Future<GoRouter> _pumpCategories(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
       ],
       child: TranslationProvider(

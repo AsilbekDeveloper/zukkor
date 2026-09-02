@@ -10,7 +10,6 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
@@ -67,8 +66,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     _debounceTimer?.cancel();
     super.dispose();
   }
-
-  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
   void _openFriendDetail(BuildContext context, FriendEntry friend) {
     final String? id = friend.id;
@@ -167,7 +164,10 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                     ),
                     if (!isSearching) ...[
                       AppSpacing.md.vGap,
-                      CompactInviteCard(code: _mockInviteCode, onShareTap: () => _comingSoon(context)),
+                      CompactInviteCard(
+                        code: _mockInviteCode,
+                        onShareTap: () => context.showSnack(context.t.bottomNav.comingSoon),
+                      ),
                     ],
                     AppSpacing.lg.vGap,
                     if (matchedFriends.isNotEmpty) ...[
@@ -220,16 +220,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                   ],
                 ),
               ),
-      ),
-      bottomNavigationBar: AppBottomNavBar(
-        current: AppTab.friends,
-        onTabTap: (tab) => switch (tab) {
-          AppTab.home => context.go(AppRoutes.home),
-          AppTab.leaderboard => context.push(AppRoutes.leaderboard),
-          AppTab.profile => context.push(AppRoutes.profile),
-          AppTab.friends => _comingSoon(context),
-        },
-        onPlayTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     );
   }

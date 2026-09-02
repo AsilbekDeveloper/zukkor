@@ -21,6 +21,9 @@ class ZukkorApp extends ConsumerWidget {
     // ishlov beruvchini butun ilova umri davomida jonli saqlaymiz.
     ref.watch(sessionExpiryHandlerProvider);
 
+    // Push-bildirishnoma bosilganda navigatsiya qiladigan ishlov beruvchi.
+    ref.watch(pushNotificationHandlerProvider);
+
     return TranslationProvider(
       child: MaterialApp.router(
         title: t.common.appName,

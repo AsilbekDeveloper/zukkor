@@ -264,7 +264,7 @@ Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
         leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
         historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),
@@ -340,32 +340,5 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SettingsScreen), findsOneWidget);
-  });
-
-  testWidgets('the bottom nav Home tab navigates back to Home', (tester) async {
-    await _pumpProfile(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.home));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
-  });
-
-  testWidgets('the bottom nav Leaderboard tab navigates to Leaderboard', (tester) async {
-    await _pumpProfile(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.trophy));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.leaderboardTitle), findsOneWidget);
-  });
-
-  testWidgets('the bottom nav Friends tab navigates to Friends', (tester) async {
-    await _pumpProfile(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.users));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.searchFriendsPlaceholder), findsOneWidget);
   });
 }

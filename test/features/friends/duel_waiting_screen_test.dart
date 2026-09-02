@@ -150,7 +150,7 @@ Future<({GoRouter router, _FakeDuelRepository repository})> _pumpDuelWaiting(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         duelRepositoryProvider.overrideWithValue(repository),
       ],
       child: TranslationProvider(

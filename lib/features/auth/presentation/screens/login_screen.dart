@@ -57,7 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             );
       }
       if (!mounted) return;
-      context.go(AppRoutes.home);
+      context.go(widget.isAddingAccount ? AppRoutes.splash : AppRoutes.home);
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {

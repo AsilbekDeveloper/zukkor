@@ -10,6 +10,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/close_header.dart';
@@ -76,12 +77,18 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      ref.read(isInActiveGameProvider.notifier).setInGame(true);
       _sync(ref.read(lobbyControllerProvider).game);
     });
   }
 
   @override
   void dispose() {
+    Future.microtask(() {
+      if (mounted) {
+        ref.read(isInActiveGameProvider.notifier).setInGame(false);
+      }
+    });
     _startTimeoutTimer?.cancel();
     _preGameCountdownTimer?.cancel();
     _timerController.dispose();

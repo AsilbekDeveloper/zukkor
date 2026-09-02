@@ -82,6 +82,8 @@ class _AccountRow extends ConsumerWidget {
 
     if (result == null) {
       context.go(AppRoutes.login);
+    } else {
+      context.go(AppRoutes.splash);
     }
   }
 
@@ -98,7 +100,7 @@ class _AccountRow extends ConsumerWidget {
                     .read(accountsControllerProvider.notifier)
                     .switchTo(account.info.userId);
                 if (success && context.mounted) {
-                  context.go(AppRoutes.home);
+                  context.go(AppRoutes.splash);
                 }
               },
         borderRadius: AppRadius.mdAll,

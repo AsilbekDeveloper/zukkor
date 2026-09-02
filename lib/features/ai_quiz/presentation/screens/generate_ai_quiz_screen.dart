@@ -93,16 +93,9 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
     }
 
     context.hideKeyboard();
-    unawaited(
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const _GeneratingDialog(),
-      ),
-    );
 
     try {
-      await ref.read(aiQuizControllerProvider.notifier).generate(
+      final String jobId = await ref.read(aiQuizControllerProvider.notifier).generateAsync(
             filePath: filePath,
             fileName: fileName,
             instruction: instruction,
@@ -111,18 +104,53 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
             topicCategoryId: _topicCategoryId,
           );
       if (!mounted) return;
-      Navigator.of(context).pop();
-      context.showSnack(context.t.aiQuiz.generated);
-      context.pop();
+
+      // Hujjat qabul qilindi, endi fon polling boshlaymiz va foydalanuvchiga
+      // xabar beramiz.
+      _showConfirmationDialog(jobId);
     } on Failure catch (e) {
       if (!mounted) return;
-      Navigator.of(context).pop();
       context.showSnack(e.message);
     } catch (_) {
       if (!mounted) return;
-      Navigator.of(context).pop();
       context.showSnack(t.errors.unknown);
     }
+  }
+
+  void _showConfirmationDialog(String jobId) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.t.common.ok),
+        content: const Text(
+          "Hujjatingiz qabul qilindi. AI savollar tayyorlashni boshladi, tayyor bo'lganda sizga bildirishnoma yuboramiz. Ilovadan foydalanishda davom etishingiz mumkin.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              this.context.pop(); // Generate ekranidan chiqish
+            },
+            child: Text(context.t.common.ok),
+          ),
+        ],
+      ),
+    );
+
+    // Fon polling — 2 daqiqa davomida har 7 soniyada tekshiradi.
+    int attempts = 0;
+    Timer.periodic(const Duration(seconds: 7), (timer) async {
+      attempts++;
+      if (attempts > 17 || !mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final result = await ref.read(aiQuizControllerProvider.notifier).checkJobStatus(jobId);
+      if (result.status == 'completed' || result.status == 'failed') {
+        timer.cancel();
+      }
+    });
   }
 
   void _goBack() {
@@ -259,41 +287,3 @@ class _FilePickerCard extends StatelessWidget {
 }
 
 /// Generatsiya davomida (odatda 10-60+ soniya - hujjatni o'qish + AI
-/// so'rovi) ko'rsatiladi, foydalanuvchi ilova "osilib qolgan" deb
-/// o'ylamasligi uchun. Orqaga qaytish/tashqarini bosish bilan yopilmaydi -
-/// generatsiyani bekor qilishning hech qanday yo'li yo'q.
-class _GeneratingDialog extends StatelessWidget {
-  const _GeneratingDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Dialog(
-        backgroundColor: context.colors.card,
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdAll),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(color: context.colors.coral),
-              AppSpacing.lg.vGap,
-              Text(
-                context.t.aiQuiz.generatingTitle,
-                textAlign: TextAlign.center,
-                style: context.textStyles.bodyLarge?.copyWith(fontWeight: FontWeight.w700),
-              ),
-              AppSpacing.xs.vGap,
-              Text(
-                context.t.aiQuiz.generatingSubtitle,
-                textAlign: TextAlign.center,
-                style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

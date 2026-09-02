@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
@@ -246,7 +245,7 @@ Future<({GoRouter router, _FakeLeaderboardRepository repository})> _pumpLeaderbo
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         leaderboardRepositoryProvider.overrideWithValue(repository),
       ],
       child: TranslationProvider(
@@ -361,15 +360,5 @@ void main() {
     // screen type instead of that shared text.
     expect(find.byType(PlayerDetailScreen), findsNothing);
     expect(find.text(AppStrings.leaderboardTitle), findsOneWidget);
-  });
-
-  testWidgets('the bottom nav Home tab navigates back to Home', (tester) async {
-    await _pumpLeaderboard(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.home));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
-    expect(find.text(AppStrings.leaderboardTitle), findsNothing);
   });
 }

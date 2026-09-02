@@ -88,6 +88,7 @@ class DuelController extends Notifier<DuelState> {
       _subscribed = true;
       ref.onDispose(() => _reconnectTimer?.cancel());
       repository.connectionStatus.listen((connected) {
+        if (!ref.mounted) return;
         state = state.copyWith(isConnected: connected);
         if (connected) {
           _everConnected = true;
@@ -96,7 +97,10 @@ class DuelController extends Notifier<DuelState> {
           _scheduleReconnect();
         }
       });
-      repository.incomingInvites.listen((invite) => state = state.copyWith(incomingInvite: () => invite));
+      repository.incomingInvites.listen((invite) {
+        if (!ref.mounted) return;
+        state = state.copyWith(incomingInvite: () => invite);
+      });
       repository.outgoingInviteOutcomes.listen(_handleOutgoingOutcome);
       repository.duelStarted.listen(_handleDuelStarted);
       repository.duelQuestion.listen(_handleDuelQuestion);
@@ -121,6 +125,7 @@ class DuelController extends Notifier<DuelState> {
   }
 
   void _handleOutgoingOutcome(DuelInviteOutcome outcome) {
+    if (!ref.mounted) return;
     if (outcome.clientInviteId != _currentOutgoingClientId) return;
     state = state.copyWith(
       outgoingStatus: switch (outcome.status) {
@@ -172,6 +177,7 @@ class DuelController extends Notifier<DuelState> {
   }
 
   void _handleDuelStarted(DuelStartedInfo info) {
+    if (!ref.mounted) return;
     state = state.copyWith(
       game: () => DuelGameState(
         duelId: info.duelId,
@@ -189,6 +195,7 @@ class DuelController extends Notifier<DuelState> {
   }
 
   void _handleDuelQuestion(DuelQuestionEvent event) {
+    if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != event.duelId) return;
     state = state.copyWith(
@@ -202,24 +209,28 @@ class DuelController extends Notifier<DuelState> {
   }
 
   void _handleOpponentProgress(DuelOpponentProgressEvent event) {
+    if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != event.duelId) return;
     state = state.copyWith(game: () => game.copyWith(opponentQuestionIndex: () => event.opponentQuestionIndex));
   }
 
   void _handleDuelQuestionResult(DuelQuestionResult result) {
+    if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != result.duelId) return;
     state = state.copyWith(game: () => game.copyWith(lastResult: () => result));
   }
 
   void _handleWaitingForOpponent(String duelId) {
+    if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != duelId) return;
     state = state.copyWith(game: () => game.copyWith(waitingForOpponent: true));
   }
 
   void _handleDuelFinished(DuelFinalResult result) {
+    if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != result.duelId) return;
     state = state.copyWith(game: () => game.copyWith(finalResult: () => result));
@@ -236,6 +247,7 @@ class DuelController extends Notifier<DuelState> {
   }
 
   void _handleDuelCancelled(String duelId) {
+    if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != duelId) return;
     state = state.copyWith(wasCancelled: true);

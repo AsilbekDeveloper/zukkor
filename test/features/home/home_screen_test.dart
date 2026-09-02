@@ -137,6 +137,21 @@ class _FakeAiQuizRepository implements AiQuizRepository {
 
   @override
   Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId}) async => const [];
+
+  @override
+  Future<String> generateAsync({
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
+    required int questionCount,
+    int? topicCategoryId,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Future<({String status, AiQuiz? quiz, String? error})> getAsyncJobStatus(String jobId) =>
+      throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home
@@ -430,7 +445,7 @@ Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) 
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
         leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
@@ -487,18 +502,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('bottom nav bar fits on the smallest supported phone width', (tester) async {
-    // 360 is the narrowest width the design explicitly targets — this is
-    // exactly the case that overflowed before the Expanded-based fix.
-    await _pumpHome(tester, size: const Size(360, 780));
-
-    expect(find.text(AppStrings.navHome), findsOneWidget);
-    expect(find.text(AppStrings.navLeaderboard), findsOneWidget);
-    expect(find.text(AppStrings.navFriends), findsOneWidget);
-    expect(find.text(AppStrings.navProfile), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
-
   testWidgets('tapping the notification bell opens Notifications', (tester) async {
     await _pumpHome(tester);
 
@@ -525,16 +528,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(AppStrings.joinCodeHint), findsOneWidget);
-  });
-
-  testWidgets('tapping the active Home tab does nothing (no snackbar)', (tester) async {
-    await _pumpHome(tester);
-
-    await tester.tap(find.text(AppStrings.navHome));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-
-    expect(find.text(AppStrings.comingSoon), findsNothing);
   });
 
   testWidgets('the Start Duel pill keeps its natural width instead of stretching', (tester) async {
@@ -587,14 +580,5 @@ void main() {
 
     expect(find.text(AppStrings.categoriesScreenTitle), findsOneWidget);
     expect(find.text(AppStrings.duelHeroTitle), findsNothing);
-  });
-
-  testWidgets('the center Play tab navigates to the AI quiz screen', (tester) async {
-    await _pumpHome(tester);
-
-    await tester.tap(find.byIcon(TablerIcons.sparkle));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.myAiQuizzesScreenTitle), findsOneWidget);
   });
 }

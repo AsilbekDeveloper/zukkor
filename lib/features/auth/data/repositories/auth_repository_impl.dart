@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/failure_mapper.dart';
+import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/storage/token_storage.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -29,13 +30,16 @@ class AuthRepositoryImpl implements AuthRepository {
     required AuthRemoteDataSource remoteDataSource,
     required GoogleAuthDataSource googleAuthDataSource,
     required TokenStorage tokenStorage,
+    required AppPreferences preferences,
   })  : _remoteDataSource = remoteDataSource,
         _googleAuthDataSource = googleAuthDataSource,
-        _tokenStorage = tokenStorage;
+        _tokenStorage = tokenStorage,
+        _preferences = preferences;
 
   final AuthRemoteDataSource _remoteDataSource;
   final GoogleAuthDataSource _googleAuthDataSource;
   final TokenStorage _tokenStorage;
+  final AppPreferences _preferences;
 
   @override
   Future<void> register({
@@ -106,7 +110,7 @@ class AuthRepositoryImpl implements AuthRepository {
     String? quizLiking,
   }) async {
     try {
-      return (await _remoteDataSource.updateProfile(
+      final User user = (await _remoteDataSource.updateProfile(
         username: username,
         firstName: firstName,
         lastName: lastName,
@@ -117,6 +121,19 @@ class AuthRepositoryImpl implements AuthRepository {
         quizLiking: quizLiking,
       ))
           .toEntity();
+
+      // Akkauntlar ro'yxatidagi ma'lumotni ham yangilaymiz.
+      await _tokenStorage.updateAccountInfo(
+        user.id,
+        StoredAccountInfo(
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+          avatarUrl: user.avatarImagePath,
+        ),
+      );
+
+      return user;
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -125,7 +142,20 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<User> uploadAvatarImage(String filePath) async {
     try {
-      return (await _remoteDataSource.uploadAvatarImage(filePath)).toEntity();
+      final User user = (await _remoteDataSource.uploadAvatarImage(filePath)).toEntity();
+
+      // Rasm yuklangach ham registrdagi ma'lumotni yangilaymiz.
+      await _tokenStorage.updateAccountInfo(
+        user.id,
+        StoredAccountInfo(
+          userId: user.id,
+          email: user.email,
+          username: user.username,
+          avatarUrl: user.avatarImagePath,
+        ),
+      );
+
+      return user;
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -148,15 +178,20 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> deleteAccount(String? password) async {
+    final String? userId = await _tokenStorage.activeAccountId();
     try {
       await _remoteDataSource.deleteAccount(password);
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
-    // Faqat muvaffaqiyatli o'chirilgandan keyin tozalanadi — logout'dagi
-    // "baribir tozalash"dan farqli, chunki bu yerda so'rov muvaffaqiyatsiz
-    // bo'lsa yuqoridagi throw ishlaydi va bu qatorga yetib kelinmaydi.
-    await _tokenStorage.clear();
+
+    // Serverda muvaffaqiyatli o'chirilgandan so'ng, lokal registrdan ham
+    // butunlay olib tashlaymiz.
+    if (userId != null) {
+      await _tokenStorage.removeAccount(userId);
+    } else {
+      await _tokenStorage.clear();
+    }
   }
 
   @override
@@ -311,6 +346,9 @@ class AuthRepositoryImpl implements AuthRepository {
         // o'chirish davom etadi (foydalanuvchi qurilmada baribir chiqadi).
       }
     }
+    // 1. SharedPreferences'dagi foydalanuvchi ma'lumotlarini tozalaymiz.
+    await _preferences.clearUserData(userId);
+    // 2. Tokenlarni va metama'lumotlarni o'chiramiz.
     await _tokenStorage.removeAccount(userId);
   }
 
@@ -325,6 +363,7 @@ final Provider<AuthRepository> authRepositoryProvider = Provider<AuthRepository>
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
     googleAuthDataSource: ref.watch(googleAuthDataSourceProvider),
     tokenStorage: ref.watch(tokenStorageProvider),
+    preferences: ref.watch(appPreferencesProvider),
   ),
 );
 

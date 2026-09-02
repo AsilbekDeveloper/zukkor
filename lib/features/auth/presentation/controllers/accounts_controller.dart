@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/storage/token_storage.dart';
@@ -58,6 +60,7 @@ class AccountsController extends AsyncNotifier<List<AccountEntry>> {
       return null; // Login'ga o'tish kerak
     }
     await switchTo(remaining.first.userId);
+    unawaited(syncPushTokenForActiveAccount(ref));
     return true; // Home'da qolinadi (yangi akkaunt bilan)
   }
 }

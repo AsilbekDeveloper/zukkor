@@ -11,8 +11,8 @@ import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/notifications/push_notification_service.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
@@ -99,8 +99,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     service.listenForeground();
   }
 
-  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
-
   void _openNotifications(BuildContext context) => context.push(AppRoutes.notifications);
 
   @override
@@ -113,7 +111,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (next.incomingInvite != null && next.incomingInvite != previous?.incomingInvite) {
         final invite = next.incomingInvite!;
         ref.read(duelControllerProvider.notifier).clearIncoming();
-        context.push(AppRoutes.duelInvite, extra: invite);
+
+        if (ref.read(isInActiveGameProvider)) {
+          // O'yin paytida xalaqit bermaslik uchun shunchaki xabarnoma chiqaramiz.
+          context.showSnack(
+            context.t.notifications.duelChallenge(name: invite.fromUser.displayName),
+            action: SnackBarAction(
+              label: context.t.common.ok, // "Ko'rish" deb o'zgartirish ham mumkin
+              onPressed: () => context.push(AppRoutes.duelInvite, extra: invite),
+            ),
+          );
+        } else {
+          context.push(AppRoutes.duelInvite, extra: invite);
+        }
       }
     });
 
@@ -142,16 +152,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ..._discoverSection(context),
           ],
         ),
-      ),
-      bottomNavigationBar: AppBottomNavBar(
-        current: AppTab.home,
-        onTabTap: (tab) => switch (tab) {
-          AppTab.leaderboard => context.push(AppRoutes.leaderboard),
-          AppTab.friends => context.push(AppRoutes.friends),
-          AppTab.profile => context.push(AppRoutes.profile),
-          AppTab.home => _comingSoon(context),
-        },
-        onPlayTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     );
   }

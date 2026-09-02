@@ -16,6 +16,7 @@ import '../../domain/usecases/search_discover_quizzes_use_case.dart';
 import '../../domain/usecases/update_ai_quiz_visibility_use_case.dart';
 import '../../domain/usecases/update_quiz_topic_use_case.dart';
 import '../datasources/ai_quiz_remote_data_source.dart';
+import '../models/ai_quiz_model.dart';
 
 class AiQuizRepositoryImpl implements AiQuizRepository {
   const AiQuizRepositoryImpl(this._remoteDataSource);
@@ -93,7 +94,47 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
         name: name,
         questions: questions,
         topicCategoryId: topicCategoryId,
-      )).toEntity();
+      ))
+          .toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<String> generateAsync({
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
+    required int questionCount,
+    int? topicCategoryId,
+  }) async {
+    try {
+      return await _remoteDataSource.generateAsync(
+        filePath: filePath,
+        fileName: fileName,
+        instruction: instruction,
+        topic: topic,
+        questionCount: questionCount,
+        topicCategoryId: topicCategoryId,
+      );
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<({String status, AiQuiz? quiz, String? error})> getAsyncJobStatus(String jobId) async {
+    try {
+      final json = await _remoteDataSource.getAsyncJobStatus(jobId);
+      final String status = json['status'] as String;
+      final Map<String, dynamic>? quizJson = json['quiz'] as Map<String, dynamic>?;
+      return (
+        status: status,
+        quiz: quizJson != null ? AiQuizModel.fromJson(quizJson).toEntity() : null,
+        error: json['error'] as String?,
+      );
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }

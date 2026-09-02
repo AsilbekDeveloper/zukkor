@@ -78,6 +78,7 @@ class LobbyController extends Notifier<LobbyState> {
       _subscribed = true;
       ref.onDispose(() => _reconnectTimer?.cancel());
       repository.connectionStatus.listen((connected) {
+        if (!ref.mounted) return;
         state = state.copyWith(isConnected: connected);
         if (connected) {
           _everConnected = true;
@@ -87,9 +88,15 @@ class LobbyController extends Notifier<LobbyState> {
         }
       });
       repository.roomUpdates.listen(
-        (room) => state = state.copyWith(room: () => room, joinError: () => null),
+        (room) {
+          if (!ref.mounted) return;
+          state = state.copyWith(room: () => room, joinError: () => null);
+        },
       );
-      repository.joinErrors.listen((reason) => state = state.copyWith(joinError: () => reason));
+      repository.joinErrors.listen((reason) {
+        if (!ref.mounted) return;
+        state = state.copyWith(joinError: () => reason);
+      });
       repository.roomClosed.listen(_handleRoomClosed);
       repository.gameStarted.listen(_handleGameStarted);
       repository.gameQuestion.listen(_handleGameQuestion);
@@ -112,6 +119,7 @@ class LobbyController extends Notifier<LobbyState> {
   }
 
   void _handleRoomClosed(String roomId) {
+    if (!ref.mounted) return;
     if (state.room?.roomId != roomId) return;
     state = state.copyWith(room: () => null, closed: true);
   }
@@ -153,6 +161,7 @@ class LobbyController extends Notifier<LobbyState> {
   }
 
   void _handleGameStarted(LobbyGameStartedInfo info) {
+    if (!ref.mounted) return;
     state = state.copyWith(
       game: () => LobbyGameState(
         roomId: info.roomId,
@@ -164,6 +173,7 @@ class LobbyController extends Notifier<LobbyState> {
   }
 
   void _handleGameQuestion(LobbyQuestionEvent event) {
+    if (!ref.mounted) return;
     final LobbyGameState? game = state.game;
     if (game == null || game.roomId != event.roomId) return;
     state = state.copyWith(
@@ -177,18 +187,21 @@ class LobbyController extends Notifier<LobbyState> {
   }
 
   void _handleGameQuestionResult(LobbyQuestionResult result) {
+    if (!ref.mounted) return;
     final LobbyGameState? game = state.game;
     if (game == null || game.roomId != result.roomId) return;
     state = state.copyWith(game: () => game.copyWith(lastResult: () => result));
   }
 
   void _handleWaitingForOthers(String roomId) {
+    if (!ref.mounted) return;
     final LobbyGameState? game = state.game;
     if (game == null || game.roomId != roomId) return;
     state = state.copyWith(game: () => game.copyWith(waitingForOthers: true));
   }
 
   void _handleGameFinished(LobbyFinalResult result) {
+    if (!ref.mounted) return;
     final LobbyGameState? game = state.game;
     if (game == null || game.roomId != result.roomId) return;
     state = state.copyWith(game: () => game.copyWith(finalResult: () => result));

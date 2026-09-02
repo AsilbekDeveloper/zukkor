@@ -36,6 +36,19 @@ abstract interface class AiQuizRepository {
     int? topicCategoryId,
   });
 
+  /// `POST /ai-quiz/generate-async` — darhol job_id qaytaradi.
+  Future<String> generateAsync({
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
+    required int questionCount,
+    int? topicCategoryId,
+  });
+
+  /// `GET /ai-quiz/generate-async/{jobId}` — holatni tekshirish.
+  Future<({String status, AiQuiz? quiz, String? error})> getAsyncJobStatus(String jobId);
+
   /// `GET /ai-quiz/users/{userId}` — shu foydalanuvchining sizga
   /// ko'rinadigan (ommaviy, yoki do'st bo'lsangiz — do'stlar uchun) quizlari.
   Future<List<AiQuiz>> listForUser(String userId);

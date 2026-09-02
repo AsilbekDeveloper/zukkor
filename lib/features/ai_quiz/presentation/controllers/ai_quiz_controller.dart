@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/ai_quiz_repository_impl.dart';
@@ -112,6 +113,37 @@ class AiQuizController extends Notifier<AiQuizState> {
     } finally {
       state = state.copyWith(isGenerating: false);
     }
+  }
+
+  /// `POST /generate-async` chaqiradi va job_id qaytaradi.
+  Future<String> generateAsync({
+    String? filePath,
+    String? fileName,
+    String? instruction,
+    String? topic,
+    required int questionCount,
+    int? topicCategoryId,
+  }) async {
+    return ref.read(aiQuizRepositoryProvider).generateAsync(
+          filePath: filePath,
+          fileName: fileName,
+          instruction: instruction,
+          topic: topic,
+          questionCount: questionCount,
+          topicCategoryId: topicCategoryId,
+        );
+  }
+
+  /// Berilgan job holatini tekshiradi. Agar tugagan bo'lsa ro'yxatni yangilaydi.
+  Future<({String status, AiQuiz? quiz, String? error})> checkJobStatus(String jobId) async {
+    final result = await ref.read(aiQuizRepositoryProvider).getAsyncJobStatus(jobId);
+    if (result.status == 'completed' && result.quiz != null) {
+      final List<AiQuiz> current = state.quizzes ?? [];
+      if (!current.any((q) => q.id == result.quiz!.id)) {
+        state = state.copyWith(quizzes: () => [result.quiz!, ...current]);
+      }
+    }
+    return result;
   }
 
   /// Failure'ni tashqariga chiqaradi. `state.quizzes`ga ta'sir qilmaydi —

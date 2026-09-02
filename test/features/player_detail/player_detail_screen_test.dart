@@ -104,7 +104,7 @@ Future<({GoRouter router, _FakeFriendsRepository friendsRepository})> _pumpPlaye
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
         friendsRepositoryProvider.overrideWithValue(friendsRepository),
       ],

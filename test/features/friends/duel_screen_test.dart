@@ -124,7 +124,7 @@ Future<GoRouter> _pumpDuel(WidgetTester tester, {Size size = const Size(390, 844
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
       ],

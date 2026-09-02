@@ -3,13 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/app_bottom_nav_bar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
@@ -53,8 +51,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       });
     }
   }
-
-  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
 
   /// Stats row (games/win-rate/streak).
   List<Widget> _progressSection(BuildContext context) {
@@ -117,16 +113,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             _settingsSection(context),
           ],
         ),
-      ),
-      bottomNavigationBar: AppBottomNavBar(
-        current: AppTab.profile,
-        onTabTap: (tab) => switch (tab) {
-          AppTab.home => context.go(AppRoutes.home),
-          AppTab.leaderboard => context.push(AppRoutes.leaderboard),
-          AppTab.friends => context.push(AppRoutes.friends),
-          AppTab.profile => _comingSoon(context),
-        },
-        onPlayTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     );
   }

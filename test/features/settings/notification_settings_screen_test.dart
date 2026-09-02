@@ -75,7 +75,7 @@ Future<GoRouter> _pumpNotificationSettings(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         notificationPreferencesRepositoryProvider
             .overrideWithValue(repository ?? _FakeNotificationPreferencesRepository()),
       ],

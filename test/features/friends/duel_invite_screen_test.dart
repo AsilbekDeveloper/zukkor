@@ -148,7 +148,7 @@ Future<GoRouter> _pumpDuelInvite(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         duelRepositoryProvider.overrideWithValue(repository ?? _FakeDuelRepository()),
         notificationsRepositoryProvider.overrideWithValue(_FakeNotificationsRepository()),
       ],

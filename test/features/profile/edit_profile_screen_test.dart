@@ -167,7 +167,7 @@ Future<({GoRouter router, _FakeAuthRepository repository})> _pumpEditProfile(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+        sharedPreferencesProvider.overrideWithValue(prefs),
         authRepositoryProvider.overrideWithValue(repo),
       ],
       child: TranslationProvider(
@@ -261,7 +261,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          appPreferencesProvider.overrideWithValue(AppPreferences(prefs)),
+          sharedPreferencesProvider.overrideWithValue(prefs),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository(usernameAvailable: false)),
         ],
         child: TranslationProvider(
