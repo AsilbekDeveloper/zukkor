@@ -43,6 +43,17 @@ Future<void> main() async {
         LocaleSettings.useDeviceLocaleSync();
       }
 
+      // slang paketida "uz" uchun standart ko'plik (plural) qoidasi yo'q —
+      // sozlanmasa har safar "Resolver for <lang = uz> not specified!"
+      // ogohlantirishi bilan zaxira (fallback) ishlatiladi. O'zbek tilida
+      // (turkiy tillarning aksariyati kabi) otlar songa qarab grammatik
+      // shaklini o'zgartirmaydi — faqat "other" toifasi kifoya.
+      LocaleSettings.setPluralResolverSync(
+        language: 'uz',
+        cardinalResolver: (n, {zero, one, two, few, many, other}) => other ?? '',
+        ordinalResolver: (n, {zero, one, two, few, many, other}) => other ?? '',
+      );
+
       runApp(
         ProviderScope(
           overrides: [
