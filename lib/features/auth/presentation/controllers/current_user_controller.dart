@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/state/load_state.dart';
@@ -13,10 +14,14 @@ class CurrentUserController extends Notifier<LoadState<User>> {
   LoadState<User> build() => const LoadState();
 
   Future<void> load() async {
+    debugPrint('[ZUKKOR-DIAG] CurrentUserController.load() chaqirildi');
     state = const LoadState();
     try {
-      state = LoadState(data: await ref.read(getCurrentUserUseCaseProvider).call());
-    } catch (_) {
+      final user = await ref.read(getCurrentUserUseCaseProvider).call();
+      debugPrint('[ZUKKOR-DIAG] CurrentUserController.load() muvaffaqiyatli: ${user.id}, ${user.username}');
+      state = LoadState(data: user);
+    } catch (e, st) {
+      debugPrint('[ZUKKOR-DIAG] CurrentUserController.load() XATO: $e\n$st');
       state = const LoadState(hasError: true);
     }
   }

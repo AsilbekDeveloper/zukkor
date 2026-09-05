@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/state/load_state.dart';
@@ -13,10 +14,14 @@ class MyStatsController extends Notifier<LoadState<PlayerStats>> {
   LoadState<PlayerStats> build() => const LoadState();
 
   Future<void> load(String userId) async {
+    debugPrint('[ZUKKOR-DIAG] MyStatsController.load($userId) chaqirildi');
     state = const LoadState();
     try {
-      state = LoadState(data: await ref.read(getPlayerStatsUseCaseProvider).call(userId));
-    } catch (_) {
+      final stats = await ref.read(getPlayerStatsUseCaseProvider).call(userId);
+      debugPrint('[ZUKKOR-DIAG] MyStatsController.load() muvaffaqiyatli: ${stats.gamesPlayed} o\'yin');
+      state = LoadState(data: stats);
+    } catch (e, st) {
+      debugPrint('[ZUKKOR-DIAG] MyStatsController.load() XATO: $e\n$st');
       state = const LoadState(hasError: true);
     }
   }

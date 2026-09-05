@@ -70,12 +70,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (ref.read(categoriesControllerProvider).data == null) {
       Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
     }
+    debugPrint(
+      '[ZUKKOR-DIAG] HomeScreen.initState: currentUser.data=${ref.read(currentUserControllerProvider).data}, '
+      'myStats.data=${ref.read(myStatsControllerProvider).data}',
+    );
     if (ref.read(currentUserControllerProvider).data == null || ref.read(myStatsControllerProvider).data == null) {
       Future.microtask(() async {
+        debugPrint('[ZUKKOR-DIAG] HomeScreen: yuklash microtask boshlandi');
         await ref.read(currentUserControllerProvider.notifier).load();
         final String? userId = ref.read(currentUserControllerProvider).data?.id;
+        debugPrint('[ZUKKOR-DIAG] HomeScreen: currentUser yuklandi, userId=$userId');
         if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
       });
+    } else {
+      debugPrint('[ZUKKOR-DIAG] HomeScreen: yuklash O\'TKAZIB YUBORILDI (ikkalasi ham allaqachon mavjud)');
     }
     Future.microtask(() => ref.read(duelControllerProvider.notifier).connect());
     Future.microtask(() => ref.read(lobbyControllerProvider.notifier).connect());
