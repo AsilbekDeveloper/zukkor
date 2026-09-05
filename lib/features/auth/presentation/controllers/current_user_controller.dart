@@ -1,9 +1,33 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/state/load_state.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user.dart';
+
+/// Faol foydalanuvchi ID'sining "signal" nusxasi — [AppPreferences] kabi
+/// `authRepositoryProvider` zanjiriga KIRMAYDIGAN quyi darajadagi
+/// provider'lar buni xavfsiz o'qishi uchun.
+///
+/// MUHIM: `appPreferencesProvider` (yoki boshqa hech kim) to'g'ridan-to'g'ri
+/// [currentUserControllerProvider]ni O'QIMASLIGI KERAK, chunki
+/// `authRepositoryProvider` (demak `appPreferencesProvider` ham, unga
+/// bog'liq bo'lgani uchun) [getCurrentUserUseCaseProvider] orqali
+/// [currentUserControllerProvider]ning O'ZI tomonidan o'qiladi —
+/// `currentUserControllerProvider` → `appPreferencesProvider` bog'lanishi
+/// aylanma bog'liqlik (`CircularDependencyError`) hosil qilib, HAR SAFAR
+/// profil yuklashga urinishda darhol xato berardi (2026-09-06'da real
+/// qurilmada topilgan, production'ni butunlay buzgan xato). Shu signal
+/// esa hech narsaga bog'liq emas — faqat [CurrentUserController] uni
+/// YANGILAYDI, xolos.
+class ActiveUserIdSignalNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void set(String? userId) => state = userId;
+}
+
+final NotifierProvider<ActiveUserIdSignalNotifier, String?> activeUserIdSignalProvider =
+    NotifierProvider<ActiveUserIdSignalNotifier, String?>(ActiveUserIdSignalNotifier.new);
 
 /// Joriy tizimga kirgan foydalanuvchi ma'lumotlari — `GET /auth/me`.
 /// Ekran ochilganda [load] chaqirilishi kerak (avtomatik yuklanmaydi);
@@ -14,14 +38,12 @@ class CurrentUserController extends Notifier<LoadState<User>> {
   LoadState<User> build() => const LoadState();
 
   Future<void> load() async {
-    debugPrint('[ZUKKOR-DIAG] CurrentUserController.load() chaqirildi');
     state = const LoadState();
     try {
-      final user = await ref.read(getCurrentUserUseCaseProvider).call();
-      debugPrint('[ZUKKOR-DIAG] CurrentUserController.load() muvaffaqiyatli: ${user.id}, ${user.username}');
+      final User user = await ref.read(getCurrentUserUseCaseProvider).call();
       state = LoadState(data: user);
-    } catch (e, st) {
-      debugPrint('[ZUKKOR-DIAG] CurrentUserController.load() XATO: $e\n$st');
+      ref.read(activeUserIdSignalProvider.notifier).set(user.id);
+    } catch (_) {
       state = const LoadState(hasError: true);
     }
   }
@@ -29,7 +51,10 @@ class CurrentUserController extends Notifier<LoadState<User>> {
   /// Boshqa bir so'rov (masalan `updateProfile`) allaqachon yangilangan
   /// foydalanuvchini qaytargan bo'lsa, qayta tarmoqqa murojaat qilmasdan
   /// darhol shu bilan almashtirish uchun.
-  void setUser(User user) => state = LoadState(data: user);
+  void setUser(User user) {
+    state = LoadState(data: user);
+    ref.read(activeUserIdSignalProvider.notifier).state = user.id;
+  }
 }
 
 final NotifierProvider<CurrentUserController, LoadState<User>> currentUserControllerProvider =
