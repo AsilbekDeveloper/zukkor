@@ -24,7 +24,9 @@
     "seeAll": "See all",
     "challengeToDuel": "Challenge to a duel",
     "createQuizTitle": "Create your own quiz",
-    "createQuizSubtitle": "Write your questions and challenge your friends"
+    "createQuizSubtitle": "Write your questions and challenge your friends",
+    "submitQuestionTitle": "Add a question to the system",
+    "submitQuestionSubtitle": "Suggest your own question, AI reviews it"
   },
   "categories": {
     "title": "Choose a category"
@@ -463,6 +465,15 @@
     "topicSelectionLabel": "Topic (optional)",
     "topicSelectionHint": "Choose a topic",
     "changeTopicTitle": "Change topic"
+  },
+  "questionSubmission": {
+    "title": "Add a question",
+    "questionTextLabel": "Question text",
+    "categoryHint": "If you don't pick one, AI will choose the best-fitting category",
+    "fillAllFields": "Fill in all fields",
+    "submit": "Submit",
+    "approved(param=category)": "Your question was approved and added to \"$category\"!",
+    "rejected(param=reason)": "Your question was rejected: $reason"
   },
   "forgotPassword": {
     "title": "Reset password",

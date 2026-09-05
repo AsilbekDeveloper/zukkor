@@ -40,6 +40,7 @@ import '../../features/player_detail/presentation/models/player_detail_args.dart
 import '../../features/player_detail/presentation/screens/player_detail_screen.dart';
 import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/question_submission/presentation/screens/submit_question_screen.dart';
 import '../../features/quiz/presentation/models/quiz_category.dart';
 import '../../features/quiz/presentation/models/quiz_launch_args.dart';
 import '../../features/quiz/presentation/models/quiz_result.dart';
@@ -214,6 +215,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.createManualQuiz,
         builder: (context, state) => const CreateManualQuizScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.submitQuestion,
+        builder: (context, state) => const SubmitQuestionScreen(),
       ),
       GoRoute(
         path: AppRoutes.addFriend,

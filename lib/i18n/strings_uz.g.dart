@@ -79,6 +79,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$authValidation$uz authValidation = _Translations$authValidation$uz._(_root);
 	@override late final _Translations$errors$uz errors = _Translations$errors$uz._(_root);
 	@override late final _Translations$aiQuiz$uz aiQuiz = _Translations$aiQuiz$uz._(_root);
+	@override late final _Translations$questionSubmission$uz questionSubmission = _Translations$questionSubmission$uz._(_root);
 	@override late final _Translations$forgotPassword$uz forgotPassword = _Translations$forgotPassword$uz._(_root);
 	@override late final _Translations$resetPassword$uz resetPassword = _Translations$resetPassword$uz._(_root);
 	@override late final _Translations$discover$uz discover = _Translations$discover$uz._(_root);
@@ -133,6 +134,8 @@ class _Translations$home$uz implements Translations$home$en {
 	@override String get challengeToDuel => 'Duelga chaqirish';
 	@override String get createQuizTitle => 'O\'z quizingizni yarating';
 	@override String get createQuizSubtitle => 'Savollaringizni tuzing va do\'stlaringiz bilan bellashing';
+	@override String get submitQuestionTitle => 'Tizimga savol qo\'shish';
+	@override String get submitQuestionSubtitle => 'O\'z savolingizni taklif qiling, AI tekshiradi';
 }
 
 // Path: categories
@@ -853,6 +856,22 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get changeTopicTitle => 'Mavzuni o\'zgartirish';
 }
 
+// Path: questionSubmission
+class _Translations$questionSubmission$uz implements Translations$questionSubmission$en {
+	_Translations$questionSubmission$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Savol qo\'shish';
+	@override String get questionTextLabel => 'Savol matni';
+	@override String get categoryHint => 'Tanlamasangiz, AI eng mos kategoriyani o\'zi tanlaydi';
+	@override String get fillAllFields => 'Barcha maydonlarni to\'ldiring';
+	@override String get submit => 'Yuborish';
+	@override String approved({required Object category}) => 'Savolingiz tasdiqlandi va "${category}" kategoriyasiga qo\'shildi!';
+	@override String rejected({required Object reason}) => 'Savolingiz qabul qilinmadi: ${reason}';
+}
+
 // Path: forgotPassword
 class _Translations$forgotPassword$uz implements Translations$forgotPassword$en {
 	_Translations$forgotPassword$uz._(this._root);
@@ -953,6 +972,8 @@ extension on TranslationsUz {
 			'home.challengeToDuel' => 'Duelga chaqirish',
 			'home.createQuizTitle' => 'O\'z quizingizni yarating',
 			'home.createQuizSubtitle' => 'Savollaringizni tuzing va do\'stlaringiz bilan bellashing',
+			'home.submitQuestionTitle' => 'Tizimga savol qo\'shish',
+			'home.submitQuestionSubtitle' => 'O\'z savolingizni taklif qiling, AI tekshiradi',
 			'categories.title' => 'Kategoriya tanlang',
 			'leaderboard.greeting' => 'Reyting',
 			'leaderboard.title' => 'Kim eng zo\'r?',
@@ -1311,6 +1332,13 @@ extension on TranslationsUz {
 			'aiQuiz.topicSelectionLabel' => 'Mavzu (ixtiyoriy)',
 			'aiQuiz.topicSelectionHint' => 'Mavzu tanlang',
 			'aiQuiz.changeTopicTitle' => 'Mavzuni o\'zgartirish',
+			'questionSubmission.title' => 'Savol qo\'shish',
+			'questionSubmission.questionTextLabel' => 'Savol matni',
+			'questionSubmission.categoryHint' => 'Tanlamasangiz, AI eng mos kategoriyani o\'zi tanlaydi',
+			'questionSubmission.fillAllFields' => 'Barcha maydonlarni to\'ldiring',
+			'questionSubmission.submit' => 'Yuborish',
+			'questionSubmission.approved' => ({required Object category}) => 'Savolingiz tasdiqlandi va "${category}" kategoriyasiga qo\'shildi!',
+			'questionSubmission.rejected' => ({required Object reason}) => 'Savolingiz qabul qilinmadi: ${reason}',
 			'forgotPassword.title' => 'Parolni tiklash',
 			'forgotPassword.subtitle' => 'Ro\'yxatdan o\'tgan emailingizni kiriting - biz sizga tiklash kodini yuboramiz',
 			'forgotPassword.sendCodeButton' => 'Kod yuborish',

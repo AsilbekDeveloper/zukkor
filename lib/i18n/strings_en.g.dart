@@ -82,6 +82,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$authValidation$en authValidation = Translations$authValidation$en._(_root);
 	late final Translations$errors$en errors = Translations$errors$en._(_root);
 	late final Translations$aiQuiz$en aiQuiz = Translations$aiQuiz$en._(_root);
+	late final Translations$questionSubmission$en questionSubmission = Translations$questionSubmission$en._(_root);
 	late final Translations$forgotPassword$en forgotPassword = Translations$forgotPassword$en._(_root);
 	late final Translations$resetPassword$en resetPassword = Translations$resetPassword$en._(_root);
 	late final Translations$discover$en discover = Translations$discover$en._(_root);
@@ -182,6 +183,12 @@ class Translations$home$en {
 
 	/// en: 'Write your questions and challenge your friends'
 	String get createQuizSubtitle => 'Write your questions and challenge your friends';
+
+	/// en: 'Add a question to the system'
+	String get submitQuestionTitle => 'Add a question to the system';
+
+	/// en: 'Suggest your own question, AI reviews it'
+	String get submitQuestionSubtitle => 'Suggest your own question, AI reviews it';
 }
 
 // Path: categories
@@ -1618,6 +1625,36 @@ class Translations$aiQuiz$en {
 	String get changeTopicTitle => 'Change topic';
 }
 
+// Path: questionSubmission
+class Translations$questionSubmission$en {
+	Translations$questionSubmission$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Add a question'
+	String get title => 'Add a question';
+
+	/// en: 'Question text'
+	String get questionTextLabel => 'Question text';
+
+	/// en: 'If you don't pick one, AI will choose the best-fitting category'
+	String get categoryHint => 'If you don\'t pick one, AI will choose the best-fitting category';
+
+	/// en: 'Fill in all fields'
+	String get fillAllFields => 'Fill in all fields';
+
+	/// en: 'Submit'
+	String get submit => 'Submit';
+
+	/// en: 'Your question was approved and added to "$category"!'
+	String approved({required Object category}) => 'Your question was approved and added to "${category}"!';
+
+	/// en: 'Your question was rejected: $reason'
+	String rejected({required Object reason}) => 'Your question was rejected: ${reason}';
+}
+
 // Path: forgotPassword
 class Translations$forgotPassword$en {
 	Translations$forgotPassword$en._(this._root);
@@ -1784,6 +1821,8 @@ extension on Translations {
 			'home.challengeToDuel' => 'Challenge to a duel',
 			'home.createQuizTitle' => 'Create your own quiz',
 			'home.createQuizSubtitle' => 'Write your questions and challenge your friends',
+			'home.submitQuestionTitle' => 'Add a question to the system',
+			'home.submitQuestionSubtitle' => 'Suggest your own question, AI reviews it',
 			'categories.title' => 'Choose a category',
 			'leaderboard.greeting' => 'Leaderboard',
 			'leaderboard.title' => 'Who\'s the best?',
@@ -2142,6 +2181,13 @@ extension on Translations {
 			'aiQuiz.topicSelectionLabel' => 'Topic (optional)',
 			'aiQuiz.topicSelectionHint' => 'Choose a topic',
 			'aiQuiz.changeTopicTitle' => 'Change topic',
+			'questionSubmission.title' => 'Add a question',
+			'questionSubmission.questionTextLabel' => 'Question text',
+			'questionSubmission.categoryHint' => 'If you don\'t pick one, AI will choose the best-fitting category',
+			'questionSubmission.fillAllFields' => 'Fill in all fields',
+			'questionSubmission.submit' => 'Submit',
+			'questionSubmission.approved' => ({required Object category}) => 'Your question was approved and added to "${category}"!',
+			'questionSubmission.rejected' => ({required Object reason}) => 'Your question was rejected: ${reason}',
 			'forgotPassword.title' => 'Reset password',
 			'forgotPassword.subtitle' => 'Enter your registered email - we will send you a reset code',
 			'forgotPassword.sendCodeButton' => 'Send code',

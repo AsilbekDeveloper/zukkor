@@ -39,7 +39,9 @@
     "seeAll": "Все",
     "challengeToDuel": "Вызвать на дуэль",
     "createQuizTitle": "Создайте свой квиз",
-    "createQuizSubtitle": "Составьте вопросы и бросьте вызов друзьям"
+    "createQuizSubtitle": "Составьте вопросы и бросьте вызов друзьям",
+    "submitQuestionTitle": "Добавить вопрос в систему",
+    "submitQuestionSubtitle": "Предложите свой вопрос, AI проверит его"
   },
   "categories": {
     "title": "Выберите категорию"
@@ -478,6 +480,15 @@
     "topicSelectionLabel": "Тема (необязательно)",
     "topicSelectionHint": "Выберите тему",
     "changeTopicTitle": "Изменить тему"
+  },
+  "questionSubmission": {
+    "title": "Добавить вопрос",
+    "questionTextLabel": "Текст вопроса",
+    "categoryHint": "Если не выберете категорию, AI сам подберёт подходящую",
+    "fillAllFields": "Заполните все поля",
+    "submit": "Отправить",
+    "approved(param=category)": "Ваш вопрос одобрен и добавлен в категорию «$category»!",
+    "rejected(param=reason)": "Ваш вопрос отклонён: $reason"
   },
   "forgotPassword": {
     "title": "Восстановление пароля",

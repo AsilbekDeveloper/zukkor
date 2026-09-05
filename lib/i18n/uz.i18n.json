@@ -24,7 +24,9 @@
     "seeAll": "Barchasi",
     "challengeToDuel": "Duelga chaqirish",
     "createQuizTitle": "O'z quizingizni yarating",
-    "createQuizSubtitle": "Savollaringizni tuzing va do'stlaringiz bilan bellashing"
+    "createQuizSubtitle": "Savollaringizni tuzing va do'stlaringiz bilan bellashing",
+    "submitQuestionTitle": "Tizimga savol qo'shish",
+    "submitQuestionSubtitle": "O'z savolingizni taklif qiling, AI tekshiradi"
   },
   "categories": {
     "title": "Kategoriya tanlang"
@@ -463,6 +465,15 @@
     "topicSelectionLabel": "Mavzu (ixtiyoriy)",
     "topicSelectionHint": "Mavzu tanlang",
     "changeTopicTitle": "Mavzuni o'zgartirish"
+  },
+  "questionSubmission": {
+    "title": "Savol qo'shish",
+    "questionTextLabel": "Savol matni",
+    "categoryHint": "Tanlamasangiz, AI eng mos kategoriyani o'zi tanlaydi",
+    "fillAllFields": "Barcha maydonlarni to'ldiring",
+    "submit": "Yuborish",
+    "approved(param=category)": "Savolingiz tasdiqlandi va \"$category\" kategoriyasiga qo'shildi!",
+    "rejected(param=reason)": "Savolingiz qabul qilinmadi: $reason"
   },
   "forgotPassword": {
     "title": "Parolni tiklash",

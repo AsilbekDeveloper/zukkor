@@ -201,6 +201,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       CreateQuizCard(onTap: () => context.push(AppRoutes.createManualQuiz)),
       AppSpacing.md.vGap,
       _DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover)),
+      AppSpacing.md.vGap,
+      _SubmitQuestionCard(onTap: () => context.push(AppRoutes.submitQuestion)),
     ];
   }
 }
@@ -250,6 +252,64 @@ class _DiscoverFeedCard extends StatelessWidget {
                     ),
                     Text(
                       context.t.discover.homeCardSubtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(TablerIcons.chevronRight, color: Colors.grey, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SubmitQuestionCard extends StatelessWidget {
+  const _SubmitQuestionCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.card,
+      borderRadius: AppRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.mdAll,
+            border: Border.all(color: context.colors.line),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(color: context.colors.blue, borderRadius: AppRadius.smAll),
+                alignment: Alignment.center,
+                child: const Icon(TablerIcons.help, color: Colors.white, size: 20),
+              ),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      context.t.home.submitQuestionTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      context.t.home.submitQuestionSubtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),

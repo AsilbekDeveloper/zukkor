@@ -79,6 +79,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$authValidation$ru authValidation = _Translations$authValidation$ru._(_root);
 	@override late final _Translations$errors$ru errors = _Translations$errors$ru._(_root);
 	@override late final _Translations$aiQuiz$ru aiQuiz = _Translations$aiQuiz$ru._(_root);
+	@override late final _Translations$questionSubmission$ru questionSubmission = _Translations$questionSubmission$ru._(_root);
 	@override late final _Translations$forgotPassword$ru forgotPassword = _Translations$forgotPassword$ru._(_root);
 	@override late final _Translations$resetPassword$ru resetPassword = _Translations$resetPassword$ru._(_root);
 	@override late final _Translations$discover$ru discover = _Translations$discover$ru._(_root);
@@ -139,6 +140,8 @@ class _Translations$home$ru implements Translations$home$en {
 	@override String get challengeToDuel => 'Вызвать на дуэль';
 	@override String get createQuizTitle => 'Создайте свой квиз';
 	@override String get createQuizSubtitle => 'Составьте вопросы и бросьте вызов друзьям';
+	@override String get submitQuestionTitle => 'Добавить вопрос в систему';
+	@override String get submitQuestionSubtitle => 'Предложите свой вопрос, AI проверит его';
 }
 
 // Path: categories
@@ -859,6 +862,22 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get changeTopicTitle => 'Изменить тему';
 }
 
+// Path: questionSubmission
+class _Translations$questionSubmission$ru implements Translations$questionSubmission$en {
+	_Translations$questionSubmission$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Добавить вопрос';
+	@override String get questionTextLabel => 'Текст вопроса';
+	@override String get categoryHint => 'Если не выберете категорию, AI сам подберёт подходящую';
+	@override String get fillAllFields => 'Заполните все поля';
+	@override String get submit => 'Отправить';
+	@override String approved({required Object category}) => 'Ваш вопрос одобрен и добавлен в категорию «${category}»!';
+	@override String rejected({required Object reason}) => 'Ваш вопрос отклонён: ${reason}';
+}
+
 // Path: forgotPassword
 class _Translations$forgotPassword$ru implements Translations$forgotPassword$en {
 	_Translations$forgotPassword$ru._(this._root);
@@ -959,6 +978,8 @@ extension on TranslationsRu {
 			'home.challengeToDuel' => 'Вызвать на дуэль',
 			'home.createQuizTitle' => 'Создайте свой квиз',
 			'home.createQuizSubtitle' => 'Составьте вопросы и бросьте вызов друзьям',
+			'home.submitQuestionTitle' => 'Добавить вопрос в систему',
+			'home.submitQuestionSubtitle' => 'Предложите свой вопрос, AI проверит его',
 			'categories.title' => 'Выберите категорию',
 			'leaderboard.greeting' => 'Рейтинг',
 			'leaderboard.title' => 'Кто лучший?',
@@ -1317,6 +1338,13 @@ extension on TranslationsRu {
 			'aiQuiz.topicSelectionLabel' => 'Тема (необязательно)',
 			'aiQuiz.topicSelectionHint' => 'Выберите тему',
 			'aiQuiz.changeTopicTitle' => 'Изменить тему',
+			'questionSubmission.title' => 'Добавить вопрос',
+			'questionSubmission.questionTextLabel' => 'Текст вопроса',
+			'questionSubmission.categoryHint' => 'Если не выберете категорию, AI сам подберёт подходящую',
+			'questionSubmission.fillAllFields' => 'Заполните все поля',
+			'questionSubmission.submit' => 'Отправить',
+			'questionSubmission.approved' => ({required Object category}) => 'Ваш вопрос одобрен и добавлен в категорию «${category}»!',
+			'questionSubmission.rejected' => ({required Object reason}) => 'Ваш вопрос отклонён: ${reason}',
 			'forgotPassword.title' => 'Восстановление пароля',
 			'forgotPassword.subtitle' => 'Введите ваш зарегистрированный email - мы отправим вам код для сброса пароля',
 			'forgotPassword.sendCodeButton' => 'Отправить код',

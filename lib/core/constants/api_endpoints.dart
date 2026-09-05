@@ -33,6 +33,8 @@ abstract final class ApiEndpoints {
 
   static String reportQuestion(int questionId) => '/questions/$questionId/report';
 
+  static const String submitQuestion = '/questions/submit';
+
   // Leaderboard (2026-07-17'da qo'shildi; scope 2026-07-19'da qo'shildi —
   // weekly/all_time/friends kesimlari).
   static String leaderboard({int limit = 50, String scope = 'all_time', int offset = 0}) =>
