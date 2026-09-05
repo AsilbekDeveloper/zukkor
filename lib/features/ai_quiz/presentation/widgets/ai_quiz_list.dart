@@ -36,8 +36,15 @@ class AiQuizList extends StatelessWidget {
     final TextScaler scaler = MediaQuery.textScalerOf(context);
     final double titleLine = (scaler.scale(14) * 1.4).ceilToDouble();
     final double subLine = (scaler.scale(11) * 1.2).ceilToDouble();
-    // Accommodate potential topic badge.
-    final double textBlock = titleLine + subLine + (scaler.scale(18));
+    // Mavzu-belgisi (topic badge) qatori — bor bo'lganda SizedBox(4)
+    // tirqishi + Container'ning vertikal padding'i (1+1) + fontSize:10
+    // matnning o'zi qo'shiladi. Haqiqiy qurilmada shrift balandligi
+    // formuladan bir necha piksel farq qilishi mumkinligi uchun
+    // ataylab generous slack qo'shilgan — [[responsive_methodology]]dagi
+    // saboqqa mos (avvalgi safar aynan shunday tor byudjet 1px overflow
+    // xatosiga olib kelgan edi).
+    final double badgeLine = (scaler.scale(10) * 1.3).ceilToDouble() + 4 /* gap */ + 4 /* padding */;
+    final double textBlock = titleLine + subLine + badgeLine + 4 /* qo'shimcha slack */;
     const double iconBlock = 40;
     const double verticalPadding = AppSpacing.sm * 2;
     return (textBlock > iconBlock ? textBlock : iconBlock) + verticalPadding;

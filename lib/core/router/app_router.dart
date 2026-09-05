@@ -138,14 +138,7 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // `preload: true` — standart holatda go_router har bir tabni
-          // FAQAT birinchi marta bosilganda quradi (LeaderboardScreen/
-          // FriendsScreen/ProfileScreen'ning `initState`dagi ma'lumot
-          // yuklashi ham shu paytgacha ishga tushmaydi) — ilova ochilganda
-          // hammasi bir vaqtda tayyor bo'lishi uchun barcha tab'larni
-          // darhol (Home bilan bir qatorda) qurishga majburlaymiz.
           StatefulShellBranch(
-            preload: true,
             routes: [
               GoRoute(
                 path: AppRoutes.leaderboard,
@@ -154,7 +147,6 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
-            preload: true,
             routes: [
               GoRoute(
                 path: AppRoutes.friends,
@@ -163,7 +155,6 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           StatefulShellBranch(
-            preload: true,
             routes: [
               GoRoute(
                 path: AppRoutes.profile,
