@@ -27,6 +27,7 @@ import '../../lobby/presentation/controllers/lobby_controller.dart';
 import '../../notifications/data/repositories/notifications_repository_impl.dart';
 import '../../notifications/presentation/controllers/notifications_controller.dart';
 import '../../quiz/data/repositories/quiz_repository_impl.dart';
+import '../../quiz/presentation/controllers/categories_controller.dart';
 import '../../settings/data/repositories/notification_preferences_repository_impl.dart';
 import '../../settings/presentation/controllers/notification_preferences_controller.dart';
 import 'controllers/current_user_controller.dart';
@@ -94,6 +95,29 @@ void resetUserScopedState(Ref ref) {
   ref.invalidate(duelSocketDataSourceProvider);
   ref.invalidate(lobbyRepositoryProvider);
   ref.invalidate(lobbySocketDataSourceProvider);
+}
+
+/// [resetUserScopedState]dan KEYIN, agar ENDI HAQIQATAN HAM YANGI faol
+/// sessiya bo'lsa (login, register, Google, akkaunt almashtirish/qo'shish —
+/// logout/sessiya-tugashida EMAS, u yerda faol sessiya yo'q) chaqiriladi —
+/// asosiy ekranlarning ma'lumotini DARHOL qayta yuklaydi.
+///
+/// MUHIM: bu shart, chunki doimiy pastki-navigatsiya qobig'i ([MainShell] /
+/// `StatefulShellRoute.indexedStack`) Home/Profile kabi ekranlarni akkaunt
+/// almashtirilganda QAYTA QURMAYDI — ular `IndexedStack`da tirik saqlanadi,
+/// shuning uchun ularning `initState`dagi "ma'lumot yo'q bo'lsa yukla"
+/// mantig'i qayta ishga TUSHMAYDI. `resetUserScopedState` faqat holatni
+/// bo'shatadi (invalidate) — buni chaqirmasak, akkaunt almashtirilgandan
+/// keyin ma'lumot abadiy bo'sh qolib ketardi (2026-09-06'da real
+/// qurilmada aynan shu holat topilgan).
+Future<void> reloadEssentialDataForNewAccount(Ref ref) async {
+  await ref.read(currentUserControllerProvider.notifier).load();
+  final String? userId = ref.read(currentUserControllerProvider).data?.id;
+  if (userId != null) {
+    await ref.read(myStatsControllerProvider.notifier).load(userId);
+  }
+  await ref.read(categoriesControllerProvider.notifier).load();
+  await ref.read(notificationsControllerProvider.notifier).load();
 }
 
 /// Bir necha akkaunt orasida almashtirilganda (yoki yangi akkaunt

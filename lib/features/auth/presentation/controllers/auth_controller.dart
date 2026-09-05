@@ -20,6 +20,7 @@ class AuthController extends Notifier<bool> {
       // Yangi hisob — oldingi sessiyadan qolgan keshni tozalab, "eski
       // foydalanuvchi ko'rinib turishi" xatosining oldini olamiz.
       resetUserScopedState(ref);
+      await reloadEssentialDataForNewAccount(ref);
     } finally {
       state = false;
     }
@@ -30,6 +31,7 @@ class AuthController extends Notifier<bool> {
     try {
       await ref.read(loginUseCaseProvider).call(email: email, password: password);
       resetUserScopedState(ref);
+      await reloadEssentialDataForNewAccount(ref);
     } finally {
       state = false;
     }
@@ -42,6 +44,7 @@ class AuthController extends Notifier<bool> {
       resetUserScopedState(ref);
       await _clearStaleIntroSurvey();
       await syncPushTokenForActiveAccount(ref);
+      await reloadEssentialDataForNewAccount(ref);
       return user;
     } finally {
       state = false;
@@ -56,6 +59,7 @@ class AuthController extends Notifier<bool> {
       resetUserScopedState(ref);
       await _clearStaleIntroSurvey();
       await syncPushTokenForActiveAccount(ref);
+      await reloadEssentialDataForNewAccount(ref);
       return user;
     } finally {
       state = false;
@@ -70,6 +74,7 @@ class AuthController extends Notifier<bool> {
         resetUserScopedState(ref);
         await _clearStaleIntroSurvey();
         await syncPushTokenForActiveAccount(ref);
+        await reloadEssentialDataForNewAccount(ref);
       }
       return user;
     } finally {
@@ -94,7 +99,10 @@ class AuthController extends Notifier<bool> {
       final User? user = await ref.read(signInWithGoogleUseCaseProvider).call();
       // Faqat haqiqatan kirilgan bo'lsa tozalanadi — bekor qilinsa (null)
       // hozirgi holat o'zgarmasligi kerak.
-      if (user != null) resetUserScopedState(ref);
+      if (user != null) {
+        resetUserScopedState(ref);
+        await reloadEssentialDataForNewAccount(ref);
+      }
       return user;
     } finally {
       state = false;
