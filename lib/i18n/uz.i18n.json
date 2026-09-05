@@ -428,6 +428,7 @@
     "modeTopicLabel": "Mavzu",
     "pickFileLabel": "Hujjat tanlash (PDF, Word, matn)",
     "pickFileFirst": "Avval hujjat tanlang",
+    "fileTooLarge(param=maxSizeMb)": "Fayl hajmi $maxSizeMb MB dan oshmasligi kerak",
     "instructionLabel": "Ko'rsatma (ixtiyoriy)",
     "instructionHint": "Masalan: 3-bobdan 10 ta savol, yoki hammasidan",
     "topicLabel": "Quiz mavzusi",

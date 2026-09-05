@@ -36,6 +36,11 @@ class GenerateAiQuizScreen extends ConsumerStatefulWidget {
 
 class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   static const List<int> _questionCountOptions = [5, 10, 15, 20];
+  // Backendning MAX_UPLOAD_SIZE_BYTES (app/routers/ai_quiz.py) qiymati bilan
+  // bir xil bo'lishi kerak - noto'g'ri bo'lsa, foydalanuvchi katta faylni
+  // to'liq yuklab, faqat serverdan rad javobini olib vaqtini behuda sarflaydi.
+  static const int _maxFileSizeBytes = 15 * 1024 * 1024;
+  static const int _maxFileSizeMb = 15;
 
   final TextEditingController _instructionController = TextEditingController();
   final TextEditingController _topicController = TextEditingController();
@@ -63,7 +68,14 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
       allowedExtensions: const ['pdf', 'docx', 'txt'],
     );
     if (result == null || result.files.isEmpty) return;
-    setState(() => _pickedFile = result.files.single);
+
+    final PlatformFile file = result.files.single;
+    if (file.size > _maxFileSizeBytes) {
+      if (!mounted) return;
+      context.showSnack(context.t.aiQuiz.fileTooLarge(maxSizeMb: _maxFileSizeMb));
+      return;
+    }
+    setState(() => _pickedFile = file);
   }
 
   Future<void> _generate() async {

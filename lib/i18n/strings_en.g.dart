@@ -1512,6 +1512,9 @@ class Translations$aiQuiz$en {
 	/// en: 'Choose a document first'
 	String get pickFileFirst => 'Choose a document first';
 
+	/// en: 'File size must not exceed $maxSizeMb MB'
+	String fileTooLarge({required Object maxSizeMb}) => 'File size must not exceed ${maxSizeMb} MB';
+
 	/// en: 'Instructions (optional)'
 	String get instructionLabel => 'Instructions (optional)';
 
@@ -2104,6 +2107,7 @@ extension on Translations {
 			'aiQuiz.modeTopicLabel' => 'Topic',
 			'aiQuiz.pickFileLabel' => 'Choose a document (PDF, Word, text)',
 			'aiQuiz.pickFileFirst' => 'Choose a document first',
+			'aiQuiz.fileTooLarge' => ({required Object maxSizeMb}) => 'File size must not exceed ${maxSizeMb} MB',
 			'aiQuiz.instructionLabel' => 'Instructions (optional)',
 			'aiQuiz.instructionHint' => 'E.g.: 10 questions from chapter 3, or from the whole document',
 			'aiQuiz.topicLabel' => 'Quiz topic',

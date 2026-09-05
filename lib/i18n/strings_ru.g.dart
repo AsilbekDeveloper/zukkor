@@ -822,6 +822,7 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get modeTopicLabel => 'Тема';
 	@override String get pickFileLabel => 'Выбрать документ (PDF, Word, текст)';
 	@override String get pickFileFirst => 'Сначала выберите документ';
+	@override String fileTooLarge({required Object maxSizeMb}) => 'Размер файла не должен превышать ${maxSizeMb} МБ';
 	@override String get instructionLabel => 'Инструкция (необязательно)';
 	@override String get instructionHint => 'Например: 10 вопросов по 3 главе, или по всему документу';
 	@override String get topicLabel => 'Тема квиза';
@@ -1281,6 +1282,7 @@ extension on TranslationsRu {
 			'aiQuiz.modeTopicLabel' => 'Тема',
 			'aiQuiz.pickFileLabel' => 'Выбрать документ (PDF, Word, текст)',
 			'aiQuiz.pickFileFirst' => 'Сначала выберите документ',
+			'aiQuiz.fileTooLarge' => ({required Object maxSizeMb}) => 'Размер файла не должен превышать ${maxSizeMb} МБ',
 			'aiQuiz.instructionLabel' => 'Инструкция (необязательно)',
 			'aiQuiz.instructionHint' => 'Например: 10 вопросов по 3 главе, или по всему документу',
 			'aiQuiz.topicLabel' => 'Тема квиза',

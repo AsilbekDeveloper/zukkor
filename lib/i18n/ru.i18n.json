@@ -443,6 +443,7 @@
     "modeTopicLabel": "Тема",
     "pickFileLabel": "Выбрать документ (PDF, Word, текст)",
     "pickFileFirst": "Сначала выберите документ",
+    "fileTooLarge(param=maxSizeMb)": "Размер файла не должен превышать $maxSizeMb МБ",
     "instructionLabel": "Инструкция (необязательно)",
     "instructionHint": "Например: 10 вопросов по 3 главе, или по всему документу",
     "topicLabel": "Тема квиза",

@@ -816,6 +816,7 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get modeTopicLabel => 'Mavzu';
 	@override String get pickFileLabel => 'Hujjat tanlash (PDF, Word, matn)';
 	@override String get pickFileFirst => 'Avval hujjat tanlang';
+	@override String fileTooLarge({required Object maxSizeMb}) => 'Fayl hajmi ${maxSizeMb} MB dan oshmasligi kerak';
 	@override String get instructionLabel => 'Ko\'rsatma (ixtiyoriy)';
 	@override String get instructionHint => 'Masalan: 3-bobdan 10 ta savol, yoki hammasidan';
 	@override String get topicLabel => 'Quiz mavzusi';
@@ -1275,6 +1276,7 @@ extension on TranslationsUz {
 			'aiQuiz.modeTopicLabel' => 'Mavzu',
 			'aiQuiz.pickFileLabel' => 'Hujjat tanlash (PDF, Word, matn)',
 			'aiQuiz.pickFileFirst' => 'Avval hujjat tanlang',
+			'aiQuiz.fileTooLarge' => ({required Object maxSizeMb}) => 'Fayl hajmi ${maxSizeMb} MB dan oshmasligi kerak',
 			'aiQuiz.instructionLabel' => 'Ko\'rsatma (ixtiyoriy)',
 			'aiQuiz.instructionHint' => 'Masalan: 3-bobdan 10 ta savol, yoki hammasidan',
 			'aiQuiz.topicLabel' => 'Quiz mavzusi',
