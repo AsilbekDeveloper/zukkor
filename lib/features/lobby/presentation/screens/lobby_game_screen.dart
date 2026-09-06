@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,7 +40,8 @@ class LobbyGameScreen extends ConsumerStatefulWidget {
   ConsumerState<LobbyGameScreen> createState() => _LobbyGameScreenState();
 }
 
-class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTickerProviderStateMixin {
+class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen>
+    with SingleTickerProviderStateMixin {
   // A lost/dropped `lobby_game_started`/`lobby_question` (the same class
   // of socket-delivery gap as room creation) otherwise left this screen
   // on a bare, header-less spinner forever — and there's no screen left
@@ -66,8 +68,10 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
   @override
   void initState() {
     super.initState();
-    _timerController = AnimationController(vsync: this, duration: const Duration(seconds: 1))
-      ..addStatusListener(_onTimerStatusChanged);
+    _timerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..addStatusListener(_onTimerStatusChanged);
     _startTimeoutTimer = Timer(_startTimeout, () {
       if (mounted) setState(() => _startFailed = true);
     });
@@ -121,13 +125,20 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
       return;
     }
 
-    if (game.lastResult != null && _revealedForIndex != game.lastResult!.questionIndex) {
+    if (game.lastResult != null &&
+        _revealedForIndex != game.lastResult!.questionIndex) {
       _revealedForIndex = game.lastResult!.questionIndex;
-      if (game.lastResult!.yourCorrect) _correctCount++;
-      ref.playSound(game.lastResult!.yourCorrect ? AppSound.correct : AppSound.wrong);
+      final bool wasCorrect = game.lastResult!.yourCorrect;
+      if (wasCorrect) _correctCount++;
+      ref.playSound(wasCorrect ? AppSound.correct : AppSound.wrong);
+      // Duel o'yin ekrani bilan bir xil - tovushdan tashqari, alohida
+      // his qilinadigan haptic ([[duel_game_screen]]).
+      wasCorrect ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact();
     }
 
-    if (game.question != null && !game.hasAnswered && _timerStartedForIndex != game.questionIndex) {
+    if (game.question != null &&
+        !game.hasAnswered &&
+        _timerStartedForIndex != game.questionIndex) {
       _timerStartedForIndex = game.questionIndex;
       _timerController
         ..stop()
@@ -157,7 +168,10 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
               context.t.gameLeave.leave,
-              style: TextStyle(color: context.colors.error, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: context.colors.error,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -174,9 +188,13 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
     final LobbyQuestionResult? result = game.lastResult;
     if (result == null) return AnswerVisualState.idle;
     if (optionIndex == result.yourSelectedOption) {
-      return result.yourCorrect ? AnswerVisualState.pickedCorrect : AnswerVisualState.pickedWrong;
+      return result.yourCorrect
+          ? AnswerVisualState.pickedCorrect
+          : AnswerVisualState.pickedWrong;
     }
-    if (optionIndex == result.correctOption) return AnswerVisualState.revealCorrect;
+    if (optionIndex == result.correctOption) {
+      return AnswerVisualState.revealCorrect;
+    }
     return AnswerVisualState.idle;
   }
 
@@ -200,7 +218,10 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppSpacing.xs.vGap,
-                  CloseHeader(title: context.t.lobbyGame.title, onClose: _onBack),
+                  CloseHeader(
+                    title: context.t.lobbyGame.title,
+                    onClose: _onBack,
+                  ),
                   Expanded(
                     child: Center(
                       child: Column(
@@ -211,7 +232,9 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
                           Text(
                             context.t.lobbyGame.waitingForOthers,
                             textAlign: TextAlign.center,
-                            style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                            style: context.textStyles.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -234,7 +257,10 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppSpacing.xs.vGap,
-                CloseHeader(title: context.t.lobbyGame.title, onClose: () => context.go(AppRoutes.home)),
+                CloseHeader(
+                  title: context.t.lobbyGame.title,
+                  onClose: () => context.go(AppRoutes.home),
+                ),
                 Expanded(
                   child: Center(
                     child: _startFailed
@@ -244,7 +270,9 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
                               Text(
                                 context.t.lobbyGame.startFailed,
                                 textAlign: TextAlign.center,
-                                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
+                                style: context.textStyles.bodyMedium?.copyWith(
+                                  color: context.colors.coralDeep,
+                                ),
                               ),
                               AppSpacing.lg.vGap,
                               AppButton.secondary(
@@ -254,26 +282,30 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
                             ],
                           )
                         : game != null
-                            ? Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    context.t.lobbyGame.waitingForQuestion,
-                                    style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
-                                  ),
-                                  AppSpacing.md.vGap,
-                                  Text(
-                                    _preGameCountdown > 0 ? '$_preGameCountdown' : '!',
-                                    style: TextStyle(
-                                      fontFamily: 'PlusJakartaSans',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 56,
-                                      color: context.colors.coralDeep,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const CircularProgressIndicator(),
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                context.t.lobbyGame.waitingForQuestion,
+                                style: context.textStyles.bodyMedium?.copyWith(
+                                  color: context.colors.muted,
+                                ),
+                              ),
+                              AppSpacing.md.vGap,
+                              Text(
+                                _preGameCountdown > 0
+                                    ? '$_preGameCountdown'
+                                    : '!',
+                                style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 56,
+                                  color: context.colors.coralDeep,
+                                ),
+                              ),
+                            ],
+                          )
+                        : const CircularProgressIndicator(),
                   ),
                 ),
               ],
@@ -292,7 +324,10 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.screenHPad,
+              vertical: AppSpacing.xs,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -312,7 +347,10 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen> with SingleTi
                   ],
                 ),
                 AppSpacing.lg.vGap,
-                QuestionCard(categoryName: game.category.name, question: game.question!.text),
+                QuestionCard(
+                  categoryName: game.category.name,
+                  question: game.question!.text,
+                ),
                 AppSpacing.sm.vGap,
                 for (int i = 0; i < game.question!.options.length; i++) ...[
                   AnswerButton(
