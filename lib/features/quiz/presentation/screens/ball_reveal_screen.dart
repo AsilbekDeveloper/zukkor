@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -40,8 +41,10 @@ class _BallRevealScreenState extends ConsumerState<BallRevealScreen>
   @override
   void initState() {
     super.initState();
-    _countController = AnimationController(vsync: this, duration: _countDuration)
-      ..addStatusListener(_onStatusChanged);
+    _countController = AnimationController(
+      vsync: this,
+      duration: _countDuration,
+    )..addStatusListener(_onStatusChanged);
     _ballAnimation = IntTween(begin: 0, end: widget.result.totalBall).animate(
       CurvedAnimation(parent: _countController, curve: AppDurations.ease),
     );
@@ -52,6 +55,9 @@ class _BallRevealScreenState extends ConsumerState<BallRevealScreen>
     if (status != AnimationStatus.completed || !mounted) return;
     setState(() => _revealed = true);
     ref.playSound(AppSound.success);
+    // Ekranning eng katta nishonlash lahzasi - Quiz Introning hisoblash
+    // haptigi bilan bir xil mantiq ([[quiz_intro_screen]]).
+    HapticFeedback.mediumImpact();
   }
 
   void _finish() {
@@ -114,7 +120,10 @@ class _BallRevealScreenState extends ConsumerState<BallRevealScreen>
                         duration: AppDurations.slow,
                         curve: AppDurations.ease,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: context.colors.coralDeep,
                             borderRadius: AppRadius.lgAll,
@@ -122,10 +131,16 @@ class _BallRevealScreenState extends ConsumerState<BallRevealScreen>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(TablerIcons.bolt, size: 16, color: Colors.white),
+                              const Icon(
+                                TablerIcons.bolt,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                               const SizedBox(width: 6),
                               Text(
-                                context.t.result.xpEarned(xp: widget.result.xpEarned),
+                                context.t.result.xpEarned(
+                                  xp: widget.result.xpEarned,
+                                ),
                                 style: const TextStyle(
                                   fontFamily: 'PlusJakartaSans',
                                   fontSize: 14,
