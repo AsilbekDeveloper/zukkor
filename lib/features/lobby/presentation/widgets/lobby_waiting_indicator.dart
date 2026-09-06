@@ -10,6 +10,17 @@ import '../../../../i18n/strings.g.dart';
 /// keyframes: staggered 0/0.15s/0.3s delay). Used by the Lobby (waiting
 /// for the host) and Duel Waiting (waiting for the opponent's answer)
 /// screens, with a different [label] for each.
+///
+/// DELIBERATELY infinite (`..repeat()`, never bounded) - unlike the
+/// notification bell's pulse (a one-time "look at this" attention-grab,
+/// correctly capped at 3 cycles), this widget's whole job is signaling
+/// "still waiting, indefinitely" - freezing it after N cycles while the
+/// host still hasn't started would look broken, not calm. The
+/// trade-off: any widget test that renders this and then calls
+/// `pumpAndSettle()` while it's still mounted will hang/time out (the
+/// exact class of bug the notification bell hit before its fix) - tests
+/// covering this state MUST use a bounded `tester.pump(duration)`
+/// instead, or navigate away (unmounting this) before `pumpAndSettle()`.
 class LobbyWaitingIndicator extends StatefulWidget {
   const LobbyWaitingIndicator({this.label, super.key});
 
@@ -24,8 +35,10 @@ class LobbyWaitingIndicator extends StatefulWidget {
 
 class _LobbyWaitingIndicatorState extends State<LobbyWaitingIndicator>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller =
-      AnimationController(vsync: this, duration: const Duration(milliseconds: 1200))..repeat();
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1200),
+  )..repeat();
 
   @override
   void dispose() {
@@ -74,7 +87,9 @@ class _PulsingDot extends StatelessWidget {
         // cycle, peaking (1.0 opacity, 1.1 scale) briefly at 30% —
         // staggered per dot via [delayFraction].
         final double t = (controller.value + delayFraction) % 1.0;
-        final double pulse = t < 0.3 ? t / 0.3 : (1 - (t - 0.3) / 0.7).clamp(0.0, 1.0);
+        final double pulse = t < 0.3
+            ? t / 0.3
+            : (1 - (t - 0.3) / 0.7).clamp(0.0, 1.0);
         final double opacity = 0.25 + 0.75 * pulse;
         final double scale = 0.85 + 0.25 * pulse;
 
@@ -85,7 +100,10 @@ class _PulsingDot extends StatelessWidget {
             child: Container(
               width: 8,
               height: 8,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: context.colors.coral),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: context.colors.coral,
+              ),
             ),
           ),
         );

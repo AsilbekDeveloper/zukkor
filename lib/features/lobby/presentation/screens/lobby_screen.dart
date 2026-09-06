@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -11,7 +12,9 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/invite_code_card.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/lobby_room_state.dart';
@@ -53,7 +56,9 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
   void initState() {
     super.initState();
     if (widget.role == LobbyRole.host) {
-      Future.microtask(() => ref.read(lobbyControllerProvider.notifier).createRoom());
+      Future.microtask(
+        () => ref.read(lobbyControllerProvider.notifier).createRoom(),
+      );
       _createTimeoutTimer = Timer(_createTimeout, () {
         if (mounted) setState(() => _createFailed = true);
       });
@@ -75,7 +80,8 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
     }
   }
 
-  void _startGame(BuildContext context, String roomId) => context.push(AppRoutes.categories, extra: roomId);
+  void _startGame(BuildContext context, String roomId) =>
+      context.push(AppRoutes.categories, extra: roomId);
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +109,10 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppSpacing.xs.vGap,
-                BackHeader(title: context.t.lobby.title, onBack: () => _leaveAndGoBack(context)),
+                BackHeader(
+                  title: context.t.lobby.title,
+                  onBack: () => _leaveAndGoBack(context),
+                ),
                 Expanded(
                   child: Center(
                     child: _createFailed
@@ -113,7 +122,9 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                               Text(
                                 context.t.lobby.createFailed,
                                 textAlign: TextAlign.center,
-                                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
+                                style: context.textStyles.bodyMedium?.copyWith(
+                                  color: context.colors.coralDeep,
+                                ),
                               ),
                               AppSpacing.lg.vGap,
                               AppButton.secondary(
@@ -122,7 +133,9 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
                               ),
                             ],
                           )
-                        : LobbyWaitingIndicator(label: context.t.lobby.creatingRoom),
+                        : LobbyWaitingIndicator(
+                            label: context.t.lobby.creatingRoom,
+                          ),
                   ),
                 ),
               ],
@@ -133,14 +146,20 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
     }
 
     final List<LobbyPlayer> players = room.participants
-        .map((p) => LobbyPlayer.fromEntity(p, isYou: p.id == room.youParticipantId))
+        .map(
+          (p) =>
+              LobbyPlayer.fromEntity(p, isYou: p.id == room.youParticipantId),
+        )
         .toList();
     // A defensive default rather than a bare `firstWhere` — "you" not
     // being in the roster shouldn't be possible, but this beats crashing
     // the screen outright if it ever momentarily isn't.
-    final bool isHost = room.participants.where((p) => p.id == room.youParticipantId).isEmpty
+    final bool isHost =
+        room.participants.where((p) => p.id == room.youParticipantId).isEmpty
         ? false
-        : room.participants.firstWhere((p) => p.id == room.youParticipantId).isHost;
+        : room.participants
+              .firstWhere((p) => p.id == room.youParticipantId)
+              .isHost;
 
     return Scaffold(
       body: SafeArea(
@@ -150,21 +169,45 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              _LobbyHeader(isHost: isHost, onBack: () => _leaveAndGoBack(context)),
+              FadeSlideIn(
+                child: _LobbyHeader(
+                  isHost: isHost,
+                  onBack: () => _leaveAndGoBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
-              InviteCodeCard(label: context.t.lobby.roomCode, code: room.roomCode),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: InviteCodeCard(
+                  label: context.t.lobby.roomCode,
+                  code: room.roomCode,
+                ),
+              ),
               AppSpacing.lg.vGap,
-              SectionHead(
-                title: context.t.lobby.players,
-                trailing: context.t.lobby.playerCount(current: players.length, max: LobbyPlayer.maxPlayers),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 120),
+                child: SectionHead(
+                  title: context.t.lobby.players,
+                  trailing: context.t.lobby.playerCount(
+                    current: players.length,
+                    max: LobbyPlayer.maxPlayers,
+                  ),
+                ),
               ),
               AppSpacing.sm.vGap,
-              PlayerList(players: players),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 120),
+                child: PlayerList(players: players),
+              ),
               AppSpacing.lg.vGap,
-              if (isHost)
-                _StartGameButton(onTap: () => _startGame(context, room.roomId))
-              else
-                const LobbyWaitingIndicator(),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 180),
+                child: isHost
+                    ? _StartGameButton(
+                        onTap: () => _startGame(context, room.roomId),
+                      )
+                    : const LobbyWaitingIndicator(),
+              ),
             ],
           ),
         ),
@@ -179,23 +222,34 @@ class _LobbyHeader extends StatelessWidget {
   final bool isHost;
   final VoidCallback onBack;
 
+  void _handleBack() {
+    HapticFeedback.lightImpact();
+    onBack();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Material(
-          color: context.colors.card,
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.smAll,
-            side: BorderSide(color: context.colors.line),
-          ),
-          child: InkWell(
-            onTap: onBack,
-            borderRadius: AppRadius.smAll,
-            child: SizedBox(
-              width: 44,
-              height: 44,
-              child: Icon(TablerIcons.arrowLeft, color: context.colors.ink, size: 20),
+        PressableScale(
+          child: Material(
+            color: context.colors.card,
+            shape: RoundedRectangleBorder(
+              borderRadius: AppRadius.smAll,
+              side: BorderSide(color: context.colors.line),
+            ),
+            child: InkWell(
+              onTap: _handleBack,
+              borderRadius: AppRadius.smAll,
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(
+                  TablerIcons.arrowLeft,
+                  color: context.colors.ink,
+                  size: 20,
+                ),
+              ),
             ),
           ),
         ),
@@ -222,14 +276,18 @@ class _RoleTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 7),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: 7,
+      ),
       decoration: BoxDecoration(
         color: context.colors.card,
         border: Border.all(color: context.colors.line),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        (isHost ? context.t.lobby.hostRole : context.t.lobby.guestRole).toUpperCase(),
+        (isHost ? context.t.lobby.hostRole : context.t.lobby.guestRole)
+            .toUpperCase(),
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w700,
@@ -246,35 +304,49 @@ class _StartGameButton extends StatelessWidget {
 
   final VoidCallback onTap;
 
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.surfaceDark,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.surfaceDark,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2, horizontal: AppSpacing.sm),
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(TablerIcons.playerPlay, color: Colors.white, size: 18),
-              AppSpacing.xs.hGap,
-              Flexible(
-                child: Text(
-                  context.t.lobby.startGame,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.bodySmall?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14.5,
+        child: InkWell(
+          onTap: _handleTap,
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm + 2,
+              horizontal: AppSpacing.sm,
+            ),
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  TablerIcons.playerPlay,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                AppSpacing.xs.hGap,
+                Flexible(
+                  child: Text(
+                    context.t.lobby.startGame,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.bodySmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.5,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

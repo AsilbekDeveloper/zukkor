@@ -6,6 +6,7 @@
     "cancel": "Cancel",
     "retry": "Retry",
     "loading": "Loading...",
+    "codeCopied": "Code copied",
     "delete": "Delete",
     "dayUnit(param=count)": { "one": "day", "other": "days" },
     "friendsCount(param=count)": { "one": "$count friend", "other": "$count friends" },

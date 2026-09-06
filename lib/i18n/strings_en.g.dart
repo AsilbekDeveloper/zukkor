@@ -117,6 +117,9 @@ class Translations$common$en {
 	/// en: 'Loading...'
 	String get loading => 'Loading...';
 
+	/// en: 'Code copied'
+	String get codeCopied => 'Code copied';
+
 	/// en: 'Delete'
 	String get delete => 'Delete';
 
@@ -1926,6 +1929,7 @@ extension on Translations {
 			'common.cancel' => 'Cancel',
 			'common.retry' => 'Retry',
 			'common.loading' => 'Loading...',
+			'common.codeCopied' => 'Code copied',
 			'common.delete' => 'Delete',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: 'day', other: 'days', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} friend', other: '${count} friends', ), 

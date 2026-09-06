@@ -6,6 +6,7 @@
     "cancel": "Bekor qilish",
     "retry": "Qayta urinish",
     "loading": "Yuklanmoqda...",
+    "codeCopied": "Kod nusxalandi",
     "delete": "O'chirish",
     "dayUnit(param=count)": { "one": "kun", "other": "kun" },
     "friendsCount(param=count)": { "one": "$count do'stingiz bor", "other": "$count do'stingiz bor" },

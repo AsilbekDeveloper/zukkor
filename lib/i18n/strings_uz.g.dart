@@ -101,6 +101,7 @@ class _Translations$common$uz implements Translations$common$en {
 	@override String get cancel => 'Bekor qilish';
 	@override String get retry => 'Qayta urinish';
 	@override String get loading => 'Yuklanmoqda...';
+	@override String get codeCopied => 'Kod nusxalandi';
 	@override String get delete => 'O\'chirish';
 	@override String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count,
 		one: 'kun',
@@ -1009,6 +1010,7 @@ extension on TranslationsUz {
 			'common.cancel' => 'Bekor qilish',
 			'common.retry' => 'Qayta urinish',
 			'common.loading' => 'Yuklanmoqda...',
+			'common.codeCopied' => 'Kod nusxalandi',
 			'common.delete' => 'O\'chirish',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: 'kun', other: 'kun', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} do\'stingiz bor', other: '${count} do\'stingiz bor', ), 

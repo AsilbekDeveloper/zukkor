@@ -101,6 +101,7 @@ class _Translations$common$ru implements Translations$common$en {
 	@override String get cancel => 'Отмена';
 	@override String get retry => 'Повторить';
 	@override String get loading => 'Загрузка...';
+	@override String get codeCopied => 'Код скопирован';
 	@override String get delete => 'Удалить';
 	@override String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count,
 		one: 'день',
@@ -1015,6 +1016,7 @@ extension on TranslationsRu {
 			'common.cancel' => 'Отмена',
 			'common.retry' => 'Повторить',
 			'common.loading' => 'Загрузка...',
+			'common.codeCopied' => 'Код скопирован',
 			'common.delete' => 'Удалить',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: 'день', few: 'дня', many: 'дней', other: 'дня', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} друг', few: '${count} друга', many: '${count} друзей', other: '${count} друга', ), 

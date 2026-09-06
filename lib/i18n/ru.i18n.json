@@ -6,6 +6,7 @@
     "cancel": "Отмена",
     "retry": "Повторить",
     "loading": "Загрузка...",
+    "codeCopied": "Код скопирован",
     "delete": "Удалить",
     "dayUnit(param=count)": {
       "one": "день",
