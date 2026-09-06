@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,7 +47,8 @@ class QuizScreen extends ConsumerStatefulWidget {
   ConsumerState<QuizScreen> createState() => _QuizScreenState();
 }
 
-class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProviderStateMixin {
+class _QuizScreenState extends ConsumerState<QuizScreen>
+    with SingleTickerProviderStateMixin {
   static const Duration _feedbackDelay = Duration(milliseconds: 900);
   static const Duration _fallbackTimeLimit = Duration(seconds: 15);
 
@@ -66,8 +68,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _timerController = AnimationController(vsync: this, duration: _fallbackTimeLimit)
-      ..addStatusListener(_onTimerStatusChanged);
+    _timerController = AnimationController(
+      vsync: this,
+      duration: _fallbackTimeLimit,
+    )..addStatusListener(_onTimerStatusChanged);
     Future.microtask(() {
       ref.read(isInActiveGameProvider.notifier).setInGame(true);
       _startSession();
@@ -99,7 +103,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
 
   Future<void> _startSession() async {
     try {
-      final result = await ref.read(quizControllerProvider.notifier).startQuiz(
+      final result = await ref
+          .read(quizControllerProvider.notifier)
+          .startQuiz(
             categoryId: widget.category.id,
             questionCount: widget.questionCount,
           );
@@ -109,8 +115,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
         _currentQuestion = result.question;
         _starting = false;
       });
-      unawaited(ref.read(analyticsServiceProvider).logGameStart(mode: 'solo', categoryId: widget.category.id));
-      _timerController.duration = Duration(milliseconds: _currentQuestion!.timeLimitMs);
+      unawaited(
+        ref
+            .read(analyticsServiceProvider)
+            .logGameStart(mode: 'solo', categoryId: widget.category.id),
+      );
+      _timerController.duration = Duration(
+        milliseconds: _currentQuestion!.timeLimitMs,
+      );
       unawaited(_timerController.forward());
     } on Failure catch (e) {
       if (!mounted) return;
@@ -142,13 +154,21 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
       _selectedIndex = pickedIndex;
       _lastCorrectIndex = correctIndex;
     });
-    ref.playSound(pickedIndex == correctIndex ? AppSound.correct : AppSound.wrong);
+    final bool wasCorrect = pickedIndex == correctIndex;
+    ref.playSound(wasCorrect ? AppSound.correct : AppSound.wrong);
+    // Duel/Lobby o'yin ekranlari bilan bir xil - tovushdan tashqari,
+    // alohida his qilinadigan haptic ([[duel_game_screen]]).
+    unawaited(
+      wasCorrect ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact(),
+    );
 
     // The network round trip and the minimum "let the user see the
     // reveal" pause run CONCURRENTLY, not one after the other — a slow
     // network no longer stacks on top of the fixed pause (previously the
     // wait was network_time + 900ms; now it's max(network_time, 900ms)).
-    final Future<AnswerResult> answerFuture = ref.read(quizControllerProvider.notifier).submitAnswer(
+    final Future<AnswerResult> answerFuture = ref
+        .read(quizControllerProvider.notifier)
+        .submitAnswer(
           sessionId: _sessionId!,
           sessionQuestionId: _currentQuestion!.sessionQuestionId,
           selectedOption: pickedIndex,
@@ -156,7 +176,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
     final Future<void> pauseFuture = _pause(_feedbackDelay);
 
     try {
-      final AnswerResult result = (await Future.wait([answerFuture, pauseFuture]))[0] as AnswerResult;
+      final AnswerResult result =
+          (await Future.wait([answerFuture, pauseFuture]))[0] as AnswerResult;
       if (!mounted) return;
       setState(() {
         _totalBall += result.ballEarned;
@@ -199,11 +220,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
       // initState notices the invalidation later.
       ref.invalidate(historyControllerProvider);
       ref.invalidate(myStatsControllerProvider);
-      final String? statsUserId = ref.read(currentUserControllerProvider).data?.id;
+      final String? statsUserId = ref
+          .read(currentUserControllerProvider)
+          .data
+          ?.id;
       if (statsUserId != null) {
-        unawaited(ref.read(myStatsControllerProvider.notifier).load(statsUserId));
+        unawaited(
+          ref.read(myStatsControllerProvider.notifier).load(statsUserId),
+        );
       }
-      ref.read(analyticsServiceProvider).logGameComplete(
+      ref
+          .read(analyticsServiceProvider)
+          .logGameComplete(
             mode: 'solo',
             categoryId: widget.category.id,
             xpEarned: summary.xpEarned,
@@ -229,7 +257,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
   AnswerVisualState _stateFor(int optionIndex, int? correctIndex) {
     if (!_answered || correctIndex == null) return AnswerVisualState.idle;
     if (optionIndex == _selectedIndex) {
-      return optionIndex == correctIndex ? AnswerVisualState.pickedCorrect : AnswerVisualState.pickedWrong;
+      return optionIndex == correctIndex
+          ? AnswerVisualState.pickedCorrect
+          : AnswerVisualState.pickedWrong;
     }
     if (optionIndex == correctIndex) return AnswerVisualState.revealCorrect;
     return AnswerVisualState.idle;
@@ -250,7 +280,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
               context.t.gameLeave.leave,
-              style: TextStyle(color: context.colors.error, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: context.colors.error,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -285,7 +318,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.screenHPad,
+              vertical: AppSpacing.xs,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -305,7 +341,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
                   ],
                 ),
                 AppSpacing.lg.vGap,
-                QuestionCard(categoryName: widget.category.name, question: questionText),
+                QuestionCard(
+                  categoryName: widget.category.name,
+                  question: questionText,
+                ),
                 AppSpacing.lg.vGap,
                 for (int i = 0; i < options.length; i++) ...[
                   AnswerButton(
