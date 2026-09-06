@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/friend_entry.dart';
@@ -14,7 +16,12 @@ import '../models/friend_entry.dart';
 /// prototype — and automatically 2 columns when the container is wide
 /// (tablets), so the list fills the screen instead of stretching rows.
 class FriendList extends StatelessWidget {
-  const FriendList({required this.entries, required this.onDuelTap, required this.onRowTap, super.key});
+  const FriendList({
+    required this.entries,
+    required this.onDuelTap,
+    required this.onRowTap,
+    super.key,
+  });
 
   final List<FriendEntry> entries;
   final ValueChanged<FriendEntry> onDuelTap;
@@ -28,12 +35,14 @@ class FriendList extends StatelessWidget {
   /// plus vertical padding — correct at any width and font scale.
   double _rowExtent(BuildContext context) {
     final TextScaler scaler = MediaQuery.textScalerOf(context);
-    final double textBlock = (scaler.scale(13.5) * 1.4).ceilToDouble() +
+    final double textBlock =
+        (scaler.scale(13.5) * 1.4).ceilToDouble() +
         (scaler.scale(11) * 1.2).ceilToDouble() +
         2;
     const double avatarBlock = 36;
     const double verticalPadding = (AppSpacing.sm - 1) * 2;
-    return (textBlock > avatarBlock ? textBlock : avatarBlock) + verticalPadding;
+    return (textBlock > avatarBlock ? textBlock : avatarBlock) +
+        verticalPadding;
   }
 
   @override
@@ -50,72 +59,92 @@ class FriendList extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final FriendEntry entry = entries[index];
-        return _FriendRow(entry: entry, onDuelTap: () => onDuelTap(entry), onRowTap: () => onRowTap(entry));
+        return _FriendRow(
+          entry: entry,
+          onDuelTap: () => onDuelTap(entry),
+          onRowTap: () => onRowTap(entry),
+        );
       },
     );
   }
 }
 
 class _FriendRow extends StatelessWidget {
-  const _FriendRow({required this.entry, required this.onDuelTap, required this.onRowTap});
+  const _FriendRow({
+    required this.entry,
+    required this.onDuelTap,
+    required this.onRowTap,
+  });
 
   final FriendEntry entry;
   final VoidCallback onDuelTap;
   final VoidCallback onRowTap;
 
+  void _handleRowTap() {
+    HapticFeedback.lightImpact();
+    onRowTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onRowTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 1),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.smAll,
-            border: Border.all(color: context.colors.line),
-            boxShadow: context.colors.shadowSm,
-          ),
-          child: Row(
-            children: [
-              UserAvatar(
-                size: 36,
-                initials: entry.initials,
-                avatarImagePath: entry.avatarImagePath,
-                backgroundColor: entry.avatarColor.resolve(context),
-                fontSize: 11.5,
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      entry.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13.5,
-                        color: context.colors.ink,
-                      ),
-                    ),
-                    if (entry.handle != null)
+        child: InkWell(
+          onTap: _handleRowTap,
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm - 1,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              border: Border.all(color: context.colors.line),
+              boxShadow: context.colors.shadowSm,
+            ),
+            child: Row(
+              children: [
+                UserAvatar(
+                  size: 36,
+                  initials: entry.initials,
+                  avatarImagePath: entry.avatarImagePath,
+                  backgroundColor: entry.avatarColor.resolve(context),
+                  fontSize: 11.5,
+                ),
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       Text(
-                        entry.handle!,
+                        entry.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                        style: context.textStyles.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.5,
+                          color: context.colors.ink,
+                        ),
                       ),
-                  ],
+                      if (entry.handle != null)
+                        Text(
+                          entry.handle!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textStyles.labelSmall?.copyWith(
+                            color: context.colors.muted,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              AppSpacing.sm.hGap,
-              _DuelButton(onTap: onDuelTap),
-            ],
+                AppSpacing.sm.hGap,
+                _DuelButton(onTap: onDuelTap),
+              ],
+            ),
           ),
         ),
       ),
@@ -128,18 +157,30 @@ class _DuelButton extends StatelessWidget {
 
   final VoidCallback onTap;
 
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.surfaceDark,
-      borderRadius: BorderRadius.circular(11),
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.surfaceDark,
         borderRadius: BorderRadius.circular(11),
-        child: SizedBox(
-          width: 36,
-          height: 36,
-          child: Icon(TablerIcons.swords, color: Colors.white, size: 16, semanticLabel: context.t.home.challengeToDuel),
+        child: InkWell(
+          onTap: _handleTap,
+          borderRadius: BorderRadius.circular(11),
+          child: SizedBox(
+            width: 36,
+            height: 36,
+            child: Icon(
+              TablerIcons.swords,
+              color: Colors.white,
+              size: 16,
+              semanticLabel: context.t.home.challengeToDuel,
+            ),
+          ),
         ),
       ),
     );

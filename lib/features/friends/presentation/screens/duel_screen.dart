@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/friends_controller.dart';
@@ -34,7 +35,9 @@ class _DuelScreenState extends ConsumerState<DuelScreen> {
   void initState() {
     super.initState();
     if (ref.read(friendsControllerProvider).data == null) {
-      Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+      Future.microtask(
+        () => ref.read(friendsControllerProvider.notifier).load(),
+      );
     }
   }
 
@@ -49,13 +52,18 @@ class _DuelScreenState extends ConsumerState<DuelScreen> {
   void _openPlayerDetail(BuildContext context, FriendEntry friend) {
     final String? id = friend.id;
     if (id == null) return;
-    context.push(AppRoutes.playerDetail, extra: {'userId': id, 'relation': 'friend'});
+    context.push(
+      AppRoutes.playerDetail,
+      extra: {'userId': id, 'relation': 'friend'},
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final friendsState = ref.watch(friendsControllerProvider);
-    final List<FriendEntry>? friends = friendsState.data?.map(FriendEntry.fromEntity).toList();
+    final List<FriendEntry>? friends = friendsState.data
+        ?.map(FriendEntry.fromEntity)
+        .toList();
 
     return Scaffold(
       body: SafeArea(
@@ -65,20 +73,36 @@ class _DuelScreenState extends ConsumerState<DuelScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.duelPick.title, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.duelPick.title,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
-              Text(context.t.duelPick.chooseYourFriend, style: context.textStyles.titleLarge),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Text(
+                  context.t.duelPick.chooseYourFriend,
+                  style: context.textStyles.titleLarge,
+                ),
+              ),
               AppSpacing.sm.vGap,
               Expanded(
                 child: friendsState.hasError
-                    ? ErrorRetryView(onRetry: () => ref.read(friendsControllerProvider.notifier).load())
+                    ? ErrorRetryView(
+                        onRetry: () =>
+                            ref.read(friendsControllerProvider.notifier).load(),
+                      )
                     : friends == null
                     ? const ShimmerListSkeleton(trailingWidth: 36)
                     : SingleChildScrollView(
                         child: FriendList(
                           entries: friends,
-                          onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
-                          onRowTap: (friend) => _openPlayerDetail(context, friend),
+                          onDuelTap: (friend) =>
+                              context.push(AppRoutes.categories, extra: friend),
+                          onRowTap: (friend) =>
+                              _openPlayerDetail(context, friend),
                         ),
                       ),
               ),
