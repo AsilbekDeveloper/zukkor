@@ -12,11 +12,13 @@ class DuelHeroCard extends StatelessWidget {
   const DuelHeroCard({
     required this.streakDays,
     required this.onStartDuel,
+    this.weeklyActivity,
     super.key,
   });
 
   final int streakDays;
   final VoidCallback onStartDuel;
+  final List<bool>? weeklyActivity;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,10 @@ class DuelHeroCard extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.85),
                 ),
               ),
+              if (weeklyActivity != null && weeklyActivity!.length == 7) ...[
+                AppSpacing.lg.vGap,
+                _WeeklyActivityRow(days: weeklyActivity!),
+              ],
               AppSpacing.xl.vGap,
               // Both children stay at their natural (pill-shaped) width —
               // matching the prototype's `.hero-foot { justify-content:
@@ -104,6 +110,59 @@ class DuelHeroCard extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+    );
+  }
+}
+
+class _WeeklyActivityRow extends StatelessWidget {
+  const _WeeklyActivityRow({required this.days});
+
+  final List<bool> days;
+
+  static const List<String> _labels = ['Du', 'Se', 'Cho', 'Pa', 'Ju', 'Sha', 'Ya'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: List.generate(7, (i) {
+        final bool isToday = i == 6;
+        final bool played = days[i];
+        final double size = isToday ? 36 : (played ? 26 : 24);
+        return Column(
+          children: [
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isToday
+                    ? const Color(0xFFFFD9A8)
+                    : played
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: 0.20),
+                boxShadow: isToday ? [const BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 3))] : null,
+              ),
+              alignment: Alignment.center,
+              child: isToday
+                  ? Icon(TablerIcons.flame, color: context.colors.coralDeep, size: 18)
+                  : played
+                      ? Icon(TablerIcons.check, color: context.colors.coralDeep, size: 13)
+                      : null,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              isToday ? 'Bugun' : _labels[i],
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: isToday ? FontWeight.w700 : FontWeight.w400,
+                color: Colors.white.withValues(alpha: isToday ? 1 : 0.6),
+              ),
+            ),
+          ],
+        );
+      }),
     );
   }
 }

@@ -96,6 +96,8 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         longestStreak: 2,
         gamesPlayed: 5,
         winRatePercent: 40,
+        totalWins: 0,
+        bestRankAchieved: 0,
       );
 }
 

@@ -14,6 +14,8 @@ class PlayerStats {
     required this.longestStreak,
     required this.gamesPlayed,
     required this.winRatePercent,
+    required this.totalWins,
+    required this.bestRankAchieved,
   });
 
   final String userId;
@@ -31,4 +33,6 @@ class PlayerStats {
   final int longestStreak;
   final int gamesPlayed;
   final int winRatePercent;
+  final int totalWins;
+  final int bestRankAchieved;
 }

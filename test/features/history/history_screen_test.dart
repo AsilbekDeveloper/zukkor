@@ -12,6 +12,7 @@ import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/history/data/repositories/history_repository_impl.dart';
 import 'package:zukkor/features/history/domain/entities/session_history_entry.dart';
+import 'package:zukkor/features/history/domain/entities/weekly_activity.dart';
 import 'package:zukkor/features/history/domain/repositories/history_repository.dart';
 import 'package:zukkor/features/history/presentation/screens/history_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
@@ -96,6 +97,9 @@ class _FakeHistoryRepository implements HistoryRepository {
           lobbyResult: const LobbyHistoryResult(rank: 2, participantCount: 4),
         ),
       ]);
+
+  @override
+  Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(days: []);
 }
 
 /// Same shape, but no sessions at all — for the genuinely-empty case.
@@ -103,6 +107,9 @@ class _FakeEmptyHistoryRepository implements HistoryRepository {
   @override
   Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
       const (entries: <SessionHistoryEntry>[], hasMore: false);
+
+  @override
+  Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(days: []);
 }
 
 /// Has sessions, but none of them lobby — for "this segment has nothing"
@@ -125,6 +132,9 @@ class _FakeHistoryRepositoryNoLobby implements HistoryRepository {
           mode: HistorySessionMode.solo,
         ),
       ]);
+
+  @override
+  Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(days: []);
 }
 
 Future<GoRouter> _pumpHistory(

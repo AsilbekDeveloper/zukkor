@@ -20,8 +20,17 @@ import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../duel/presentation/controllers/duel_controller.dart';
+import '../../../history/domain/entities/session_history_entry.dart';
+import '../../../history/presentation/controllers/history_controller.dart';
+import '../../../history/presentation/controllers/weekly_activity_controller.dart';
+import '../../../leaderboard/data/repositories/leaderboard_repository_impl.dart';
+import '../../../leaderboard/domain/entities/leaderboard_data.dart';
+import '../../../leaderboard/domain/entities/leaderboard_scope.dart';
 import '../../../leaderboard/domain/entities/player_stats.dart';
 import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
+import '../../../leaderboard/presentation/models/achievement.dart';
+import '../../../leaderboard/presentation/models/leaderboard_entry.dart';
+import '../../../leaderboard/presentation/widgets/achievement_badge.dart';
 import '../../../lobby/presentation/controllers/lobby_controller.dart';
 import '../../../lobby/presentation/screens/lobby_screen.dart';
 import '../../../notifications/presentation/controllers/notifications_controller.dart';
@@ -29,9 +38,11 @@ import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../widgets/category_scroll_row.dart';
+import '../widgets/continue_playing_card.dart';
 import '../widgets/duel_hero_card.dart';
 import '../widgets/home_header.dart';
 import '../widgets/multiplayer_row.dart';
+import '../widgets/rival_card.dart';
 import '../widgets/stats_strip.dart';
 
 /// The main screen — mirrors the prototype's `view-home` 1:1: greeting
@@ -83,6 +94,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     Future.microtask(() => ref.read(duelControllerProvider.notifier).connect());
     Future.microtask(() => ref.read(lobbyControllerProvider.notifier).connect());
     Future.microtask(() => ref.read(notificationsControllerProvider.notifier).load());
+    Future.microtask(() => ref.read(weeklyActivityControllerProvider.notifier).load());
     Future.microtask(_syncPushToken);
   }
 
@@ -93,10 +105,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     await Future.wait([
       ref.read(currentUserControllerProvider.notifier).load(),
       ref.read(categoriesControllerProvider.notifier).load(),
+      ref.read(weeklyActivityControllerProvider.notifier).load(),
     ]);
     final String? userId = ref.read(currentUserControllerProvider).data?.id;
     if (userId != null) {
-      await ref.read(myStatsControllerProvider.notifier).load(userId);
+      await Future.wait([
+        ref.read(myStatsControllerProvider.notifier).load(userId),
+        ref.read(historyControllerProvider.notifier).load(),
+      ]);
     }
   }
 
@@ -174,6 +190,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               AppSpacing.xxs.vGap,
               for (final Widget section in _discoverSection(context))
                 FadeSlideIn(delay: const Duration(milliseconds: 120), child: section),
+              ...[
+                AppSpacing.md.vGap,
+                for (final Widget section in _enrichmentSection(context))
+                  FadeSlideIn(delay: const Duration(milliseconds: 180), child: section),
+              ],
             ],
           ),
         ),
@@ -187,10 +208,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// own hero card/buttons) stays fully usable either way.
   List<Widget> _playSection(BuildContext context) {
     final myStatsState = ref.watch(myStatsControllerProvider);
+    final weeklyActivityState = ref.watch(weeklyActivityControllerProvider);
     final PlayerStats? stats = myStatsState.data;
 
     return [
-      DuelHeroCard(streakDays: stats?.currentStreak ?? 0, onStartDuel: () => context.push(AppRoutes.duel)),
+      DuelHeroCard(
+        streakDays: stats?.currentStreak ?? 0,
+        weeklyActivity: weeklyActivityState.data?.days,
+        onStartDuel: () => context.push(AppRoutes.duel),
+      ),
       AppSpacing.md.vGap,
       myStatsState.hasError
           ? InlineRetryRow(onRetry: _reloadMyStats)
@@ -223,7 +249,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<Widget> _discoverSection(BuildContext context) {
     final categoriesState = ref.watch(categoriesControllerProvider);
     final List<QuizCategory> categories =
-        categoriesState.data?.map(QuizCategory.fromEntity).toList() ?? const [];
+        categoriesState.data?.map(QuizCategory.fromEntity).take(3).toList() ?? const [];
 
     return [
       categoriesState.hasError
@@ -242,11 +268,110 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
-      AppSpacing.md.vGap,
-      _DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover)),
     ];
   }
+
+  /// New section with "Continue Playing" (last history category),
+  /// "Closest Rival" (nearest friend in XP), a Discover shortcut, and
+  /// the top achievements.
+  List<Widget> _enrichmentSection(BuildContext context) {
+    final List<SessionHistoryEntry>? history = ref.watch(historyControllerProvider).entries;
+    final PlayerStats? stats = ref.watch(myStatsControllerProvider).data;
+    final friendsLeaderboard = ref.watch(_homeFriendsLeaderboardProvider);
+
+    final List<Widget> widgets = [];
+
+    if (history != null && history.isNotEmpty) {
+      final entry = history.first;
+      widgets.addAll([
+        ContinuePlayingCard(
+          entry: entry,
+          onTap: () {
+            final category = QuizCategory(
+              id: entry.categoryId,
+              name: entry.categoryName,
+              questionCount: 0,
+              icon: TablerIcons.category,
+              colorKey: CategoryColorKey.values.firstWhere(
+                (k) => k.name == entry.categoryColorKey,
+                orElse: () => CategoryColorKey.coral,
+              ),
+            );
+            context.push(
+              AppRoutes.quizSetup,
+              extra: (
+                category: category,
+                onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
+                  AppRoutes.quizIntro,
+                  extra: QuizLaunchArgs(category: category, questionCount: count),
+                ),
+              ),
+            );
+          },
+        ),
+        AppSpacing.sm.vGap,
+      ]);
+    }
+
+    if (friendsLeaderboard.hasValue) {
+      final data = friendsLeaderboard.value!;
+      final meXp = data.me.totalXp;
+      final ahead = data.entries.where((e) => !e.isMe && e.totalXp > meXp).toList()
+        ..sort((a, b) => a.totalXp.compareTo(b.totalXp));
+
+      if (ahead.isNotEmpty) {
+        final rival = ahead.first;
+        widgets.addAll([
+          RivalCard(
+            rival: LeaderboardEntry.fromEntity(rival),
+            xpGap: rival.totalXp - meXp,
+            onTap: () => context.push(AppRoutes.playerDetail, extra: {'userId': rival.userId}),
+          ),
+          AppSpacing.sm.vGap,
+        ]);
+      }
+    }
+
+    widgets.addAll([
+      _DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover)),
+    ]);
+
+    if (stats != null) {
+      widgets.addAll([
+        AppSpacing.lg.vGap,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                'Yutuqlaringiz',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.textStyles.titleLarge,
+              ),
+            ),
+            TextButton(onPressed: () => context.push(AppRoutes.achievements), child: const Text('Barchasi')),
+          ],
+        ),
+        AppSpacing.sm.vGap,
+        Row(
+          children: [
+            for (final a in allAchievements.take(4)) ...[
+              Expanded(child: AchievementBadge(achievement: a, unlocked: a.isUnlocked(stats))),
+              if (a != allAchievements.take(4).last) AppSpacing.sm.hGap,
+            ],
+          ],
+        ),
+      ]);
+    }
+
+    return widgets;
+  }
 }
+
+final _homeFriendsLeaderboardProvider = FutureProvider.autoDispose<LeaderboardData>((ref) {
+  return ref.watch(getLeaderboardUseCaseProvider).call(scope: LeaderboardScope.friends, limit: 50);
+});
 
 class _DiscoverFeedCard extends StatelessWidget {
   const _DiscoverFeedCard({required this.onTap});

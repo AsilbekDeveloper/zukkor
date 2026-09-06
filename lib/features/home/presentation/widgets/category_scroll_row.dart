@@ -23,20 +23,6 @@ class CategoryScrollRow extends StatelessWidget {
   final VoidCallback onSeeAll;
   final ValueChanged<QuizCategory> onCategoryTap;
 
-  /// Tile height driven by its CONTENT (icon + up to 2 text lines), not a
-  /// fixed guess - same reasoning as CategoryGridView's `_rowExtent`: a
-  /// hardcoded height overflows once text scale/fonts push the text
-  /// block taller than the guess.
-  double _tileHeight(BuildContext context) {
-    final TextScaler scaler = MediaQuery.textScalerOf(context);
-    final double nameLine = (scaler.scale(12) * 1.3).ceilToDouble();
-    final double countLine = (scaler.scale(10.5) * 1.2).ceilToDouble();
-    const double iconBlock = 40;
-    const double gap = AppSpacing.xs;
-    const double verticalPadding = AppSpacing.sm * 2;
-    return iconBlock + gap + nameLine + countLine + verticalPadding;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -57,17 +43,13 @@ class CategoryScrollRow extends StatelessWidget {
           ],
         ),
         AppSpacing.xs.vGap,
-        SizedBox(
-          height: _tileHeight(context),
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            separatorBuilder: (context, index) => AppSpacing.sm.hGap,
-            itemBuilder: (context, index) {
-              final QuizCategory category = categories[index];
-              return _CategoryTile(category: category, onTap: () => onCategoryTap(category));
-            },
-          ),
+        Row(
+          children: [
+            for (int i = 0; i < categories.length; i++) ...[
+              Expanded(child: _CategoryTile(category: categories[i], onTap: () => onCategoryTap(categories[i]))),
+              if (i < categories.length - 1) AppSpacing.sm.hGap,
+            ],
+          ],
         ),
       ],
     );
@@ -91,7 +73,6 @@ class _CategoryTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: AppRadius.mdAll,
           child: Container(
-            width: 92,
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
             decoration: BoxDecoration(
               borderRadius: AppRadius.mdAll,

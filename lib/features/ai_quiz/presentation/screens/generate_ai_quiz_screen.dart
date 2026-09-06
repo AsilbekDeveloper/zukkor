@@ -336,15 +336,42 @@ class _GeneratingDialogState extends ConsumerState<_GeneratingDialog> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      child: AlertDialog(
-        title: Text(context.t.aiQuiz.generatingTitle),
-        content: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.5)),
-            AppSpacing.md.hGap,
-            Expanded(child: Text(context.t.aiQuiz.generatingSubtitle)),
-          ],
+      child: Dialog(
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgAll),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 64,
+                height: 64,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 64,
+                      height: 64,
+                      child: CircularProgressIndicator(strokeWidth: 3, color: context.colors.coral),
+                    ),
+                    Icon(TablerIcons.sparkle, color: context.colors.coral, size: 24),
+                  ],
+                ),
+              ),
+              AppSpacing.lg.vGap,
+              Text(
+                context.t.aiQuiz.generatingTitle,
+                textAlign: TextAlign.center,
+                style: context.textStyles.titleLarge,
+              ),
+              AppSpacing.xs.vGap,
+              Text(
+                context.t.aiQuiz.generatingSubtitle,
+                textAlign: TextAlign.center,
+                style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+              ),
+            ],
+          ),
         ),
       ),
     );

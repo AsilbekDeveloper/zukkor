@@ -43,6 +43,7 @@ abstract final class ApiEndpoints {
 
   // Game history (2026-07-18'da qo'shildi).
   static String history({int limit = 50, int offset = 0}) => '/history?limit=$limit&offset=$offset';
+  static const String weeklyActivity = '/history/weekly-activity';
 
   // Friends (2026-07-18'da qo'shildi).
   static const String friends = '/friends';

@@ -23,7 +23,7 @@ class StatsStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.xxs),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.xxs),
       decoration: BoxDecoration(
         color: context.colors.card,
         borderRadius: AppRadius.mdAll,
@@ -78,21 +78,18 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: iconColor),
-            const SizedBox(width: 4),
-            AnimatedCounter(
-              value: targetValue,
-              formatter: formatter,
-              style: context.textStyles.titleMedium?.copyWith(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-          ],
+        Icon(icon, size: 15, color: iconColor),
+        const SizedBox(width: 6),
+        AnimatedCounter(
+          value: targetValue,
+          formatter: formatter,
+          style: context.textStyles.titleMedium?.copyWith(fontSize: 15, fontWeight: FontWeight.w700),
         ),
-        Text(label, style: context.textStyles.labelSmall),
+        const SizedBox(width: 4),
+        Flexible(child: Text(label, style: context.textStyles.labelSmall, overflow: TextOverflow.ellipsis)),
       ],
     );
   }

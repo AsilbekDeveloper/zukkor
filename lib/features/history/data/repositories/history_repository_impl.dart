@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/failure_mapper.dart';
 import '../../domain/entities/session_history_entry.dart';
+import '../../domain/entities/weekly_activity.dart';
 import '../../domain/repositories/history_repository.dart';
 import '../../domain/usecases/get_history_use_case.dart';
 import '../datasources/history_remote_data_source.dart';
@@ -18,6 +19,15 @@ class HistoryRepositoryImpl implements HistoryRepository {
     try {
       final page = await _remoteDataSource.getHistory(limit: limit, offset: offset);
       return (entries: page.entries.map((model) => model.toEntity()).toList(), hasMore: page.hasMore);
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<WeeklyActivity> getWeeklyActivity() async {
+    try {
+      return (await _remoteDataSource.getWeeklyActivity()).toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }

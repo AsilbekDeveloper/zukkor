@@ -26,6 +26,7 @@ import '../../features/friends/presentation/screens/friends_screen.dart';
 import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/introduction/presentation/screens/introduction_screen.dart';
+import '../../features/leaderboard/presentation/screens/achievements_screen.dart';
 import '../../features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import '../../features/leaderboard/presentation/screens/leaderboard_screen.dart';
 import '../../features/lobby/presentation/controllers/lobby_controller.dart';
@@ -325,6 +326,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.history,
         builder: (context, state) => const HistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.achievements,
+        builder: (context, state) => const AchievementsScreen(),
       ),
       GoRoute(
         path: AppRoutes.duelWaiting,

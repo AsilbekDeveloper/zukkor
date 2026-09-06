@@ -14,6 +14,8 @@ class PlayerStatsModel {
     required this.longestStreak,
     required this.gamesPlayed,
     required this.winRatePercent,
+    required this.totalWins,
+    required this.bestRankAchieved,
   });
 
   factory PlayerStatsModel.fromJson(Map<String, dynamic> json) => PlayerStatsModel(
@@ -29,6 +31,8 @@ class PlayerStatsModel {
         longestStreak: json['longest_streak'] as int,
         gamesPlayed: json['games_played'] as int,
         winRatePercent: json['win_rate_percent'] as int,
+        totalWins: json['total_wins'] as int,
+        bestRankAchieved: json['best_rank_achieved'] as int,
       );
 
   final String userId;
@@ -43,6 +47,8 @@ class PlayerStatsModel {
   final int longestStreak;
   final int gamesPlayed;
   final int winRatePercent;
+  final int totalWins;
+  final int bestRankAchieved;
 
   PlayerStats toEntity() => PlayerStats(
         userId: userId,
@@ -57,5 +63,7 @@ class PlayerStatsModel {
         longestStreak: longestStreak,
         gamesPlayed: gamesPlayed,
         winRatePercent: winRatePercent,
+        totalWins: totalWins,
+        bestRankAchieved: bestRankAchieved,
       );
 }

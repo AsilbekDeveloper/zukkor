@@ -20,6 +20,7 @@ import 'package:zukkor/features/friends/domain/repositories/friends_repository.d
 import 'package:zukkor/features/friends/presentation/screens/friends_screen.dart';
 import 'package:zukkor/features/history/data/repositories/history_repository_impl.dart';
 import 'package:zukkor/features/history/domain/entities/session_history_entry.dart';
+import 'package:zukkor/features/history/domain/entities/weekly_activity.dart';
 import 'package:zukkor/features/history/domain/repositories/history_repository.dart';
 import 'package:zukkor/features/history/presentation/screens/history_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
@@ -177,6 +178,8 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         longestStreak: 12,
         gamesPlayed: 184,
         winRatePercent: 68,
+        totalWins: 0,
+        bestRankAchieved: 0,
       );
 }
 
@@ -201,6 +204,9 @@ class _FakeHistoryRepository implements HistoryRepository {
           mode: HistorySessionMode.solo,
         ),
       ]);
+
+  @override
+  Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(days: []);
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Friends tab'i

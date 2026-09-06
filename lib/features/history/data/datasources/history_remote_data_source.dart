@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/session_history_entry_model.dart';
+import '../models/weekly_activity_model.dart';
 
 /// `/history` endpoint'iga xom (Dio) so'rov. Xatolikni ushlamaydi —
 /// [DioException] to'g'ridan-to'g'ri tashqariga chiqadi, uni [Failure]ga
@@ -23,6 +24,11 @@ class HistoryRemoteDataSource {
         .map((json) => SessionHistoryEntryModel.fromJson(json as Map<String, dynamic>))
         .toList();
     return (entries: entries, hasMore: data['has_more'] as bool? ?? false);
+  }
+
+  Future<WeeklyActivityModel> getWeeklyActivity() async {
+    final Response<dynamic> response = await _dio.get(ApiEndpoints.weeklyActivity);
+    return WeeklyActivityModel.fromJson(response.data as Map<String, dynamic>);
   }
 }
 
