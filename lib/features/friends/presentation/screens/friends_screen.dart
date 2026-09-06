@@ -11,6 +11,7 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/section_head.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -55,9 +56,13 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   void initState() {
     super.initState();
     if (ref.read(friendsControllerProvider).data == null) {
-      Future.microtask(() => ref.read(friendsControllerProvider.notifier).load());
+      Future.microtask(
+        () => ref.read(friendsControllerProvider.notifier).load(),
+      );
     }
-    Future.microtask(() => ref.read(friendRequestsControllerProvider.notifier).load());
+    Future.microtask(
+      () => ref.read(friendRequestsControllerProvider.notifier).load(),
+    );
   }
 
   @override
@@ -70,7 +75,10 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
   void _openFriendDetail(BuildContext context, FriendEntry friend) {
     final String? id = friend.id;
     if (id == null) return;
-    context.push(AppRoutes.playerDetail, extra: {'userId': id, 'relation': 'friend'});
+    context.push(
+      AppRoutes.playerDetail,
+      extra: {'userId': id, 'relation': 'friend'},
+    );
   }
 
   void _openDiscoveredDetail(DiscoverableUser user) {
@@ -78,7 +86,8 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
       AppRoutes.playerDetail,
       extra: {
         'userId': user.id,
-        if (user.requestPending || _addedIds.contains(user.id)) 'requestSent': true,
+        if (user.requestPending || _addedIds.contains(user.id))
+          'requestSent': true,
       },
     );
   }
@@ -99,7 +108,9 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     if (_sendingIds.contains(user.id)) return;
     setState(() => _sendingIds.add(user.id));
     try {
-      await ref.read(sendFriendRequestControllerProvider.notifier).sendRequest(user.id);
+      await ref
+          .read(sendFriendRequestControllerProvider.notifier)
+          .sendRequest(user.id);
       if (!mounted) return;
       setState(() => _addedIds.add(user.id));
     } on Failure catch (e) {
@@ -117,9 +128,11 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     if (_query.isEmpty) return friends;
     final String needle = _query.toLowerCase();
     return friends
-        .where((f) =>
-            f.name.toLowerCase().contains(needle) ||
-            (f.username?.toLowerCase().contains(needle) ?? false))
+        .where(
+          (f) =>
+              f.name.toLowerCase().contains(needle) ||
+              (f.username?.toLowerCase().contains(needle) ?? false),
+        )
         .toList();
   }
 
@@ -128,58 +141,98 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
     final double hPad = context.screenHPad;
     final bool isSearching = _query.isNotEmpty;
     final friendsState = ref.watch(friendsControllerProvider);
-    final List<FriendEntry>? allFriends = friendsState.data?.map(FriendEntry.fromEntity).toList();
-    final List<FriendEntry> matchedFriends = allFriends == null ? const [] : _filteredFriends(allFriends);
-    final int pendingRequestCount = ref.watch(friendRequestsControllerProvider).data?.length ?? 0;
+    final List<FriendEntry>? allFriends = friendsState.data
+        ?.map(FriendEntry.fromEntity)
+        .toList();
+    final List<FriendEntry> matchedFriends = allFriends == null
+        ? const []
+        : _filteredFriends(allFriends);
+    final int pendingRequestCount =
+        ref.watch(friendRequestsControllerProvider).data?.length ?? 0;
 
-    final List<DiscoveredUser>? searchResults = isSearching ? ref.watch(userSearchControllerProvider) : null;
-    final List<DiscoverableUser> discovered =
-        (searchResults ?? const []).map(DiscoverableUser.fromEntity).toList();
+    final List<DiscoveredUser>? searchResults = isSearching
+        ? ref.watch(userSearchControllerProvider)
+        : null;
+    final List<DiscoverableUser> discovered = (searchResults ?? const [])
+        .map(DiscoverableUser.fromEntity)
+        .toList();
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
         child: friendsState.hasError
-            ? ErrorRetryView(onRetry: () => ref.read(friendsControllerProvider.notifier).load())
+            ? ErrorRetryView(
+                onRetry: () =>
+                    ref.read(friendsControllerProvider.notifier).load(),
+              )
             : allFriends == null
             ? Padding(
-                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xl, hPad, AppSpacing.lg),
+                padding: EdgeInsets.fromLTRB(
+                  hPad,
+                  AppSpacing.xl,
+                  hPad,
+                  AppSpacing.lg,
+                ),
                 child: const ShimmerListSkeleton(trailingWidth: 36),
               )
             : RefreshIndicator(
-                onRefresh: () => ref.read(friendsControllerProvider.notifier).load(),
+                onRefresh: () =>
+                    ref.read(friendsControllerProvider.notifier).load(),
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+                  padding: EdgeInsets.fromLTRB(
+                    hPad,
+                    AppSpacing.xs,
+                    hPad,
+                    AppSpacing.lg,
+                  ),
                   children: [
-                    FriendsHeader(
-                      onRequestsTap: () => context.push(AppRoutes.friendRequests),
-                      pendingRequestCount: pendingRequestCount,
+                    FadeSlideIn(
+                      child: FriendsHeader(
+                        onRequestsTap: () =>
+                            context.push(AppRoutes.friendRequests),
+                        pendingRequestCount: pendingRequestCount,
+                      ),
                     ),
                     AppSpacing.lg.vGap,
-                    FriendsSearchBar(
-                      placeholder: context.t.friends.searchPlaceholder,
-                      controller: _searchController,
-                      onChanged: _onQueryChanged,
+                    FadeSlideIn(
+                      delay: const Duration(milliseconds: 60),
+                      child: FriendsSearchBar(
+                        placeholder: context.t.friends.searchPlaceholder,
+                        controller: _searchController,
+                        onChanged: _onQueryChanged,
+                      ),
                     ),
                     if (!isSearching) ...[
                       AppSpacing.md.vGap,
-                      CompactInviteCard(
-                        code: _mockInviteCode,
-                        onShareTap: () => context.showSnack(context.t.bottomNav.comingSoon),
+                      FadeSlideIn(
+                        delay: const Duration(milliseconds: 120),
+                        child: CompactInviteCard(
+                          code: _mockInviteCode,
+                          onShareTap: () =>
+                              context.showSnack(context.t.bottomNav.comingSoon),
+                        ),
                       ),
                     ],
                     AppSpacing.lg.vGap,
                     if (matchedFriends.isNotEmpty) ...[
-                      SectionHead(
-                        title: context.t.friends.allSection,
-                        trailing: isSearching ? null : '${allFriends.length}',
+                      FadeSlideIn(
+                        delay: const Duration(milliseconds: 180),
+                        child: SectionHead(
+                          title: context.t.friends.allSection,
+                          trailing: isSearching ? null : '${allFriends.length}',
+                        ),
                       ),
                       AppSpacing.sm.vGap,
-                      FriendList(
-                        entries: matchedFriends,
-                        onDuelTap: (friend) => context.push(AppRoutes.categories, extra: friend),
-                        onRowTap: (friend) => _openFriendDetail(context, friend),
+                      FadeSlideIn(
+                        delay: const Duration(milliseconds: 180),
+                        child: FriendList(
+                          entries: matchedFriends,
+                          onDuelTap: (friend) =>
+                              context.push(AppRoutes.categories, extra: friend),
+                          onRowTap: (friend) =>
+                              _openFriendDetail(context, friend),
+                        ),
                       ),
                     ],
                     if (isSearching) ...[
@@ -190,11 +243,15 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                         const ShimmerListSkeleton(count: 3, trailingWidth: 70)
                       else if (discovered.isEmpty)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.lg,
+                          ),
                           child: Center(
                             child: Text(
                               context.t.addFriend.noUsersFound,
-                              style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                              style: context.textStyles.bodySmall?.copyWith(
+                                color: context.colors.muted,
+                              ),
                             ),
                           ),
                         )
@@ -209,11 +266,15 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                     ],
                     if (!isSearching && matchedFriends.isEmpty)
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSpacing.lg,
+                        ),
                         child: Center(
                           child: Text(
                             context.t.friends.noneFound,
-                            style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                            style: context.textStyles.bodySmall?.copyWith(
+                              color: context.colors.muted,
+                            ),
                           ),
                         ),
                       ),

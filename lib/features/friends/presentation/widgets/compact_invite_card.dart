@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -5,6 +7,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// Compact single-row taklif kodi + ulashish — [InviteCodeCard]ning
@@ -12,7 +15,11 @@ import '../../../../i18n/strings.g.dart';
 /// [InviteCodeCard]ning o'zi Lobby ekranida ham ishlatilgani uchun
 /// tegilmaydi. Qatorning o'ziga bosilsa kod clipboard'ga nusxalanadi.
 class CompactInviteCard extends StatelessWidget {
-  const CompactInviteCard({required this.code, required this.onShareTap, super.key});
+  const CompactInviteCard({
+    required this.code,
+    required this.onShareTap,
+    super.key,
+  });
 
   final String code;
   final VoidCallback onShareTap;
@@ -22,42 +29,58 @@ class CompactInviteCard extends StatelessWidget {
   ];
 
   Future<void> _copyCode(BuildContext context) async {
+    unawaited(HapticFeedback.lightImpact());
     await Clipboard.setData(ClipboardData(text: code));
     if (context.mounted) context.showSnack(context.t.addFriend.codeCopied);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.surfaceDark,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: () => _copyCode(context),
+    return PressableScale(
+      child: Material(
+        color: context.colors.surfaceDark,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-          decoration: const BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: _shadow),
-          child: Row(
-            children: [
-              Icon(TablerIcons.ticket, size: 18, color: Colors.white.withValues(alpha: 0.7)),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Text(
-                  code,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontFamily: 'PlusJakartaSans',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    letterSpacing: 1.5,
-                    color: Colors.white,
+        child: InkWell(
+          onTap: () => _copyCode(context),
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm + 2,
+            ),
+            decoration: const BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              boxShadow: _shadow,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  TablerIcons.ticket,
+                  size: 18,
+                  color: Colors.white.withValues(alpha: 0.7),
+                ),
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Text(
+                    code,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: 'PlusJakartaSans',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      letterSpacing: 1.5,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              AppSpacing.sm.hGap,
-              _ShareIconButton(onTap: onShareTap, semanticLabel: context.t.addFriend.shareLink),
-            ],
+                AppSpacing.sm.hGap,
+                _ShareIconButton(
+                  onTap: onShareTap,
+                  semanticLabel: context.t.addFriend.shareLink,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -73,15 +96,25 @@ class _ShareIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white.withValues(alpha: 0.14),
-      shape: const CircleBorder(),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          child: Icon(TablerIcons.share3, size: 16, color: Colors.white, semanticLabel: semanticLabel),
+    return PressableScale(
+      child: Material(
+        color: Colors.white.withValues(alpha: 0.14),
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          customBorder: const CircleBorder(),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: Icon(
+              TablerIcons.share3,
+              size: 16,
+              color: Colors.white,
+              semanticLabel: semanticLabel,
+            ),
+          ),
         ),
       ),
     );

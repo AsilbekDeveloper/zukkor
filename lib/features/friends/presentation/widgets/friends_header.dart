@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// "Friends" title + requests icon button — finding and adding friends
@@ -55,33 +57,48 @@ class _HeaderIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.smAll,
-        side: BorderSide(color: context.colors.line),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.smAll,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              Center(child: Icon(icon, color: context.colors.ink, size: 20, semanticLabel: semanticLabel)),
-              if (badgeCount > 0)
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: Container(
-                    width: 9,
-                    height: 9,
-                    decoration: BoxDecoration(shape: BoxShape.circle, color: context.colors.coral),
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.smAll,
+          side: BorderSide(color: context.colors.line),
+        ),
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.smAll,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Center(
+                  child: Icon(
+                    icon,
+                    color: context.colors.ink,
+                    size: 20,
+                    semanticLabel: semanticLabel,
                   ),
                 ),
-            ],
+                if (badgeCount > 0)
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: Container(
+                      width: 9,
+                      height: 9,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: context.colors.coral,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
