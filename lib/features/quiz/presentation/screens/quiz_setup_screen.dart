@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -11,7 +12,9 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/quiz_category.dart';
 
@@ -27,10 +30,15 @@ import '../models/quiz_category.dart';
 /// Intro, push Duel Waiting, or call LobbyController.startGame), keeping
 /// this screen ignorant of those other features' types.
 class QuizSetupScreen extends ConsumerStatefulWidget {
-  const QuizSetupScreen({required this.category, required this.onStart, super.key});
+  const QuizSetupScreen({
+    required this.category,
+    required this.onStart,
+    super.key,
+  });
 
   final QuizCategory category;
-  final void Function(BuildContext context, WidgetRef ref, int questionCount) onStart;
+  final void Function(BuildContext context, WidgetRef ref, int questionCount)
+  onStart;
 
   @override
   ConsumerState<QuizSetupScreen> createState() => _QuizSetupScreenState();
@@ -44,13 +52,20 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
 
   late final int _available = widget.category.questionCount;
   late final bool _hasQuestions = _available > 0;
-  late final int _maxCustom = _hasQuestions ? _available.clamp(_minCustom, _hardMax) : _minCustom;
-  late final List<int> _availableQuickOptions = _quickOptions.where((v) => v <= _available).toList();
+  late final int _maxCustom = _hasQuestions
+      ? _available.clamp(_minCustom, _hardMax)
+      : _minCustom;
+  late final List<int> _availableQuickOptions = _quickOptions
+      .where((v) => v <= _available)
+      .toList();
 
-  late int _selectedCount = _hasQuestions ? (_defaultCount <= _maxCustom ? _defaultCount : _maxCustom) : _minCustom;
+  late int _selectedCount = _hasQuestions
+      ? (_defaultCount <= _maxCustom ? _defaultCount : _maxCustom)
+      : _minCustom;
 
   void _selectQuick(int count) {
     ref.playSound(AppSound.tap);
+    HapticFeedback.lightImpact();
     setState(() => _selectedCount = count);
   }
 
@@ -58,6 +73,7 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
     final int next = (_selectedCount + delta).clamp(_minCustom, _maxCustom);
     if (next == _selectedCount) return;
     ref.playSound(AppSound.tap);
+    HapticFeedback.lightImpact();
     setState(() => _selectedCount = next);
   }
 
@@ -75,20 +91,38 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.quizSetup.title, onBack: () => context.pop()),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.quizSetup.title,
+                  onBack: () => context.pop(),
+                ),
+              ),
               AppSpacing.sm.vGap,
-              Text(
-                context.t.quizSetup.subtitle,
-                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Text(
+                  context.t.quizSetup.subtitle,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: context.colors.muted,
+                  ),
+                ),
               ),
               Expanded(
                 child: Center(
-                  child: _hasQuestions ? _buildPicker(context) : const _NoQuestionsState(),
+                  child: FadeSlideIn(
+                    delay: const Duration(milliseconds: 120),
+                    child: _hasQuestions
+                        ? _buildPicker(context)
+                        : const _NoQuestionsState(),
+                  ),
                 ),
               ),
-              AppButton.primary(
-                label: context.t.quizSetup.startButton,
-                onPressed: _hasQuestions ? _start : null,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 180),
+                child: AppButton.primary(
+                  label: context.t.quizSetup.startButton,
+                  onPressed: _hasQuestions ? _start : null,
+                ),
               ),
               AppSpacing.lg.vGap,
             ],
@@ -106,7 +140,9 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
         if (_availableQuickOptions.isNotEmpty) ...[
           PillSegmentControl<int>(
             values: _availableQuickOptions,
-            selected: _availableQuickOptions.contains(_selectedCount) ? _selectedCount : -1,
+            selected: _availableQuickOptions.contains(_selectedCount)
+                ? _selectedCount
+                : -1,
             labelBuilder: (value) => '$value',
             onChanged: _selectQuick,
           ),
@@ -129,7 +165,9 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
         Text(
           context.t.quizSetup.availableCount(count: _available),
           textAlign: TextAlign.center,
-          style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+          style: context.textStyles.labelSmall?.copyWith(
+            color: context.colors.muted,
+          ),
         ),
       ],
     );
@@ -153,7 +191,9 @@ class _NoQuestionsState extends StatelessWidget {
         Text(
           context.t.quizSetup.noQuestionsAvailable,
           textAlign: TextAlign.center,
-          style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
+          style: context.textStyles.bodyMedium?.copyWith(
+            color: context.colors.muted,
+          ),
         ),
       ],
     );
@@ -164,7 +204,11 @@ class _NoQuestionsState extends StatelessWidget {
 /// shu oraliqni qamrab oladi, lekin ekranning yarmini egallamaydi va tinch
 /// holatda bo'sh ko'rinmaydi.
 class _CountStepper extends StatelessWidget {
-  const _CountStepper({required this.count, required this.onDecrement, required this.onIncrement});
+  const _CountStepper({
+    required this.count,
+    required this.onDecrement,
+    required this.onIncrement,
+  });
 
   final int count;
   final VoidCallback? onDecrement;
@@ -183,7 +227,11 @@ class _CountStepper extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _StepButton(icon: TablerIcons.minus, onTap: onDecrement, semanticLabel: context.t.quizSetup.decrement),
+          _StepButton(
+            icon: TablerIcons.minus,
+            onTap: onDecrement,
+            semanticLabel: context.t.quizSetup.decrement,
+          ),
           SizedBox(
             width: 64,
             child: Text(
@@ -192,7 +240,11 @@ class _CountStepper extends StatelessWidget {
               style: AppTextStyles.headline.copyWith(color: context.colors.ink),
             ),
           ),
-          _StepButton(icon: TablerIcons.plus, onTap: onIncrement, semanticLabel: context.t.quizSetup.increment),
+          _StepButton(
+            icon: TablerIcons.plus,
+            onTap: onIncrement,
+            semanticLabel: context.t.quizSetup.increment,
+          ),
         ],
       ),
     );
@@ -200,7 +252,11 @@ class _CountStepper extends StatelessWidget {
 }
 
 class _StepButton extends StatelessWidget {
-  const _StepButton({required this.icon, required this.onTap, required this.semanticLabel});
+  const _StepButton({
+    required this.icon,
+    required this.onTap,
+    required this.semanticLabel,
+  });
 
   final IconData icon;
   final VoidCallback? onTap;
@@ -209,15 +265,23 @@ class _StepButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool enabled = onTap != null;
-    return Material(
-      color: enabled ? context.colors.coral : context.colors.line,
-      shape: const CircleBorder(),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          child: Icon(icon, size: 18, color: enabled ? Colors.white : context.colors.muted, semanticLabel: semanticLabel),
+    return PressableScale(
+      enabled: enabled,
+      child: Material(
+        color: enabled ? context.colors.coral : context.colors.line,
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: Icon(
+              icon,
+              size: 18,
+              color: enabled ? Colors.white : context.colors.muted,
+              semanticLabel: semanticLabel,
+            ),
+          ),
         ),
       ),
     );

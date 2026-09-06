@@ -5,6 +5,7 @@ import '../audio/app_sound.dart';
 import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
+import 'pressable_scale.dart';
 
 /// A pill-shaped, N-way segmented control — mirrors the prototype's
 /// `.segment` / `.seg-btn`. Generic over any value type so both the
@@ -66,26 +67,31 @@ class _SegmentButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: isActive ? context.colors.surfaceDark : Colors.transparent,
-      borderRadius: BorderRadius.circular(999),
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: isActive ? context.colors.surfaceDark : Colors.transparent,
         borderRadius: BorderRadius.circular(999),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm - 1, horizontal: AppSpacing.xxs),
-          // Shrinks instead of ellipsizing — each segment is a narrow
-          // fraction of the pill's width, and some locales' label is
-          // longer than others (e.g. History's 4-way filter).
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              style: context.textStyles.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: isActive ? Colors.white : context.colors.muted,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm - 1,
+              horizontal: AppSpacing.xxs,
+            ),
+            // Shrinks instead of ellipsizing — each segment is a narrow
+            // fraction of the pill's width, and some locales' label is
+            // longer than others (e.g. History's 4-way filter).
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                style: context.textStyles.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isActive ? Colors.white : context.colors.muted,
+                ),
               ),
             ),
           ),
