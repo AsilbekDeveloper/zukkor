@@ -41,7 +41,9 @@
     "createQuizTitle": "Создайте свой квиз",
     "createQuizSubtitle": "Составьте вопросы и бросьте вызов друзьям",
     "submitQuestionTitle": "Добавить вопрос в систему",
-    "submitQuestionSubtitle": "Предложите свой вопрос, AI проверит его"
+    "submitQuestionSubtitle": "Предложите свой вопрос, AI проверит его",
+    "rivalAheadMessage": "$name опережает вас на $xp XP",
+    "rivalCatchUpSubtitle": "Одной дуэли достаточно, чтобы догнать!"
   },
   "categories": {
     "title": "Выберите категорию"

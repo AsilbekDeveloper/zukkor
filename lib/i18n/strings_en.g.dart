@@ -191,6 +191,12 @@ class Translations$home$en {
 
 	/// en: 'Suggest your own question, AI reviews it'
 	String get submitQuestionSubtitle => 'Suggest your own question, AI reviews it';
+
+	/// en: '$name is $xp XP ahead of you'
+	String rivalAheadMessage({required Object name, required Object xp}) => '${name} is ${xp} XP ahead of you';
+
+	/// en: 'One duel is enough to catch up!'
+	String get rivalCatchUpSubtitle => 'One duel is enough to catch up!';
 }
 
 // Path: categories
@@ -1939,6 +1945,8 @@ extension on Translations {
 			'home.createQuizSubtitle' => 'Write your questions and challenge your friends',
 			'home.submitQuestionTitle' => 'Add a question to the system',
 			'home.submitQuestionSubtitle' => 'Suggest your own question, AI reviews it',
+			'home.rivalAheadMessage' => ({required Object name, required Object xp}) => '${name} is ${xp} XP ahead of you',
+			'home.rivalCatchUpSubtitle' => 'One duel is enough to catch up!',
 			'categories.title' => 'Choose a category',
 			'leaderboard.greeting' => 'Leaderboard',
 			'leaderboard.title' => 'Who\'s the best?',

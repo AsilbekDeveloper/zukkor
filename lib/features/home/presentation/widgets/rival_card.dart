@@ -5,6 +5,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../i18n/strings.g.dart';
 import '../../../leaderboard/presentation/models/leaderboard_entry.dart';
 
 class RivalCard extends StatelessWidget {
@@ -38,18 +39,13 @@ class RivalCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: context.textStyles.bodySmall?.copyWith(color: context.colors.ink),
-                        children: [
-                          TextSpan(text: '${rival.name} ', style: const TextStyle(fontWeight: FontWeight.w700)),
-                          const TextSpan(text: 'sizdan '),
-                          TextSpan(text: '${formatThousands(xpGap)} XP ', style: TextStyle(fontWeight: FontWeight.w700, color: context.colors.blue)),
-                          const TextSpan(text: 'oldinda'),
-                        ],
-                      ),
+                    Text(
+                      context.t.home.rivalAheadMessage(name: rival.name, xp: formatThousands(xpGap)),
+                      style: context.textStyles.bodySmall?.copyWith(color: context.colors.ink, fontWeight: FontWeight.w600),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    Text('Quvib yetish uchun bitta duel yetarli!',
+                    Text(context.t.home.rivalCatchUpSubtitle,
                         style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted)),
                   ],
                 ),

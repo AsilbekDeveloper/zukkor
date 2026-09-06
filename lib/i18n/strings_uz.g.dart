@@ -138,6 +138,8 @@ class _Translations$home$uz implements Translations$home$en {
 	@override String get createQuizSubtitle => 'Savollaringizni tuzing va do\'stlaringiz bilan bellashing';
 	@override String get submitQuestionTitle => 'Tizimga savol qo\'shish';
 	@override String get submitQuestionSubtitle => 'O\'z savolingizni taklif qiling, AI tekshiradi';
+	@override String rivalAheadMessage({required Object name, required Object xp}) => '${name} sizdan ${xp} XP oldinda';
+	@override String get rivalCatchUpSubtitle => 'Quvib yetish uchun bitta duel yetarli!';
 }
 
 // Path: categories
@@ -1026,6 +1028,8 @@ extension on TranslationsUz {
 			'home.createQuizSubtitle' => 'Savollaringizni tuzing va do\'stlaringiz bilan bellashing',
 			'home.submitQuestionTitle' => 'Tizimga savol qo\'shish',
 			'home.submitQuestionSubtitle' => 'O\'z savolingizni taklif qiling, AI tekshiradi',
+			'home.rivalAheadMessage' => ({required Object name, required Object xp}) => '${name} sizdan ${xp} XP oldinda',
+			'home.rivalCatchUpSubtitle' => 'Quvib yetish uchun bitta duel yetarli!',
 			'categories.title' => 'Kategoriya tanlang',
 			'leaderboard.greeting' => 'Reyting',
 			'leaderboard.title' => 'Kim eng zo\'r?',

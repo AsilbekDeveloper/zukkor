@@ -26,7 +26,9 @@
     "createQuizTitle": "Create your own quiz",
     "createQuizSubtitle": "Write your questions and challenge your friends",
     "submitQuestionTitle": "Add a question to the system",
-    "submitQuestionSubtitle": "Suggest your own question, AI reviews it"
+    "submitQuestionSubtitle": "Suggest your own question, AI reviews it",
+    "rivalAheadMessage": "$name is $xp XP ahead of you",
+    "rivalCatchUpSubtitle": "One duel is enough to catch up!"
   },
   "categories": {
     "title": "Choose a category"

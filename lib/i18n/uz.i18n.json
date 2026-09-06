@@ -26,7 +26,9 @@
     "createQuizTitle": "O'z quizingizni yarating",
     "createQuizSubtitle": "Savollaringizni tuzing va do'stlaringiz bilan bellashing",
     "submitQuestionTitle": "Tizimga savol qo'shish",
-    "submitQuestionSubtitle": "O'z savolingizni taklif qiling, AI tekshiradi"
+    "submitQuestionSubtitle": "O'z savolingizni taklif qiling, AI tekshiradi",
+    "rivalAheadMessage": "$name sizdan $xp XP oldinda",
+    "rivalCatchUpSubtitle": "Quvib yetish uchun bitta duel yetarli!"
   },
   "categories": {
     "title": "Kategoriya tanlang"

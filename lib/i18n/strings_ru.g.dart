@@ -144,6 +144,8 @@ class _Translations$home$ru implements Translations$home$en {
 	@override String get createQuizSubtitle => 'Составьте вопросы и бросьте вызов друзьям';
 	@override String get submitQuestionTitle => 'Добавить вопрос в систему';
 	@override String get submitQuestionSubtitle => 'Предложите свой вопрос, AI проверит его';
+	@override String rivalAheadMessage({required Object name, required Object xp}) => '${name} опережает вас на ${xp} XP';
+	@override String get rivalCatchUpSubtitle => 'Одной дуэли достаточно, чтобы догнать!';
 }
 
 // Path: categories
@@ -1032,6 +1034,8 @@ extension on TranslationsRu {
 			'home.createQuizSubtitle' => 'Составьте вопросы и бросьте вызов друзьям',
 			'home.submitQuestionTitle' => 'Добавить вопрос в систему',
 			'home.submitQuestionSubtitle' => 'Предложите свой вопрос, AI проверит его',
+			'home.rivalAheadMessage' => ({required Object name, required Object xp}) => '${name} опережает вас на ${xp} XP',
+			'home.rivalCatchUpSubtitle' => 'Одной дуэли достаточно, чтобы догнать!',
 			'categories.title' => 'Выберите категорию',
 			'leaderboard.greeting' => 'Рейтинг',
 			'leaderboard.title' => 'Кто лучший?',
