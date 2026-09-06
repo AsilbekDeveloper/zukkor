@@ -168,8 +168,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               FadeSlideIn(
                 child: HomeHeader(
-                  name: user.displayName,
-                  username: user?.username,
                   initials: user.initials,
                   avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
                   avatarImagePath: user?.avatarImagePath,

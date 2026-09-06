@@ -8,28 +8,26 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/animated_counter.dart';
 import '../../../../core/widgets/user_avatar.dart';
 
-/// Avatar + ism/username on the left, bell on the right; Coin/Diamond
-/// hamyon chiplari ikkinchi qatorda — 2026-09-06, "Xayrli tong" salomi
-/// olib tashlandi (foydalanuvchi so'rovi bo'yicha, ism/username yetarli),
-/// hamyon ikkinchi qatorga chiqarildi (aks holda bitta qatorda ism +
-/// ikkita valyuta chipi + qo'ng'iroq torlik qilib, uzun ismlar kesilib
-/// qolishi mumkin edi - shu bilan ism ustuni to'liq kenglikni oladi).
+/// Avatar + "Zukkor" wordmark on the left, Coin/Diamond hamyon chiplari va
+/// qo'ng'iroq o'ng tomonda - hammasi BITTA qatorda (app bar kabi, doim
+/// bir xil balandlikda). 2026-09-06: ism/username ko'rsatilgan versiya
+/// foydalanuvchiga yoqmadi - qator ikkiga bo'linib pastga "tushib
+/// ketgani" (kutilmagan balandlik o'zgarishi) noxush tuyuldi. Ism o'rniga
+/// qisqa, sobit kenglikdagi brend yozuvi ("Zukkor") ishlatiladi - bu
+/// o'zgaruvchan uzunlikdagi ism bilan bog'liq joylashuv muammosini ham
+/// tubdan hal qiladi (sobit matn hech qachon kesilib qolmaydi).
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
-    required this.name,
     required this.initials,
     required this.avatarColor,
     required this.hasUnreadNotifications,
     required this.onNotificationsTap,
     required this.coinBalance,
     required this.diamondBalance,
-    this.username,
     this.avatarImagePath,
     super.key,
   });
 
-  final String name;
-  final String? username;
   final String initials;
   final AvatarColorOption avatarColor;
   final String? avatarImagePath;
@@ -40,66 +38,47 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: context.colors.shadowCoral),
-              child: UserAvatar(
-                size: 48,
-                initials: initials,
-                avatarImagePath: avatarImagePath,
-                backgroundColor: avatarColor.resolve(context),
-                borderRadius: AppRadius.smAll,
-                fontSize: 15.5,
-              ),
-            ),
-            AppSpacing.sm.hGap,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    name,
-                    style: context.textStyles.titleLarge,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (username != null && username!.isNotEmpty)
-                    Text(
-                      '@$username',
-                      style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                ],
-              ),
-            ),
-            AppSpacing.sm.hGap,
-            _NotificationButton(
-              hasUnread: hasUnreadNotifications,
-              onTap: onNotificationsTap,
-            ),
-          ],
+        Container(
+          decoration: BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: context.colors.shadowCoral),
+          child: UserAvatar(
+            size: 48,
+            initials: initials,
+            avatarImagePath: avatarImagePath,
+            backgroundColor: avatarColor.resolve(context),
+            borderRadius: AppRadius.smAll,
+            fontSize: 15.5,
+          ),
         ),
-        AppSpacing.sm.vGap,
-        Row(
-          children: [
-            _CurrencyChip(
-              icon: TablerIcons.coinFilled,
-              color: context.colors.terra,
-              value: coinBalance,
+        AppSpacing.sm.hGap,
+        Expanded(
+          child: Text(
+            'Zukkor',
+            style: context.textStyles.titleLarge?.copyWith(
+              color: context.colors.coral,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.2,
             ),
-            AppSpacing.xs.hGap,
-            _CurrencyChip(
-              icon: TablerIcons.diamondFilled,
-              color: context.colors.teal,
-              value: diamondBalance,
-            ),
-          ],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        _CurrencyChip(
+          icon: TablerIcons.coinFilled,
+          color: context.colors.terra,
+          value: coinBalance,
+        ),
+        AppSpacing.xxs.hGap,
+        _CurrencyChip(
+          icon: TablerIcons.diamondFilled,
+          color: context.colors.teal,
+          value: diamondBalance,
+        ),
+        AppSpacing.xs.hGap,
+        _NotificationButton(
+          hasUnread: hasUnreadNotifications,
+          onTap: onNotificationsTap,
         ),
       ],
     );
