@@ -101,6 +101,8 @@ class _FakeAuthRepository implements AuthRepository {
   @override
   Future<void> changePassword({required String currentPassword, required String newPassword}) =>
       throw UnimplementedError();
+  @override
+  Future<void> linkTelegram(String code) => throw UnimplementedError();
 
   @override
   Future<void> deleteAccount(String? password) async {

@@ -85,6 +85,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$discover$ru discover = _Translations$discover$ru._(_root);
 	@override late final _Translations$gameLeave$ru gameLeave = _Translations$gameLeave$ru._(_root);
 	@override late final _Translations$wallet$ru wallet = _Translations$wallet$ru._(_root);
+	@override late final _Translations$telegramLink$ru telegramLink = _Translations$telegramLink$ru._(_root);
 }
 
 // Path: common
@@ -289,6 +290,7 @@ class _Translations$settings$ru implements Translations$settings$en {
 	@override String get helpCenter => 'Центр помощи';
 	@override String get termsOfUse => 'Условия использования';
 	@override String get changePassword => 'Изменить пароль';
+	@override String get telegramLink => 'Привязать Telegram';
 	@override String get logOut => 'Выйти';
 	@override String get groupDangerZone => 'Опасная зона';
 	@override String get deleteAccount => 'Удалить аккаунт';
@@ -974,6 +976,22 @@ class _Translations$wallet$ru implements Translations$wallet$en {
 	@override String get reasonOther => 'Другое';
 }
 
+// Path: telegramLink
+class _Translations$telegramLink$ru implements Translations$telegramLink$en {
+	_Translations$telegramLink$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Привязать Telegram';
+	@override String get description => 'Откройте нашего Telegram-бота и отправьте /start - бот пришлёт 6-значный код. Введите его здесь.';
+	@override String get codeLabel => 'Код';
+	@override String get codeHint => '123456';
+	@override String get submit => 'Привязать';
+	@override String get success => 'Успешно привязано!';
+	@override String get alreadyLinked => 'Ваш Telegram-аккаунт привязан ✅';
+}
+
 /// The flat map containing all translations for locale <ru>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1063,6 +1081,7 @@ extension on TranslationsRu {
 			'settings.helpCenter' => 'Центр помощи',
 			'settings.termsOfUse' => 'Условия использования',
 			'settings.changePassword' => 'Изменить пароль',
+			'settings.telegramLink' => 'Привязать Telegram',
 			'settings.logOut' => 'Выйти',
 			'settings.groupDangerZone' => 'Опасная зона',
 			'settings.deleteAccount' => 'Удалить аккаунт',
@@ -1422,6 +1441,13 @@ extension on TranslationsRu {
 			'wallet.reasonCosmeticPurchase' => 'Покупка косметики',
 			'wallet.reasonStreakFreeze' => 'Заморозка серии',
 			'wallet.reasonOther' => 'Другое',
+			'telegramLink.title' => 'Привязать Telegram',
+			'telegramLink.description' => 'Откройте нашего Telegram-бота и отправьте /start - бот пришлёт 6-значный код. Введите его здесь.',
+			'telegramLink.codeLabel' => 'Код',
+			'telegramLink.codeHint' => '123456',
+			'telegramLink.submit' => 'Привязать',
+			'telegramLink.success' => 'Успешно привязано!',
+			'telegramLink.alreadyLinked' => 'Ваш Telegram-аккаунт привязан ✅',
 			_ => null,
 		};
 	}

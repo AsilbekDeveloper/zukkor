@@ -79,6 +79,12 @@ abstract interface class AuthRepository {
   /// tahrirlashda username o'zgartirilganda ishlatiladi).
   Future<bool> isUsernameAvailable(String username);
 
+  /// `POST /telegram/link` — botning `/start` javobida bergan 6 xonali
+  /// kodni tasdiqlab, joriy hisobni Telegram akkauntiga bog'laydi
+  /// (Diamond sotib olish uchun - [[ai_cost_architecture]]). Noto'g'ri/
+  /// muddati o'tgan kod bo'lsa [Failure] ko'taradi.
+  Future<void> linkTelegram(String code);
+
   /// `POST /auth/logout` — saqlangan refresh tokenni backendda bekor
   /// qiladi va lokal tokenlarni tozalaydi.
   Future<void> logout();

@@ -22,6 +22,7 @@ class User {
     this.coinBalance = 0,
     this.diamondBalance = 0,
     this.referralCode,
+    this.telegramLinked = false,
   });
 
   final String id;
@@ -60,6 +61,7 @@ class User {
   final int coinBalance;
   final int diamondBalance;
   final String? referralCode;
+  final bool telegramLinked;
 
   bool get isGoogleAccount => authProvider == 'google';
 }

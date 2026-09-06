@@ -57,6 +57,7 @@ import '../../features/settings/presentation/screens/language_screen.dart';
 import '../../features/settings/presentation/screens/notification_settings_screen.dart';
 import '../../features/settings/presentation/screens/privacy_policy_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/settings/presentation/screens/telegram_link_screen.dart';
 import '../../features/settings/presentation/screens/terms_of_use_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/wallet/presentation/screens/wallet_screen.dart';
@@ -386,6 +387,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.changePassword,
         builder: (context, state) => const ChangePasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.telegramLink,
+        builder: (context, state) => const TelegramLinkScreen(),
       ),
       GoRoute(
         path: AppRoutes.accounts,

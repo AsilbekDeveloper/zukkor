@@ -115,6 +115,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               label: context.t.auth.accounts,
               onTap: () => context.push(AppRoutes.accounts),
             ),
+            SettingsRowData(
+              icon: TablerIcons.brandTelegram,
+              label: context.t.settings.telegramLink,
+              onTap: () => context.push(AppRoutes.telegramLink),
+            ),
           ],
         ),
       ];

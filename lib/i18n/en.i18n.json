@@ -103,6 +103,7 @@
     "helpCenter": "Help center",
     "termsOfUse": "Terms of use",
     "changePassword": "Change password",
+    "telegramLink": "Link Telegram",
     "logOut": "Log out",
     "groupDangerZone": "Danger zone",
     "deleteAccount": "Delete account"
@@ -534,5 +535,14 @@
     "reasonCosmeticPurchase": "Cosmetic purchase",
     "reasonStreakFreeze": "Streak freeze",
     "reasonOther": "Other"
+  },
+  "telegramLink": {
+    "title": "Link Telegram",
+    "description": "Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.",
+    "codeLabel": "Code",
+    "codeHint": "123456",
+    "submit": "Link",
+    "success": "Linked successfully!",
+    "alreadyLinked": "Your Telegram account is linked ✅"
   }
 }

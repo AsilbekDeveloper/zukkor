@@ -37,6 +37,7 @@ abstract final class AppRoutes {
   static const String helpCenter = '/profile/settings/help';
   static const String termsOfUse = '/profile/settings/terms';
   static const String changePassword = '/profile/settings/change-password';
+  static const String telegramLink = '/profile/settings/telegram-link';
   static const String accounts = '/profile/settings/accounts';
   static const String achievements = '/achievements';
   static const String wallet = '/wallet';

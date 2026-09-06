@@ -19,6 +19,7 @@ abstract final class ApiEndpoints {
   // backend'da yo'q).
   static const String changePassword = '/auth/change-password';
   static const String deleteAccount = '/auth/me';
+  static const String telegramLink = '/telegram/link';
   static const String forgotPassword = '/auth/forgot-password';
   static const String resetPassword = '/auth/reset-password';
 

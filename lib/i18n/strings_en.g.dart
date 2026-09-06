@@ -88,6 +88,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$discover$en discover = Translations$discover$en._(_root);
 	late final Translations$gameLeave$en gameLeave = Translations$gameLeave$en._(_root);
 	late final Translations$wallet$en wallet = Translations$wallet$en._(_root);
+	late final Translations$telegramLink$en telegramLink = Translations$telegramLink$en._(_root);
 }
 
 // Path: common
@@ -448,6 +449,9 @@ class Translations$settings$en {
 
 	/// en: 'Change password'
 	String get changePassword => 'Change password';
+
+	/// en: 'Link Telegram'
+	String get telegramLink => 'Link Telegram';
 
 	/// en: 'Log out'
 	String get logOut => 'Log out';
@@ -1851,6 +1855,36 @@ class Translations$wallet$en {
 	String get reasonOther => 'Other';
 }
 
+// Path: telegramLink
+class Translations$telegramLink$en {
+	Translations$telegramLink$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Link Telegram'
+	String get title => 'Link Telegram';
+
+	/// en: 'Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.'
+	String get description => 'Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.';
+
+	/// en: 'Code'
+	String get codeLabel => 'Code';
+
+	/// en: '123456'
+	String get codeHint => '123456';
+
+	/// en: 'Link'
+	String get submit => 'Link';
+
+	/// en: 'Linked successfully!'
+	String get success => 'Linked successfully!';
+
+	/// en: 'Your Telegram account is linked ✅'
+	String get alreadyLinked => 'Your Telegram account is linked ✅';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1940,6 +1974,7 @@ extension on Translations {
 			'settings.helpCenter' => 'Help center',
 			'settings.termsOfUse' => 'Terms of use',
 			'settings.changePassword' => 'Change password',
+			'settings.telegramLink' => 'Link Telegram',
 			'settings.logOut' => 'Log out',
 			'settings.groupDangerZone' => 'Danger zone',
 			'settings.deleteAccount' => 'Delete account',
@@ -2299,6 +2334,13 @@ extension on Translations {
 			'wallet.reasonCosmeticPurchase' => 'Cosmetic purchase',
 			'wallet.reasonStreakFreeze' => 'Streak freeze',
 			'wallet.reasonOther' => 'Other',
+			'telegramLink.title' => 'Link Telegram',
+			'telegramLink.description' => 'Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.',
+			'telegramLink.codeLabel' => 'Code',
+			'telegramLink.codeHint' => '123456',
+			'telegramLink.submit' => 'Link',
+			'telegramLink.success' => 'Linked successfully!',
+			'telegramLink.alreadyLinked' => 'Your Telegram account is linked ✅',
 			_ => null,
 		};
 	}

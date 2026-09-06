@@ -13,6 +13,7 @@ import '../../domain/usecases/check_username_available_use_case.dart';
 import '../../domain/usecases/delete_account_use_case.dart';
 import '../../domain/usecases/forgot_password_use_case.dart';
 import '../../domain/usecases/get_current_user_use_case.dart';
+import '../../domain/usecases/link_telegram_use_case.dart';
 import '../../domain/usecases/login_use_case.dart';
 import '../../domain/usecases/logout_use_case.dart';
 import '../../domain/usecases/register_push_token_use_case.dart';
@@ -171,6 +172,15 @@ class AuthRepositoryImpl implements AuthRepository {
         currentPassword: currentPassword,
         newPassword: newPassword,
       );
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<void> linkTelegram(String code) async {
+    try {
+      await _remoteDataSource.linkTelegram(code);
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -410,6 +420,10 @@ final Provider<ChangePasswordUseCase> changePasswordUseCaseProvider = Provider<C
 
 final Provider<DeleteAccountUseCase> deleteAccountUseCaseProvider = Provider<DeleteAccountUseCase>(
   (ref) => DeleteAccountUseCase(ref.watch(authRepositoryProvider)),
+);
+
+final Provider<LinkTelegramUseCase> linkTelegramUseCaseProvider = Provider<LinkTelegramUseCase>(
+  (ref) => LinkTelegramUseCase(ref.watch(authRepositoryProvider)),
 );
 
 final Provider<ForgotPasswordUseCase> forgotPasswordUseCaseProvider = Provider<ForgotPasswordUseCase>(

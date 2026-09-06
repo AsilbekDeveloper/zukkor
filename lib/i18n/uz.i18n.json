@@ -103,6 +103,7 @@
     "helpCenter": "Yordam markazi",
     "termsOfUse": "Foydalanish shartlari",
     "changePassword": "Parolni o'zgartirish",
+    "telegramLink": "Telegram bilan bog'lash",
     "logOut": "Chiqish",
     "groupDangerZone": "Xavfli zona",
     "deleteAccount": "Akkauntni o'chirish"
@@ -534,5 +535,14 @@
     "reasonCosmeticPurchase": "Bezak sotib olindi",
     "reasonStreakFreeze": "Streak himoyasi",
     "reasonOther": "Boshqa"
+  },
+  "telegramLink": {
+    "title": "Telegram bilan bog'lash",
+    "description": "Telegram botimizga o'ting va /start yozing - bot sizga 6 xonali kod beradi. Kodni shu yerga kiriting.",
+    "codeLabel": "Kod",
+    "codeHint": "123456",
+    "submit": "Bog'lash",
+    "success": "Muvaffaqiyatli bog'landi!",
+    "alreadyLinked": "Telegram hisobingiz ulangan ✅"
   }
 }

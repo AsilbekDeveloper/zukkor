@@ -117,6 +117,10 @@ class AuthRemoteDataSource {
     );
   }
 
+  Future<void> linkTelegram(String code) async {
+    await _dio.post<void>(ApiEndpoints.telegramLink, data: {'code': code});
+  }
+
   Future<void> deleteAccount(String? password) async {
     await _dio.delete<void>(
       ApiEndpoints.deleteAccount,

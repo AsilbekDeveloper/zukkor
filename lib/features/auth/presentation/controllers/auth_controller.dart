@@ -4,6 +4,7 @@ import '../../../../core/storage/app_preferences.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user.dart';
 import '../user_session.dart';
+import 'current_user_controller.dart';
 
 /// Login/Register/Logout/Profil-yangilash amallarini boshqaradi. Holati —
 /// shunchaki `isLoading` bayrog'i (ekranlarda spinner ko'rsatish uchun);
@@ -172,6 +173,20 @@ class AuthController extends Notifier<bool> {
             currentPassword: currentPassword,
             newPassword: newPassword,
           );
+    } finally {
+      state = false;
+    }
+  }
+
+  /// Bot bergan 6 xonali kodni tasdiqlaydi - muvaffaqiyatli bo'lsa joriy
+  /// foydalanuvchi profili qayta yuklanadi (keyingi safar Home/Sozlamalar
+  /// ochilganda emas, darhol - foydalanuvchi bog'lanish holatini tezda
+  /// ko'rishi uchun).
+  Future<void> linkTelegram(String code) async {
+    state = true;
+    try {
+      await ref.read(linkTelegramUseCaseProvider).call(code);
+      await ref.read(currentUserControllerProvider.notifier).load();
     } finally {
       state = false;
     }

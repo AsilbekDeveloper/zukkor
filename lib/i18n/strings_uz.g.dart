@@ -85,6 +85,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$discover$uz discover = _Translations$discover$uz._(_root);
 	@override late final _Translations$gameLeave$uz gameLeave = _Translations$gameLeave$uz._(_root);
 	@override late final _Translations$wallet$uz wallet = _Translations$wallet$uz._(_root);
+	@override late final _Translations$telegramLink$uz telegramLink = _Translations$telegramLink$uz._(_root);
 }
 
 // Path: common
@@ -283,6 +284,7 @@ class _Translations$settings$uz implements Translations$settings$en {
 	@override String get helpCenter => 'Yordam markazi';
 	@override String get termsOfUse => 'Foydalanish shartlari';
 	@override String get changePassword => 'Parolni o\'zgartirish';
+	@override String get telegramLink => 'Telegram bilan bog\'lash';
 	@override String get logOut => 'Chiqish';
 	@override String get groupDangerZone => 'Xavfli zona';
 	@override String get deleteAccount => 'Akkauntni o\'chirish';
@@ -968,6 +970,22 @@ class _Translations$wallet$uz implements Translations$wallet$en {
 	@override String get reasonOther => 'Boshqa';
 }
 
+// Path: telegramLink
+class _Translations$telegramLink$uz implements Translations$telegramLink$en {
+	_Translations$telegramLink$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Telegram bilan bog\'lash';
+	@override String get description => 'Telegram botimizga o\'ting va /start yozing - bot sizga 6 xonali kod beradi. Kodni shu yerga kiriting.';
+	@override String get codeLabel => 'Kod';
+	@override String get codeHint => '123456';
+	@override String get submit => 'Bog\'lash';
+	@override String get success => 'Muvaffaqiyatli bog\'landi!';
+	@override String get alreadyLinked => 'Telegram hisobingiz ulangan ✅';
+}
+
 /// The flat map containing all translations for locale <uz>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1057,6 +1075,7 @@ extension on TranslationsUz {
 			'settings.helpCenter' => 'Yordam markazi',
 			'settings.termsOfUse' => 'Foydalanish shartlari',
 			'settings.changePassword' => 'Parolni o\'zgartirish',
+			'settings.telegramLink' => 'Telegram bilan bog\'lash',
 			'settings.logOut' => 'Chiqish',
 			'settings.groupDangerZone' => 'Xavfli zona',
 			'settings.deleteAccount' => 'Akkauntni o\'chirish',
@@ -1416,6 +1435,13 @@ extension on TranslationsUz {
 			'wallet.reasonCosmeticPurchase' => 'Bezak sotib olindi',
 			'wallet.reasonStreakFreeze' => 'Streak himoyasi',
 			'wallet.reasonOther' => 'Boshqa',
+			'telegramLink.title' => 'Telegram bilan bog\'lash',
+			'telegramLink.description' => 'Telegram botimizga o\'ting va /start yozing - bot sizga 6 xonali kod beradi. Kodni shu yerga kiriting.',
+			'telegramLink.codeLabel' => 'Kod',
+			'telegramLink.codeHint' => '123456',
+			'telegramLink.submit' => 'Bog\'lash',
+			'telegramLink.success' => 'Muvaffaqiyatli bog\'landi!',
+			'telegramLink.alreadyLinked' => 'Telegram hisobingiz ulangan ✅',
 			_ => null,
 		};
 	}

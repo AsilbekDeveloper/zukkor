@@ -94,6 +94,7 @@ import 'package:zukkor/features/settings/presentation/screens/language_screen.da
 import 'package:zukkor/features/settings/presentation/screens/notification_settings_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/privacy_policy_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
+import 'package:zukkor/features/settings/presentation/screens/telegram_link_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/terms_of_use_screen.dart';
 import 'package:zukkor/features/splash/splash_screen.dart';
 import 'package:zukkor/features/wallet/data/repositories/wallet_repository_impl.dart';
@@ -162,6 +163,7 @@ final List<_ScreenCase> _screens = [
   (name: 'HelpCenter', builder: (_) => const HelpCenterScreen()),
   (name: 'TermsOfUse', builder: (_) => const TermsOfUseScreen()),
   (name: 'ChangePassword', builder: (_) => const ChangePasswordScreen()),
+  (name: 'TelegramLink', builder: (_) => const TelegramLinkScreen()),
   (name: 'MyAiQuizzes', builder: (_) => const MyAiQuizzesScreen()),
   (name: 'GenerateAiQuiz', builder: (_) => const GenerateAiQuizScreen()),
   (name: 'CreateManualQuiz', builder: (_) => const CreateManualQuizScreen()),
@@ -191,6 +193,8 @@ class _FakeAuthRepository implements AuthRepository {
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
   @override
   Future<void> changePassword({required String currentPassword, required String newPassword}) => throw UnimplementedError();
+  @override
+  Future<void> linkTelegram(String code) => throw UnimplementedError();
   @override
   Future<void> deleteAccount(String? password) => throw UnimplementedError();
   @override

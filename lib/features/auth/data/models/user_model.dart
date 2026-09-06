@@ -23,6 +23,7 @@ class UserModel {
     this.coinBalance = 0,
     this.diamondBalance = 0,
     this.referralCode,
+    this.telegramLinked = false,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -44,6 +45,7 @@ class UserModel {
         coinBalance: json['coin_balance'] as int? ?? 0,
         diamondBalance: json['diamond_balance'] as int? ?? 0,
         referralCode: json['referral_code'] as String?,
+        telegramLinked: json['telegram_linked'] as bool? ?? false,
       );
 
   final String id;
@@ -64,6 +66,7 @@ class UserModel {
   final int coinBalance;
   final int diamondBalance;
   final String? referralCode;
+  final bool telegramLinked;
 
   User toEntity() => User(
         id: id,
@@ -84,5 +87,6 @@ class UserModel {
         coinBalance: coinBalance,
         diamondBalance: diamondBalance,
         referralCode: referralCode,
+        telegramLinked: telegramLinked,
       );
 }

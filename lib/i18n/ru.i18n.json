@@ -118,6 +118,7 @@
     "helpCenter": "Центр помощи",
     "termsOfUse": "Условия использования",
     "changePassword": "Изменить пароль",
+    "telegramLink": "Привязать Telegram",
     "logOut": "Выйти",
     "groupDangerZone": "Опасная зона",
     "deleteAccount": "Удалить аккаунт"
@@ -549,5 +550,14 @@
     "reasonCosmeticPurchase": "Покупка косметики",
     "reasonStreakFreeze": "Заморозка серии",
     "reasonOther": "Другое"
+  },
+  "telegramLink": {
+    "title": "Привязать Telegram",
+    "description": "Откройте нашего Telegram-бота и отправьте /start - бот пришлёт 6-значный код. Введите его здесь.",
+    "codeLabel": "Код",
+    "codeHint": "123456",
+    "submit": "Привязать",
+    "success": "Успешно привязано!",
+    "alreadyLinked": "Ваш Telegram-аккаунт привязан ✅"
   }
 }
