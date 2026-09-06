@@ -45,6 +45,10 @@ abstract final class ApiEndpoints {
   static String history({int limit = 50, int offset = 0}) => '/history?limit=$limit&offset=$offset';
   static const String weeklyActivity = '/history/weekly-activity';
 
+  // Coin/Diamond hamyon tarixi (2026-09-06'da qo'shildi).
+  static String walletTransactions({int limit = 30, int offset = 0}) =>
+      '/wallet/transactions?limit=$limit&offset=$offset';
+
   // Friends (2026-07-18'da qo'shildi).
   static const String friends = '/friends';
   static String friendsSearch(String query) => '/friends/search?q=${Uri.encodeQueryComponent(query)}';

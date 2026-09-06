@@ -518,5 +518,21 @@
     "opponentLeft": "Your opponent has left the duel",
     "stay": "Stay",
     "leave": "Leave"
+  },
+  "wallet": {
+    "title": "Wallet",
+    "emptyState": "No activity yet",
+    "currentBalance": "Current balance",
+    "reasonDailyLogin": "Daily login bonus",
+    "reasonFirstGame": "First game of the day",
+    "reasonStreakBonus7d": "7-day streak bonus",
+    "reasonReferral": "Friend referral bonus",
+    "reasonSignupBonus": "Welcome bonus",
+    "reasonAiGeneration": "AI quiz generation",
+    "reasonAdminAdjustment": "Admin adjustment",
+    "reasonPurchase": "Purchased",
+    "reasonCosmeticPurchase": "Cosmetic purchase",
+    "reasonStreakFreeze": "Streak freeze",
+    "reasonOther": "Other"
   }
 }

@@ -24,6 +24,7 @@ class HomeHeader extends StatelessWidget {
     required this.onNotificationsTap,
     required this.coinBalance,
     required this.diamondBalance,
+    required this.onWalletTap,
     this.avatarImagePath,
     super.key,
   });
@@ -35,6 +36,7 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback onNotificationsTap;
   final int coinBalance;
   final int diamondBalance;
+  final VoidCallback onWalletTap;
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +70,14 @@ class HomeHeader extends StatelessWidget {
           icon: TablerIcons.coinFilled,
           color: context.colors.terra,
           value: coinBalance,
+          onTap: onWalletTap,
         ),
         AppSpacing.xxs.hGap,
         _CurrencyChip(
           icon: TablerIcons.diamondFilled,
           color: context.colors.teal,
           value: diamondBalance,
+          onTap: onWalletTap,
         ),
         AppSpacing.xs.hGap,
         _NotificationButton(
@@ -89,40 +93,43 @@ class HomeHeader extends StatelessWidget {
 /// fonli, boshqa joyda ishlatilmagan to'yingan ranglar (masalan avvalgi
 /// yorqin-ko'k) o'rniga ilovaning o'zida allaqachon bor ranglar (terra/
 /// teal) ishlatiladi - shu orqali ilovaning qolgan qismidan "begona
-/// vidjet" bo'lib ajralib turmaydi. Hozircha bosilsa hech narsa qilmaydi
-/// (hamyon/tarix ekrani hali yo'q) - keyingi bosqichda `AppRoutes.wallet`ga
-/// o'tadigan qilinadi.
+/// vidjet" bo'lib ajralib turmaydi. Bosilsa `AppRoutes.wallet` (to'liq
+/// tarix) ochiladi.
 class _CurrencyChip extends StatelessWidget {
-  const _CurrencyChip({required this.icon, required this.color, required this.value});
+  const _CurrencyChip({required this.icon, required this.color, required this.value, required this.onTap});
 
   final IconData icon;
   final Color color;
   final int value;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 36,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: context.colors.card,
+    return Material(
+      color: context.colors.card,
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.smAll, side: BorderSide(color: context.colors.line)),
+      child: InkWell(
+        onTap: onTap,
         borderRadius: AppRadius.smAll,
-        border: Border.all(color: context.colors.line),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 15),
-          AppSpacing.xxs.hGap,
-          AnimatedCounter(
-            value: value,
-            formatter: (v) => '$v',
-            style: context.textStyles.bodySmall?.copyWith(
-              color: context.colors.ink,
-              fontWeight: FontWeight.w700,
-            ),
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 15),
+              AppSpacing.xxs.hGap,
+              AnimatedCounter(
+                value: value,
+                formatter: (v) => '$v',
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: context.colors.ink,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

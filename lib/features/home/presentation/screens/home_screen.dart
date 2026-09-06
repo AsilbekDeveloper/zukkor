@@ -175,6 +175,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onNotificationsTap: () => _openNotifications(context),
                   coinBalance: user?.coinBalance ?? 0,
                   diamondBalance: user?.diamondBalance ?? 0,
+                  onWalletTap: () => context.push(AppRoutes.wallet),
                 ),
               ),
               AppSpacing.lg.vGap,

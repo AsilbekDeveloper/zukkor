@@ -39,6 +39,7 @@ abstract final class AppRoutes {
   static const String changePassword = '/profile/settings/change-password';
   static const String accounts = '/profile/settings/accounts';
   static const String achievements = '/achievements';
+  static const String wallet = '/wallet';
   static const String duelGame = '/duel-game';
   static const String duelResult = '/duel-result';
   static const String lobbyGame = '/lobby-game';

@@ -533,5 +533,21 @@
     "opponentLeft": "Ваш противник покинул дуэль",
     "stay": "Остаться",
     "leave": "Выйти"
+  },
+  "wallet": {
+    "title": "Кошелёк",
+    "emptyState": "Пока нет ни одной операции",
+    "currentBalance": "Текущий баланс",
+    "reasonDailyLogin": "Бонус за ежедневный вход",
+    "reasonFirstGame": "Первая игра за день",
+    "reasonStreakBonus7d": "Бонус за 7-дневную серию",
+    "reasonReferral": "Бонус за приглашение друга",
+    "reasonSignupBonus": "Приветственный бонус",
+    "reasonAiGeneration": "Генерация теста через AI",
+    "reasonAdminAdjustment": "Корректировка администратором",
+    "reasonPurchase": "Куплено",
+    "reasonCosmeticPurchase": "Покупка косметики",
+    "reasonStreakFreeze": "Заморозка серии",
+    "reasonOther": "Другое"
   }
 }

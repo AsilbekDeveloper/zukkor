@@ -84,6 +84,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$resetPassword$uz resetPassword = _Translations$resetPassword$uz._(_root);
 	@override late final _Translations$discover$uz discover = _Translations$discover$uz._(_root);
 	@override late final _Translations$gameLeave$uz gameLeave = _Translations$gameLeave$uz._(_root);
+	@override late final _Translations$wallet$uz wallet = _Translations$wallet$uz._(_root);
 }
 
 // Path: common
@@ -944,6 +945,29 @@ class _Translations$gameLeave$uz implements Translations$gameLeave$en {
 	@override String get leave => 'Chiqish';
 }
 
+// Path: wallet
+class _Translations$wallet$uz implements Translations$wallet$en {
+	_Translations$wallet$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Hamyon';
+	@override String get emptyState => 'Hali hech qanday harakat yo\'q';
+	@override String get currentBalance => 'Joriy balans';
+	@override String get reasonDailyLogin => 'Kunlik kirish bonusi';
+	@override String get reasonFirstGame => 'Kunning birinchi o\'yini';
+	@override String get reasonStreakBonus7d => '7 kunlik streak bonusi';
+	@override String get reasonReferral => 'Do\'st taklif qilish bonusi';
+	@override String get reasonSignupBonus => 'Xush kelibsiz bonusi';
+	@override String get reasonAiGeneration => 'AI orqali test yaratish';
+	@override String get reasonAdminAdjustment => 'Administrator tuzatishi';
+	@override String get reasonPurchase => 'Sotib olindi';
+	@override String get reasonCosmeticPurchase => 'Bezak sotib olindi';
+	@override String get reasonStreakFreeze => 'Streak himoyasi';
+	@override String get reasonOther => 'Boshqa';
+}
+
 /// The flat map containing all translations for locale <uz>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1378,6 +1402,20 @@ extension on TranslationsUz {
 			'gameLeave.opponentLeft' => 'Raqibingiz duelni tark etdi',
 			'gameLeave.stay' => 'Qolish',
 			'gameLeave.leave' => 'Chiqish',
+			'wallet.title' => 'Hamyon',
+			'wallet.emptyState' => 'Hali hech qanday harakat yo\'q',
+			'wallet.currentBalance' => 'Joriy balans',
+			'wallet.reasonDailyLogin' => 'Kunlik kirish bonusi',
+			'wallet.reasonFirstGame' => 'Kunning birinchi o\'yini',
+			'wallet.reasonStreakBonus7d' => '7 kunlik streak bonusi',
+			'wallet.reasonReferral' => 'Do\'st taklif qilish bonusi',
+			'wallet.reasonSignupBonus' => 'Xush kelibsiz bonusi',
+			'wallet.reasonAiGeneration' => 'AI orqali test yaratish',
+			'wallet.reasonAdminAdjustment' => 'Administrator tuzatishi',
+			'wallet.reasonPurchase' => 'Sotib olindi',
+			'wallet.reasonCosmeticPurchase' => 'Bezak sotib olindi',
+			'wallet.reasonStreakFreeze' => 'Streak himoyasi',
+			'wallet.reasonOther' => 'Boshqa',
 			_ => null,
 		};
 	}

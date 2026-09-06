@@ -518,5 +518,21 @@
     "opponentLeft": "Raqibingiz duelni tark etdi",
     "stay": "Qolish",
     "leave": "Chiqish"
+  },
+  "wallet": {
+    "title": "Hamyon",
+    "emptyState": "Hali hech qanday harakat yo'q",
+    "currentBalance": "Joriy balans",
+    "reasonDailyLogin": "Kunlik kirish bonusi",
+    "reasonFirstGame": "Kunning birinchi o'yini",
+    "reasonStreakBonus7d": "7 kunlik streak bonusi",
+    "reasonReferral": "Do'st taklif qilish bonusi",
+    "reasonSignupBonus": "Xush kelibsiz bonusi",
+    "reasonAiGeneration": "AI orqali test yaratish",
+    "reasonAdminAdjustment": "Administrator tuzatishi",
+    "reasonPurchase": "Sotib olindi",
+    "reasonCosmeticPurchase": "Bezak sotib olindi",
+    "reasonStreakFreeze": "Streak himoyasi",
+    "reasonOther": "Boshqa"
   }
 }

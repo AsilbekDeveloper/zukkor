@@ -59,6 +59,7 @@ import '../../features/settings/presentation/screens/privacy_policy_screen.dart'
 import '../../features/settings/presentation/screens/settings_screen.dart';
 import '../../features/settings/presentation/screens/terms_of_use_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../../features/wallet/presentation/screens/wallet_screen.dart';
 import '../widgets/main_shell.dart';
 import 'app_routes.dart';
 
@@ -330,6 +331,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.achievements,
         builder: (context, state) => const AchievementsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.wallet,
+        builder: (context, state) => const WalletScreen(),
       ),
       GoRoute(
         path: AppRoutes.duelWaiting,

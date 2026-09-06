@@ -96,6 +96,10 @@ import 'package:zukkor/features/settings/presentation/screens/privacy_policy_scr
 import 'package:zukkor/features/settings/presentation/screens/settings_screen.dart';
 import 'package:zukkor/features/settings/presentation/screens/terms_of_use_screen.dart';
 import 'package:zukkor/features/splash/splash_screen.dart';
+import 'package:zukkor/features/wallet/data/repositories/wallet_repository_impl.dart';
+import 'package:zukkor/features/wallet/domain/entities/currency_transaction.dart';
+import 'package:zukkor/features/wallet/domain/repositories/wallet_repository.dart';
+import 'package:zukkor/features/wallet/presentation/screens/wallet_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
 
 /// RESPONSIVE AUDIT — the project's overflow safety net.
@@ -163,6 +167,7 @@ final List<_ScreenCase> _screens = [
   (name: 'CreateManualQuiz', builder: (_) => const CreateManualQuizScreen()),
   (name: 'SubmitQuestion', builder: (_) => const SubmitQuestionScreen()),
   (name: 'Achievements', builder: (_) => const AchievementsScreen()),
+  (name: 'Wallet', builder: (_) => const WalletScreen()),
 ];
 
 class _FakeAuthRepository implements AuthRepository {
@@ -246,6 +251,12 @@ class _FakeHistoryRepository implements HistoryRepository {
   Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(days: []);
 }
 
+class _FakeWalletRepository implements WalletRepository {
+  @override
+  Future<({List<CurrencyTransaction> entries, bool hasMore})> getTransactions({int limit = 30, int offset = 0}) async =>
+      (entries: <CurrencyTransaction>[], hasMore: false);
+}
+
 class _FakeNotificationPreferencesRepository implements NotificationPreferencesRepository {
   @override
   Future<NotificationPreferences> getPreferences() async => const NotificationPreferences(duelInvites: true, streakReminders: true, leaderboardUpdates: true, friendRequests: true, productUpdates: true);
@@ -283,6 +294,7 @@ Future<void> _pumpAt(WidgetTester tester, Size size, WidgetBuilder builder, {dou
       leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
       quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
       historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),
+      walletRepositoryProvider.overrideWithValue(_FakeWalletRepository()),
       friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
       pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
       notificationPreferencesRepositoryProvider.overrideWithValue(_FakeNotificationPreferencesRepository()),

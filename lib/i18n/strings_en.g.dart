@@ -87,6 +87,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$resetPassword$en resetPassword = Translations$resetPassword$en._(_root);
 	late final Translations$discover$en discover = Translations$discover$en._(_root);
 	late final Translations$gameLeave$en gameLeave = Translations$gameLeave$en._(_root);
+	late final Translations$wallet$en wallet = Translations$wallet$en._(_root);
 }
 
 // Path: common
@@ -1799,6 +1800,57 @@ class Translations$gameLeave$en {
 	String get leave => 'Leave';
 }
 
+// Path: wallet
+class Translations$wallet$en {
+	Translations$wallet$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Wallet'
+	String get title => 'Wallet';
+
+	/// en: 'No activity yet'
+	String get emptyState => 'No activity yet';
+
+	/// en: 'Current balance'
+	String get currentBalance => 'Current balance';
+
+	/// en: 'Daily login bonus'
+	String get reasonDailyLogin => 'Daily login bonus';
+
+	/// en: 'First game of the day'
+	String get reasonFirstGame => 'First game of the day';
+
+	/// en: '7-day streak bonus'
+	String get reasonStreakBonus7d => '7-day streak bonus';
+
+	/// en: 'Friend referral bonus'
+	String get reasonReferral => 'Friend referral bonus';
+
+	/// en: 'Welcome bonus'
+	String get reasonSignupBonus => 'Welcome bonus';
+
+	/// en: 'AI quiz generation'
+	String get reasonAiGeneration => 'AI quiz generation';
+
+	/// en: 'Admin adjustment'
+	String get reasonAdminAdjustment => 'Admin adjustment';
+
+	/// en: 'Purchased'
+	String get reasonPurchase => 'Purchased';
+
+	/// en: 'Cosmetic purchase'
+	String get reasonCosmeticPurchase => 'Cosmetic purchase';
+
+	/// en: 'Streak freeze'
+	String get reasonStreakFreeze => 'Streak freeze';
+
+	/// en: 'Other'
+	String get reasonOther => 'Other';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -2233,6 +2285,20 @@ extension on Translations {
 			'gameLeave.opponentLeft' => 'Your opponent has left the duel',
 			'gameLeave.stay' => 'Stay',
 			'gameLeave.leave' => 'Leave',
+			'wallet.title' => 'Wallet',
+			'wallet.emptyState' => 'No activity yet',
+			'wallet.currentBalance' => 'Current balance',
+			'wallet.reasonDailyLogin' => 'Daily login bonus',
+			'wallet.reasonFirstGame' => 'First game of the day',
+			'wallet.reasonStreakBonus7d' => '7-day streak bonus',
+			'wallet.reasonReferral' => 'Friend referral bonus',
+			'wallet.reasonSignupBonus' => 'Welcome bonus',
+			'wallet.reasonAiGeneration' => 'AI quiz generation',
+			'wallet.reasonAdminAdjustment' => 'Admin adjustment',
+			'wallet.reasonPurchase' => 'Purchased',
+			'wallet.reasonCosmeticPurchase' => 'Cosmetic purchase',
+			'wallet.reasonStreakFreeze' => 'Streak freeze',
+			'wallet.reasonOther' => 'Other',
 			_ => null,
 		};
 	}

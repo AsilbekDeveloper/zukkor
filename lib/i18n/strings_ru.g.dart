@@ -84,6 +84,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$resetPassword$ru resetPassword = _Translations$resetPassword$ru._(_root);
 	@override late final _Translations$discover$ru discover = _Translations$discover$ru._(_root);
 	@override late final _Translations$gameLeave$ru gameLeave = _Translations$gameLeave$ru._(_root);
+	@override late final _Translations$wallet$ru wallet = _Translations$wallet$ru._(_root);
 }
 
 // Path: common
@@ -950,6 +951,29 @@ class _Translations$gameLeave$ru implements Translations$gameLeave$en {
 	@override String get leave => 'Выйти';
 }
 
+// Path: wallet
+class _Translations$wallet$ru implements Translations$wallet$en {
+	_Translations$wallet$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Кошелёк';
+	@override String get emptyState => 'Пока нет ни одной операции';
+	@override String get currentBalance => 'Текущий баланс';
+	@override String get reasonDailyLogin => 'Бонус за ежедневный вход';
+	@override String get reasonFirstGame => 'Первая игра за день';
+	@override String get reasonStreakBonus7d => 'Бонус за 7-дневную серию';
+	@override String get reasonReferral => 'Бонус за приглашение друга';
+	@override String get reasonSignupBonus => 'Приветственный бонус';
+	@override String get reasonAiGeneration => 'Генерация теста через AI';
+	@override String get reasonAdminAdjustment => 'Корректировка администратором';
+	@override String get reasonPurchase => 'Куплено';
+	@override String get reasonCosmeticPurchase => 'Покупка косметики';
+	@override String get reasonStreakFreeze => 'Заморозка серии';
+	@override String get reasonOther => 'Другое';
+}
+
 /// The flat map containing all translations for locale <ru>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -1384,6 +1408,20 @@ extension on TranslationsRu {
 			'gameLeave.opponentLeft' => 'Ваш противник покинул дуэль',
 			'gameLeave.stay' => 'Остаться',
 			'gameLeave.leave' => 'Выйти',
+			'wallet.title' => 'Кошелёк',
+			'wallet.emptyState' => 'Пока нет ни одной операции',
+			'wallet.currentBalance' => 'Текущий баланс',
+			'wallet.reasonDailyLogin' => 'Бонус за ежедневный вход',
+			'wallet.reasonFirstGame' => 'Первая игра за день',
+			'wallet.reasonStreakBonus7d' => 'Бонус за 7-дневную серию',
+			'wallet.reasonReferral' => 'Бонус за приглашение друга',
+			'wallet.reasonSignupBonus' => 'Приветственный бонус',
+			'wallet.reasonAiGeneration' => 'Генерация теста через AI',
+			'wallet.reasonAdminAdjustment' => 'Корректировка администратором',
+			'wallet.reasonPurchase' => 'Куплено',
+			'wallet.reasonCosmeticPurchase' => 'Покупка косметики',
+			'wallet.reasonStreakFreeze' => 'Заморозка серии',
+			'wallet.reasonOther' => 'Другое',
 			_ => null,
 		};
 	}
