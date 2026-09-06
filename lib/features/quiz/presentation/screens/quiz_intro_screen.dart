@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_x.dart';
@@ -43,12 +44,18 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
   void _onTick(Timer timer) {
     if (!mounted) return;
     setState(() => _count--);
+    // Apple-uslub hisoblash haptigi - har bir raqamda yengil, "Start!"da
+    // kattaroq, katta lahzani boshqalarga (masalan g'alaba/mag'lubiyat
+    // haptigi) o'xshab his qildiradi.
     if (_count == 0) {
+      HapticFeedback.mediumImpact();
       timer.cancel();
       _navigateTimer = Timer(_startHoldDuration, () {
         if (!mounted) return;
         context.pushReplacement(AppRoutes.quiz, extra: widget.args);
       });
+    } else {
+      HapticFeedback.lightImpact();
     }
   }
 
@@ -79,7 +86,11 @@ class _QuizIntroScreenState extends State<QuizIntroScreen> {
                     borderRadius: AppRadius.mdAll,
                   ),
                   alignment: Alignment.center,
-                  child: Icon(widget.args.category.icon, color: Colors.white, size: 28),
+                  child: Icon(
+                    widget.args.category.icon,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                 ),
                 AppSpacing.md.vGap,
                 Text(
