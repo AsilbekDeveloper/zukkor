@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/quiz_category.dart';
 
@@ -10,9 +12,12 @@ import '../models/quiz_category.dart';
 /// The column count is NOT hardcoded: `maxCrossAxisExtent` lets the grid
 /// derive it from whatever width its container actually has (2 columns
 /// on phones, 3–4 on tablets, 2 again inside a tablet two-pane column) —
-/// the adaptive-grid approach recommended by the Flutter team. Used on
-/// its own by the full Categories screen, and wrapped with a
-/// "Categories / See all" header on Home.
+/// the adaptive-grid approach recommended by the Flutter team.
+///
+/// Used by the full Categories screen. Home used to wrap this in a
+/// "Categories / See all" header too, but shows a [CategoryScrollRow]
+/// instead since the Home redesign (2026-09-06) - that old wrapper
+/// (`home/presentation/widgets/category_grid.dart`) is now dead code.
 class CategoryGridView extends StatelessWidget {
   const CategoryGridView({
     required this.categories,
@@ -34,7 +39,8 @@ class CategoryGridView extends StatelessWidget {
     // Two lines: name (13.5px @ 1.4 height) + count (11px @ 1.2 height).
     // Each line is ceil'ed (Flutter rounds line boxes up to whole pixels)
     // plus a small cushion for platform/font metric differences.
-    final double textBlock = (scaler.scale(13.5) * 1.4).ceilToDouble() +
+    final double textBlock =
+        (scaler.scale(13.5) * 1.4).ceilToDouble() +
         (scaler.scale(11) * 1.2).ceilToDouble() +
         2;
     const double iconBlock = 42;
@@ -75,57 +81,64 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(color: context.colors.line),
-            boxShadow: context.colors.shadowSm,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: category.color(context),
-                  borderRadius: AppRadius.smAll,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              border: Border.all(color: context.colors.line),
+              boxShadow: context.colors.shadowSm,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: category.color(context),
+                    borderRadius: AppRadius.smAll,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(category.icon, color: Colors.white, size: 20),
                 ),
-                alignment: Alignment.center,
-                child: Icon(category.icon, color: Colors.white, size: 20),
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      category.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.bodySmall?.copyWith(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
-                        color: context.colors.ink,
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        category.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.bodySmall?.copyWith(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: context.colors.ink,
+                        ),
                       ),
-                    ),
-                    Text(
-                      context.t.common.questionCount(count: category.questionCount),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.labelSmall,
-                    ),
-                  ],
+                      Text(
+                        context.t.common.questionCount(
+                          count: category.questionCount,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.labelSmall,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

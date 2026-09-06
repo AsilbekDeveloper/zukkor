@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +12,8 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/categories_controller.dart';
@@ -33,7 +36,11 @@ import '../widgets/category_grid_view.dart';
 /// own AI/manual quizzes, and potentially the opponent's quizzes in a
 /// duel, so they can be picked for the match.
 class CategoriesScreen extends ConsumerStatefulWidget {
-  const CategoriesScreen({this.onCategoryPicked, this.onAiQuizEntryTap, super.key});
+  const CategoriesScreen({
+    this.onCategoryPicked,
+    this.onAiQuizEntryTap,
+    super.key,
+  });
 
   final CategoryPickedCallback? onCategoryPicked;
 
@@ -52,7 +59,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   void initState() {
     super.initState();
     if (ref.read(categoriesControllerProvider).data == null) {
-      Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+      Future.microtask(
+        () => ref.read(categoriesControllerProvider.notifier).load(),
+      );
     }
   }
 
@@ -85,7 +94,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     final categoriesState = ref.watch(categoriesControllerProvider);
-    final List<QuizCategory>? categories = categoriesState.data?.map(QuizCategory.fromEntity).toList();
+    final List<QuizCategory>? categories = categoriesState.data
+        ?.map(QuizCategory.fromEntity)
+        .toList();
 
     return Scaffold(
       body: SafeArea(
@@ -95,30 +106,48 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.categories.title, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.categories.title,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               // Faqat Duel/Lobby kontekstida (kategoriya birovga taklif
               // qilinganda/o'yin uchun tanlanganda) ko'rinadi — bu holda
               // foydalanuvchi o'zining quizini ham tanlay olishi kerak.
               // Oddiy Solo ko'rish/yaratish endi Profile'dan.
               if (widget.onCategoryPicked != null) ...[
                 AppSpacing.md.vGap,
-                _AiQuizEntryCard(
-                  label: context.t.aiQuiz.entryCardLabel,
-                  onTap: widget.onAiQuizEntryTap ?? () => context.push(AppRoutes.myAiQuizzes),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 60),
+                  child: _AiQuizEntryCard(
+                    label: context.t.aiQuiz.entryCardLabel,
+                    onTap:
+                        widget.onAiQuizEntryTap ??
+                        () => context.push(AppRoutes.myAiQuizzes),
+                  ),
                 ),
               ],
               AppSpacing.lg.vGap,
               Expanded(
                 child: categoriesState.hasError
-                    ? ErrorRetryView(onRetry: () => ref.read(categoriesControllerProvider.notifier).load())
+                    ? ErrorRetryView(
+                        onRetry: () => ref
+                            .read(categoriesControllerProvider.notifier)
+                            .load(),
+                      )
                     : categories == null
-                        ? const ShimmerCategoryGridSkeleton()
-                        : SingleChildScrollView(
-                            child: CategoryGridView(
-                              categories: categories,
-                              onCategoryTap: (category) => _onCategoryTap(context, category),
-                            ),
+                    ? const ShimmerCategoryGridSkeleton()
+                    : SingleChildScrollView(
+                        child: FadeSlideIn(
+                          delay: const Duration(milliseconds: 120),
+                          child: CategoryGridView(
+                            categories: categories,
+                            onCategoryTap: (category) =>
+                                _onCategoryTap(context, category),
                           ),
+                        ),
+                      ),
               ),
             ],
           ),
@@ -137,30 +166,42 @@ class _AiQuizEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.surfaceDark,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.surfaceDark,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(borderRadius: AppRadius.mdAll, boxShadow: context.colors.shadowSm),
-          child: Row(
-            children: [
-              const Icon(TablerIcons.sparkle, color: Colors.white, size: 20),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Text(
-                  label,
-                  style: context.textStyles.bodyMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              boxShadow: context.colors.shadowSm,
+            ),
+            child: Row(
+              children: [
+                const Icon(TablerIcons.sparkle, color: Colors.white, size: 20),
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Text(
+                    label,
+                    style: context.textStyles.bodyMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-              const Icon(TablerIcons.chevronRight, color: Colors.white, size: 18),
-            ],
+                const Icon(
+                  TablerIcons.chevronRight,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ],
+            ),
           ),
         ),
       ),
