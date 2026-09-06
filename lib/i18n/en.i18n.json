@@ -416,6 +416,8 @@
     "entryCardLabel": "Create a quiz from a document with AI",
     "myQuizzesTitle": "My quizzes",
     "createButton": "+ Create a new AI quiz",
+    "hubAiLabel": "With AI",
+    "hubManualLabel": "Manual",
     "emptyTitle": "You haven't created an AI quiz yet",
     "emptySubtitle": "Upload a document (PDF, Word, or text) and get a quiz generated from it",
     "deleteConfirmTitle": "Delete quiz",

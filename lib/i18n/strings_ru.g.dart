@@ -811,6 +811,8 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get entryCardLabel => 'Создать викторину из документа с помощью AI';
 	@override String get myQuizzesTitle => 'Мои викторины';
 	@override String get createButton => '+ Создать новую AI-викторину';
+	@override String get hubAiLabel => 'С AI';
+	@override String get hubManualLabel => 'Вручную';
 	@override String get emptyTitle => 'У вас пока нет AI-викторин';
 	@override String get emptySubtitle => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе';
 	@override String get deleteConfirmTitle => 'Удалить викторину';
@@ -1289,6 +1291,8 @@ extension on TranslationsRu {
 			'aiQuiz.entryCardLabel' => 'Создать викторину из документа с помощью AI',
 			'aiQuiz.myQuizzesTitle' => 'Мои викторины',
 			'aiQuiz.createButton' => '+ Создать новую AI-викторину',
+			'aiQuiz.hubAiLabel' => 'С AI',
+			'aiQuiz.hubManualLabel' => 'Вручную',
 			'aiQuiz.emptyTitle' => 'У вас пока нет AI-викторин',
 			'aiQuiz.emptySubtitle' => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе',
 			'aiQuiz.deleteConfirmTitle' => 'Удалить викторину',

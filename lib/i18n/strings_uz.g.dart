@@ -805,6 +805,8 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get entryCardLabel => 'AI orqali hujjatdan quiz yaratish';
 	@override String get myQuizzesTitle => 'Mening quizlarim';
 	@override String get createButton => '+ Yangi AI quiz yaratish';
+	@override String get hubAiLabel => 'AI bilan';
+	@override String get hubManualLabel => 'Qo\'lda';
 	@override String get emptyTitle => 'Hali AI quiz yaratmagansiz';
 	@override String get emptySubtitle => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating';
 	@override String get deleteConfirmTitle => 'Quizni o\'chirish';
@@ -1283,6 +1285,8 @@ extension on TranslationsUz {
 			'aiQuiz.entryCardLabel' => 'AI orqali hujjatdan quiz yaratish',
 			'aiQuiz.myQuizzesTitle' => 'Mening quizlarim',
 			'aiQuiz.createButton' => '+ Yangi AI quiz yaratish',
+			'aiQuiz.hubAiLabel' => 'AI bilan',
+			'aiQuiz.hubManualLabel' => 'Qo\'lda',
 			'aiQuiz.emptyTitle' => 'Hali AI quiz yaratmagansiz',
 			'aiQuiz.emptySubtitle' => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating',
 			'aiQuiz.deleteConfirmTitle' => 'Quizni o\'chirish',

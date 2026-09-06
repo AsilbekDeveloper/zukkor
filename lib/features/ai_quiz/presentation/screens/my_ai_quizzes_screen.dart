@@ -9,7 +9,6 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -68,6 +67,18 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
 
   Future<void> _createViaAi() async {
     await context.push(AppRoutes.generateAiQuiz);
+  }
+
+  Future<void> _createManual() async {
+    await context.push(AppRoutes.createManualQuiz);
+  }
+
+  Future<void> _openDiscover() async {
+    await context.push(AppRoutes.discover);
+  }
+
+  Future<void> _openSubmitQuestion() async {
+    await context.push(AppRoutes.submitQuestion);
   }
 
   void _rowTapped(AiQuiz quiz) {
@@ -231,7 +242,45 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
               _buildHeader(context, canSelect: canSelect),
               AppSpacing.lg.vGap,
               if (!_selectionMode) ...[
-                AppButton.primary(label: context.t.aiQuiz.createButton, onPressed: _createViaAi),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _ActionTile(
+                        icon: TablerIcons.sparkle,
+                        color: context.colors.coral,
+                        label: context.t.aiQuiz.hubAiLabel,
+                        onTap: _createViaAi,
+                      ),
+                    ),
+                    AppSpacing.sm.hGap,
+                    Expanded(
+                      child: _ActionTile(
+                        icon: TablerIcons.pencil,
+                        color: context.colors.green,
+                        label: context.t.aiQuiz.hubManualLabel,
+                        onTap: _createManual,
+                      ),
+                    ),
+                    AppSpacing.sm.hGap,
+                    Expanded(
+                      child: _ActionTile(
+                        icon: TablerIcons.world,
+                        color: context.colors.teal,
+                        label: context.t.discover.title,
+                        onTap: _openDiscover,
+                      ),
+                    ),
+                    AppSpacing.sm.hGap,
+                    Expanded(
+                      child: _ActionTile(
+                        icon: TablerIcons.help,
+                        color: context.colors.blue,
+                        label: context.t.questionSubmission.title,
+                        onTap: _openSubmitQuestion,
+                      ),
+                    ),
+                  ],
+                ),
                 AppSpacing.lg.vGap,
               ],
               Expanded(
@@ -282,6 +331,59 @@ class _HeaderIconButton extends StatelessWidget {
           width: 44,
           height: 44,
           child: Icon(icon, color: color ?? context.colors.ink, size: 20),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionTile extends StatelessWidget {
+  const _ActionTile({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.card,
+      borderRadius: AppRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.mdAll,
+            border: Border.all(color: context.colors.line),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(color: color, borderRadius: AppRadius.smAll),
+                alignment: Alignment.center,
+                child: Icon(icon, color: Colors.white, size: 16),
+              ),
+              AppSpacing.xs.vGap,
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: context.textStyles.labelSmall?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
         ),
       ),
     );

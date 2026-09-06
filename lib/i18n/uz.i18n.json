@@ -416,6 +416,8 @@
     "entryCardLabel": "AI orqali hujjatdan quiz yaratish",
     "myQuizzesTitle": "Mening quizlarim",
     "createButton": "+ Yangi AI quiz yaratish",
+    "hubAiLabel": "AI bilan",
+    "hubManualLabel": "Qo'lda",
     "emptyTitle": "Hali AI quiz yaratmagansiz",
     "emptySubtitle": "Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating",
     "deleteConfirmTitle": "Quizni o'chirish",

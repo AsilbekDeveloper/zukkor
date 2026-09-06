@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -27,8 +26,7 @@ import '../../../notifications/presentation/controllers/notifications_controller
 import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
-import '../widgets/category_grid.dart';
-import '../widgets/create_quiz_card.dart';
+import '../widgets/category_scroll_row.dart';
 import '../widgets/duel_hero_card.dart';
 import '../widgets/home_header.dart';
 import '../widgets/multiplayer_row.dart';
@@ -36,20 +34,19 @@ import '../widgets/stats_strip.dart';
 
 /// The main screen — mirrors the prototype's `view-home` 1:1: greeting
 /// header, duel hero card, stats strip, create/join room buttons,
-/// category grid, and a call-to-action for creating your own quiz.
+/// and category row.
 ///
 /// CURRENT STATE: name/avatar, the unread-notifications dot, and the
 /// stats strip (XP/rank/level) + streak are all real, from
 /// `GET /leaderboard/{my_user_id}` via [MyStatsController] (shared with
 /// [ProfileScreen]). "Start a duel" pushes the Duel (choose a friend)
-/// screen; tapping the create-quiz card goes to manual quiz creation;
-/// "See all", the center Play tab, and tapping a category all go to the
-/// Categories/quiz flow; "Create a room" and "Join with a code" go to
-/// the Lobby flow; the bell opens Notifications, which marks everything
-/// read on open — the dot here reflects that live, shared state (see
-/// [NotificationsController]), not a local flag. Every other action
-/// without a real destination yet (the Home tab itself) goes through
-/// [_comingSoon].
+/// screen; "See all", the center Play tab, and tapping a category all go
+/// to the Categories/quiz flow; "Create a room" and "Join with a code"
+/// go to the Lobby flow; the bell opens Notifications, which marks
+/// everything read on open — the dot here reflects that live, shared
+/// state (see [NotificationsController]), not a local flag. Every other
+/// action without a real destination yet (the Home tab itself) goes
+/// through [_comingSoon].
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -207,19 +204,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
-  /// Categories grid + create-quiz shortcut. The grid shows an
-  /// [InlineRetryRow] instead of silently going empty when categories
-  /// failed to load - the create-quiz/discover/submit-question cards
-  /// below stay fully usable either way.
+  /// Categories, horizontally scrollable — shows an [InlineRetryRow]
+  /// instead of silently going empty when categories failed to load.
+  /// Quiz-creation/discovery/question-submission shortcuts used to live
+  /// here too but moved to the "Mening quizlarim" hub (reached via the
+  /// bottom nav's center button) so this whole screen fits one viewport
+  /// without scrolling (2026-09-06).
   List<Widget> _discoverSection(BuildContext context) {
     final categoriesState = ref.watch(categoriesControllerProvider);
     final List<QuizCategory> categories =
-        categoriesState.data?.map(QuizCategory.fromEntity).take(4).toList() ?? const [];
+        categoriesState.data?.map(QuizCategory.fromEntity).toList() ?? const [];
 
     return [
       categoriesState.hasError
           ? InlineRetryRow(onRetry: () => ref.read(categoriesControllerProvider.notifier).load())
-          : CategoryGrid(
+          : CategoryScrollRow(
         categories: categories,
         onSeeAll: () => context.push(AppRoutes.categories),
         onCategoryTap: (category) => context.push(
@@ -233,131 +232,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
-      AppSpacing.md.vGap,
-      CreateQuizCard(onTap: () => context.push(AppRoutes.createManualQuiz)),
-      AppSpacing.md.vGap,
-      _DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover)),
-      AppSpacing.md.vGap,
-      _SubmitQuestionCard(onTap: () => context.push(AppRoutes.submitQuestion)),
     ];
-  }
-}
-
-class _DiscoverFeedCard extends StatelessWidget {
-  const _DiscoverFeedCard({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(color: context.colors.line),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: context.colors.teal,
-                  borderRadius: AppRadius.smAll,
-                ),
-                alignment: Alignment.center,
-                child: const Icon(TablerIcons.world, color: Colors.white, size: 20),
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      context.t.discover.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      context.t.discover.homeCardSubtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(TablerIcons.chevronRight, color: Colors.grey, size: 18),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SubmitQuestionCard extends StatelessWidget {
-  const _SubmitQuestionCard({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(color: context.colors.line),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(color: context.colors.blue, borderRadius: AppRadius.smAll),
-                alignment: Alignment.center,
-                child: const Icon(TablerIcons.help, color: Colors.white, size: 20),
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      context.t.home.submitQuestionTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      context.t.home.submitQuestionSubtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(TablerIcons.chevronRight, color: Colors.grey, size: 18),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

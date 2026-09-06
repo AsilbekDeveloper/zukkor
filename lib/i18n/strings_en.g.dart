@@ -1477,6 +1477,12 @@ class Translations$aiQuiz$en {
 	/// en: '+ Create a new AI quiz'
 	String get createButton => '+ Create a new AI quiz';
 
+	/// en: 'With AI'
+	String get hubAiLabel => 'With AI';
+
+	/// en: 'Manual'
+	String get hubManualLabel => 'Manual';
+
 	/// en: 'You haven't created an AI quiz yet'
 	String get emptyTitle => 'You haven\'t created an AI quiz yet';
 
@@ -2132,6 +2138,8 @@ extension on Translations {
 			'aiQuiz.entryCardLabel' => 'Create a quiz from a document with AI',
 			'aiQuiz.myQuizzesTitle' => 'My quizzes',
 			'aiQuiz.createButton' => '+ Create a new AI quiz',
+			'aiQuiz.hubAiLabel' => 'With AI',
+			'aiQuiz.hubManualLabel' => 'Manual',
 			'aiQuiz.emptyTitle' => 'You haven\'t created an AI quiz yet',
 			'aiQuiz.emptySubtitle' => 'Upload a document (PDF, Word, or text) and get a quiz generated from it',
 			'aiQuiz.deleteConfirmTitle' => 'Delete quiz',

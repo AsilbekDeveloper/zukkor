@@ -473,7 +473,6 @@ void main() {
     expect(find.text(AppStrings.createRoom), findsOneWidget);
     expect(find.text(AppStrings.joinWithCode), findsOneWidget);
     expect(find.text(AppStrings.categoriesTitle), findsOneWidget);
-    expect(find.text(AppStrings.createQuizTitle), findsOneWidget);
 
     // One card per sample category.
     expect(find.text('Math'), findsOneWidget);
@@ -558,18 +557,6 @@ void main() {
     await tester.tap(find.text(AppStrings.startDuel));
     await tester.pumpAndSettle();
     expect(find.text(AppStrings.duelScreenTitle), findsOneWidget);
-  });
-
-  testWidgets('the create-quiz card navigates to manual quiz creation', (tester) async {
-    // Tall viewport so the last list item isn't near the bottom nav bar's
-    // raised center Play button, whose hit area extends above its own
-    // bounding box and can otherwise steal the tap.
-    await _pumpHome(tester, size: const Size(390, 1400));
-
-    await tester.tap(find.text(AppStrings.createQuizTitle));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.manualQuizScreenTitle), findsOneWidget);
   });
 
   testWidgets('"See all" navigates to the Categories screen', (tester) async {

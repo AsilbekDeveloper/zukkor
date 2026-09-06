@@ -431,6 +431,8 @@
     "entryCardLabel": "Создать викторину из документа с помощью AI",
     "myQuizzesTitle": "Мои викторины",
     "createButton": "+ Создать новую AI-викторину",
+    "hubAiLabel": "С AI",
+    "hubManualLabel": "Вручную",
     "emptyTitle": "У вас пока нет AI-викторин",
     "emptySubtitle": "Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе",
     "deleteConfirmTitle": "Удалить викторину",
