@@ -443,6 +443,7 @@
     "generated": "Done! Saved to \"My quizzes\"",
     "generatingTitle": "AI is generating questions...",
     "generatingSubtitle": "This can take a moment, please wait",
+    "stillProcessingNotifyLater": "This is taking longer than usual - we'll notify you when it's ready",
     "sourceAi": "AI",
     "sourceManual": "Manual",
     "visibilityPrivate": "Nobody",

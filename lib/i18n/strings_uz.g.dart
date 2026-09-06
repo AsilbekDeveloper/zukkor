@@ -832,6 +832,7 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get generated => 'Tayyor! Quiz "Mening quizlarim"ga saqlandi';
 	@override String get generatingTitle => 'AI savollar tayyorlamoqda...';
 	@override String get generatingSubtitle => 'Bu biroz vaqt olishi mumkin, iltimos kuting';
+	@override String get stillProcessingNotifyLater => 'Bu odatdagidan uzoqroq davom etayapti - tayyor bo\'lganda sizga bildirishnoma yuboramiz';
 	@override String get sourceAi => 'AI';
 	@override String get sourceManual => 'Qo\'lda';
 	@override String get visibilityPrivate => 'Hech kim';
@@ -1312,6 +1313,7 @@ extension on TranslationsUz {
 			'aiQuiz.generated' => 'Tayyor! Quiz "Mening quizlarim"ga saqlandi',
 			'aiQuiz.generatingTitle' => 'AI savollar tayyorlamoqda...',
 			'aiQuiz.generatingSubtitle' => 'Bu biroz vaqt olishi mumkin, iltimos kuting',
+			'aiQuiz.stillProcessingNotifyLater' => 'Bu odatdagidan uzoqroq davom etayapti - tayyor bo\'lganda sizga bildirishnoma yuboramiz',
 			'aiQuiz.sourceAi' => 'AI',
 			'aiQuiz.sourceManual' => 'Qo\'lda',
 			'aiQuiz.visibilityPrivate' => 'Hech kim',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 
@@ -81,46 +82,56 @@ class _CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    final Color base = category.color(context);
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          width: 92,
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(color: context.colors.line),
-            boxShadow: context.colors.shadowSm,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(color: category.color(context), borderRadius: AppRadius.smAll),
-                alignment: Alignment.center,
-                child: Icon(category.icon, color: Colors.white, size: 18),
-              ),
-              AppSpacing.xs.vGap,
-              Text(
-                category.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: context.textStyles.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: context.colors.ink),
-              ),
-              Text(
-                context.t.common.questionCount(count: category.questionCount),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: context.textStyles.labelSmall?.copyWith(fontSize: 10, color: context.colors.muted),
-              ),
-            ],
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            width: 92,
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              border: Border.all(color: context.colors.line),
+              boxShadow: context.colors.shadowSm,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [base, Color.lerp(base, Colors.black, 0.18)!],
+                    ),
+                    borderRadius: AppRadius.smAll,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(category.icon, color: Colors.white, size: 18),
+                ),
+                AppSpacing.xs.vGap,
+                Text(
+                  category.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: context.textStyles.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: context.colors.ink),
+                ),
+                Text(
+                  context.t.common.questionCount(count: category.questionCount),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: context.textStyles.labelSmall?.copyWith(fontSize: 10, color: context.colors.muted),
+                ),
+              ],
+            ),
           ),
         ),
       ),

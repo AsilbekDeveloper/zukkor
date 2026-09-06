@@ -73,10 +73,6 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     await context.push(AppRoutes.createManualQuiz);
   }
 
-  Future<void> _openDiscover() async {
-    await context.push(AppRoutes.discover);
-  }
-
   Future<void> _openSubmitQuestion() async {
     await context.push(AppRoutes.submitQuestion);
   }
@@ -259,15 +255,6 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                         color: context.colors.green,
                         label: context.t.aiQuiz.hubManualLabel,
                         onTap: _createManual,
-                      ),
-                    ),
-                    AppSpacing.sm.hGap,
-                    Expanded(
-                      child: _ActionTile(
-                        icon: TablerIcons.world,
-                        color: context.colors.teal,
-                        label: context.t.discover.title,
-                        onTap: _openDiscover,
                       ),
                     ),
                     AppSpacing.sm.hGap,

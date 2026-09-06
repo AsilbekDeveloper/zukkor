@@ -458,6 +458,7 @@
     "generated": "Готово! Сохранено в «Мои викторины»",
     "generatingTitle": "AI генерирует вопросы...",
     "generatingSubtitle": "Это может занять некоторое время, пожалуйста подождите",
+    "stillProcessingNotifyLater": "Это занимает больше времени, чем обычно - мы уведомим вас, когда будет готово",
     "sourceAi": "AI",
     "sourceManual": "Вручную",
     "visibilityPrivate": "Никто",

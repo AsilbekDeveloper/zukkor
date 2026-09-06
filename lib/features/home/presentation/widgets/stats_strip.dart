@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/animated_counter.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// The 2-stat strip (Total XP, Rank) — mirrors the prototype's `.stats`
@@ -30,9 +32,25 @@ class StatsStrip extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(child: _Stat(value: formatThousands(totalXp), label: context.t.home.totalXpLabel)),
+          Expanded(
+            child: _Stat(
+              icon: TablerIcons.star,
+              iconColor: context.colors.coral,
+              targetValue: totalXp,
+              formatter: formatThousands,
+              label: context.t.home.totalXpLabel,
+            ),
+          ),
           _divider(context),
-          Expanded(child: _Stat(value: '#$rank', label: context.t.home.rankLabel)),
+          Expanded(
+            child: _Stat(
+              icon: TablerIcons.trophy,
+              iconColor: context.colors.teal,
+              targetValue: rank,
+              formatter: (r) => '#$r',
+              label: context.t.home.rankLabel,
+            ),
+          ),
         ],
       ),
     );
@@ -44,18 +62,35 @@ class StatsStrip extends StatelessWidget {
 }
 
 class _Stat extends StatelessWidget {
-  const _Stat({required this.value, required this.label});
+  const _Stat({
+    required this.icon,
+    required this.iconColor,
+    required this.targetValue,
+    required this.formatter,
+    required this.label,
+  });
 
-  final String value;
+  final IconData icon;
+  final Color iconColor;
+  final int targetValue;
+  final String Function(int) formatter;
   final String label;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          value,
-          style: context.textStyles.titleMedium?.copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: iconColor),
+            const SizedBox(width: 4),
+            AnimatedCounter(
+              value: targetValue,
+              formatter: formatter,
+              style: context.textStyles.titleMedium?.copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+          ],
         ),
         Text(label, style: context.textStyles.labelSmall),
       ],

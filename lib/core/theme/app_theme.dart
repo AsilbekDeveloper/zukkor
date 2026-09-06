@@ -51,6 +51,20 @@ abstract final class AppTheme {
       textTheme: textTheme,
       splashFactory: InkSparkle.splashFactory,
 
+      // Har bir sahifa o'tishi (go_router'ning oddiy `builder:` orqali
+      // yaratilgan barcha 46+ route'i, hech biri alohida sozlanmasa ham)
+      // shu yerdan avtomatik oladi. Android'da standart (Material 3)
+      // ZoomPageTransitionsBuilder o'rniga yangiroq, jonliroq
+      // FadeForwardsPageTransitionsBuilder - iOS o'zining tabiiy
+      // Cupertino chapdan-o'ngga surilishida qoladi (foydalanuvchi shu
+      // platformada shunga o'rganib qolgan).
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
+
       appBarTheme: AppBarTheme(
         backgroundColor: c.cream,
         foregroundColor: c.ink,

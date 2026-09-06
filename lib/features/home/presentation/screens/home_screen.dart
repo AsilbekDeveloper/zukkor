@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -12,6 +13,7 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/inline_retry_row.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
@@ -156,18 +158,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
             children: [
-              HomeHeader(
-                name: user.displayName,
-                initials: user.initials,
-                avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
-                avatarImagePath: user?.avatarImagePath,
-                hasUnreadNotifications: hasUnreadNotifications,
-                onNotificationsTap: () => _openNotifications(context),
+              FadeSlideIn(
+                child: HomeHeader(
+                  name: user.displayName,
+                  initials: user.initials,
+                  avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
+                  avatarImagePath: user?.avatarImagePath,
+                  hasUnreadNotifications: hasUnreadNotifications,
+                  onNotificationsTap: () => _openNotifications(context),
+                ),
               ),
               AppSpacing.lg.vGap,
-              ..._playSection(context),
+              for (final Widget section in _playSection(context))
+                FadeSlideIn(delay: const Duration(milliseconds: 60), child: section),
               AppSpacing.xxs.vGap,
-              ..._discoverSection(context),
+              for (final Widget section in _discoverSection(context))
+                FadeSlideIn(delay: const Duration(milliseconds: 120), child: section),
             ],
           ),
         ),
@@ -206,10 +212,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   /// Categories, horizontally scrollable — shows an [InlineRetryRow]
   /// instead of silently going empty when categories failed to load.
-  /// Quiz-creation/discovery/question-submission shortcuts used to live
-  /// here too but moved to the "Mening quizlarim" hub (reached via the
-  /// bottom nav's center button) so this whole screen fits one viewport
-  /// without scrolling (2026-09-06).
+  /// Manual-quiz-creation/question-submission shortcuts used to live here
+  /// too but moved to the "Mening quizlarim" hub (reached via the bottom
+  /// nav's center button) - Discover moved there too at first, then came
+  /// back (2026-09-06): unlike those two (pure content-creation, rarely
+  /// used), Discover leads straight to playing someone else's quiz, so it
+  /// belongs with the rest of Home's "play now" actions - and removing
+  /// all three left a large, awkward empty gap above the bottom nav bar
+  /// once there were only 3 short "play now" blocks left.
   List<Widget> _discoverSection(BuildContext context) {
     final categoriesState = ref.watch(categoriesControllerProvider);
     final List<QuizCategory> categories =
@@ -232,6 +242,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
+      AppSpacing.md.vGap,
+      _DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover)),
     ];
+  }
+}
+
+class _DiscoverFeedCard extends StatelessWidget {
+  const _DiscoverFeedCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: context.colors.card,
+      borderRadius: AppRadius.mdAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.mdAll,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.mdAll,
+            border: Border.all(color: context.colors.line),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: context.colors.teal,
+                  borderRadius: AppRadius.smAll,
+                ),
+                alignment: Alignment.center,
+                child: const Icon(TablerIcons.world, color: Colors.white, size: 20),
+              ),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      context.t.discover.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      context.t.discover.homeCardSubtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(TablerIcons.chevronRight, color: Colors.grey, size: 18),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

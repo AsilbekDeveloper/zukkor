@@ -838,6 +838,7 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get generated => 'Готово! Сохранено в «Мои викторины»';
 	@override String get generatingTitle => 'AI генерирует вопросы...';
 	@override String get generatingSubtitle => 'Это может занять некоторое время, пожалуйста подождите';
+	@override String get stillProcessingNotifyLater => 'Это занимает больше времени, чем обычно - мы уведомим вас, когда будет готово';
 	@override String get sourceAi => 'AI';
 	@override String get sourceManual => 'Вручную';
 	@override String get visibilityPrivate => 'Никто';
@@ -1318,6 +1319,7 @@ extension on TranslationsRu {
 			'aiQuiz.generated' => 'Готово! Сохранено в «Мои викторины»',
 			'aiQuiz.generatingTitle' => 'AI генерирует вопросы...',
 			'aiQuiz.generatingSubtitle' => 'Это может занять некоторое время, пожалуйста подождите',
+			'aiQuiz.stillProcessingNotifyLater' => 'Это занимает больше времени, чем обычно - мы уведомим вас, когда будет готово',
 			'aiQuiz.sourceAi' => 'AI',
 			'aiQuiz.sourceManual' => 'Вручную',
 			'aiQuiz.visibilityPrivate' => 'Никто',

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/analytics/analytics_service.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../history/presentation/controllers/history_controller.dart';
 import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../../data/repositories/duel_repository_impl.dart';
@@ -235,9 +236,16 @@ class DuelController extends Notifier<DuelState> {
     if (game == null || game.duelId != result.duelId) return;
     state = state.copyWith(game: () => game.copyWith(finalResult: () => result));
     // This device's own XP/history just changed server-side — drop the
-    // cached copies so History/Home/Profile fetch fresh next visit.
+    // cached copy so History fetches fresh next visit (a regular pushed
+    // screen, always remounts). Home/Profile live in the persistent
+    // bottom-nav shell and never remount, so merely invalidating leaves
+    // them stuck at 0/0/0 - reload immediately instead.
     ref.invalidate(historyControllerProvider);
     ref.invalidate(myStatsControllerProvider);
+    final String? statsUserId = ref.read(currentUserControllerProvider).data?.id;
+    if (statsUserId != null) {
+      unawaited(ref.read(myStatsControllerProvider.notifier).load(statsUserId));
+    }
     unawaited(ref.read(analyticsServiceProvider).logGameComplete(
           mode: 'duel',
           categoryId: game.category.id,

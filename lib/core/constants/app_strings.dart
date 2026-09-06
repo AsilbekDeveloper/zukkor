@@ -36,6 +36,7 @@ abstract final class AppStrings {
 
   // AI quiz
   static const String myAiQuizzesScreenTitle = 'My quizzes';
+  static const String generatingTitle = 'AI is generating questions...';
 
   // Leaderboard
   static const String leaderboardGreeting = 'Leaderboard';

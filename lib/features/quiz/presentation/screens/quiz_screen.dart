@@ -15,6 +15,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../history/presentation/controllers/history_controller.dart';
 import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../../domain/entities/answer_result.dart';
@@ -188,10 +189,20 @@ class _QuizScreenState extends ConsumerState<QuizScreen> with SingleTickerProvid
         breakdown: summary.breakdown,
       );
       // This session's own XP/history just changed server-side — drop
-      // the cached copies so History/Home/Profile fetch fresh next time
-      // they're visited, instead of showing the pre-game snapshot.
+      // the cached copy so History fetches fresh next time it's visited
+      // (a regular pushed screen, so it always remounts). Home/Profile
+      // are different: they live in the persistent bottom-nav shell and
+      // never remount, so merely invalidating would leave them stuck
+      // showing 0/0/0 forever (2026-09-06, reported from a live device -
+      // "stats go to 0 after finishing any quiz and returning home") -
+      // reload it immediately here instead of hoping some screen's
+      // initState notices the invalidation later.
       ref.invalidate(historyControllerProvider);
       ref.invalidate(myStatsControllerProvider);
+      final String? statsUserId = ref.read(currentUserControllerProvider).data?.id;
+      if (statsUserId != null) {
+        unawaited(ref.read(myStatsControllerProvider.notifier).load(statsUserId));
+      }
       ref.read(analyticsServiceProvider).logGameComplete(
             mode: 'solo',
             categoryId: widget.category.id,

@@ -1558,6 +1558,9 @@ class Translations$aiQuiz$en {
 	/// en: 'This can take a moment, please wait'
 	String get generatingSubtitle => 'This can take a moment, please wait';
 
+	/// en: 'This is taking longer than usual - we'll notify you when it's ready'
+	String get stillProcessingNotifyLater => 'This is taking longer than usual - we\'ll notify you when it\'s ready';
+
 	/// en: 'AI'
 	String get sourceAi => 'AI';
 
@@ -2165,6 +2168,7 @@ extension on Translations {
 			'aiQuiz.generated' => 'Done! Saved to "My quizzes"',
 			'aiQuiz.generatingTitle' => 'AI is generating questions...',
 			'aiQuiz.generatingSubtitle' => 'This can take a moment, please wait',
+			'aiQuiz.stillProcessingNotifyLater' => 'This is taking longer than usual - we\'ll notify you when it\'s ready',
 			'aiQuiz.sourceAi' => 'AI',
 			'aiQuiz.sourceManual' => 'Manual',
 			'aiQuiz.visibilityPrivate' => 'Nobody',

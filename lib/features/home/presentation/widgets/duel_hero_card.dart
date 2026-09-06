@@ -4,6 +4,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// The big coral "start a duel" card — mirrors the prototype's `.hero`.
@@ -114,31 +115,33 @@ class _StartDuelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(999),
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(999),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 1, horizontal: AppSpacing.lg),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(TablerIcons.swords, color: context.colors.coralDeep, size: 18),
-              AppSpacing.xs.hGap,
-              Flexible(
-                child: Text(
-                  context.t.home.startDuel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.labelLarge?.copyWith(
-                    color: context.colors.coralDeep,
-                    fontSize: 14,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(999),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 1, horizontal: AppSpacing.lg),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(TablerIcons.swords, color: context.colors.coralDeep, size: 18),
+                AppSpacing.xs.hGap,
+                Flexible(
+                  child: Text(
+                    context.t.home.startDuel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.labelLarge?.copyWith(
+                      color: context.colors.coralDeep,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

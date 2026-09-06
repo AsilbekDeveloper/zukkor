@@ -17,6 +17,7 @@ import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
+import '../../domain/entities/ai_quiz.dart';
 import '../controllers/ai_quiz_controller.dart';
 import '../widgets/topic_selection_row.dart';
 
@@ -117,9 +118,33 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
           );
       if (!mounted) return;
 
-      // Hujjat qabul qilindi, endi fon polling boshlaymiz va foydalanuvchiga
-      // xabar beramiz.
-      _showConfirmationDialog(jobId);
+      // Backend so'rovi baribir darhol qaytadi (uzun HTTP ulanishini ochiq
+      // ushlab turmaslik uchun - katta hujjat 1-2 daqiqa olishi mumkin),
+      // lekin foydalanuvchiga "eski" sinxron tuyg'uni qaytarish uchun shu
+      // ekranda turib fon-so'rovni (har 7 soniyada, 2 daqiqagacha)
+      // kuzatuvchi, yopilmaydigan "tayyorlanmoqda" dialogini ko'rsatamiz -
+      // shunda foydalanuvchi ekrandan chiqarilmasdan, natijani shu yerda
+      // kutadi (2026-09-06, foydalanuvchi ilgarigi xatti-harakatni so'rab
+      // qaytardi: "avval tayyorlanmoqda deb chiqar edi").
+      final result = await showDialog<({String status, AiQuiz? quiz, String? error})?>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => _GeneratingDialog(jobId: jobId),
+      );
+      if (!mounted) return;
+
+      if (result == null) {
+        // 2 daqiqadan keyin ham tugamadi - juda kamdan-kam holat (g'ayrioddiy
+        // uzun hujjat). Fon jarayonning o'zi davom etadi, foydalanuvchi
+        // cheksiz kutib turmasin deb dialogni yopamiz - tayyor bo'lganda
+        // bildirishnoma orqali bilib oladi.
+        context.showSnack(context.t.aiQuiz.stillProcessingNotifyLater);
+      } else if (result.status == 'completed') {
+        context.showSnack(context.t.aiQuiz.generated);
+        context.pop();
+      } else {
+        context.showSnack(result.error ?? t.errors.unknown);
+      }
     } on Failure catch (e) {
       if (!mounted) return;
       context.showSnack(e.message);
@@ -127,42 +152,6 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
       if (!mounted) return;
       context.showSnack(t.errors.unknown);
     }
-  }
-
-  void _showConfirmationDialog(String jobId) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.t.common.ok),
-        content: const Text(
-          "Hujjatingiz qabul qilindi. AI savollar tayyorlashni boshladi, tayyor bo'lganda sizga bildirishnoma yuboramiz. Ilovadan foydalanishda davom etishingiz mumkin.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              this.context.pop(); // Generate ekranidan chiqish
-            },
-            child: Text(context.t.common.ok),
-          ),
-        ],
-      ),
-    );
-
-    // Fon polling — 2 daqiqa davomida har 7 soniyada tekshiradi.
-    int attempts = 0;
-    Timer.periodic(const Duration(seconds: 7), (timer) async {
-      attempts++;
-      if (attempts > 17 || !mounted) {
-        timer.cancel();
-        return;
-      }
-
-      final result = await ref.read(aiQuizControllerProvider.notifier).checkJobStatus(jobId);
-      if (result.status == 'completed' || result.status == 'failed') {
-        timer.cancel();
-      }
-    });
   }
 
   void _goBack() {
@@ -299,3 +288,65 @@ class _FilePickerCard extends StatelessWidget {
 }
 
 /// Generatsiya davomida (odatda 10-60+ soniya - hujjatni o'qish + AI
+/// so'rovi) ekranda ko'rsatiladigan, yopilmaydigan dialog. O'zi (har 7
+/// soniyada, 2 daqiqagacha) `checkJobStatus` orqali fon-jarayonni
+/// so'raydi va tugagach (yoki 2 daqiqadan oshsa) o'zini yopib natijani
+/// chaqiruvchiga qaytaradi.
+class _GeneratingDialog extends ConsumerStatefulWidget {
+  const _GeneratingDialog({required this.jobId});
+
+  final String jobId;
+
+  @override
+  ConsumerState<_GeneratingDialog> createState() => _GeneratingDialogState();
+}
+
+class _GeneratingDialogState extends ConsumerState<_GeneratingDialog> {
+  Timer? _pollTimer;
+  int _attempts = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pollTimer = Timer.periodic(const Duration(seconds: 7), _poll);
+  }
+
+  Future<void> _poll(Timer timer) async {
+    _attempts++;
+    if (_attempts > 17) {
+      timer.cancel();
+      if (mounted) Navigator.of(context).pop();
+      return;
+    }
+
+    final result = await ref.read(aiQuizControllerProvider.notifier).checkJobStatus(widget.jobId);
+    if ((result.status == 'completed' || result.status == 'failed') && mounted) {
+      timer.cancel();
+      Navigator.of(context).pop(result);
+    }
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: AlertDialog(
+        title: Text(context.t.aiQuiz.generatingTitle),
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2.5)),
+            AppSpacing.md.hGap,
+            Expanded(child: Text(context.t.aiQuiz.generatingSubtitle)),
+          ],
+        ),
+      ),
+    );
+  }
+}
