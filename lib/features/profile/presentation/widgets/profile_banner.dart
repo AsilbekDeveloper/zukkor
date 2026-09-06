@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 
@@ -91,7 +93,9 @@ class ProfileBanner extends StatelessWidget {
                   initials: initials,
                   avatarImagePath: avatarImagePath,
                   backgroundColor: avatarColor.resolve(context),
-                  borderRadius: const BorderRadius.all(Radius.circular(AppRadius.md - 4)),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(AppRadius.md - 4),
+                  ),
                   fontSize: 21,
                 ),
               ),
@@ -116,22 +120,29 @@ class _EditButton extends StatelessWidget {
 
   final VoidCallback onTap;
 
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: Colors.white,
         borderRadius: AppRadius.smAll,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(
-            TablerIcons.pencil,
-            color: context.colors.coralDeep,
-            size: 20,
-            semanticLabel: context.t.profile.editProfile,
+        child: InkWell(
+          onTap: _handleTap,
+          borderRadius: AppRadius.smAll,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Icon(
+              TablerIcons.pencil,
+              color: context.colors.coralDeep,
+              size: 20,
+              semanticLabel: context.t.profile.editProfile,
+            ),
           ),
         ),
       ),

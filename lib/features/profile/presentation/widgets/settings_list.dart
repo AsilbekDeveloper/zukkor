@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -7,6 +8,7 @@ import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 
 /// A card of tappable rows (icon + label + chevron) — mirrors the
 /// prototype's `.settings-list` / `.settings-row`.
@@ -29,7 +31,8 @@ class SettingsList extends StatelessWidget {
         children: [
           for (int i = 0; i < rows.length; i++) ...[
             _SettingsRow(data: rows[i]),
-            if (i < rows.length - 1) Divider(height: 1, color: context.colors.line),
+            if (i < rows.length - 1)
+              Divider(height: 1, color: context.colors.line),
           ],
         ],
       ),
@@ -72,36 +75,53 @@ class _SettingsRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final Color? dangerColor = data.isDanger ? context.colors.coralDeep : null;
-    return InkWell(
-      onTap: () {
-        ref.playSound(AppSound.tap);
-        data.onTap();
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-        child: Row(
-          children: [
-            Icon(data.icon, size: 19, color: dangerColor ?? context.colors.ink2),
-            AppSpacing.sm.hGap,
-            Expanded(
-              child: Text(
-                data.label,
-                style: context.textStyles.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13.5,
-                  color: dangerColor,
+    return PressableScale(
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          ref.playSound(AppSound.tap);
+          data.onTap();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm + 2,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                data.icon,
+                size: 19,
+                color: dangerColor ?? context.colors.ink2,
+              ),
+              AppSpacing.sm.hGap,
+              Expanded(
+                child: Text(
+                  data.label,
+                  style: context.textStyles.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.5,
+                    color: dangerColor,
+                  ),
                 ),
               ),
-            ),
-            if (data.trailingLabel != null) ...[
-              Text(
-                data.trailingLabel!,
-                style: context.textStyles.labelSmall?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              AppSpacing.xs.hGap,
+              if (data.trailingLabel != null) ...[
+                Text(
+                  data.trailingLabel!,
+                  style: context.textStyles.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                AppSpacing.xs.hGap,
+              ],
+              data.trailingWidget ??
+                  Icon(
+                    TablerIcons.chevronRight,
+                    size: 17,
+                    color: context.colors.muted,
+                  ),
             ],
-            data.trailingWidget ?? Icon(TablerIcons.chevronRight, size: 17, color: context.colors.muted),
-          ],
+          ),
         ),
       ),
     );

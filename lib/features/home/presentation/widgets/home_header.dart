@@ -6,7 +6,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/widgets/animated_counter.dart';
+import '../../../../core/widgets/currency_chip.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/user_avatar.dart';
 
@@ -71,14 +71,14 @@ class HomeHeader extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        _CurrencyChip(
+        CurrencyChip(
           icon: TablerIcons.coinFilled,
           color: context.colors.terra,
           value: coinBalance,
           onTap: onWalletTap,
         ),
         AppSpacing.xxs.hGap,
-        _CurrencyChip(
+        CurrencyChip(
           icon: TablerIcons.diamondFilled,
           color: context.colors.teal,
           value: diamondBalance,
@@ -90,67 +90,6 @@ class HomeHeader extends StatelessWidget {
           onTap: onNotificationsTap,
         ),
       ],
-    );
-  }
-}
-
-/// Coin/Diamond hamyon chipi - [[ai_cost_architecture]]. Yumshoq "card"
-/// fonli, boshqa joyda ishlatilmagan to'yingan ranglar (masalan avvalgi
-/// yorqin-ko'k) o'rniga ilovaning o'zida allaqachon bor ranglar (terra/
-/// teal) ishlatiladi - shu orqali ilovaning qolgan qismidan "begona
-/// vidjet" bo'lib ajralib turmaydi. Bosilsa `AppRoutes.wallet` (to'liq
-/// tarix) ochiladi.
-class _CurrencyChip extends StatelessWidget {
-  const _CurrencyChip({
-    required this.icon,
-    required this.color,
-    required this.value,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final Color color;
-  final int value;
-  final VoidCallback onTap;
-
-  void _handleTap() {
-    HapticFeedback.lightImpact();
-    onTap();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PressableScale(
-      child: Material(
-        color: context.colors.card,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.smAll,
-          side: BorderSide(color: context.colors.line),
-        ),
-        child: InkWell(
-          onTap: _handleTap,
-          borderRadius: AppRadius.smAll,
-          child: Container(
-            height: 36,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, color: color, size: 15),
-                AppSpacing.xxs.hGap,
-                AnimatedCounter(
-                  value: value,
-                  formatter: (v) => '$v',
-                  style: context.textStyles.bodySmall?.copyWith(
-                    color: context.colors.ink,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

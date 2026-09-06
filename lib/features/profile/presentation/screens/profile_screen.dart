@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/currency_chip.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/inline_retry_row.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/domain/entities/user.dart';
@@ -48,7 +51,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     // [_progressSection] shows an [InlineRetryRow] in place of just the
     // stats row - previously a failed load here left the screen silently
     // stuck showing 0/0 stats with no way to recover.
-    if (ref.read(currentUserControllerProvider).data == null || ref.read(myStatsControllerProvider).data == null) {
+    if (ref.read(currentUserControllerProvider).data == null ||
+        ref.read(myStatsControllerProvider).data == null) {
       Future.microtask(_reloadEssentialData);
     }
   }
@@ -113,6 +117,30 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  /// Coin/Diamond balansi - Home'dagi bilan bir xil chip (`CurrencyChip`,
+  /// 2026-09-06 umumiy widgetga chiqarilgan) - foydalanuvchi so'rovi bilan
+  /// Profilga ham qo'shildi (avval faqat Home'da ko'rinardi).
+  Widget _walletRow(BuildContext context, User? user) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CurrencyChip(
+          icon: TablerIcons.coinFilled,
+          color: context.colors.terra,
+          value: user?.coinBalance ?? 0,
+          onTap: () => context.push(AppRoutes.wallet),
+        ),
+        AppSpacing.xs.hGap,
+        CurrencyChip(
+          icon: TablerIcons.diamondFilled,
+          color: context.colors.teal,
+          value: user?.diamondBalance ?? 0,
+          onTap: () => context.push(AppRoutes.wallet),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
@@ -125,21 +153,53 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           onRefresh: _reloadEssentialData,
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+            padding: EdgeInsets.fromLTRB(
+              hPad,
+              AppSpacing.xs,
+              hPad,
+              AppSpacing.lg,
+            ),
             children: [
-              ProfileHeader(onSettingsTap: () => context.push(AppRoutes.settings)),
-              AppSpacing.lg.vGap,
-              ProfileBanner(
-                initials: user.initials,
-                avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
-                avatarImagePath: user?.avatarImagePath,
-                onEditTap: () => context.push(AppRoutes.editProfile),
+              FadeSlideIn(
+                child: ProfileHeader(
+                  onSettingsTap: () => context.push(AppRoutes.settings),
+                ),
               ),
-              ProfileNameBlock(name: user.displayName, username: user?.username ?? ''),
               AppSpacing.lg.vGap,
-              ..._progressSection(context),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: ProfileBanner(
+                  initials: user.initials,
+                  avatarColor: AvatarColorOption.fromApiValue(
+                    user?.avatarColor,
+                  ),
+                  avatarImagePath: user?.avatarImagePath,
+                  onEditTap: () => context.push(AppRoutes.editProfile),
+                ),
+              ),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: ProfileNameBlock(
+                  name: user.displayName,
+                  username: user?.username ?? '',
+                ),
+              ),
+              AppSpacing.sm.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: _walletRow(context, user),
+              ),
               AppSpacing.lg.vGap,
-              _settingsSection(context),
+              for (final Widget section in _progressSection(context))
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 140),
+                  child: section,
+                ),
+              AppSpacing.lg.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 180),
+                child: _settingsSection(context),
+              ),
             ],
           ),
         ),
