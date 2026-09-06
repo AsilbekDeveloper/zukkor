@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -6,6 +7,7 @@ import '../audio/app_sound.dart';
 import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
+import 'pressable_scale.dart';
 
 /// Back button + centered title — mirrors the prototype's sub-screen
 /// `.header` pattern (Categories, Add Friend, 1v1 Duel, ...).
@@ -47,22 +49,29 @@ class _BackIconButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Material(
-      color: context.colors.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.smAll,
-        side: BorderSide(color: context.colors.line),
-      ),
-      child: InkWell(
-        onTap: () {
-          ref.playSound(AppSound.tap);
-          onTap();
-        },
-        borderRadius: AppRadius.smAll,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(TablerIcons.arrowLeft, color: context.colors.ink, size: 20),
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.smAll,
+          side: BorderSide(color: context.colors.line),
+        ),
+        child: InkWell(
+          onTap: () {
+            ref.playSound(AppSound.tap);
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.smAll,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Icon(
+              TablerIcons.arrowLeft,
+              color: context.colors.ink,
+              size: 20,
+            ),
+          ),
         ),
       ),
     );

@@ -10,6 +10,7 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/invite_code_card.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -59,7 +60,8 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
     super.dispose();
   }
 
-  void _comingSoon(BuildContext context) => context.showSnack(context.t.bottomNav.comingSoon);
+  void _comingSoon(BuildContext context) =>
+      context.showSnack(context.t.bottomNav.comingSoon);
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -86,7 +88,8 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
       AppRoutes.playerDetail,
       extra: {
         'userId': user.id,
-        if (user.requestPending || _addedIds.contains(user.id)) 'requestSent': true,
+        if (user.requestPending || _addedIds.contains(user.id))
+          'requestSent': true,
       },
     );
   }
@@ -95,7 +98,9 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
     if (_sendingIds.contains(user.id)) return;
     setState(() => _sendingIds.add(user.id));
     try {
-      await ref.read(sendFriendRequestControllerProvider.notifier).sendRequest(user.id);
+      await ref
+          .read(sendFriendRequestControllerProvider.notifier)
+          .sendRequest(user.id);
       if (!mounted) return;
       setState(() => _addedIds.add(user.id));
     } on Failure catch (e) {
@@ -112,9 +117,12 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isSearching = _query.isNotEmpty;
-    final List<DiscoveredUser>? searchResults = ref.watch(userSearchControllerProvider);
-    final List<DiscoverableUser> results =
-        (searchResults ?? const []).map(DiscoverableUser.fromEntity).toList();
+    final List<DiscoveredUser>? searchResults = ref.watch(
+      userSearchControllerProvider,
+    );
+    final List<DiscoverableUser> results = (searchResults ?? const [])
+        .map(DiscoverableUser.fromEntity)
+        .toList();
 
     return Scaffold(
       body: SafeArea(
@@ -126,12 +134,20 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.friends.addFriend, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.friends.addFriend,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
-              FriendsSearchBar(
-                placeholder: context.t.addFriend.searchByUsername,
-                controller: _searchController,
-                onChanged: _onQueryChanged,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: FriendsSearchBar(
+                  placeholder: context.t.addFriend.searchByUsername,
+                  controller: _searchController,
+                  onChanged: _onQueryChanged,
+                ),
               ),
               if (isSearching) ...[
                 AppSpacing.lg.vGap,
@@ -139,11 +155,15 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
                   const ShimmerListSkeleton(count: 4, trailingWidth: 70)
                 else if (results.isEmpty)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.lg,
+                    ),
                     child: Center(
                       child: Text(
                         context.t.addFriend.noUsersFound,
-                        style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                        style: context.textStyles.bodySmall?.copyWith(
+                          color: context.colors.muted,
+                        ),
                       ),
                     ),
                   )
@@ -157,11 +177,26 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
                   ),
               ] else ...[
                 AppSpacing.lg.vGap,
-                Text(context.t.addFriend.orViaInviteLink, style: context.textStyles.titleLarge),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 120),
+                  child: Text(
+                    context.t.addFriend.orViaInviteLink,
+                    style: context.textStyles.titleLarge,
+                  ),
+                ),
                 AppSpacing.sm.vGap,
-                InviteCodeCard(label: context.t.addFriend.yourInviteCode, code: _mockInviteCode),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 120),
+                  child: InviteCodeCard(
+                    label: context.t.addFriend.yourInviteCode,
+                    code: _mockInviteCode,
+                  ),
+                ),
                 AppSpacing.lg.vGap,
-                ShareLinkButton(onTap: () => _comingSoon(context)),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 180),
+                  child: ShareLinkButton(onTap: () => _comingSoon(context)),
+                ),
               ],
             ],
           ),
@@ -170,4 +205,3 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
     );
   }
 }
-

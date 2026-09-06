@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 
 class ShareLinkButton extends StatelessWidget {
@@ -17,29 +19,37 @@ class ShareLinkButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.surfaceDark,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.surfaceDark,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
-          decoration: const BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: _shadow),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(TablerIcons.share3, size: 17, color: Colors.white),
-              const SizedBox(width: 6),
-              Text(
-                context.t.addFriend.shareLink,
-                style: context.textStyles.bodySmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
+            decoration: const BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              boxShadow: _shadow,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(TablerIcons.share3, size: 17, color: Colors.white),
+                const SizedBox(width: 6),
+                Text(
+                  context.t.addFriend.shareLink,
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

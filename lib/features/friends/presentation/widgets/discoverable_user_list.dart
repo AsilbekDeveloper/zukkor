@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/discoverable_user.dart';
@@ -65,55 +67,72 @@ class _ResultRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onRowTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 1),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.smAll,
-            border: Border.all(color: context.colors.line),
-            boxShadow: context.colors.shadowSm,
-          ),
-          child: Row(
-            children: [
-              UserAvatar(
-                size: 36,
-                initials: user.initials,
-                avatarImagePath: user.avatarImagePath,
-                backgroundColor: user.avatarColor.resolve(context),
-                fontSize: 11.5,
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      user.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.5),
-                    ),
-                    if (user.handle != null)
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onRowTap();
+          },
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm - 1,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              border: Border.all(color: context.colors.line),
+              boxShadow: context.colors.shadowSm,
+            ),
+            child: Row(
+              children: [
+                UserAvatar(
+                  size: 36,
+                  initials: user.initials,
+                  avatarImagePath: user.avatarImagePath,
+                  backgroundColor: user.avatarColor.resolve(context),
+                  fontSize: 11.5,
+                ),
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       Text(
-                        user.handle!,
+                        user.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
+                        style: context.textStyles.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.5,
+                        ),
                       ),
-                  ],
+                      if (user.handle != null)
+                        Text(
+                          user.handle!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.textStyles.labelSmall?.copyWith(
+                            color: context.colors.muted,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              if (onAddTap != null) ...[
-                AppSpacing.sm.hGap,
-                _AddButton(isAdded: isAdded, isSending: isSending, onTap: onAddTap!),
+                if (onAddTap != null) ...[
+                  AppSpacing.sm.hGap,
+                  _AddButton(
+                    isAdded: isAdded,
+                    isSending: isSending,
+                    onTap: onAddTap!,
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -122,7 +141,11 @@ class _ResultRow extends StatelessWidget {
 }
 
 class _AddButton extends StatelessWidget {
-  const _AddButton({required this.isAdded, required this.isSending, required this.onTap});
+  const _AddButton({
+    required this.isAdded,
+    required this.isSending,
+    required this.onTap,
+  });
 
   final bool isAdded;
   final bool isSending;
@@ -132,14 +155,20 @@ class _AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final BorderRadius radius = BorderRadius.circular(999);
     final Widget content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 2, vertical: AppSpacing.xs),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm + 2,
+        vertical: AppSpacing.xs,
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isSending)
             const SizedBox.square(
               dimension: 14,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
             )
           else
             Icon(
@@ -149,7 +178,9 @@ class _AddButton extends StatelessWidget {
             ),
           const SizedBox(width: 4),
           Text(
-            isAdded ? context.t.addFriend.requestedLabel : context.t.addFriend.addButton,
+            isAdded
+                ? context.t.addFriend.requestedLabel
+                : context.t.addFriend.addButton,
             style: context.textStyles.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
               color: isAdded ? context.colors.muted : Colors.white,
@@ -164,17 +195,32 @@ class _AddButton extends StatelessWidget {
     // muddy rather than clearly "done").
     if (isAdded) {
       return DecoratedBox(
-        decoration: BoxDecoration(borderRadius: radius, border: Border.all(color: context.colors.line)),
+        decoration: BoxDecoration(
+          borderRadius: radius,
+          border: Border.all(color: context.colors.line),
+        ),
         child: content,
       );
     }
-    return Material(
-      color: context.colors.coral,
-      borderRadius: radius,
-      // `isSending` chog'ida `onTap: null` — tugma butunlay o'chirilgan
-      // (qo'sh bosishning oldi ham shu yerda olinadi, chaqiruvchidagi
-      // himoya bilan bir qatorda).
-      child: InkWell(onTap: isSending ? null : onTap, borderRadius: radius, child: content),
+    return PressableScale(
+      enabled: !isSending,
+      child: Material(
+        color: context.colors.coral,
+        borderRadius: radius,
+        // `isSending` chog'ida `onTap: null` — tugma butunlay o'chirilgan
+        // (qo'sh bosishning oldi ham shu yerda olinadi, chaqiruvchidagi
+        // himoya bilan bir qatorda).
+        child: InkWell(
+          onTap: isSending
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  onTap();
+                },
+          borderRadius: radius,
+          child: content,
+        ),
+      ),
     );
   }
 }
