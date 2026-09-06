@@ -13,7 +13,26 @@ import 'package:zukkor/features/ai_quiz/domain/entities/ai_quiz.dart';
 import 'package:zukkor/features/ai_quiz/domain/repositories/ai_quiz_repository.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import 'package:zukkor/features/quiz/presentation/controllers/categories_controller.dart';
+import 'package:zukkor/features/wallet/data/repositories/wallet_repository_impl.dart';
+import 'package:zukkor/features/wallet/domain/entities/currency_transaction.dart';
+import 'package:zukkor/features/wallet/domain/entities/diamond_pricing.dart';
+import 'package:zukkor/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:zukkor/i18n/strings.g.dart';
+
+class _FakeWalletRepository extends Fake implements WalletRepository {
+  @override
+  Future<DiamondPricing> getPricing() async => const DiamondPricing(
+        inputUsdPer1mTokens: 1.5,
+        outputUsdPer1mTokens: 7.5,
+        diamondMarkupMultiplier: 4.0,
+        usdPerDiamond: 0.001,
+        charsPerTokenEstimate: 4,
+      );
+
+  @override
+  Future<({List<CurrencyTransaction> entries, bool hasMore})> getTransactions({int limit = 30, int offset = 0}) async =>
+      (entries: <CurrencyTransaction>[], hasMore: false);
+}
 
 class _FakeAiQuizRepository extends Fake implements AiQuizRepository {
   bool generateAsyncCalled = false;
@@ -61,6 +80,7 @@ Future<GoRouter> _pumpGenerateScreen(WidgetTester tester, _FakeAiQuizRepository 
         sharedPreferencesProvider.overrideWithValue(prefs),
         aiQuizRepositoryProvider.overrideWithValue(repo),
         categoriesControllerProvider.overrideWith(() => _FakeCategoriesController()),
+        walletRepositoryProvider.overrideWithValue(_FakeWalletRepository()),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
@@ -88,8 +108,11 @@ void main() {
       await tester.enterText(find.byType(TextField).first, 'Space');
       await tester.pump();
 
-      // Tap generate
+      // Tap generate - a "this will cost ~N Diamond" confirm dialog shows
+      // first (2026-09-06, [[ai_cost_architecture]]); confirm it.
       await tester.tap(find.text('Generate'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue'));
       await tester.pump();
 
       expect(repo.generateAsyncCalled, isTrue);
@@ -121,6 +144,8 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'Space');
     await tester.pump();
     await tester.tap(find.text('Generate'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Continue'));
     await tester.pump();
 
     expect(find.text(AppStrings.generatingTitle), findsOneWidget);

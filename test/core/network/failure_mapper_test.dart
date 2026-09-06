@@ -85,6 +85,15 @@ void main() {
       expect(failure.message, "Email yoki parol noto'g'ri");
     });
 
+    test('402 Diamond balansi yetarli emas: ValidationFailure sifatida ko\'rsatiladi', () {
+      final Failure failure = FailureMapper.fromDio(_badResponse(402, {
+        'detail': 'Diamond balansi yetarli emas',
+      }));
+
+      expect(failure, isA<ValidationFailure>());
+      expect(failure.message, 'Diamond balansi yetarli emas');
+    });
+
     test('500 → ServerFailure', () {
       expect(
         FailureMapper.fromDio(_badResponse(500, 'Internal error')),

@@ -99,6 +99,7 @@ import 'package:zukkor/features/settings/presentation/screens/terms_of_use_scree
 import 'package:zukkor/features/splash/splash_screen.dart';
 import 'package:zukkor/features/wallet/data/repositories/wallet_repository_impl.dart';
 import 'package:zukkor/features/wallet/domain/entities/currency_transaction.dart';
+import 'package:zukkor/features/wallet/domain/entities/diamond_pricing.dart';
 import 'package:zukkor/features/wallet/domain/repositories/wallet_repository.dart';
 import 'package:zukkor/features/wallet/presentation/screens/wallet_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
@@ -259,6 +260,15 @@ class _FakeWalletRepository implements WalletRepository {
   @override
   Future<({List<CurrencyTransaction> entries, bool hasMore})> getTransactions({int limit = 30, int offset = 0}) async =>
       (entries: <CurrencyTransaction>[], hasMore: false);
+
+  @override
+  Future<DiamondPricing> getPricing() async => const DiamondPricing(
+        inputUsdPer1mTokens: 1.5,
+        outputUsdPer1mTokens: 7.5,
+        diamondMarkupMultiplier: 4.0,
+        usdPerDiamond: 0.001,
+        charsPerTokenEstimate: 4,
+      );
 }
 
 class _FakeNotificationPreferencesRepository implements NotificationPreferencesRepository {

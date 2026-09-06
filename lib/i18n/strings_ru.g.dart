@@ -839,8 +839,15 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get questionCountLabel => 'Количество вопросов';
 	@override String get generateButton => 'Сгенерировать';
 	@override String get generated => 'Готово! Сохранено в «Мои викторины»';
+	@override String generatedWithCost({required Object diamonds}) => 'Готово! Потрачено ${diamonds} 💎';
 	@override String get generatingTitle => 'AI генерирует вопросы...';
 	@override String get generatingSubtitle => 'Это может занять некоторое время, пожалуйста подождите';
+	@override String generatingCostSubtitle({required Object diamonds}) => 'Будет потрачено примерно ${diamonds} 💎';
+	@override String estimatedCostLabel({required Object diamonds}) => 'Примерная стоимость: ~${diamonds} 💎';
+	@override String get confirmGenerationTitle => 'Будут потрачены Diamond';
+	@override String confirmGenerationMessage({required Object diamonds}) => 'Эта генерация будет стоить примерно ${diamonds} 💎 (точная стоимость рассчитывается после завершения). Продолжить?';
+	@override String get confirmGenerationConfirm => 'Продолжить';
+	@override String get confirmGenerationCancel => 'Отмена';
 	@override String get stillProcessingNotifyLater => 'Это занимает больше времени, чем обычно - мы уведомим вас, когда будет готово';
 	@override String get sourceAi => 'AI';
 	@override String get sourceManual => 'Вручную';
@@ -1360,8 +1367,15 @@ extension on TranslationsRu {
 			'aiQuiz.questionCountLabel' => 'Количество вопросов',
 			'aiQuiz.generateButton' => 'Сгенерировать',
 			'aiQuiz.generated' => 'Готово! Сохранено в «Мои викторины»',
+			'aiQuiz.generatedWithCost' => ({required Object diamonds}) => 'Готово! Потрачено ${diamonds} 💎',
 			'aiQuiz.generatingTitle' => 'AI генерирует вопросы...',
 			'aiQuiz.generatingSubtitle' => 'Это может занять некоторое время, пожалуйста подождите',
+			'aiQuiz.generatingCostSubtitle' => ({required Object diamonds}) => 'Будет потрачено примерно ${diamonds} 💎',
+			'aiQuiz.estimatedCostLabel' => ({required Object diamonds}) => 'Примерная стоимость: ~${diamonds} 💎',
+			'aiQuiz.confirmGenerationTitle' => 'Будут потрачены Diamond',
+			'aiQuiz.confirmGenerationMessage' => ({required Object diamonds}) => 'Эта генерация будет стоить примерно ${diamonds} 💎 (точная стоимость рассчитывается после завершения). Продолжить?',
+			'aiQuiz.confirmGenerationConfirm' => 'Продолжить',
+			'aiQuiz.confirmGenerationCancel' => 'Отмена',
 			'aiQuiz.stillProcessingNotifyLater' => 'Это занимает больше времени, чем обычно - мы уведомим вас, когда будет готово',
 			'aiQuiz.sourceAi' => 'AI',
 			'aiQuiz.sourceManual' => 'Вручную',

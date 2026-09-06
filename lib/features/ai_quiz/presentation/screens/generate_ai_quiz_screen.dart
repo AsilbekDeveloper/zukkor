@@ -16,7 +16,10 @@ import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
+import '../../../wallet/data/repositories/wallet_repository_impl.dart';
+import '../../../wallet/domain/entities/diamond_pricing.dart';
 import '../../domain/entities/ai_quiz.dart';
 import '../controllers/ai_quiz_controller.dart';
 import '../widgets/topic_selection_row.dart';
@@ -54,13 +57,36 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   void initState() {
     super.initState();
     Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+    // Mavzu rejimida taxminiy narx foydalanuvchi yozayotganda JONLI
+    // yangilanishi uchun - `_topicController.text`ning o'zi Flutter'da
+    // rebuild'ni avtomatik qo'zg'atmaydi.
+    _topicController.addListener(_onTopicChanged);
   }
+
+  void _onTopicChanged() => setState(() {});
 
   @override
   void dispose() {
+    _topicController.removeListener(_onTopicChanged);
     _instructionController.dispose();
     _topicController.dispose();
     super.dispose();
+  }
+
+  /// Diamond narxlash formulasi hali yuklanmagan bo'lsa (masalan birinchi
+  /// ochilishda tarmoq sekin) - `null` qaytadi, chaqiruvchi bu holda
+  /// taxminni ko'rsatmaydi (chalg'ituvchi noto'g'ri raqam ko'rsatishdan
+  /// ko'ra ko'rsatmaslik yaxshiroq).
+  int? _estimatedDiamondCost(DiamondPricing? pricing) {
+    if (pricing == null) return null;
+    final int lengthInCharsOrBytes = _mode == _GenerateMode.document
+        ? (_pickedFile?.size ?? 0)
+        : _topicController.text.trim().length;
+    if (lengthInCharsOrBytes == 0) return null;
+    return pricing.estimateDiamondCost(
+      estimatedInputTokens: pricing.estimateInputTokens(lengthInCharsOrBytes),
+      questionCount: _questionCount,
+    );
   }
 
   Future<void> _pickFile() async {
@@ -105,6 +131,35 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
       instruction = _instructionController.text.trim();
     }
 
+    // Diamond haqiqatan sarflanishidan OLDIN tasdiqlash - taxminiy narx
+    // ma'lum bo'lsagina ko'rsatiladi (aks holda foydalanuvchi hech narsa
+    // ko'rmasdan to'g'ridan-to'g'ri davom etadi, chunki taxminni
+    // ko'rsatolmaslik uni butunlay to'xtatishdan yomonroq emas).
+    // [[ai_cost_architecture]] - "confirm-before-spend dialog" qarori.
+    final AsyncValue<DiamondPricing> pricingAsync = ref.read(diamondPricingProvider);
+    final int? estimatedCost = _estimatedDiamondCost(pricingAsync.hasValue ? pricingAsync.value : null);
+    if (estimatedCost != null) {
+      final bool? confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(context.t.aiQuiz.confirmGenerationTitle),
+          content: Text(context.t.aiQuiz.confirmGenerationMessage(diamonds: estimatedCost)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(context.t.aiQuiz.confirmGenerationCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: Text(context.t.aiQuiz.confirmGenerationConfirm),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+      if (!mounted) return;
+    }
+
     context.hideKeyboard();
 
     try {
@@ -129,7 +184,7 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
       final result = await showDialog<({String status, AiQuiz? quiz, String? error})?>(
         context: context,
         barrierDismissible: false,
-        builder: (_) => _GeneratingDialog(jobId: jobId),
+        builder: (_) => _GeneratingDialog(jobId: jobId, estimatedCost: estimatedCost),
       );
       if (!mounted) return;
 
@@ -140,7 +195,16 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
         // bildirishnoma orqali bilib oladi.
         context.showSnack(context.t.aiQuiz.stillProcessingNotifyLater);
       } else if (result.status == 'completed') {
-        context.showSnack(context.t.aiQuiz.generated);
+        final int? realCost = result.quiz?.diamondCost;
+        context.showSnack(
+          realCost != null ? context.t.aiQuiz.generatedWithCost(diamonds: realCost) : context.t.aiQuiz.generated,
+        );
+        // Diamond balansi shu generatsiya bilan kamaygan - Home'da darhol
+        // (keyingi safar qo'lda pull-to-refresh qilinmasdan) ko'rinishi
+        // uchun joriy foydalanuvchini qayta yuklaymiz (2026-09-06,
+        // foydalanuvchi "faqat Home'ga qayta kirganda ko'rsatildi" deb
+        // xato sifatida qayd etgan edi).
+        unawaited(ref.read(currentUserControllerProvider.notifier).load());
         context.pop();
       } else {
         context.showSnack(result.error ?? t.errors.unknown);
@@ -165,6 +229,9 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isGenerating = ref.watch(aiQuizControllerProvider).isGenerating;
+    final AsyncValue<DiamondPricing> pricingAsyncWatch = ref.watch(diamondPricingProvider);
+    final DiamondPricing? pricing = pricingAsyncWatch.hasValue ? pricingAsyncWatch.value : null;
+    final int? estimatedCost = _estimatedDiamondCost(pricing);
 
     return Scaffold(
       body: SafeArea(
@@ -226,6 +293,23 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
                 onChanged: isGenerating ? (_) {} : (value) => setState(() => _questionCount = value),
               ),
               AppSpacing.xl.vGap,
+              if (estimatedCost != null) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(TablerIcons.diamondFilled, color: context.colors.teal, size: 16),
+                    AppSpacing.xxs.hGap,
+                    Text(
+                      context.t.aiQuiz.estimatedCostLabel(diamonds: estimatedCost),
+                      style: context.textStyles.bodySmall?.copyWith(
+                        color: context.colors.ink2,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                AppSpacing.sm.vGap,
+              ],
               AppButton.primary(
                 label: context.t.aiQuiz.generateButton,
                 isLoading: isGenerating,
@@ -293,9 +377,14 @@ class _FilePickerCard extends StatelessWidget {
 /// so'raydi va tugagach (yoki 2 daqiqadan oshsa) o'zini yopib natijani
 /// chaqiruvchiga qaytaradi.
 class _GeneratingDialog extends ConsumerStatefulWidget {
-  const _GeneratingDialog({required this.jobId});
+  const _GeneratingDialog({required this.jobId, this.estimatedCost});
 
   final String jobId;
+
+  /// Taxminiy narx - haqiqiy narx faqat generatsiya tugagach ma'lum
+  /// bo'ladi, shuning uchun bu yerda faqat "sarflanadi" deb ko'rsatiladi,
+  /// aniq raqam emas.
+  final int? estimatedCost;
 
   @override
   ConsumerState<_GeneratingDialog> createState() => _GeneratingDialogState();
@@ -370,6 +459,14 @@ class _GeneratingDialogState extends ConsumerState<_GeneratingDialog> {
                 textAlign: TextAlign.center,
                 style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
               ),
+              if (widget.estimatedCost != null) ...[
+                AppSpacing.xs.vGap,
+                Text(
+                  context.t.aiQuiz.generatingCostSubtitle(diamonds: widget.estimatedCost!),
+                  textAlign: TextAlign.center,
+                  style: context.textStyles.labelSmall?.copyWith(color: context.colors.teal),
+                ),
+              ],
             ],
           ),
         ),

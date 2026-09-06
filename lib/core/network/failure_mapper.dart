@@ -34,6 +34,11 @@ abstract final class FailureMapper {
       401 => AuthFailure(detailMessage ?? t.errors.invalidCredentials),
       403 => AuthFailure(detailMessage ?? t.errors.sessionExpired),
       404 => NotFoundFailure(detailMessage ?? t.errors.unknown),
+      // 402 — AI-generatsiya uchun Diamond balansi yetarli emas
+      // ([[ai_cost_architecture]]); backend `detail`da aynan shuni
+      // ("Diamond balansi yetarli emas") aytadi, umumiy xabarga
+      // tushirmasdan shuni ko'rsatamiz - 429 bilan bir xil mantiq.
+      402 => ValidationFailure(detailMessage ?? t.errors.unknown),
       422 => ValidationFailure(
           detailMessage ?? t.errors.unknown,
           fieldErrors: _extractFieldErrors(data),

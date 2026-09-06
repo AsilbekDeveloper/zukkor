@@ -833,8 +833,15 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get questionCountLabel => 'Savollar soni';
 	@override String get generateButton => 'Generatsiya qilish';
 	@override String get generated => 'Tayyor! Quiz "Mening quizlarim"ga saqlandi';
+	@override String generatedWithCost({required Object diamonds}) => 'Tayyor! ${diamonds} 💎 ishlatildi';
 	@override String get generatingTitle => 'AI savollar tayyorlamoqda...';
 	@override String get generatingSubtitle => 'Bu biroz vaqt olishi mumkin, iltimos kuting';
+	@override String generatingCostSubtitle({required Object diamonds}) => 'Taxminan ${diamonds} 💎 sarflanadi';
+	@override String estimatedCostLabel({required Object diamonds}) => 'Taxminiy narx: ~${diamonds} 💎';
+	@override String get confirmGenerationTitle => 'Diamond sarflanadi';
+	@override String confirmGenerationMessage({required Object diamonds}) => 'Bu generatsiya taxminan ${diamonds} 💎 turadi (haqiqiy narx tugagach aniq hisoblanadi). Davom etasizmi?';
+	@override String get confirmGenerationConfirm => 'Davom etish';
+	@override String get confirmGenerationCancel => 'Bekor qilish';
 	@override String get stillProcessingNotifyLater => 'Bu odatdagidan uzoqroq davom etayapti - tayyor bo\'lganda sizga bildirishnoma yuboramiz';
 	@override String get sourceAi => 'AI';
 	@override String get sourceManual => 'Qo\'lda';
@@ -1354,8 +1361,15 @@ extension on TranslationsUz {
 			'aiQuiz.questionCountLabel' => 'Savollar soni',
 			'aiQuiz.generateButton' => 'Generatsiya qilish',
 			'aiQuiz.generated' => 'Tayyor! Quiz "Mening quizlarim"ga saqlandi',
+			'aiQuiz.generatedWithCost' => ({required Object diamonds}) => 'Tayyor! ${diamonds} 💎 ishlatildi',
 			'aiQuiz.generatingTitle' => 'AI savollar tayyorlamoqda...',
 			'aiQuiz.generatingSubtitle' => 'Bu biroz vaqt olishi mumkin, iltimos kuting',
+			'aiQuiz.generatingCostSubtitle' => ({required Object diamonds}) => 'Taxminan ${diamonds} 💎 sarflanadi',
+			'aiQuiz.estimatedCostLabel' => ({required Object diamonds}) => 'Taxminiy narx: ~${diamonds} 💎',
+			'aiQuiz.confirmGenerationTitle' => 'Diamond sarflanadi',
+			'aiQuiz.confirmGenerationMessage' => ({required Object diamonds}) => 'Bu generatsiya taxminan ${diamonds} 💎 turadi (haqiqiy narx tugagach aniq hisoblanadi). Davom etasizmi?',
+			'aiQuiz.confirmGenerationConfirm' => 'Davom etish',
+			'aiQuiz.confirmGenerationCancel' => 'Bekor qilish',
 			'aiQuiz.stillProcessingNotifyLater' => 'Bu odatdagidan uzoqroq davom etayapti - tayyor bo\'lganda sizga bildirishnoma yuboramiz',
 			'aiQuiz.sourceAi' => 'AI',
 			'aiQuiz.sourceManual' => 'Qo\'lda',

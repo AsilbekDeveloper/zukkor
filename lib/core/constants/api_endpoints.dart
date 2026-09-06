@@ -49,6 +49,7 @@ abstract final class ApiEndpoints {
   // Coin/Diamond hamyon tarixi (2026-09-06'da qo'shildi).
   static String walletTransactions({int limit = 30, int offset = 0}) =>
       '/wallet/transactions?limit=$limit&offset=$offset';
+  static const String walletPricing = '/wallet/pricing';
 
   // Friends (2026-07-18'da qo'shildi).
   static const String friends = '/friends';

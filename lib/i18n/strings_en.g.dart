@@ -1557,11 +1557,32 @@ class Translations$aiQuiz$en {
 	/// en: 'Done! Saved to "My quizzes"'
 	String get generated => 'Done! Saved to "My quizzes"';
 
+	/// en: 'Done! $diamonds 💎 spent'
+	String generatedWithCost({required Object diamonds}) => 'Done! ${diamonds} 💎 spent';
+
 	/// en: 'AI is generating questions...'
 	String get generatingTitle => 'AI is generating questions...';
 
 	/// en: 'This can take a moment, please wait'
 	String get generatingSubtitle => 'This can take a moment, please wait';
+
+	/// en: 'Will cost approximately $diamonds 💎'
+	String generatingCostSubtitle({required Object diamonds}) => 'Will cost approximately ${diamonds} 💎';
+
+	/// en: 'Estimated cost: ~$diamonds 💎'
+	String estimatedCostLabel({required Object diamonds}) => 'Estimated cost: ~${diamonds} 💎';
+
+	/// en: 'Diamonds will be spent'
+	String get confirmGenerationTitle => 'Diamonds will be spent';
+
+	/// en: 'This generation will cost approximately $diamonds 💎 (the exact cost is calculated once it's done). Continue?'
+	String confirmGenerationMessage({required Object diamonds}) => 'This generation will cost approximately ${diamonds} 💎 (the exact cost is calculated once it\'s done). Continue?';
+
+	/// en: 'Continue'
+	String get confirmGenerationConfirm => 'Continue';
+
+	/// en: 'Cancel'
+	String get confirmGenerationCancel => 'Cancel';
 
 	/// en: 'This is taking longer than usual - we'll notify you when it's ready'
 	String get stillProcessingNotifyLater => 'This is taking longer than usual - we\'ll notify you when it\'s ready';
@@ -2253,8 +2274,15 @@ extension on Translations {
 			'aiQuiz.questionCountLabel' => 'Number of questions',
 			'aiQuiz.generateButton' => 'Generate',
 			'aiQuiz.generated' => 'Done! Saved to "My quizzes"',
+			'aiQuiz.generatedWithCost' => ({required Object diamonds}) => 'Done! ${diamonds} 💎 spent',
 			'aiQuiz.generatingTitle' => 'AI is generating questions...',
 			'aiQuiz.generatingSubtitle' => 'This can take a moment, please wait',
+			'aiQuiz.generatingCostSubtitle' => ({required Object diamonds}) => 'Will cost approximately ${diamonds} 💎',
+			'aiQuiz.estimatedCostLabel' => ({required Object diamonds}) => 'Estimated cost: ~${diamonds} 💎',
+			'aiQuiz.confirmGenerationTitle' => 'Diamonds will be spent',
+			'aiQuiz.confirmGenerationMessage' => ({required Object diamonds}) => 'This generation will cost approximately ${diamonds} 💎 (the exact cost is calculated once it\'s done). Continue?',
+			'aiQuiz.confirmGenerationConfirm' => 'Continue',
+			'aiQuiz.confirmGenerationCancel' => 'Cancel',
 			'aiQuiz.stillProcessingNotifyLater' => 'This is taking longer than usual - we\'ll notify you when it\'s ready',
 			'aiQuiz.sourceAi' => 'AI',
 			'aiQuiz.sourceManual' => 'Manual',

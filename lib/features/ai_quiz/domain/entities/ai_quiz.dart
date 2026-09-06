@@ -10,6 +10,7 @@ class AiQuiz {
     required this.visibility,
     this.topicCategoryId,
     this.topicCategoryName,
+    this.diamondCost,
   });
 
   final int id;
@@ -25,4 +26,9 @@ class AiQuiz {
 
   final int? topicCategoryId;
   final String? topicCategoryName;
+
+  /// Faqat generatsiyadan TO'G'RIDAN-TO'G'RI qaytgan javoblarda to'ladi
+  /// (haqiqiy token sarfidan hisoblangan) - keyinchalik ro'yxat/discover
+  /// orqali o'qilganda har doim null. [[ai_cost_architecture]].
+  final int? diamondCost;
 }
