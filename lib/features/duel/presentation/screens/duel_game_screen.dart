@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,7 +38,8 @@ class DuelGameScreen extends ConsumerStatefulWidget {
   ConsumerState<DuelGameScreen> createState() => _DuelGameScreenState();
 }
 
-class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTickerProviderStateMixin {
+class _DuelGameScreenState extends ConsumerState<DuelGameScreen>
+    with SingleTickerProviderStateMixin {
   // A lost/dropped `duel_started`/`duel_question` (the same class of
   // socket-delivery gap as invites) otherwise left this screen on a
   // bare, header-less spinner forever — and unlike Duel Waiting, there's
@@ -67,8 +69,10 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
   @override
   void initState() {
     super.initState();
-    _timerController = AnimationController(vsync: this, duration: const Duration(seconds: 1))
-      ..addStatusListener(_onTimerStatusChanged);
+    _timerController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..addStatusListener(_onTimerStatusChanged);
     _startTimeoutTimer = Timer(_startTimeout, () {
       if (mounted) setState(() => _startFailed = true);
     });
@@ -117,13 +121,21 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
       return;
     }
 
-    if (game.lastResult != null && _revealedForIndex != game.lastResult!.questionIndex) {
+    if (game.lastResult != null &&
+        _revealedForIndex != game.lastResult!.questionIndex) {
       _revealedForIndex = game.lastResult!.questionIndex;
-      if (game.lastResult!.yourCorrect) _correctCount++;
-      ref.playSound(game.lastResult!.yourCorrect ? AppSound.correct : AppSound.wrong);
+      final bool wasCorrect = game.lastResult!.yourCorrect;
+      if (wasCorrect) _correctCount++;
+      ref.playSound(wasCorrect ? AppSound.correct : AppSound.wrong);
+      // To'g'ri/noto'g'ri bo'lganda alohida, tovushdan tashqari, aniq
+      // his qilinadigan haptic - to'g'ri bo'lsa qoniqarli (o'rtacha),
+      // noto'g'ri bo'lsa kuchliroq (og'irroq) signal.
+      wasCorrect ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact();
     }
 
-    if (game.question != null && !game.hasAnswered && _timerStartedForIndex != game.questionIndex) {
+    if (game.question != null &&
+        !game.hasAnswered &&
+        _timerStartedForIndex != game.questionIndex) {
       _timerStartedForIndex = game.questionIndex;
       _timerController
         ..stop()
@@ -153,7 +165,10 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
               context.t.gameLeave.leave,
-              style: TextStyle(color: context.colors.error, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: context.colors.error,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],
@@ -189,9 +204,13 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
     final DuelQuestionResult? result = game.lastResult;
     if (result == null) return AnswerVisualState.idle;
     if (optionIndex == result.yourSelectedOption) {
-      return result.yourCorrect ? AnswerVisualState.pickedCorrect : AnswerVisualState.pickedWrong;
+      return result.yourCorrect
+          ? AnswerVisualState.pickedCorrect
+          : AnswerVisualState.pickedWrong;
     }
-    if (optionIndex == result.correctOption) return AnswerVisualState.revealCorrect;
+    if (optionIndex == result.correctOption) {
+      return AnswerVisualState.revealCorrect;
+    }
     return AnswerVisualState.idle;
   }
 
@@ -220,7 +239,10 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppSpacing.xs.vGap,
-                  CloseHeader(title: context.t.duelGame.title, onClose: _onBack),
+                  CloseHeader(
+                    title: context.t.duelGame.title,
+                    onClose: _onBack,
+                  ),
                   Expanded(
                     child: Center(
                       child: Column(
@@ -231,7 +253,9 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
                           Text(
                             context.t.duelGame.waitingForOpponent,
                             textAlign: TextAlign.center,
-                            style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                            style: context.textStyles.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -254,7 +278,10 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppSpacing.xs.vGap,
-                CloseHeader(title: context.t.duelGame.title, onClose: () => context.go(AppRoutes.home)),
+                CloseHeader(
+                  title: context.t.duelGame.title,
+                  onClose: () => context.go(AppRoutes.home),
+                ),
                 Expanded(
                   child: Center(
                     child: _startFailed
@@ -264,7 +291,9 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
                               Text(
                                 context.t.duelGame.startFailed,
                                 textAlign: TextAlign.center,
-                                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.coralDeep),
+                                style: context.textStyles.bodyMedium?.copyWith(
+                                  color: context.colors.coralDeep,
+                                ),
                               ),
                               AppSpacing.lg.vGap,
                               AppButton.secondary(
@@ -274,26 +303,30 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
                             ],
                           )
                         : game != null
-                            ? Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    context.t.duelGame.waitingForQuestion,
-                                    style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
-                                  ),
-                                  AppSpacing.md.vGap,
-                                  Text(
-                                    _preGameCountdown > 0 ? '$_preGameCountdown' : '!',
-                                    style: TextStyle(
-                                      fontFamily: 'PlusJakartaSans',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 56,
-                                      color: context.colors.coralDeep,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const CircularProgressIndicator(),
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                context.t.duelGame.waitingForQuestion,
+                                style: context.textStyles.bodyMedium?.copyWith(
+                                  color: context.colors.muted,
+                                ),
+                              ),
+                              AppSpacing.md.vGap,
+                              Text(
+                                _preGameCountdown > 0
+                                    ? '$_preGameCountdown'
+                                    : '!',
+                                style: TextStyle(
+                                  fontFamily: 'PlusJakartaSans',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 56,
+                                  color: context.colors.coralDeep,
+                                ),
+                              ),
+                            ],
+                          )
+                        : const CircularProgressIndicator(),
                   ),
                 ),
               ],
@@ -312,7 +345,10 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: context.screenHPad, vertical: AppSpacing.xs),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.screenHPad,
+              vertical: AppSpacing.xs,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -332,7 +368,10 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
                   ],
                 ),
                 AppSpacing.lg.vGap,
-                QuestionCard(categoryName: game.category.name, question: game.question!.text),
+                QuestionCard(
+                  categoryName: game.category.name,
+                  question: game.question!.text,
+                ),
                 AppSpacing.sm.vGap,
                 if (game.opponentQuestionIndex != null)
                   Center(
@@ -341,7 +380,9 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen> with SingleTick
                         index: game.opponentQuestionIndex! + 1,
                         total: game.totalQuestions,
                       ),
-                      style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                      style: context.textStyles.bodySmall?.copyWith(
+                        color: context.colors.muted,
+                      ),
                     ),
                   ),
                 AppSpacing.sm.vGap,

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 
 /// Visual state of a single answer option once the question has been
 /// answered (or timed out) — mirrors the prototype's implicit
@@ -40,6 +42,11 @@ class AnswerButton extends StatelessWidget {
   final AnswerVisualState state;
   final VoidCallback? onTap;
 
+  void _handleTap() {
+    HapticFeedback.selectionClick();
+    onTap!();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Color? fill = switch (state) {
@@ -63,43 +70,62 @@ class AnswerButton extends StatelessWidget {
       AnswerVisualState.revealCorrect => context.colors.green,
     };
 
-    return Material(
-      color: fill ?? context.colors.card,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      enabled: onTap != null,
+      child: Material(
+        color: fill ?? context.colors.card,
         borderRadius: AppRadius.smAll,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.smAll,
-            border: Border.all(color: border, width: 1.5),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(color: badgeBg, borderRadius: AppRadius.smAll),
-                alignment: Alignment.center,
-                child: state == AnswerVisualState.pickedCorrect || state == AnswerVisualState.revealCorrect
-                    ? Icon(TablerIcons.check, size: 16, color: badgeFg)
-                    : state == AnswerVisualState.pickedWrong
-                        ? Icon(TablerIcons.x, size: 16, color: badgeFg)
-                        : Text(
-                            letter,
-                            style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: badgeFg),
+        child: InkWell(
+          onTap: onTap == null ? null : _handleTap,
+          borderRadius: AppRadius.smAll,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm + 2,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              border: Border.all(color: border, width: 1.5),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: badgeBg,
+                    borderRadius: AppRadius.smAll,
+                  ),
+                  alignment: Alignment.center,
+                  child:
+                      state == AnswerVisualState.pickedCorrect ||
+                          state == AnswerVisualState.revealCorrect
+                      ? Icon(TablerIcons.check, size: 16, color: badgeFg)
+                      : state == AnswerVisualState.pickedWrong
+                      ? Icon(TablerIcons.x, size: 16, color: badgeFg)
+                      : Text(
+                          letter,
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w700,
+                            color: badgeFg,
                           ),
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Text(
-                  text,
-                  style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, color: textColor),
+                        ),
                 ),
-              ),
-            ],
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                      color: textColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
