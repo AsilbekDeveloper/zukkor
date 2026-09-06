@@ -20,6 +20,9 @@ class UserModel {
     this.interests,
     this.studyPlace,
     this.quizLiking,
+    this.coinBalance = 0,
+    this.diamondBalance = 0,
+    this.referralCode,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -38,6 +41,9 @@ class UserModel {
         interests: (json['interests'] as List<dynamic>?)?.cast<String>(),
         studyPlace: json['study_place'] as String?,
         quizLiking: json['quiz_liking'] as String?,
+        coinBalance: json['coin_balance'] as int? ?? 0,
+        diamondBalance: json['diamond_balance'] as int? ?? 0,
+        referralCode: json['referral_code'] as String?,
       );
 
   final String id;
@@ -55,6 +61,9 @@ class UserModel {
   final List<String>? interests;
   final String? studyPlace;
   final String? quizLiking;
+  final int coinBalance;
+  final int diamondBalance;
+  final String? referralCode;
 
   User toEntity() => User(
         id: id,
@@ -72,5 +81,8 @@ class UserModel {
         interests: interests,
         studyPlace: studyPlace,
         quizLiking: quizLiking,
+        coinBalance: coinBalance,
+        diamondBalance: diamondBalance,
+        referralCode: referralCode,
       );
 }

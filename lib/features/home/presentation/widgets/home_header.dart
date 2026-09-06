@@ -5,11 +5,15 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/animated_counter.dart';
 import '../../../../core/widgets/user_avatar.dart';
-import '../../../../i18n/strings.g.dart';
 
-/// Greeting + avatar on the left, notifications bell on the right —
-/// mirrors the prototype's `.header`.
+/// Avatar + ism/username on the left, bell on the right; Coin/Diamond
+/// hamyon chiplari ikkinchi qatorda — 2026-09-06, "Xayrli tong" salomi
+/// olib tashlandi (foydalanuvchi so'rovi bo'yicha, ism/username yetarli),
+/// hamyon ikkinchi qatorga chiqarildi (aks holda bitta qatorda ism +
+/// ikkita valyuta chipi + qo'ng'iroq torlik qilib, uzun ismlar kesilib
+/// qolishi mumkin edi - shu bilan ism ustuni to'liq kenglikni oladi).
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
     required this.name,
@@ -17,52 +21,130 @@ class HomeHeader extends StatelessWidget {
     required this.avatarColor,
     required this.hasUnreadNotifications,
     required this.onNotificationsTap,
+    required this.coinBalance,
+    required this.diamondBalance,
+    this.username,
     this.avatarImagePath,
     super.key,
   });
 
   final String name;
+  final String? username;
   final String initials;
   final AvatarColorOption avatarColor;
   final String? avatarImagePath;
   final bool hasUnreadNotifications;
   final VoidCallback onNotificationsTap;
+  final int coinBalance;
+  final int diamondBalance;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          decoration: BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: context.colors.shadowCoral),
-          child: UserAvatar(
-            size: 48,
-            initials: initials,
-            avatarImagePath: avatarImagePath,
-            backgroundColor: avatarColor.resolve(context),
-            borderRadius: AppRadius.smAll,
-            fontSize: 15.5,
-          ),
-        ),
-        AppSpacing.sm.hGap,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(context.t.home.greeting, style: context.textStyles.bodySmall),
-              Text(
-                name,
-                style: context.textStyles.titleLarge,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+        Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: context.colors.shadowCoral),
+              child: UserAvatar(
+                size: 48,
+                initials: initials,
+                avatarImagePath: avatarImagePath,
+                backgroundColor: avatarColor.resolve(context),
+                borderRadius: AppRadius.smAll,
+                fontSize: 15.5,
               ),
-            ],
-          ),
+            ),
+            AppSpacing.sm.hGap,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name,
+                    style: context.textStyles.titleLarge,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (username != null && username!.isNotEmpty)
+                    Text(
+                      '@$username',
+                      style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+            ),
+            AppSpacing.sm.hGap,
+            _NotificationButton(
+              hasUnread: hasUnreadNotifications,
+              onTap: onNotificationsTap,
+            ),
+          ],
         ),
-        _NotificationButton(
-          hasUnread: hasUnreadNotifications,
-          onTap: onNotificationsTap,
+        AppSpacing.sm.vGap,
+        Row(
+          children: [
+            _CurrencyChip(
+              icon: TablerIcons.coinFilled,
+              color: context.colors.terra,
+              value: coinBalance,
+            ),
+            AppSpacing.xs.hGap,
+            _CurrencyChip(
+              icon: TablerIcons.diamondFilled,
+              color: context.colors.teal,
+              value: diamondBalance,
+            ),
+          ],
         ),
       ],
+    );
+  }
+}
+
+/// Coin/Diamond hamyon chipi - [[ai_cost_architecture]]. Yumshoq "card"
+/// fonli, boshqa joyda ishlatilmagan to'yingan ranglar (masalan avvalgi
+/// yorqin-ko'k) o'rniga ilovaning o'zida allaqachon bor ranglar (terra/
+/// teal) ishlatiladi - shu orqali ilovaning qolgan qismidan "begona
+/// vidjet" bo'lib ajralib turmaydi. Hozircha bosilsa hech narsa qilmaydi
+/// (hamyon/tarix ekrani hali yo'q) - keyingi bosqichda `AppRoutes.wallet`ga
+/// o'tadigan qilinadi.
+class _CurrencyChip extends StatelessWidget {
+  const _CurrencyChip({required this.icon, required this.color, required this.value});
+
+  final IconData icon;
+  final Color color;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 36,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: context.colors.card,
+        borderRadius: AppRadius.smAll,
+        border: Border.all(color: context.colors.line),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 15),
+          AppSpacing.xxs.hGap,
+          AnimatedCounter(
+            value: value,
+            formatter: (v) => '$v',
+            style: context.textStyles.bodySmall?.copyWith(
+              color: context.colors.ink,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

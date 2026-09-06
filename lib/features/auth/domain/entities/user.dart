@@ -19,6 +19,9 @@ class User {
     this.interests,
     this.studyPlace,
     this.quizLiking,
+    this.coinBalance = 0,
+    this.diamondBalance = 0,
+    this.referralCode,
   });
 
   final String id;
@@ -49,6 +52,14 @@ class User {
   final List<String>? interests;
   final String? studyPlace;
   final String? quizLiking;
+
+  /// Coin/Diamond iqtisodiyoti - [[ai_cost_architecture]]. Coin - bepul,
+  /// faoliyat evaziga; Diamond - AI-generatsiya uchun sarflanadigan qattiq
+  /// valyuta. `referralCode` - foydalanuvchining o'z taklif kodi (do'stlarga
+  /// ulashadi).
+  final int coinBalance;
+  final int diamondBalance;
+  final String? referralCode;
 
   bool get isGoogleAccount => authProvider == 'google';
 }

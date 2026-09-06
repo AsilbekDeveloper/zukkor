@@ -169,11 +169,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               FadeSlideIn(
                 child: HomeHeader(
                   name: user.displayName,
+                  username: user?.username,
                   initials: user.initials,
                   avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
                   avatarImagePath: user?.avatarImagePath,
                   hasUnreadNotifications: hasUnreadNotifications,
                   onNotificationsTap: () => _openNotifications(context),
+                  coinBalance: user?.coinBalance ?? 0,
+                  diamondBalance: user?.diamondBalance ?? 0,
                 ),
               ),
               AppSpacing.lg.vGap,
