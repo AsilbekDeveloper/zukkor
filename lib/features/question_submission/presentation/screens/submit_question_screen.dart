@@ -88,6 +88,11 @@ class _SubmitQuestionScreenState extends ConsumerState<SubmitQuestionScreen> {
       if (result.approved) {
         context.showSnack(context.t.questionSubmission.approved(category: result.categoryName ?? ''));
         _clearForm();
+        // Yangi savol tasdiqlangach kategoriyaning savollar soni serverda
+        // ko'paydi - Home va Kategoriyalar ekranlaridagi eskirgan sonni
+        // darhol to'g'irlash uchun ro'yxatni qayta yuklaymiz (ikkalasi
+        // ham shu providerni reaktiv kuzatadi).
+        await ref.read(categoriesControllerProvider.notifier).load();
       } else {
         context.showSnack(
           context.t.questionSubmission.rejected(reason: result.rejectionReason ?? t.errors.unknown),

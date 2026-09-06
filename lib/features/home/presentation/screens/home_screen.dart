@@ -13,6 +13,7 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/inline_retry_row.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
@@ -60,27 +61,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Categories/profile/stats only change via this device's own
-    // actions (each of those flows refreshes its own provider directly),
-    // so re-fetching them on every Home visit is wasted traffic — loaded
-    // once per session and reused. Notifications stay unconditional: a
-    // new one can arrive from the backend at any time with no other
-    // signal telling this screen to refresh, so the unread dot would go
-    // stale for the rest of the session otherwise.
-    if (ref.read(categoriesControllerProvider).data == null) {
-      Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
-    }
-    if (ref.read(currentUserControllerProvider).data == null || ref.read(myStatsControllerProvider).data == null) {
-      Future.microtask(() async {
-        await ref.read(currentUserControllerProvider.notifier).load();
-        final String? userId = ref.read(currentUserControllerProvider).data?.id;
-        if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
-      });
+    // Categories/profile/stats only change via this device's own actions
+    // (each of those flows refreshes its own provider directly) or an
+    // explicit pull-to-refresh (see [_reloadEssentialData]), so
+    // re-fetching them on every Home visit is wasted traffic — loaded
+    // once per session and reused. If any of the three failed or never
+    // finished loading (e.g. this device's very first Home visit, or a
+    // network hiccup during it), retry all three together here; on
+    // failure again, [_playSection]/[_discoverSection] show an
+    // [InlineRetryRow] in place of just the broken piece - previously a
+    // failed one-time load here left the screen silently stuck showing
+    // 0/0 stats with no way to recover. Notifications stay separately
+    // unconditional: a new one can arrive from the backend at any time
+    // with no other signal telling this screen to refresh, so the unread
+    // dot would go stale otherwise.
+    final bool needsInitialLoad = ref.read(currentUserControllerProvider).data == null ||
+        ref.read(myStatsControllerProvider).data == null ||
+        ref.read(categoriesControllerProvider).data == null;
+    if (needsInitialLoad) {
+      Future.microtask(_reloadEssentialData);
     }
     Future.microtask(() => ref.read(duelControllerProvider.notifier).connect());
     Future.microtask(() => ref.read(lobbyControllerProvider.notifier).connect());
     Future.microtask(() => ref.read(notificationsControllerProvider.notifier).load());
     Future.microtask(_syncPushToken);
+  }
+
+  /// Categories + current user + my stats, reloaded together - used both
+  /// for the initial load (if it never finished or failed) and for pull-
+  /// to-refresh / the error-state retry button.
+  Future<void> _reloadEssentialData() async {
+    await Future.wait([
+      ref.read(currentUserControllerProvider.notifier).load(),
+      ref.read(categoriesControllerProvider.notifier).load(),
+    ]);
+    final String? userId = ref.read(currentUserControllerProvider).data?.id;
+    if (userId != null) {
+      await ref.read(myStatsControllerProvider.notifier).load(userId);
+    }
   }
 
   /// Ruxsat so'raydi, FCM token'ni backendga bog'laydi va token
@@ -135,35 +153,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
-          children: [
-            HomeHeader(
-              name: user.displayName,
-              initials: user.initials,
-              avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
-              avatarImagePath: user?.avatarImagePath,
-              hasUnreadNotifications: hasUnreadNotifications,
-              onNotificationsTap: () => _openNotifications(context),
-            ),
-            AppSpacing.lg.vGap,
-            ..._playSection(context),
-            AppSpacing.xxs.vGap,
-            ..._discoverSection(context),
-          ],
+        child: RefreshIndicator(
+          onRefresh: _reloadEssentialData,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+            children: [
+              HomeHeader(
+                name: user.displayName,
+                initials: user.initials,
+                avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
+                avatarImagePath: user?.avatarImagePath,
+                hasUnreadNotifications: hasUnreadNotifications,
+                onNotificationsTap: () => _openNotifications(context),
+              ),
+              AppSpacing.lg.vGap,
+              ..._playSection(context),
+              AppSpacing.xxs.vGap,
+              ..._discoverSection(context),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  /// Hero card + stats + create/join room buttons.
+  /// Hero card + stats + create/join room buttons. The stats strip shows
+  /// an [InlineRetryRow] instead of silently falling back to 0/0 when its
+  /// own load failed — the rest of the screen (including this section's
+  /// own hero card/buttons) stays fully usable either way.
   List<Widget> _playSection(BuildContext context) {
-    final PlayerStats? stats = ref.watch(myStatsControllerProvider).data;
+    final myStatsState = ref.watch(myStatsControllerProvider);
+    final PlayerStats? stats = myStatsState.data;
 
     return [
       DuelHeroCard(streakDays: stats?.currentStreak ?? 0, onStartDuel: () => context.push(AppRoutes.duel)),
       AppSpacing.md.vGap,
-      StatsStrip(totalXp: stats?.totalXp ?? 0, rank: stats?.rank ?? 0),
+      myStatsState.hasError
+          ? InlineRetryRow(onRetry: _reloadMyStats)
+          : StatsStrip(totalXp: stats?.totalXp ?? 0, rank: stats?.rank ?? 0),
       AppSpacing.md.vGap,
       MultiplayerRow(
         onCreateRoom: () => context.push(AppRoutes.lobby, extra: LobbyRole.host),
@@ -172,18 +200,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ];
   }
 
-  /// Categories grid + create-quiz shortcut.
+  Future<void> _reloadMyStats() async {
+    final String? userId = ref.read(currentUserControllerProvider).data?.id;
+    if (userId != null) {
+      await ref.read(myStatsControllerProvider.notifier).load(userId);
+    }
+  }
+
+  /// Categories grid + create-quiz shortcut. The grid shows an
+  /// [InlineRetryRow] instead of silently going empty when categories
+  /// failed to load - the create-quiz/discover/submit-question cards
+  /// below stay fully usable either way.
   List<Widget> _discoverSection(BuildContext context) {
-    final List<QuizCategory> categories = ref
-            .watch(categoriesControllerProvider)
-            .data
-            ?.map(QuizCategory.fromEntity)
-            .take(4)
-            .toList() ??
-        const [];
+    final categoriesState = ref.watch(categoriesControllerProvider);
+    final List<QuizCategory> categories =
+        categoriesState.data?.map(QuizCategory.fromEntity).take(4).toList() ?? const [];
 
     return [
-      CategoryGrid(
+      categoriesState.hasError
+          ? InlineRetryRow(onRetry: () => ref.read(categoriesControllerProvider.notifier).load())
+          : CategoryGrid(
         categories: categories,
         onSeeAll: () => context.push(AppRoutes.categories),
         onCategoryTap: (category) => context.push(

@@ -8,6 +8,7 @@ import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/inline_retry_row.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
@@ -41,20 +42,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     // Loaded once per session, not on every visit — [EditProfileScreen]
     // already reloads [currentUserControllerProvider] directly after a
     // successful save, and finishing a game invalidates
-    // [myStatsControllerProvider], so both stay correct without a
-    // refetch here every time this screen mounts.
+    // [myStatsControllerProvider]. If the one-time load here never
+    // finished or failed (e.g. a network hiccup on this device's first
+    // Profile visit), retry both together; on failure again,
+    // [_progressSection] shows an [InlineRetryRow] in place of just the
+    // stats row - previously a failed load here left the screen silently
+    // stuck showing 0/0 stats with no way to recover.
     if (ref.read(currentUserControllerProvider).data == null || ref.read(myStatsControllerProvider).data == null) {
-      Future.microtask(() async {
-        await ref.read(currentUserControllerProvider.notifier).load();
-        final String? userId = ref.read(currentUserControllerProvider).data?.id;
-        if (userId != null) await ref.read(myStatsControllerProvider.notifier).load(userId);
-      });
+      Future.microtask(_reloadEssentialData);
     }
   }
 
-  /// Stats row (games/win-rate/streak).
+  /// Current user + my stats, reloaded together - used both for the
+  /// initial load (if it never finished or failed) and for pull-to-
+  /// refresh / the error-state retry button.
+  Future<void> _reloadEssentialData() async {
+    await ref.read(currentUserControllerProvider.notifier).load();
+    final String? userId = ref.read(currentUserControllerProvider).data?.id;
+    if (userId != null) {
+      await ref.read(myStatsControllerProvider.notifier).load(userId);
+    }
+  }
+
+  /// Stats row (games/win-rate/streak). Shows an [InlineRetryRow] instead
+  /// of silently falling back to 0/0 when the load failed - the rest of
+  /// the screen (header, banner, settings list) stays fully usable either
+  /// way.
   List<Widget> _progressSection(BuildContext context) {
-    final PlayerStats? stats = ref.watch(myStatsControllerProvider).data;
+    final myStatsState = ref.watch(myStatsControllerProvider);
+    final PlayerStats? stats = myStatsState.data;
+    if (myStatsState.hasError) {
+      return [InlineRetryRow(onRetry: _reloadMyStats)];
+    }
     return [
       ProfileStatsRow(
         totalGames: stats?.gamesPlayed ?? 0,
@@ -62,6 +81,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         longestStreak: stats?.longestStreak ?? 0,
       ),
     ];
+  }
+
+  Future<void> _reloadMyStats() async {
+    final String? userId = ref.read(currentUserControllerProvider).data?.id;
+    if (userId != null) {
+      await ref.read(myStatsControllerProvider.notifier).load(userId);
+    }
   }
 
   /// Settings shortcuts.
@@ -95,23 +121,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
-          children: [
-            ProfileHeader(onSettingsTap: () => context.push(AppRoutes.settings)),
-            AppSpacing.lg.vGap,
-            ProfileBanner(
-              initials: user.initials,
-              avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
-              avatarImagePath: user?.avatarImagePath,
-              onEditTap: () => context.push(AppRoutes.editProfile),
-            ),
-            ProfileNameBlock(name: user.displayName, username: user?.username ?? ''),
-            AppSpacing.lg.vGap,
-            ..._progressSection(context),
-            AppSpacing.lg.vGap,
-            _settingsSection(context),
-          ],
+        child: RefreshIndicator(
+          onRefresh: _reloadEssentialData,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+            children: [
+              ProfileHeader(onSettingsTap: () => context.push(AppRoutes.settings)),
+              AppSpacing.lg.vGap,
+              ProfileBanner(
+                initials: user.initials,
+                avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
+                avatarImagePath: user?.avatarImagePath,
+                onEditTap: () => context.push(AppRoutes.editProfile),
+              ),
+              ProfileNameBlock(name: user.displayName, username: user?.username ?? ''),
+              AppSpacing.lg.vGap,
+              ..._progressSection(context),
+              AppSpacing.lg.vGap,
+              _settingsSection(context),
+            ],
+          ),
         ),
       ),
     );

@@ -94,12 +94,27 @@ extension LeaderboardEntryDisplayName on LeaderboardEntry {
 }
 
 extension LeaderboardDataRankedWithMe on LeaderboardData {
-  /// [entries] converted, plus the caller's own entry appended at the
-  /// end — unless they're already ranked highly enough to be in
+  /// [entries] converted, plus the caller's own entry merged in at its
+  /// correct sorted position by rank — unless they're already present in
   /// [entries], in which case it isn't duplicated.
+  ///
+  /// Previously this always appended "me" at the very end regardless of
+  /// rank - in the Friends scope (where the backend returns friends and
+  /// "me" as two separate fields), a current user who outranks every
+  /// friend still showed up dead last in the list (2026-09-06, reported
+  /// from a live device screenshot: "Siz" at rank 1/322 XP rendered below
+  /// rank 2 and 3).
   List<LeaderboardEntry> get rankedWithMe {
     final List<LeaderboardEntry> ranked = entries.map(LeaderboardEntry.fromEntity).toList();
     if (ranked.any((entry) => entry.isCurrentUser)) return ranked;
-    return [...ranked, LeaderboardEntry.fromEntity(me)];
+
+    final LeaderboardEntry meEntry = LeaderboardEntry.fromEntity(me);
+    final int insertIndex = ranked.indexWhere((entry) => entry.rank > meEntry.rank);
+    if (insertIndex == -1) {
+      ranked.add(meEntry);
+    } else {
+      ranked.insert(insertIndex, meEntry);
+    }
+    return ranked;
   }
 }
