@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../audio/app_sound.dart';
@@ -6,6 +7,7 @@ import '../audio/sound_controller.dart';
 import '../constants/app_durations.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
+import 'pressable_scale.dart';
 
 enum AppButtonVariant { primary, secondary }
 
@@ -45,9 +47,11 @@ class AppButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final VoidCallback? onPressedCallback = onPressed;
-    final VoidCallback? effectiveOnPressed = isLoading || onPressedCallback == null
+    final VoidCallback? effectiveOnPressed =
+        isLoading || onPressedCallback == null
         ? null
         : () {
+            HapticFeedback.lightImpact();
             ref.playSound(AppSound.tap);
             onPressedCallback();
           };
@@ -83,9 +87,12 @@ class AppButton extends ConsumerWidget {
             ),
     );
 
-    final Widget button = _isPrimary
-        ? ElevatedButton(onPressed: effectiveOnPressed, child: child)
-        : OutlinedButton(onPressed: effectiveOnPressed, child: child);
+    final Widget button = PressableScale(
+      enabled: effectiveOnPressed != null,
+      child: _isPrimary
+          ? ElevatedButton(onPressed: effectiveOnPressed, child: child)
+          : OutlinedButton(onPressed: effectiveOnPressed, child: child),
+    );
 
     // Coral soya faqat faol primary tugmada — o'chirilgan holatda
     // "yonib turgan" soya g'alati ko'rinadi.

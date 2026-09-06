@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -26,7 +29,10 @@ class QuestionBreakdownList extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(context.t.result.breakdownTitle, style: context.textStyles.labelSmall),
+        Text(
+          context.t.result.breakdownTitle,
+          style: context.textStyles.labelSmall,
+        ),
         AppSpacing.sm.vGap,
         for (int i = 0; i < items.length; i++) ...[
           _BreakdownRow(item: items[i]),
@@ -43,9 +49,12 @@ class _BreakdownRow extends ConsumerWidget {
   final QuestionBreakdownItem item;
 
   Future<void> _report(BuildContext context, WidgetRef ref) async {
+    unawaited(HapticFeedback.lightImpact());
     final bool? reported = await ReportQuestionDialog.show(
       context,
-      onSubmit: (reason, comment) => ref.read(quizRepositoryProvider).reportQuestion(
+      onSubmit: (reason, comment) => ref
+          .read(quizRepositoryProvider)
+          .reportQuestion(
             questionId: item.questionId,
             reason: reason,
             comment: comment,
@@ -59,9 +68,14 @@ class _BreakdownRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Color color = item.isCorrect ? context.colors.green : context.colors.error;
+    final Color color = item.isCorrect
+        ? context.colors.green
+        : context.colors.error;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: context.colors.card,
         borderRadius: AppRadius.smAll,
