@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
@@ -6,6 +7,7 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/animated_counter.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/user_avatar.dart';
 
 /// Avatar + "Zukkor" wordmark on the left, Coin/Diamond hamyon chiplari va
@@ -43,7 +45,10 @@ class HomeHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          decoration: BoxDecoration(borderRadius: AppRadius.smAll, boxShadow: context.colors.shadowCoral),
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.smAll,
+            boxShadow: context.colors.shadowCoral,
+          ),
           child: UserAvatar(
             size: 48,
             initials: initials,
@@ -96,38 +101,53 @@ class HomeHeader extends StatelessWidget {
 /// vidjet" bo'lib ajralib turmaydi. Bosilsa `AppRoutes.wallet` (to'liq
 /// tarix) ochiladi.
 class _CurrencyChip extends StatelessWidget {
-  const _CurrencyChip({required this.icon, required this.color, required this.value, required this.onTap});
+  const _CurrencyChip({
+    required this.icon,
+    required this.color,
+    required this.value,
+    required this.onTap,
+  });
 
   final IconData icon;
   final Color color;
   final int value;
   final VoidCallback onTap;
 
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.smAll, side: BorderSide(color: context.colors.line)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.smAll,
-        child: Container(
-          height: 36,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: color, size: 15),
-              AppSpacing.xxs.hGap,
-              AnimatedCounter(
-                value: value,
-                formatter: (v) => '$v',
-                style: context.textStyles.bodySmall?.copyWith(
-                  color: context.colors.ink,
-                  fontWeight: FontWeight.w700,
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.smAll,
+          side: BorderSide(color: context.colors.line),
+        ),
+        child: InkWell(
+          onTap: _handleTap,
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            height: 36,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, color: color, size: 15),
+                AppSpacing.xxs.hGap,
+                AnimatedCounter(
+                  value: value,
+                  formatter: (v) => '$v',
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: context.colors.ink,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -145,7 +165,8 @@ class _NotificationButton extends StatefulWidget {
   State<_NotificationButton> createState() => _NotificationButtonState();
 }
 
-class _NotificationButtonState extends State<_NotificationButton> with SingleTickerProviderStateMixin {
+class _NotificationButtonState extends State<_NotificationButton>
+    with SingleTickerProviderStateMixin {
   // Cheksiz `repeat()` emas, atayin cheklangan (3 marta) - ikkita sabab
   // bilan: (1) doim-abadiy pulslash foydalanuvchini charchatadi, bir necha
   // marta "e'tibor tort" qilib tinch turgani ko'proq yoqimli; (2) cheksiz
@@ -199,42 +220,52 @@ class _NotificationButtonState extends State<_NotificationButton> with SingleTic
     super.dispose();
   }
 
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    widget.onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.smAll,
-        side: BorderSide(color: context.colors.line),
-      ),
-      child: InkWell(
-        onTap: widget.onTap,
-        borderRadius: AppRadius.smAll,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Icon(TablerIcons.bell, color: context.colors.ink, size: 22),
-              if (widget.hasUnread)
-                Positioned(
-                  top: 9,
-                  right: 10,
-                  child: ScaleTransition(
-                    scale: _pulse,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: context.colors.coral,
-                        border: Border.all(color: context.colors.card, width: 2),
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.smAll,
+          side: BorderSide(color: context.colors.line),
+        ),
+        child: InkWell(
+          onTap: _handleTap,
+          borderRadius: AppRadius.smAll,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(TablerIcons.bell, color: context.colors.ink, size: 22),
+                if (widget.hasUnread)
+                  Positioned(
+                    top: 9,
+                    right: 10,
+                    child: ScaleTransition(
+                      scale: _pulse,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: context.colors.coral,
+                          border: Border.all(
+                            color: context.colors.card,
+                            width: 2,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

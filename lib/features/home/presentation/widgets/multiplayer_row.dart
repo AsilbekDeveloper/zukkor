@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// "Create a room" (solid dark) / "Join with a code" (outlined) —
@@ -69,40 +71,53 @@ class _MpButton extends StatelessWidget {
   final BoxBorder? border;
   final VoidCallback onTap;
 
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: background,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: background,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2, horizontal: AppSpacing.xs),
-          decoration: BoxDecoration(borderRadius: AppRadius.smAll, border: border),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 18, color: iconColor),
-              const SizedBox(width: 6),
-              // Shrinks instead of ellipsizing — this button is half the
-              // row's width, and some locales' translation (e.g. Russian
-              // "Присоединиться по коду") is much longer than English.
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    style: context.textStyles.bodySmall?.copyWith(
-                      color: foreground,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+        child: InkWell(
+          onTap: _handleTap,
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm + 2,
+              horizontal: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              border: border,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 18, color: iconColor),
+                const SizedBox(width: 6),
+                // Shrinks instead of ellipsizing — this button is half the
+                // row's width, and some locales' translation (e.g. Russian
+                // "Присоединиться по коду") is much longer than English.
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: context.textStyles.bodySmall?.copyWith(
+                        color: foreground,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

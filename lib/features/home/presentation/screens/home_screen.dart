@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -15,6 +16,7 @@ import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/inline_retry_row.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
@@ -80,16 +82,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // unconditional: a new one can arrive from the backend at any time
     // with no other signal telling this screen to refresh, so the unread
     // dot would go stale otherwise.
-    final bool needsInitialLoad = ref.read(currentUserControllerProvider).data == null ||
+    final bool needsInitialLoad =
+        ref.read(currentUserControllerProvider).data == null ||
         ref.read(myStatsControllerProvider).data == null ||
         ref.read(categoriesControllerProvider).data == null;
     if (needsInitialLoad) {
       Future.microtask(_reloadEssentialData);
     }
     Future.microtask(() => ref.read(duelControllerProvider.notifier).connect());
-    Future.microtask(() => ref.read(lobbyControllerProvider.notifier).connect());
-    Future.microtask(() => ref.read(notificationsControllerProvider.notifier).load());
-    Future.microtask(() => ref.read(weeklyActivityControllerProvider.notifier).load());
+    Future.microtask(
+      () => ref.read(lobbyControllerProvider.notifier).connect(),
+    );
+    Future.microtask(
+      () => ref.read(notificationsControllerProvider.notifier).load(),
+    );
+    Future.microtask(
+      () => ref.read(weeklyActivityControllerProvider.notifier).load(),
+    );
     Future.microtask(_syncPushToken);
   }
 
@@ -112,7 +121,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// almashtirilgan holatlarni (masalan qayta o'rnatilgandan keyin) ham
   /// kuzatib boradi — har safar Home ochilganda emas, bir marta.
   Future<void> _syncPushToken() async {
-    final PushNotificationService service = ref.read(pushNotificationServiceProvider);
+    final PushNotificationService service = ref.read(
+      pushNotificationServiceProvider,
+    );
     final String? token = await service.requestTokenOrNull();
     if (!mounted) return;
     if (token != null) {
@@ -124,7 +135,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     service.listenForeground();
   }
 
-  void _openNotifications(BuildContext context) => context.push(AppRoutes.notifications);
+  void _openNotifications(BuildContext context) =>
+      context.push(AppRoutes.notifications);
 
   @override
   Widget build(BuildContext context) {
@@ -133,17 +145,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     // real incoming challenge opens Duel Invite from wherever the user
     // is in the app.
     ref.listen(duelControllerProvider, (previous, next) {
-      if (next.incomingInvite != null && next.incomingInvite != previous?.incomingInvite) {
+      if (next.incomingInvite != null &&
+          next.incomingInvite != previous?.incomingInvite) {
         final invite = next.incomingInvite!;
         ref.read(duelControllerProvider.notifier).clearIncoming();
 
         if (ref.read(isInActiveGameProvider)) {
           // O'yin paytida xalaqit bermaslik uchun shunchaki xabarnoma chiqaramiz.
           context.showSnack(
-            context.t.notifications.duelChallenge(name: invite.fromUser.displayName),
+            context.t.notifications.duelChallenge(
+              name: invite.fromUser.displayName,
+            ),
             action: SnackBarAction(
-              label: context.t.common.ok, // "Ko'rish" deb o'zgartirish ham mumkin
-              onPressed: () => context.push(AppRoutes.duelInvite, extra: invite),
+              label:
+                  context.t.common.ok, // "Ko'rish" deb o'zgartirish ham mumkin
+              onPressed: () =>
+                  context.push(AppRoutes.duelInvite, extra: invite),
             ),
           );
         } else {
@@ -155,7 +172,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final double hPad = context.screenHPad;
     final User? user = ref.watch(currentUserControllerProvider).data;
     final bool hasUnreadNotifications =
-        ref.watch(notificationsControllerProvider).data?.any((n) => !n.isRead) ?? false;
+        ref
+            .watch(notificationsControllerProvider)
+            .data
+            ?.any((n) => !n.isRead) ??
+        false;
 
     return Scaffold(
       body: SafeArea(
@@ -164,12 +185,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onRefresh: _reloadEssentialData,
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+            padding: EdgeInsets.fromLTRB(
+              hPad,
+              AppSpacing.xs,
+              hPad,
+              AppSpacing.lg,
+            ),
             children: [
               FadeSlideIn(
                 child: HomeHeader(
                   initials: user.initials,
-                  avatarColor: AvatarColorOption.fromApiValue(user?.avatarColor),
+                  avatarColor: AvatarColorOption.fromApiValue(
+                    user?.avatarColor,
+                  ),
                   avatarImagePath: user?.avatarImagePath,
                   hasUnreadNotifications: hasUnreadNotifications,
                   onNotificationsTap: () => _openNotifications(context),
@@ -180,14 +208,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               AppSpacing.lg.vGap,
               for (final Widget section in _playSection(context))
-                FadeSlideIn(delay: const Duration(milliseconds: 60), child: section),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 60),
+                  child: section,
+                ),
               AppSpacing.xxs.vGap,
               for (final Widget section in _discoverSection(context))
-                FadeSlideIn(delay: const Duration(milliseconds: 120), child: section),
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 120),
+                  child: section,
+                ),
               ...[
                 AppSpacing.md.vGap,
                 for (final Widget section in _enrichmentSection(context))
-                  FadeSlideIn(delay: const Duration(milliseconds: 180), child: section),
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 180),
+                    child: section,
+                  ),
               ],
             ],
           ),
@@ -217,7 +254,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           : StatsStrip(totalXp: stats?.totalXp ?? 0, rank: stats?.rank ?? 0),
       AppSpacing.md.vGap,
       MultiplayerRow(
-        onCreateRoom: () => context.push(AppRoutes.lobby, extra: LobbyRole.host),
+        onCreateRoom: () =>
+            context.push(AppRoutes.lobby, extra: LobbyRole.host),
         onJoinWithCode: () => context.push(AppRoutes.joinCode),
       ),
     ];
@@ -243,25 +281,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   List<Widget> _discoverSection(BuildContext context) {
     final categoriesState = ref.watch(categoriesControllerProvider);
     final List<QuizCategory> categories =
-        categoriesState.data?.map(QuizCategory.fromEntity).take(3).toList() ?? const [];
+        categoriesState.data?.map(QuizCategory.fromEntity).take(3).toList() ??
+        const [];
 
     return [
       categoriesState.hasError
-          ? InlineRetryRow(onRetry: () => ref.read(categoriesControllerProvider.notifier).load())
+          ? InlineRetryRow(
+              onRetry: () =>
+                  ref.read(categoriesControllerProvider.notifier).load(),
+            )
           : CategoryScrollRow(
-        categories: categories,
-        onSeeAll: () => context.push(AppRoutes.categories),
-        onCategoryTap: (category) => context.push(
-          AppRoutes.quizSetup,
-          extra: (
-            category: category,
-            onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
-              AppRoutes.quizIntro,
-              extra: QuizLaunchArgs(category: category, questionCount: count),
+              categories: categories,
+              onSeeAll: () => context.push(AppRoutes.categories),
+              onCategoryTap: (category) => context.push(
+                AppRoutes.quizSetup,
+                extra: (
+                  category: category,
+                  onStart: (BuildContext ctx, WidgetRef ref, int count) =>
+                      ctx.push(
+                        AppRoutes.quizIntro,
+                        extra: QuizLaunchArgs(
+                          category: category,
+                          questionCount: count,
+                        ),
+                      ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     ];
   }
 
@@ -277,11 +323,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final List<Widget> widgets = [];
 
-    if (friendsLeaderboard.hasValue) {
+    if (friendsLeaderboard.hasError) {
+      // Ilgari bu holatda karta jimgina umuman ko'rinmasdi - foydalanuvchi
+      // nima bo'lganini bilmasdi. Endi boshqa bo'limlar (statistika,
+      // kategoriyalar) bilan bir xil "qayta urinish" qatori ko'rsatiladi.
+      widgets.addAll([
+        InlineRetryRow(
+          onRetry: () async => ref.invalidate(_homeFriendsLeaderboardProvider),
+        ),
+        AppSpacing.sm.vGap,
+      ]);
+    } else if (friendsLeaderboard.hasValue) {
       final data = friendsLeaderboard.value!;
       final meXp = data.me.totalXp;
-      final ahead = data.entries.where((e) => !e.isMe && e.totalXp > meXp).toList()
-        ..sort((a, b) => a.totalXp.compareTo(b.totalXp));
+      final ahead =
+          data.entries.where((e) => !e.isMe && e.totalXp > meXp).toList()
+            ..sort((a, b) => a.totalXp.compareTo(b.totalXp));
 
       if (ahead.isNotEmpty) {
         final rival = ahead.first;
@@ -289,7 +346,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           RivalCard(
             rival: LeaderboardEntry.fromEntity(rival),
             xpGap: rival.totalXp - meXp,
-            onTap: () => context.push(AppRoutes.playerDetail, extra: {'userId': rival.userId}),
+            onTap: () => context.push(
+              AppRoutes.playerDetail,
+              extra: {'userId': rival.userId},
+            ),
           ),
           AppSpacing.sm.vGap,
         ]);
@@ -304,64 +364,92 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-final _homeFriendsLeaderboardProvider = FutureProvider.autoDispose<LeaderboardData>((ref) {
-  return ref.watch(getLeaderboardUseCaseProvider).call(scope: LeaderboardScope.friends, limit: 50);
-});
+final _homeFriendsLeaderboardProvider =
+    FutureProvider.autoDispose<LeaderboardData>((ref) {
+      return ref
+          .watch(getLeaderboardUseCaseProvider)
+          .call(scope: LeaderboardScope.friends, limit: 50);
+    });
 
 class _DiscoverFeedCard extends StatelessWidget {
   const _DiscoverFeedCard({required this.onTap});
 
   final VoidCallback onTap;
 
+  void _handleTap() {
+    HapticFeedback.lightImpact();
+    onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    // Boshqa Home kartalari (RivalCard, HistoryList qatorlari) bilan bir
+    // xil - chegara chizig'i emas, yumshoq soya (`shadowSm`) - avval bu
+    // karta shu jihatdan farq qilib turardi.
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(color: context.colors.line),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: context.colors.teal,
-                  borderRadius: AppRadius.smAll,
+        child: InkWell(
+          onTap: _handleTap,
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm + 2,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              boxShadow: context.colors.shadowSm,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: context.colors.teal,
+                    borderRadius: AppRadius.smAll,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    TablerIcons.world,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
-                alignment: Alignment.center,
-                child: const Icon(TablerIcons.world, color: Colors.white, size: 20),
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      context.t.discover.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      context.t.discover.homeCardSubtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                    ),
-                  ],
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        context.t.discover.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        context.t.discover.homeCardSubtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.labelSmall?.copyWith(
+                          color: context.colors.muted,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(TablerIcons.chevronRight, color: Colors.grey, size: 18),
-            ],
+                Icon(
+                  TablerIcons.chevronRight,
+                  color: context.colors.muted,
+                  size: 18,
+                ),
+              ],
+            ),
           ),
         ),
       ),

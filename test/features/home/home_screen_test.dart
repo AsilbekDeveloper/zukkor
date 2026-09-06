@@ -96,13 +96,21 @@ class _FakeHistoryRepository extends Fake implements HistoryRepository {
 }
 
 class _FakeLeaderboardRepository implements LeaderboardRepository {
+  // Rival Card bo'limining "InlineRetryRow" holatini sinash uchun - true
+  // bo'lsa do'stlar reytingi (Home'da rival kartani ta'minlaydigan) so'rovi
+  // muvaffaqiyatsiz bo'ladi.
+  bool failFriendsScope = false;
+
   @override
   Future<LeaderboardData> getLeaderboard({
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
-  }) async =>
-      const LeaderboardData(
+  }) async {
+    if (scope == LeaderboardScope.friends && failFriendsScope) {
+      throw Exception('network error');
+    }
+    return const LeaderboardData(
         entries: [],
         me: RankEntry(
           userId: '1',
@@ -116,6 +124,7 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
           isMe: true,
         ),
       );
+  }
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => const PlayerStats(
@@ -161,7 +170,11 @@ class _MockCurrentUserController extends CurrentUserController {
   Future<void> load() async {}
 }
 
-Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) async {
+Future<void> _pumpHome(
+  WidgetTester tester, {
+  Size size = const Size(390, 844),
+  LeaderboardRepository? leaderboardRepository,
+}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -190,7 +203,7 @@ Future<void> _pumpHome(WidgetTester tester, {Size size = const Size(390, 844)}) 
         notificationsRepositoryProvider.overrideWithValue(_FakeNotificationsRepository()),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
         historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),
-        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(leaderboardRepository ?? _FakeLeaderboardRepository()),
         currentUserControllerProvider.overrideWith(() => _MockCurrentUserController()),
       ],
       child: TranslationProvider(
@@ -270,4 +283,22 @@ void main() {
 
     expect(find.text('CATEGORIES'), findsOneWidget);
   });
+
+  testWidgets(
+    'rival card section shows a retry row when the friends leaderboard fails, and retry clears it',
+    (tester) async {
+      final repo = _FakeLeaderboardRepository()..failFriendsScope = true;
+      await _pumpHome(tester, leaderboardRepository: repo);
+
+      // Previously this section just silently showed nothing on failure -
+      // now it matches the stats/categories sections' own retry affordance.
+      expect(find.text(AppStrings.retry), findsOneWidget);
+
+      repo.failFriendsScope = false;
+      await tester.tap(find.text(AppStrings.retry));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppStrings.retry), findsNothing);
+    },
+  );
 }
