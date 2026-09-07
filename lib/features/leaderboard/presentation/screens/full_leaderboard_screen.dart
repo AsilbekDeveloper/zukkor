@@ -8,6 +8,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/leaderboard_data.dart';
@@ -25,7 +26,8 @@ class FullLeaderboardScreen extends ConsumerStatefulWidget {
   const FullLeaderboardScreen({super.key});
 
   @override
-  ConsumerState<FullLeaderboardScreen> createState() => _FullLeaderboardScreenState();
+  ConsumerState<FullLeaderboardScreen> createState() =>
+      _FullLeaderboardScreenState();
 }
 
 class _FullLeaderboardScreenState extends ConsumerState<FullLeaderboardScreen> {
@@ -35,7 +37,9 @@ class _FullLeaderboardScreenState extends ConsumerState<FullLeaderboardScreen> {
   void initState() {
     super.initState();
     if (ref.read(leaderboardControllerProvider).data == null) {
-      Future.microtask(() => ref.read(leaderboardControllerProvider.notifier).load());
+      Future.microtask(
+        () => ref.read(leaderboardControllerProvider.notifier).load(),
+      );
     }
     _scrollController.addListener(_onScroll);
   }
@@ -51,7 +55,10 @@ class _FullLeaderboardScreenState extends ConsumerState<FullLeaderboardScreen> {
   // Fires the next page a little before the user actually hits the
   // bottom, so the new rows are ready by the time they get there.
   void _onScroll() {
-    if (_scrollController.position.pixels < _scrollController.position.maxScrollExtent - 200) return;
+    if (_scrollController.position.pixels <
+        _scrollController.position.maxScrollExtent - 200) {
+      return;
+    }
     ref.read(leaderboardControllerProvider.notifier).loadMore();
   }
 
@@ -70,7 +77,9 @@ class _FullLeaderboardScreenState extends ConsumerState<FullLeaderboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final LeaderboardState leaderboardState = ref.watch(leaderboardControllerProvider);
+    final LeaderboardState leaderboardState = ref.watch(
+      leaderboardControllerProvider,
+    );
     final LeaderboardData? data = leaderboardState.data;
 
     return Scaffold(
@@ -81,12 +90,18 @@ class _FullLeaderboardScreenState extends ConsumerState<FullLeaderboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.fullLeaderboard.title, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.fullLeaderboard.title,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
               if (leaderboardState.hasError)
                 Expanded(
                   child: ErrorRetryView(
-                    onRetry: () => ref.read(leaderboardControllerProvider.notifier).load(),
+                    onRetry: () =>
+                        ref.read(leaderboardControllerProvider.notifier).load(),
                   ),
                 )
               else if (data == null)
@@ -97,16 +112,22 @@ class _FullLeaderboardScreenState extends ConsumerState<FullLeaderboardScreen> {
                     controller: _scrollController,
                     child: Column(
                       children: [
-                        RankList(
-                          entries: data.rankedWithMe,
-                          onEntryTap: (entry) => _openPlayerDetail(context, entry),
+                        FadeSlideIn(
+                          delay: const Duration(milliseconds: 60),
+                          child: RankList(
+                            entries: data.rankedWithMe,
+                            onEntryTap: (entry) =>
+                                _openPlayerDetail(context, entry),
+                          ),
                         ),
                         if (leaderboardState.isLoadingMore) ...[
                           AppSpacing.md.vGap,
                           const Center(
                             child: SizedBox.square(
                               dimension: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2.5),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                              ),
                             ),
                           ),
                           AppSpacing.md.vGap,
