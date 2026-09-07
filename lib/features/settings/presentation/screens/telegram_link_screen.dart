@@ -11,6 +11,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
@@ -48,7 +49,9 @@ class _TelegramLinkScreenState extends ConsumerState<TelegramLinkScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     try {
-      await ref.read(authControllerProvider.notifier).linkTelegram(_codeController.text.trim());
+      await ref
+          .read(authControllerProvider.notifier)
+          .linkTelegram(_codeController.text.trim());
       if (!mounted) return;
       context.showSnack(context.t.telegramLink.success);
       _goBack();
@@ -62,7 +65,8 @@ class _TelegramLinkScreenState extends ConsumerState<TelegramLinkScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isLoading = ref.watch(authControllerProvider);
-    final bool isLinked = ref.watch(currentUserControllerProvider).data?.telegramLinked ?? false;
+    final bool isLinked =
+        ref.watch(currentUserControllerProvider).data?.telegramLinked ?? false;
 
     return Scaffold(
       body: SafeArea(
@@ -72,43 +76,70 @@ class _TelegramLinkScreenState extends ConsumerState<TelegramLinkScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.telegramLink.title, onBack: _goBack),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.telegramLink.title,
+                  onBack: _goBack,
+                ),
+              ),
               AppSpacing.xl.vGap,
               if (isLinked)
-                Row(
-                  children: [
-                    Icon(TablerIcons.brandTelegram, color: context.colors.teal),
-                    AppSpacing.sm.hGap,
-                    Expanded(
-                      child: Text(context.t.telegramLink.alreadyLinked, style: context.textStyles.bodyMedium),
-                    ),
-                  ],
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 60),
+                  child: Row(
+                    children: [
+                      Icon(
+                        TablerIcons.brandTelegram,
+                        color: context.colors.teal,
+                      ),
+                      AppSpacing.sm.hGap,
+                      Expanded(
+                        child: Text(
+                          context.t.telegramLink.alreadyLinked,
+                          style: context.textStyles.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               else ...[
-                Text(
-                  context.t.telegramLink.description,
-                  style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-                ),
-                AppSpacing.xl.vGap,
-                Form(
-                  key: _formKey,
-                  child: AppTextField(
-                    label: context.t.telegramLink.codeLabel,
-                    hint: context.t.telegramLink.codeHint,
-                    controller: _codeController,
-                    keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.done,
-                    maxLength: 6,
-                    onSubmitted: (_) => _submit(),
-                    validator: (value) =>
-                        (value == null || value.trim().length != 6) ? context.t.telegramLink.codeHint : null,
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 60),
+                  child: Text(
+                    context.t.telegramLink.description,
+                    style: context.textStyles.bodySmall?.copyWith(
+                      color: context.colors.muted,
+                    ),
                   ),
                 ),
                 AppSpacing.xl.vGap,
-                AppButton.primary(
-                  label: context.t.telegramLink.submit,
-                  isLoading: isLoading,
-                  onPressed: _submit,
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 100),
+                  child: Form(
+                    key: _formKey,
+                    child: AppTextField(
+                      label: context.t.telegramLink.codeLabel,
+                      hint: context.t.telegramLink.codeHint,
+                      controller: _codeController,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.done,
+                      maxLength: 6,
+                      onSubmitted: (_) => _submit(),
+                      validator: (value) =>
+                          (value == null || value.trim().length != 6)
+                          ? context.t.telegramLink.codeHint
+                          : null,
+                    ),
+                  ),
+                ),
+                AppSpacing.xl.vGap,
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 140),
+                  child: AppButton.primary(
+                    label: context.t.telegramLink.submit,
+                    isLoading: isLoading,
+                    onPressed: _submit,
+                  ),
                 ),
               ],
             ],

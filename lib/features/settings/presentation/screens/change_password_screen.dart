@@ -11,6 +11,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 
@@ -21,14 +22,17 @@ class ChangePasswordScreen extends ConsumerStatefulWidget {
   const ChangePasswordScreen({super.key});
 
   @override
-  ConsumerState<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+  ConsumerState<ChangePasswordScreen> createState() =>
+      _ChangePasswordScreenState();
 }
 
 class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -64,7 +68,9 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     try {
-      await ref.read(authControllerProvider.notifier).changePassword(
+      await ref
+          .read(authControllerProvider.notifier)
+          .changePassword(
             currentPassword: _currentPasswordController.text,
             newPassword: _newPasswordController.text,
           );
@@ -90,53 +96,67 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.changePassword.title, onBack: _goBack),
-              AppSpacing.xl.vGap,
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppTextField(
-                      label: context.t.changePassword.currentPasswordLabel,
-                      hint: context.t.changePassword.currentPasswordHint,
-                      controller: _currentPasswordController,
-                      obscure: true,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.password],
-                      validator: Validators.currentPassword,
-                    ),
-                    AppSpacing.md.vGap,
-                    AppTextField(
-                      label: context.t.changePassword.newPasswordLabel,
-                      hint: context.t.changePassword.newPasswordHint,
-                      controller: _newPasswordController,
-                      obscure: true,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.newPassword],
-                      validator: Validators.password,
-                      maxLength: kPasswordMaxLength,
-                    ),
-                    AppSpacing.md.vGap,
-                    AppTextField(
-                      label: context.t.changePassword.confirmNewPasswordLabel,
-                      hint: context.t.changePassword.confirmNewPasswordHint,
-                      controller: _confirmPasswordController,
-                      obscure: true,
-                      textInputAction: TextInputAction.done,
-                      autofillHints: const [AutofillHints.newPassword],
-                      validator: (value) => Validators.confirmPassword(value, _newPasswordController.text),
-                      onSubmitted: (_) => _save(),
-                      maxLength: kPasswordMaxLength,
-                    ),
-                  ],
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.changePassword.title,
+                  onBack: _goBack,
                 ),
               ),
               AppSpacing.xl.vGap,
-              AppButton.primary(
-                label: context.t.changePassword.saveButton,
-                isLoading: isLoading,
-                onPressed: _save,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppTextField(
+                        label: context.t.changePassword.currentPasswordLabel,
+                        hint: context.t.changePassword.currentPasswordHint,
+                        controller: _currentPasswordController,
+                        obscure: true,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.password],
+                        validator: Validators.currentPassword,
+                      ),
+                      AppSpacing.md.vGap,
+                      AppTextField(
+                        label: context.t.changePassword.newPasswordLabel,
+                        hint: context.t.changePassword.newPasswordHint,
+                        controller: _newPasswordController,
+                        obscure: true,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.newPassword],
+                        validator: Validators.password,
+                        maxLength: kPasswordMaxLength,
+                      ),
+                      AppSpacing.md.vGap,
+                      AppTextField(
+                        label: context.t.changePassword.confirmNewPasswordLabel,
+                        hint: context.t.changePassword.confirmNewPasswordHint,
+                        controller: _confirmPasswordController,
+                        obscure: true,
+                        textInputAction: TextInputAction.done,
+                        autofillHints: const [AutofillHints.newPassword],
+                        validator: (value) => Validators.confirmPassword(
+                          value,
+                          _newPasswordController.text,
+                        ),
+                        onSubmitted: (_) => _save(),
+                        maxLength: kPasswordMaxLength,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: AppButton.primary(
+                  label: context.t.changePassword.saveButton,
+                  isLoading: isLoading,
+                  onPressed: _save,
+                ),
               ),
             ],
           ),
