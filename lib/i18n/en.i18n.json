@@ -428,8 +428,7 @@
     "entryCardLabel": "Create a quiz from a document with AI",
     "myQuizzesTitle": "My quizzes",
     "createButton": "+ Create a new AI quiz",
-    "hubAiLabel": "With AI",
-    "hubManualLabel": "Manual",
+    "hubManualSubtitle": "Write your own questions and answers to build a quiz",
     "emptyTitle": "You haven't created an AI quiz yet",
     "emptySubtitle": "Upload a document (PDF, Word, or text) and get a quiz generated from it",
     "deleteConfirmTitle": "Delete quiz",
@@ -490,6 +489,8 @@
   },
   "questionSubmission": {
     "title": "Add a question",
+    "profileCardTitle": "Add a question",
+    "cardSubtitle": "Help us grow the question bank",
     "questionTextLabel": "Question text",
     "categoryHint": "If you don't pick one, AI will choose the best-fitting category",
     "fillAllFields": "Fill in all fields",

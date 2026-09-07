@@ -22,6 +22,7 @@ import '../widgets/profile_header.dart';
 import '../widgets/profile_name_block.dart';
 import '../widgets/profile_stats_row.dart';
 import '../widgets/settings_list.dart';
+import '../widgets/submit_question_card.dart';
 
 /// The Profile tab — mirrors the prototype's `view-profile`: header +
 /// settings shortcut, coral banner with an overlapping avatar, name
@@ -195,6 +196,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   delay: const Duration(milliseconds: 140),
                   child: section,
                 ),
+              AppSpacing.lg.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 160),
+                child: SubmitQuestionCard(
+                  onTap: () => context.push(AppRoutes.submitQuestion),
+                ),
+              ),
               AppSpacing.lg.vGap,
               FadeSlideIn(
                 delay: const Duration(milliseconds: 180),

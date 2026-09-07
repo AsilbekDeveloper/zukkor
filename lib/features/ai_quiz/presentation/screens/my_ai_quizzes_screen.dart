@@ -78,10 +78,6 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     await context.push(AppRoutes.createManualQuiz);
   }
 
-  Future<void> _openSubmitQuestion() async {
-    await context.push(AppRoutes.submitQuestion);
-  }
-
   void _rowTapped(AiQuiz quiz) {
     if (_selectionMode) {
       _toggleSelect(quiz);
@@ -283,38 +279,20 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
               FadeSlideIn(child: _buildHeader(context, canSelect: canSelect)),
               AppSpacing.lg.vGap,
               if (!_selectionMode) ...[
+                // Two tiers, not two equal tiles: AI generation is the
+                // flagship flow (full-width hero), manual creation is a
+                // secondary but still prominent card. Submitting a single
+                // question to a public category isn't "creating a quiz" at
+                // all - moved to its own card on the Profile screen instead
+                // of competing for space here (see [ProfileScreen]).
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 60),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _ActionTile(
-                          icon: TablerIcons.sparkle,
-                          color: context.colors.coral,
-                          label: context.t.aiQuiz.hubAiLabel,
-                          onTap: _createViaAi,
-                        ),
-                      ),
-                      AppSpacing.sm.hGap,
-                      Expanded(
-                        child: _ActionTile(
-                          icon: TablerIcons.pencil,
-                          color: context.colors.green,
-                          label: context.t.aiQuiz.hubManualLabel,
-                          onTap: _createManual,
-                        ),
-                      ),
-                      AppSpacing.sm.hGap,
-                      Expanded(
-                        child: _ActionTile(
-                          icon: TablerIcons.help,
-                          color: context.colors.blue,
-                          label: context.t.questionSubmission.title,
-                          onTap: _openSubmitQuestion,
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: _AiHeroCard(onTap: _createViaAi),
+                ),
+                AppSpacing.sm.vGap,
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 100),
+                  child: _ManualCreateCard(onTap: _createManual),
                 ),
                 AppSpacing.lg.vGap,
               ],
@@ -331,7 +309,7 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                     ? _EmptyState(onCreate: _createViaAi)
                     : SingleChildScrollView(
                         child: FadeSlideIn(
-                          delay: const Duration(milliseconds: 100),
+                          delay: const Duration(milliseconds: 140),
                           child: AiQuizList(
                             quizzes: quizzes,
                             onTap: _rowTapped,
@@ -391,17 +369,121 @@ class _HeaderIconButton extends StatelessWidget {
   }
 }
 
-class _ActionTile extends StatelessWidget {
-  const _ActionTile({
-    required this.icon,
-    required this.color,
-    required this.label,
-    required this.onTap,
-  });
+/// The flagship action — full-width gradient hero, same visual language as
+/// [DuelHeroCard] on Home, so it reads as THE primary way to get a quiz here.
+class _AiHeroCard extends StatelessWidget {
+  const _AiHeroCard({required this.onTap});
 
-  final IconData icon;
-  final Color color;
-  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return PressableScale(
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: AppRadius.lgAll,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.lgAll,
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.lgAll,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xFFFF7A50),
+                  context.colors.coral,
+                  context.colors.coralDeep,
+                ],
+                stops: const [0, 0.45, 1],
+              ),
+              boxShadow: context.colors.shadowCoral,
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  top: -60,
+                  right: -30,
+                  child: Container(
+                    width: 130,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.12),
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: AppRadius.mdAll,
+                      ),
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        TablerIcons.sparkle,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                    AppSpacing.sm.hGap,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            context.t.aiQuiz.generateTitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textStyles.titleLarge?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Text(
+                            context.t.aiQuiz.generateSubtitle,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textStyles.bodySmall?.copyWith(
+                              color: Colors.white.withValues(alpha: 0.85),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      TablerIcons.chevronRight,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The secondary action — still a full-width card so it's easy to tap, but
+/// a plain neutral one (no gradient) so it doesn't compete with the AI hero
+/// above it.
+class _ManualCreateCard extends StatelessWidget {
+  const _ManualCreateCard({required this.onTap});
+
   final VoidCallback onTap;
 
   @override
@@ -409,44 +491,64 @@ class _ActionTile extends StatelessWidget {
     return PressableScale(
       child: Material(
         color: context.colors.card,
-        borderRadius: AppRadius.mdAll,
+        borderRadius: AppRadius.lgAll,
         child: InkWell(
           onTap: () {
             HapticFeedback.lightImpact();
             onTap();
           },
-          borderRadius: AppRadius.mdAll,
+          borderRadius: AppRadius.lgAll,
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.sm,
-              horizontal: AppSpacing.xs,
-            ),
+            padding: const EdgeInsets.all(AppSpacing.sm),
             decoration: BoxDecoration(
-              borderRadius: AppRadius.mdAll,
+              borderRadius: AppRadius.lgAll,
               border: Border.all(color: context.colors.line),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Row(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
-                    color: color,
+                    color: context.colors.green,
                     borderRadius: AppRadius.smAll,
                   ),
                   alignment: Alignment.center,
-                  child: Icon(icon, color: Colors.white, size: 16),
-                ),
-                AppSpacing.xs.vGap,
-                Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: context.textStyles.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
+                  child: const Icon(
+                    TablerIcons.pencil,
+                    color: Colors.white,
+                    size: 18,
                   ),
+                ),
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        context.t.aiQuiz.createManualTitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        context.t.aiQuiz.hubManualSubtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.bodySmall?.copyWith(
+                          color: context.colors.muted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  TablerIcons.chevronRight,
+                  color: context.colors.muted,
+                  size: 18,
                 ),
               ],
             ),

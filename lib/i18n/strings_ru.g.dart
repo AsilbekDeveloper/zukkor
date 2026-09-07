@@ -833,8 +833,7 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String get entryCardLabel => 'Создать викторину из документа с помощью AI';
 	@override String get myQuizzesTitle => 'Мои викторины';
 	@override String get createButton => '+ Создать новую AI-викторину';
-	@override String get hubAiLabel => 'С AI';
-	@override String get hubManualLabel => 'Вручную';
+	@override String get hubManualSubtitle => 'Напишите свои вопросы и ответы, чтобы создать викторину';
 	@override String get emptyTitle => 'У вас пока нет AI-викторин';
 	@override String get emptySubtitle => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе';
 	@override String get deleteConfirmTitle => 'Удалить викторину';
@@ -902,6 +901,8 @@ class _Translations$questionSubmission$ru implements Translations$questionSubmis
 
 	// Translations
 	@override String get title => 'Добавить вопрос';
+	@override String get profileCardTitle => 'Добавьте вопрос';
+	@override String get cardSubtitle => 'Помогите пополнить базу вопросов';
 	@override String get questionTextLabel => 'Текст вопроса';
 	@override String get categoryHint => 'Если не выберете категорию, AI сам подберёт подходящую';
 	@override String get fillAllFields => 'Заполните все поля';
@@ -1370,8 +1371,7 @@ extension on TranslationsRu {
 			'aiQuiz.entryCardLabel' => 'Создать викторину из документа с помощью AI',
 			'aiQuiz.myQuizzesTitle' => 'Мои викторины',
 			'aiQuiz.createButton' => '+ Создать новую AI-викторину',
-			'aiQuiz.hubAiLabel' => 'С AI',
-			'aiQuiz.hubManualLabel' => 'Вручную',
+			'aiQuiz.hubManualSubtitle' => 'Напишите свои вопросы и ответы, чтобы создать викторину',
 			'aiQuiz.emptyTitle' => 'У вас пока нет AI-викторин',
 			'aiQuiz.emptySubtitle' => 'Загрузите документ (PDF, Word или текст), и мы создадим викторину на его основе',
 			'aiQuiz.deleteConfirmTitle' => 'Удалить викторину',
@@ -1430,6 +1430,8 @@ extension on TranslationsRu {
 			'aiQuiz.topicSelectionHint' => 'Выберите тему',
 			'aiQuiz.changeTopicTitle' => 'Изменить тему',
 			'questionSubmission.title' => 'Добавить вопрос',
+			'questionSubmission.profileCardTitle' => 'Добавьте вопрос',
+			'questionSubmission.cardSubtitle' => 'Помогите пополнить базу вопросов',
 			'questionSubmission.questionTextLabel' => 'Текст вопроса',
 			'questionSubmission.categoryHint' => 'Если не выберете категорию, AI сам подберёт подходящую',
 			'questionSubmission.fillAllFields' => 'Заполните все поля',

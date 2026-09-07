@@ -827,8 +827,7 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String get entryCardLabel => 'AI orqali hujjatdan quiz yaratish';
 	@override String get myQuizzesTitle => 'Mening quizlarim';
 	@override String get createButton => '+ Yangi AI quiz yaratish';
-	@override String get hubAiLabel => 'AI bilan';
-	@override String get hubManualLabel => 'Qo\'lda';
+	@override String get hubManualSubtitle => 'O\'zingiz savol-javoblar yozib, shaxsiy quiz tuzing';
 	@override String get emptyTitle => 'Hali AI quiz yaratmagansiz';
 	@override String get emptySubtitle => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating';
 	@override String get deleteConfirmTitle => 'Quizni o\'chirish';
@@ -896,6 +895,8 @@ class _Translations$questionSubmission$uz implements Translations$questionSubmis
 
 	// Translations
 	@override String get title => 'Savol qo\'shish';
+	@override String get profileCardTitle => 'Savol qo\'shing';
+	@override String get cardSubtitle => 'Bilim bazasini birga boyitamiz';
 	@override String get questionTextLabel => 'Savol matni';
 	@override String get categoryHint => 'Tanlamasangiz, AI eng mos kategoriyani o\'zi tanlaydi';
 	@override String get fillAllFields => 'Barcha maydonlarni to\'ldiring';
@@ -1364,8 +1365,7 @@ extension on TranslationsUz {
 			'aiQuiz.entryCardLabel' => 'AI orqali hujjatdan quiz yaratish',
 			'aiQuiz.myQuizzesTitle' => 'Mening quizlarim',
 			'aiQuiz.createButton' => '+ Yangi AI quiz yaratish',
-			'aiQuiz.hubAiLabel' => 'AI bilan',
-			'aiQuiz.hubManualLabel' => 'Qo\'lda',
+			'aiQuiz.hubManualSubtitle' => 'O\'zingiz savol-javoblar yozib, shaxsiy quiz tuzing',
 			'aiQuiz.emptyTitle' => 'Hali AI quiz yaratmagansiz',
 			'aiQuiz.emptySubtitle' => 'Hujjat (PDF, Word yoki matn) yuklab, undan avtomatik quiz yarating',
 			'aiQuiz.deleteConfirmTitle' => 'Quizni o\'chirish',
@@ -1424,6 +1424,8 @@ extension on TranslationsUz {
 			'aiQuiz.topicSelectionHint' => 'Mavzu tanlang',
 			'aiQuiz.changeTopicTitle' => 'Mavzuni o\'zgartirish',
 			'questionSubmission.title' => 'Savol qo\'shish',
+			'questionSubmission.profileCardTitle' => 'Savol qo\'shing',
+			'questionSubmission.cardSubtitle' => 'Bilim bazasini birga boyitamiz',
 			'questionSubmission.questionTextLabel' => 'Savol matni',
 			'questionSubmission.categoryHint' => 'Tanlamasangiz, AI eng mos kategoriyani o\'zi tanlaydi',
 			'questionSubmission.fillAllFields' => 'Barcha maydonlarni to\'ldiring',

@@ -1519,11 +1519,8 @@ class Translations$aiQuiz$en {
 	/// en: '+ Create a new AI quiz'
 	String get createButton => '+ Create a new AI quiz';
 
-	/// en: 'With AI'
-	String get hubAiLabel => 'With AI';
-
-	/// en: 'Manual'
-	String get hubManualLabel => 'Manual';
+	/// en: 'Write your own questions and answers to build a quiz'
+	String get hubManualSubtitle => 'Write your own questions and answers to build a quiz';
 
 	/// en: 'You haven't created an AI quiz yet'
 	String get emptyTitle => 'You haven\'t created an AI quiz yet';
@@ -1707,6 +1704,12 @@ class Translations$questionSubmission$en {
 
 	/// en: 'Add a question'
 	String get title => 'Add a question';
+
+	/// en: 'Add a question'
+	String get profileCardTitle => 'Add a question';
+
+	/// en: 'Help us grow the question bank'
+	String get cardSubtitle => 'Help us grow the question bank';
 
 	/// en: 'Question text'
 	String get questionTextLabel => 'Question text';
@@ -2295,8 +2298,7 @@ extension on Translations {
 			'aiQuiz.entryCardLabel' => 'Create a quiz from a document with AI',
 			'aiQuiz.myQuizzesTitle' => 'My quizzes',
 			'aiQuiz.createButton' => '+ Create a new AI quiz',
-			'aiQuiz.hubAiLabel' => 'With AI',
-			'aiQuiz.hubManualLabel' => 'Manual',
+			'aiQuiz.hubManualSubtitle' => 'Write your own questions and answers to build a quiz',
 			'aiQuiz.emptyTitle' => 'You haven\'t created an AI quiz yet',
 			'aiQuiz.emptySubtitle' => 'Upload a document (PDF, Word, or text) and get a quiz generated from it',
 			'aiQuiz.deleteConfirmTitle' => 'Delete quiz',
@@ -2355,6 +2357,8 @@ extension on Translations {
 			'aiQuiz.topicSelectionHint' => 'Choose a topic',
 			'aiQuiz.changeTopicTitle' => 'Change topic',
 			'questionSubmission.title' => 'Add a question',
+			'questionSubmission.profileCardTitle' => 'Add a question',
+			'questionSubmission.cardSubtitle' => 'Help us grow the question bank',
 			'questionSubmission.questionTextLabel' => 'Question text',
 			'questionSubmission.categoryHint' => 'If you don\'t pick one, AI will choose the best-fitting category',
 			'questionSubmission.fillAllFields' => 'Fill in all fields',
