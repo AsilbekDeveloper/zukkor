@@ -13,6 +13,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/auth_divider.dart';
@@ -68,12 +69,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     try {
       if (widget.isAddingAccount) {
-        await ref.read(authControllerProvider.notifier).addAccountViaRegister(
+        await ref
+            .read(authControllerProvider.notifier)
+            .addAccountViaRegister(
               email: _emailController.text.trim(),
               password: _passwordController.text,
             );
       } else {
-        await ref.read(authControllerProvider.notifier).register(
+        await ref
+            .read(authControllerProvider.notifier)
+            .register(
               email: _emailController.text.trim(),
               password: _passwordController.text,
             );
@@ -99,14 +104,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _signInWithGoogle() async {
     try {
       final user = widget.isAddingAccount
-          ? await ref.read(authControllerProvider.notifier).addAccountWithGoogle()
+          ? await ref
+                .read(authControllerProvider.notifier)
+                .addAccountWithGoogle()
           : await ref.read(authControllerProvider.notifier).signInWithGoogle();
 
-      if (!mounted || user == null) return; // foydalanuvchi tanlagichni yopdi — bekor qilingan
+      if (!mounted || user == null) {
+        return; // foydalanuvchi tanlagichni yopdi — bekor qilingan
+      }
       if (!user.onboardingCompleted && !widget.isAddingAccount) {
         unawaited(ref.read(analyticsServiceProvider).logSignUp('google'));
       }
-      context.go(user.onboardingCompleted ? AppRoutes.home : AppRoutes.onboarding);
+      context.go(
+        user.onboardingCompleted ? AppRoutes.home : AppRoutes.onboarding,
+      );
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
@@ -133,7 +144,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final bool isLoading = ref.watch(authControllerProvider);
 
     return Scaffold(
-      appBar: widget.isAddingAccount ? AppBar(title: Text(context.t.auth.addAccount)) : null,
+      appBar: widget.isAddingAccount
+          ? AppBar(title: Text(context.t.auth.addAccount))
+          : null,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(
@@ -144,78 +157,99 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppSpacing.xxl.vGap,
-                  const Center(child: BrandLogo()),
+                  const FadeSlideIn(child: Center(child: BrandLogo())),
                   AppSpacing.xxl.vGap,
-                  Text(
-                    context.t.auth.registerTitle,
-                    style: context.textStyles.headlineMedium,
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 60),
+                    child: Text(
+                      context.t.auth.registerTitle,
+                      style: context.textStyles.headlineMedium,
+                    ),
                   ),
                   AppSpacing.xs.vGap,
-                  Text(
-                    context.t.auth.registerSubtitle,
-                    style: context.textStyles.bodyMedium,
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 60),
+                    child: Text(
+                      context.t.auth.registerSubtitle,
+                      style: context.textStyles.bodyMedium,
+                    ),
                   ),
                   AppSpacing.xl.vGap,
-                  Form(
-                    key: _formKey,
-                    child: AutofillGroup(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          AppTextField(
-                            label: context.t.auth.emailLabel,
-                            hint: context.t.auth.emailHint,
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            autofillHints: const [AutofillHints.email],
-                            validator: Validators.email,
-                          ),
-                          AppSpacing.md.vGap,
-                          AppTextField(
-                            label: context.t.auth.passwordLabel,
-                            hint: context.t.auth.passwordHint,
-                            controller: _passwordController,
-                            obscure: true,
-                            textInputAction: TextInputAction.next,
-                            autofillHints: const [AutofillHints.newPassword],
-                            validator: Validators.password,
-                            maxLength: kPasswordMaxLength,
-                          ),
-                          AppSpacing.md.vGap,
-                          AppTextField(
-                            label: context.t.auth.confirmPasswordLabel,
-                            hint: context.t.auth.confirmPasswordHint,
-                            controller: _confirmPasswordController,
-                            obscure: true,
-                            textInputAction: TextInputAction.done,
-                            autofillHints: const [AutofillHints.newPassword],
-                            validator: (value) => Validators.confirmPassword(
-                              value,
-                              _passwordController.text,
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 100),
+                    child: Form(
+                      key: _formKey,
+                      child: AutofillGroup(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            AppTextField(
+                              label: context.t.auth.emailLabel,
+                              hint: context.t.auth.emailHint,
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              autofillHints: const [AutofillHints.email],
+                              validator: Validators.email,
                             ),
-                            onSubmitted: (_) => _submit(),
-                            maxLength: kPasswordMaxLength,
-                          ),
-                        ],
+                            AppSpacing.md.vGap,
+                            AppTextField(
+                              label: context.t.auth.passwordLabel,
+                              hint: context.t.auth.passwordHint,
+                              controller: _passwordController,
+                              obscure: true,
+                              textInputAction: TextInputAction.next,
+                              autofillHints: const [AutofillHints.newPassword],
+                              validator: Validators.password,
+                              maxLength: kPasswordMaxLength,
+                            ),
+                            AppSpacing.md.vGap,
+                            AppTextField(
+                              label: context.t.auth.confirmPasswordLabel,
+                              hint: context.t.auth.confirmPasswordHint,
+                              controller: _confirmPasswordController,
+                              obscure: true,
+                              textInputAction: TextInputAction.done,
+                              autofillHints: const [AutofillHints.newPassword],
+                              validator: (value) => Validators.confirmPassword(
+                                value,
+                                _passwordController.text,
+                              ),
+                              onSubmitted: (_) => _submit(),
+                              maxLength: kPasswordMaxLength,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   AppSpacing.xl.vGap,
-                  AppButton.primary(
-                    label: context.t.auth.registerButton,
-                    isLoading: isLoading,
-                    onPressed: _submit,
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 140),
+                    child: AppButton.primary(
+                      label: context.t.auth.registerButton,
+                      isLoading: isLoading,
+                      onPressed: _submit,
+                    ),
                   ),
                   AppSpacing.lg.vGap,
-                  const AuthDivider(),
+                  const FadeSlideIn(
+                    delay: Duration(milliseconds: 180),
+                    child: AuthDivider(),
+                  ),
                   AppSpacing.lg.vGap,
-                  GoogleButton(onPressed: _signInWithGoogle),
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 220),
+                    child: GoogleButton(onPressed: _signInWithGoogle),
+                  ),
                   AppSpacing.xxl.vGap,
-                  AuthSwitchPrompt(
-                    promptText: context.t.auth.haveAccountPrompt,
-                    actionText: context.t.auth.switchToLogin,
-                    onTap: _goToLogin,
+                  FadeSlideIn(
+                    delay: const Duration(milliseconds: 260),
+                    child: AuthSwitchPrompt(
+                      promptText: context.t.auth.haveAccountPrompt,
+                      actionText: context.t.auth.switchToLogin,
+                      onTap: _goToLogin,
+                    ),
                   ),
                   AppSpacing.lg.vGap,
                 ],
