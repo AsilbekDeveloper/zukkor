@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../audio/app_sound.dart';
@@ -44,6 +45,7 @@ class PillSegmentControl<T> extends ConsumerWidget {
                 isActive: value == selected,
                 onTap: () {
                   ref.playSound(AppSound.tap);
+                  HapticFeedback.lightImpact();
                   onChanged(value);
                 },
               ),

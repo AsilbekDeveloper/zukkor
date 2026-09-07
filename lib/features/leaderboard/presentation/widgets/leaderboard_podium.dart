@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/user_avatar.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/leaderboard_entry.dart';
@@ -27,18 +29,40 @@ class LeaderboardPodium extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Expanded(child: _PodiumColumn(entry: entries[0], place: 2, onTap: () => onEntryTap(entries[0]))),
+        Expanded(
+          child: _PodiumColumn(
+            entry: entries[0],
+            place: 2,
+            onTap: () => onEntryTap(entries[0]),
+          ),
+        ),
         AppSpacing.sm.hGap,
-        Expanded(child: _PodiumColumn(entry: entries[1], place: 1, onTap: () => onEntryTap(entries[1]))),
+        Expanded(
+          child: _PodiumColumn(
+            entry: entries[1],
+            place: 1,
+            onTap: () => onEntryTap(entries[1]),
+          ),
+        ),
         AppSpacing.sm.hGap,
-        Expanded(child: _PodiumColumn(entry: entries[2], place: 3, onTap: () => onEntryTap(entries[2]))),
+        Expanded(
+          child: _PodiumColumn(
+            entry: entries[2],
+            place: 3,
+            onTap: () => onEntryTap(entries[2]),
+          ),
+        ),
       ],
     );
   }
 }
 
 class _PodiumColumn extends StatelessWidget {
-  const _PodiumColumn({required this.entry, required this.place, required this.onTap});
+  const _PodiumColumn({
+    required this.entry,
+    required this.place,
+    required this.onTap,
+  });
 
   final LeaderboardEntry entry;
   final int place;
@@ -62,88 +86,100 @@ class _PodiumColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     final double avatarSize = _isFirst ? 68 : 52;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: AppRadius.mdAll,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: _isFirst ? context.colors.shadowCoral : null,
+    return PressableScale(
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
+        borderRadius: AppRadius.mdAll,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: _isFirst ? context.colors.shadowCoral : null,
+                  ),
+                  child: UserAvatar(
+                    size: avatarSize,
+                    initials: entry.initials,
+                    avatarImagePath: entry.avatarImagePath,
+                    backgroundColor: _isFirst
+                        ? null
+                        : context.colors.surfaceDark,
+                    gradient: _isFirst
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              context.colors.coral,
+                              context.colors.coralDeep,
+                            ],
+                          )
+                        : null,
+                    fontSize: _isFirst ? 17 : 14,
+                  ),
                 ),
-                child: UserAvatar(
-                  size: avatarSize,
-                  initials: entry.initials,
-                  avatarImagePath: entry.avatarImagePath,
-                  backgroundColor: _isFirst ? null : context.colors.surfaceDark,
-                  gradient: _isFirst
-                      ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [context.colors.coral, context.colors.coralDeep],
-                        )
-                      : null,
-                  fontSize: _isFirst ? 17 : 14,
+                Positioned(
+                  top: -12,
+                  child: Icon(
+                    _isFirst ? TablerIcons.crown : TablerIcons.medal,
+                    color: _medalColors[place],
+                    size: 20,
+                  ),
                 ),
-              ),
-              Positioned(
-                top: -12,
-                child: Icon(
-                  _isFirst ? TablerIcons.crown : TablerIcons.medal,
-                  color: _medalColors[place],
-                  size: 20,
-                ),
-              ),
-            ],
-          ),
-          Text(
-            entry.displayName(context),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: context.textStyles.bodySmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 13,
-              color: context.colors.ink,
+              ],
             ),
-          ),
-          Text(
-            context.t.leaderboard.xpValue(xp: formatThousands(entry.xp)),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: context.textStyles.labelSmall,
-          ),
-          AppSpacing.xs.vGap,
-          Container(
-            width: double.infinity,
-            height: _barHeights[place],
-            alignment: Alignment.topCenter,
-            padding: const EdgeInsets.only(top: AppSpacing.xs),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: _barColors[place]!,
+            Text(
+              entry.displayName(context),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.textStyles.bodySmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+                color: context.colors.ink,
               ),
             ),
-            child: Text(
-              '$place',
-              style: const TextStyle(
-                fontFamily: 'PlusJakartaSans',
-                fontWeight: FontWeight.w800,
-                fontSize: 15,
-                color: Colors.white,
+            Text(
+              context.t.leaderboard.xpValue(xp: formatThousands(entry.xp)),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.textStyles.labelSmall,
+            ),
+            AppSpacing.xs.vGap,
+            Container(
+              width: double.infinity,
+              height: _barHeights[place],
+              alignment: Alignment.topCenter,
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: _barColors[place]!,
+                ),
+              ),
+              child: Text(
+                '$place',
+                style: const TextStyle(
+                  fontFamily: 'PlusJakartaSans',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -8,6 +9,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/leaderboard_data.dart';
@@ -56,7 +59,11 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
     // kelmay qolardi.
     _scope = current.scope;
     if (current.data == null) {
-      Future.microtask(() => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope));
+      Future.microtask(
+        () => ref
+            .read(leaderboardControllerProvider.notifier)
+            .load(scope: _scope),
+      );
     }
   }
 
@@ -76,9 +83,12 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   List<Widget> _bodySections(BuildContext context, LeaderboardData data) {
     final List<LeaderboardEntry> withMe = data.rankedWithMe;
     final List<Widget> segmentControl = [
-      LeaderboardSegmentControl(
-        selected: _scope,
-        onChanged: _onScopeChanged,
+      FadeSlideIn(
+        delay: const Duration(milliseconds: 60),
+        child: LeaderboardSegmentControl(
+          selected: _scope,
+          onChanged: _onScopeChanged,
+        ),
       ),
       AppSpacing.lg.vGap,
     ];
@@ -86,17 +96,36 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
     if (data.entries.length < 3) {
       return [
         ...segmentControl,
-        RankList(entries: withMe, onEntryTap: _openPlayerDetail),
-        _SeeFullRankingButton(onTap: () => context.push(AppRoutes.fullLeaderboard)),
+        FadeSlideIn(
+          delay: const Duration(milliseconds: 120),
+          child: RankList(entries: withMe, onEntryTap: _openPlayerDetail),
+        ),
+        _SeeFullRankingButton(
+          onTap: () => context.push(AppRoutes.fullLeaderboard),
+        ),
       ];
     }
 
     return [
       ...segmentControl,
-      LeaderboardPodium(entries: [withMe[1], withMe[0], withMe[2]], onEntryTap: _openPlayerDetail),
+      FadeSlideIn(
+        delay: const Duration(milliseconds: 120),
+        child: LeaderboardPodium(
+          entries: [withMe[1], withMe[0], withMe[2]],
+          onEntryTap: _openPlayerDetail,
+        ),
+      ),
       AppSpacing.lg.vGap,
-      RankList(entries: withMe.sublist(3), onEntryTap: _openPlayerDetail),
-      _SeeFullRankingButton(onTap: () => context.push(AppRoutes.fullLeaderboard)),
+      FadeSlideIn(
+        delay: const Duration(milliseconds: 120),
+        child: RankList(
+          entries: withMe.sublist(3),
+          onEntryTap: _openPlayerDetail,
+        ),
+      ),
+      _SeeFullRankingButton(
+        onTap: () => context.push(AppRoutes.fullLeaderboard),
+      ),
     ];
   }
 
@@ -110,19 +139,39 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
       body: SafeArea(
         bottom: false,
         child: leaderboardState.hasError
-            ? ErrorRetryView(onRetry: () => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope))
+            ? ErrorRetryView(
+                onRetry: () => ref
+                    .read(leaderboardControllerProvider.notifier)
+                    .load(scope: _scope),
+              )
             : data == null
             ? Padding(
-                padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xl, hPad, AppSpacing.lg),
+                padding: EdgeInsets.fromLTRB(
+                  hPad,
+                  AppSpacing.xl,
+                  hPad,
+                  AppSpacing.lg,
+                ),
                 child: const ShimmerListSkeleton(),
               )
             : RefreshIndicator(
-                onRefresh: () => ref.read(leaderboardControllerProvider.notifier).load(scope: _scope),
+                onRefresh: () => ref
+                    .read(leaderboardControllerProvider.notifier)
+                    .load(scope: _scope),
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+                  padding: EdgeInsets.fromLTRB(
+                    hPad,
+                    AppSpacing.xs,
+                    hPad,
+                    AppSpacing.lg,
+                  ),
                   children: [
-                    LeaderboardHeader(greeting: context.t.leaderboard.greeting),
+                    FadeSlideIn(
+                      child: LeaderboardHeader(
+                        greeting: context.t.leaderboard.greeting,
+                      ),
+                    ),
                     AppSpacing.lg.vGap,
                     ..._bodySections(context, data),
                   ],
@@ -140,12 +189,20 @@ class _SeeFullRankingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: TextButton.icon(
-        onPressed: onTap,
-        icon: const Icon(TablerIcons.chevronRight, size: 16),
-        label: Text(context.t.leaderboard.seeFullRanking),
-        iconAlignment: IconAlignment.end,
+    return FadeSlideIn(
+      delay: const Duration(milliseconds: 180),
+      child: Center(
+        child: PressableScale(
+          child: TextButton.icon(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              onTap();
+            },
+            icon: const Icon(TablerIcons.chevronRight, size: 16),
+            label: Text(context.t.leaderboard.seeFullRanking),
+            iconAlignment: IconAlignment.end,
+          ),
+        ),
       ),
     );
   }

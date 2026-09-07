@@ -9,9 +9,9 @@ import '../../domain/entities/rank_entry.dart';
 /// One row on the leaderboard — mirrors the prototype's `.rank-row` /
 /// `.pod` data (rank, avatar, name, XP). Built from the real
 /// `GET /leaderboard` entities via [LeaderboardEntry.fromEntity]. [id] is
-/// the backend user id — null only for [LobbyResultScreen]'s mock room
-/// standings, which aren't real users and so can't open a
-/// [PlayerDetailScreen].
+/// the backend user id, used to open a tapped row's [PlayerDetailScreen]
+/// — [LobbyResultScreen] also fills it in (its room-mates are real users
+/// too, from the lobby socket, not `GET /leaderboard`).
 class LeaderboardEntry {
   const LeaderboardEntry({
     required this.rank,
@@ -25,29 +25,37 @@ class LeaderboardEntry {
   });
 
   factory LeaderboardEntry.fromEntity(RankEntry entity) => LeaderboardEntry(
-        id: entity.userId,
-        rank: entity.rank,
-        name: _displayName(
-          firstName: entity.firstName,
-          lastName: entity.lastName,
-          username: entity.username,
-        ),
-        initials: _initials(firstName: entity.firstName, lastName: entity.lastName),
-        xp: entity.totalXp,
-        avatarColor: AvatarColorOption.fromApiValue(entity.avatarColor),
-        avatarImagePath: entity.avatarImagePath,
-        isCurrentUser: entity.isMe,
-      );
+    id: entity.userId,
+    rank: entity.rank,
+    name: _displayName(
+      firstName: entity.firstName,
+      lastName: entity.lastName,
+      username: entity.username,
+    ),
+    initials: _initials(firstName: entity.firstName, lastName: entity.lastName),
+    xp: entity.totalXp,
+    avatarColor: AvatarColorOption.fromApiValue(entity.avatarColor),
+    avatarImagePath: entity.avatarImagePath,
+    isCurrentUser: entity.isMe,
+  );
 
   /// Builds a row from `GET /leaderboard/{user_id}` — used by
   /// [PlayerDetailScreen] to paint its header once stats arrive, for
   /// callers (Friends, Add Friend, Friend Requests) that don't already
   /// have a [LeaderboardEntry] on hand the way a Leaderboard row tap does.
-  factory LeaderboardEntry.fromPlayerStats(PlayerStats stats) => LeaderboardEntry(
+  factory LeaderboardEntry.fromPlayerStats(PlayerStats stats) =>
+      LeaderboardEntry(
         id: stats.userId,
         rank: stats.rank,
-        name: _displayName(firstName: stats.firstName, lastName: stats.lastName, username: stats.username),
-        initials: _initials(firstName: stats.firstName, lastName: stats.lastName),
+        name: _displayName(
+          firstName: stats.firstName,
+          lastName: stats.lastName,
+          username: stats.username,
+        ),
+        initials: _initials(
+          firstName: stats.firstName,
+          lastName: stats.lastName,
+        ),
         xp: stats.totalXp,
         avatarColor: AvatarColorOption.fromApiValue(stats.avatarColor),
         avatarImagePath: stats.avatarImagePath,
@@ -70,8 +78,10 @@ class LeaderboardEntry {
     required String? lastName,
     required String? username,
   }) {
-    final String name =
-        [firstName, lastName].where((part) => part != null && part.isNotEmpty).join(' ');
+    final String name = [
+      firstName,
+      lastName,
+    ].where((part) => part != null && part.isNotEmpty).join(' ');
     if (name.isNotEmpty) return name;
     if (username != null && username.isNotEmpty) return username;
     // No first/last name and no username yet — earned XP before ever
@@ -79,7 +89,10 @@ class LeaderboardEntry {
     return t.leaderboard.anonymousPlayer;
   }
 
-  static String _initials({required String? firstName, required String? lastName}) {
+  static String _initials({
+    required String? firstName,
+    required String? lastName,
+  }) {
     final String first = (firstName?.isNotEmpty ?? false) ? firstName![0] : '';
     final String last = (lastName?.isNotEmpty ?? false) ? lastName![0] : '';
     final String combined = '$first$last'.toUpperCase();
@@ -105,11 +118,15 @@ extension LeaderboardDataRankedWithMe on LeaderboardData {
   /// from a live device screenshot: "Siz" at rank 1/322 XP rendered below
   /// rank 2 and 3).
   List<LeaderboardEntry> get rankedWithMe {
-    final List<LeaderboardEntry> ranked = entries.map(LeaderboardEntry.fromEntity).toList();
+    final List<LeaderboardEntry> ranked = entries
+        .map(LeaderboardEntry.fromEntity)
+        .toList();
     if (ranked.any((entry) => entry.isCurrentUser)) return ranked;
 
     final LeaderboardEntry meEntry = LeaderboardEntry.fromEntity(me);
-    final int insertIndex = ranked.indexWhere((entry) => entry.rank > meEntry.rank);
+    final int insertIndex = ranked.indexWhere(
+      (entry) => entry.rank > meEntry.rank,
+    );
     if (insertIndex == -1) {
       ranked.add(meEntry);
     } else {

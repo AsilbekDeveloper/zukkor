@@ -70,6 +70,10 @@ class LobbyResultScreen extends ConsumerWidget {
       isYou: participant.id == youId,
     );
     return LeaderboardEntry(
+      // Room-mates are real logged-in users (the lobby socket sends real
+      // backend ids, unlike a solo bot/placeholder) - carrying it through
+      // lets a tap open their real profile, same as the main Leaderboard.
+      id: participant.id,
       rank: rank,
       name: player.name,
       initials: player.initials,
@@ -77,6 +81,11 @@ class LobbyResultScreen extends ConsumerWidget {
       avatarColor: player.avatarColor,
       isCurrentUser: player.isYou,
     );
+  }
+
+  void _openParticipantDetail(BuildContext context, LeaderboardEntry entry) {
+    if (entry.isCurrentUser || entry.id == null) return;
+    context.push(AppRoutes.playerDetail, extra: {'userId': entry.id!});
   }
 
   // Duelning g'alaba/mag'lubiyat haptigiga o'xshash, lekin N o'yinchili
@@ -148,13 +157,20 @@ class LobbyResultScreen extends ConsumerWidget {
               if (hasPodium) ...[
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 80),
-                  child: LeaderboardPodium(entries: podium, onEntryTap: (_) {}),
+                  child: LeaderboardPodium(
+                    entries: podium,
+                    onEntryTap: (entry) =>
+                        _openParticipantDetail(context, entry),
+                  ),
                 ),
                 AppSpacing.lg.vGap,
               ],
               FadeSlideIn(
                 delay: const Duration(milliseconds: 80),
-                child: RankList(entries: rest, onEntryTap: (_) {}),
+                child: RankList(
+                  entries: rest,
+                  onEntryTap: (entry) => _openParticipantDetail(context, entry),
+                ),
               ),
               AppSpacing.lg.vGap,
               FadeSlideIn(
