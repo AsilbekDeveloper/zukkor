@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -7,7 +8,9 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/animated_counter.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/quiz_launch_args.dart';
 import '../models/quiz_result.dart';
@@ -34,82 +37,143 @@ class ResultScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xxl.vGap,
-              Center(
-                child: Text(context.t.result.label, style: context.textStyles.labelSmall),
+              FadeSlideIn(
+                child: Center(
+                  child: Text(
+                    context.t.result.label,
+                    style: context.textStyles.labelSmall,
+                  ),
+                ),
               ),
               AppSpacing.lg.vGap,
-              Center(child: ScoreRing(percent: result.percent)),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 80),
+                child: Center(child: ScoreRing(percent: result.percent)),
+              ),
               AppSpacing.md.vGap,
-              Center(
-                child: Text(
-                  context.t.result.summary(correct: result.correctCount, total: result.totalCount),
-                  style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600, fontSize: 15),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 80),
+                child: Center(
+                  child: Text(
+                    context.t.result.summary(
+                      correct: result.correctCount,
+                      total: result.totalCount,
+                    ),
+                    style: context.textStyles.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
-              Center(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(TablerIcons.target, size: 16, color: context.colors.ink),
-                        const SizedBox(width: 6),
-                        Text(
-                          context.t.result.totalBall(ball: result.totalBall),
-                          style: context.textStyles.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 160),
+                child: Center(
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            TablerIcons.target,
+                            size: 16,
                             color: context.colors.ink,
                           ),
-                        ),
-                      ],
-                    ),
-                    Icon(TablerIcons.arrowRight, size: 14, color: context.colors.muted),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(TablerIcons.bolt, size: 16, color: context.colors.coralDeep),
-                        const SizedBox(width: 6),
-                        Text(
-                          context.t.result.xpEarned(xp: result.xpEarned),
-                          style: context.textStyles.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
+                          const SizedBox(width: 6),
+                          AnimatedCounter(
+                            value: result.totalBall,
+                            formatter: (v) =>
+                                context.t.result.totalBall(ball: v),
+                            style: context.textStyles.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                              color: context.colors.ink,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(
+                        TablerIcons.arrowRight,
+                        size: 14,
+                        color: context.colors.muted,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            TablerIcons.bolt,
+                            size: 16,
                             color: context.colors.coralDeep,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 6),
+                          AnimatedCounter(
+                            value: result.xpEarned,
+                            formatter: (v) => context.t.result.xpEarned(xp: v),
+                            style: context.textStyles.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                              color: context.colors.coralDeep,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               AppSpacing.xl.vGap,
-              QuestionBreakdownList(items: result.breakdown),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 220),
+                child: QuestionBreakdownList(items: result.breakdown),
+              ),
               AppSpacing.xxl.vGap,
-              AppButton.primary(
-                label: context.t.result.playAgain,
-                icon: const Icon(TablerIcons.refresh, color: Colors.white, size: 18),
-                onPressed: () => context.pushReplacement(
-                  AppRoutes.quiz,
-                  extra: QuizLaunchArgs(category: result.category, questionCount: result.questionCount),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 260),
+                child: AppButton.primary(
+                  label: context.t.result.playAgain,
+                  icon: const Icon(
+                    TablerIcons.refresh,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  onPressed: () => context.pushReplacement(
+                    AppRoutes.quiz,
+                    extra: QuizLaunchArgs(
+                      category: result.category,
+                      questionCount: result.questionCount,
+                    ),
+                  ),
                 ),
               ),
               AppSpacing.sm.vGap,
-              AppButton.secondary(
-                label: context.t.result.challengeAFriend,
-                icon: Icon(TablerIcons.swords, color: context.colors.coralDeep, size: 18),
-                onPressed: () => context.push(AppRoutes.duel),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 300),
+                child: AppButton.secondary(
+                  label: context.t.result.challengeAFriend,
+                  icon: Icon(
+                    TablerIcons.swords,
+                    color: context.colors.coralDeep,
+                    size: 18,
+                  ),
+                  onPressed: () => context.push(AppRoutes.duel),
+                ),
               ),
               AppSpacing.sm.vGap,
-              Center(
-                child: TextButton(
-                  onPressed: () => context.go(AppRoutes.home),
-                  child: Text(context.t.result.backToHome),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 340),
+                child: Center(
+                  child: TextButton(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      context.go(AppRoutes.home);
+                    },
+                    child: Text(context.t.result.backToHome),
+                  ),
                 ),
               ),
               AppSpacing.lg.vGap,

@@ -31,8 +31,14 @@ const QuizCategory _math = QuizCategory(
   icon: TablerIcons.mathSymbols,
   colorKey: CategoryColorKey.coral,
 );
-const QuizResult _result =
-    QuizResult(category: _math, correctCount: 4, totalCount: 5, xpEarned: 60, totalBall: 4200, breakdown: []);
+const QuizResult _result = QuizResult(
+  category: _math,
+  correctCount: 4,
+  totalCount: 5,
+  xpEarned: 60,
+  totalBall: 4200,
+  breakdown: [],
+);
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Home va Duel
 /// ekranlari `GET /friends`ni chaqiradi, haqiqiy tarmoqqa bog'liq
@@ -40,18 +46,19 @@ const QuizResult _result =
 class _FakeFriendsRepository implements FriendsRepository {
   @override
   Future<List<Friend>> getFriends() async => const [
-        Friend(
-          id: '1',
-          username: 'malika_yusupova',
-          firstName: 'Malika',
-          lastName: 'Yusupova',
-          avatarColor: 'a-teal',
-          avatarImagePath: null,
-        ),
-      ];
+    Friend(
+      id: '1',
+      username: 'malika_yusupova',
+      firstName: 'Malika',
+      lastName: 'Yusupova',
+      avatarColor: 'a-teal',
+      avatarImagePath: null,
+    ),
+  ];
 
   @override
-  Future<List<DiscoveredUser>> searchUsers(String query) => throw UnimplementedError();
+  Future<List<DiscoveredUser>> searchUsers(String query) =>
+      throw UnimplementedError();
 
   @override
   Future<void> sendFriendRequest(String userId) => throw UnimplementedError();
@@ -60,13 +67,18 @@ class _FakeFriendsRepository implements FriendsRepository {
   Future<List<FriendRequest>> getIncomingRequests() async => const [];
 
   @override
-  Future<void> acceptFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> acceptFriendRequest(String requestId) =>
+      throw UnimplementedError();
 
   @override
-  Future<void> declineFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> declineFriendRequest(String requestId) =>
+      throw UnimplementedError();
 }
 
-Future<GoRouter> _pumpResult(WidgetTester tester, {Size size = const Size(390, 844)}) async {
+Future<GoRouter> _pumpResult(
+  WidgetTester tester, {
+  Size size = const Size(390, 844),
+}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -75,8 +87,14 @@ Future<GoRouter> _pumpResult(WidgetTester tester, {Size size = const Size(390, 8
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
-      GoRoute(path: AppRoutes.duel, builder: (context, state) => const DuelScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.duel,
+        builder: (context, state) => const DuelScreen(),
+      ),
       GoRoute(
         path: AppRoutes.quiz,
         builder: (context, state) {
@@ -86,7 +104,8 @@ Future<GoRouter> _pumpResult(WidgetTester tester, {Size size = const Size(390, 8
       ),
       GoRoute(
         path: AppRoutes.result,
-        builder: (context, state) => ResultScreen(result: state.extra! as QuizResult),
+        builder: (context, state) =>
+            ResultScreen(result: state.extra! as QuizResult),
       ),
     ],
   );
@@ -101,13 +120,19 @@ Future<GoRouter> _pumpResult(WidgetTester tester, {Size size = const Size(390, 8
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
   unawaited(router.push(AppRoutes.result, extra: _result));
   await tester.pump();
-  await tester.pump(const Duration(milliseconds: 300));
+  // Settles the screen's entrance fade-ins plus the score ring and
+  // ball/XP counters (all bounded, one-shot animations - no infinite
+  // repeat on this screen, so pumpAndSettle is safe here).
+  await tester.pumpAndSettle();
   return router;
 }
 
@@ -140,7 +165,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('"Play again" starts a fresh Quiz for the same category', (tester) async {
+  testWidgets('"Play again" starts a fresh Quiz for the same category', (
+    tester,
+  ) async {
     await _pumpResult(tester);
 
     await tester.tap(find.text(AppStrings.playAgain));
@@ -150,7 +177,9 @@ void main() {
     expect(find.byType(QuizScreen), findsOneWidget);
   });
 
-  testWidgets('"Challenge a friend" navigates to the Duel screen', (tester) async {
+  testWidgets('"Challenge a friend" navigates to the Duel screen', (
+    tester,
+  ) async {
     await _pumpResult(tester);
 
     await tester.tap(find.text(AppStrings.challengeAFriendButton));
