@@ -63,9 +63,9 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
       ? (_defaultCount <= _maxCustom ? _defaultCount : _maxCustom)
       : _minCustom;
 
+  // PillSegmentControl already fires its own tap sound + haptic
+  // internally - this only updates the selection.
   void _selectQuick(int count) {
-    ref.playSound(AppSound.tap);
-    HapticFeedback.lightImpact();
     setState(() => _selectedCount = count);
   }
 

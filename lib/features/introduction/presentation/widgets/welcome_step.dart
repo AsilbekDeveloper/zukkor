@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
@@ -39,14 +38,14 @@ class WelcomeStep extends ConsumerWidget {
           style: context.textStyles.titleMedium,
         ),
         AppSpacing.sm.vGap,
+        // PillSegmentControl already fires its own tap sound + haptic
+        // internally - no need to duplicate it here.
         PillSegmentControl<AppLocale>(
           values: appLocaleDisplayOrder,
           selected: current,
           labelBuilder: (locale) => locale.displayName,
-          onChanged: (locale) {
-            HapticFeedback.selectionClick();
-            ref.read(localeControllerProvider.notifier).setLocale(locale);
-          },
+          onChanged: (locale) =>
+              ref.read(localeControllerProvider.notifier).setLocale(locale),
         ),
       ],
     );

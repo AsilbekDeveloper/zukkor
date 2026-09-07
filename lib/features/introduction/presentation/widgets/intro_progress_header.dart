@@ -5,6 +5,7 @@ import '../../../../core/constants/app_durations.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// Introduction-only progress bar: back button, a row of pill segments
@@ -34,10 +35,14 @@ class IntroProgressHeader extends StatelessWidget {
     return Row(
       children: [
         if (onBack != null)
-          IconButton(
-            onPressed: onBack,
-            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-            icon: const Icon(TablerIcons.arrowLeft),
+          // Haptic already fires from the caller's own _back() - this is
+          // just the visual press feedback.
+          PressableScale(
+            child: IconButton(
+              onPressed: onBack,
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              icon: const Icon(TablerIcons.arrowLeft),
+            ),
           )
         else
           const SizedBox(width: 48),
@@ -47,7 +52,10 @@ class IntroProgressHeader extends StatelessWidget {
             children: [
               for (int i = 0; i < totalSteps; i++) ...[
                 Expanded(
-                  child: _Segment(filled: i < currentStep, isCurrent: i == currentStep - 1),
+                  child: _Segment(
+                    filled: i < currentStep,
+                    isCurrent: i == currentStep - 1,
+                  ),
                 ),
                 if (i < totalSteps - 1) AppSpacing.xxs.hGap,
               ],
@@ -55,7 +63,13 @@ class IntroProgressHeader extends StatelessWidget {
           ),
         ),
         AppSpacing.xs.hGap,
-        TextButton(onPressed: onSkip, child: Text(context.t.introduction.skip)),
+        // Haptic already fires from the caller's own _skip().
+        PressableScale(
+          child: TextButton(
+            onPressed: onSkip,
+            child: Text(context.t.introduction.skip),
+          ),
+        ),
       ],
     );
   }
@@ -77,7 +91,12 @@ class _Segment extends StatelessWidget {
         color: filled ? context.colors.coral : context.colors.line,
         borderRadius: BorderRadius.circular(999),
         boxShadow: isCurrent
-            ? [BoxShadow(color: context.colors.coral.withValues(alpha: 0.4), blurRadius: 8)]
+            ? [
+                BoxShadow(
+                  color: context.colors.coral.withValues(alpha: 0.4),
+                  blurRadius: 8,
+                ),
+              ]
             : null,
       ),
     );

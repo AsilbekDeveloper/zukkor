@@ -19,7 +19,6 @@ import '../widgets/confetti_burst.dart';
 import '../widgets/interests_step.dart';
 import '../widgets/intro_explainer_page.dart';
 import '../widgets/intro_progress_header.dart';
-import '../widgets/pressable_scale.dart';
 import '../widgets/study_survey_step.dart';
 import '../widgets/welcome_step.dart';
 
@@ -136,14 +135,19 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
     if (_reachedSurvey) {
       final List<String> interests = [
         ..._selectedInterests,
-        if (_otherInterestSelected && _otherInterestController.text.trim().isNotEmpty)
+        if (_otherInterestSelected &&
+            _otherInterestController.text.trim().isNotEmpty)
           _otherInterestController.text.trim(),
       ];
-      final String studyPlace = _studyPlace == StudyPlace.other && _otherStudyPlaceController.text.trim().isNotEmpty
+      final String studyPlace =
+          _studyPlace == StudyPlace.other &&
+              _otherStudyPlaceController.text.trim().isNotEmpty
           ? _otherStudyPlaceController.text.trim()
           : _studyPlace.apiValue;
 
-      await ref.read(appPreferencesProvider).saveIntroSurvey(
+      await ref
+          .read(appPreferencesProvider)
+          .saveIntroSurvey(
             interests: interests,
             studyPlace: studyPlace,
             quizLiking: _quizLiking.apiValue,
@@ -191,16 +195,17 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
                         child: AnimatedSwitcher(
                           duration: AppDurations.normal,
                           switchInCurve: AppDurations.ease,
-                          transitionBuilder: (child, animation) => FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: Tween<Offset>(
-                                begin: const Offset(0.04, 0),
-                                end: Offset.zero,
-                              ).animate(animation),
-                              child: child,
-                            ),
-                          ),
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0.04, 0),
+                                    end: Offset.zero,
+                                  ).animate(animation),
+                                  child: child,
+                                ),
+                              ),
                           child: KeyedSubtree(
                             key: ValueKey(_step),
                             child: _buildStep(context, accent),
@@ -209,13 +214,13 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
                       ),
                     ),
                     AppSpacing.md.vGap,
-                    PressableScale(
-                      child: AppButton.primary(
-                        label: _step == _totalSteps
-                            ? context.t.introduction.getStarted
-                            : context.t.onboarding.continueButton,
-                        onPressed: _isFinishing ? null : _next,
-                      ),
+                    // AppButton already wraps itself in PressableScale -
+                    // no need to double it here.
+                    AppButton.primary(
+                      label: _step == _totalSteps
+                          ? context.t.introduction.getStarted
+                          : context.t.onboarding.continueButton,
+                      onPressed: _isFinishing ? null : _next,
                     ),
                     AppSpacing.lg.vGap,
                   ],
@@ -245,45 +250,41 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
     return switch (_step) {
       1 => const WelcomeStep(),
       2 => IntroExplainerPage(
-          icon: TablerIcons.bulb,
-          iconColor: accent,
-          title: context.t.introduction.soloTitle,
-          subtitle: context.t.introduction.soloSubtitle,
-        ),
+        icon: TablerIcons.bulb,
+        iconColor: accent,
+        title: context.t.introduction.soloTitle,
+        subtitle: context.t.introduction.soloSubtitle,
+      ),
       3 => IntroExplainerPage(
-          icon: TablerIcons.swords,
-          iconColor: accent,
-          title: context.t.introduction.duelTitle,
-          subtitle: context.t.introduction.duelSubtitle,
-        ),
+        icon: TablerIcons.swords,
+        iconColor: accent,
+        title: context.t.introduction.duelTitle,
+        subtitle: context.t.introduction.duelSubtitle,
+      ),
       4 => IntroExplainerPage(
-          icon: TablerIcons.trophy,
-          iconColor: accent,
-          title: context.t.introduction.leaderboardTitle,
-          subtitle: context.t.introduction.leaderboardSubtitle,
-        ),
+        icon: TablerIcons.trophy,
+        iconColor: accent,
+        title: context.t.introduction.leaderboardTitle,
+        subtitle: context.t.introduction.leaderboardSubtitle,
+      ),
       5 => InterestsStep(
-          selected: _selectedInterests,
-          onToggle: _toggleInterest,
-          otherSelected: _otherInterestSelected,
-          onToggleOther: _toggleOtherInterest,
-          otherController: _otherInterestController,
-          accentColor: accent,
-        ),
+        selected: _selectedInterests,
+        onToggle: _toggleInterest,
+        otherSelected: _otherInterestSelected,
+        onToggleOther: _toggleOtherInterest,
+        otherController: _otherInterestController,
+        accentColor: accent,
+      ),
+      // Both callbacks go straight into a PillSegmentControl, which
+      // already fires its own tap sound + haptic internally.
       _ => StudySurveyStep(
-          studyPlace: _studyPlace,
-          onStudyPlaceChanged: (value) {
-            HapticFeedback.selectionClick();
-            setState(() => _studyPlace = value);
-          },
-          otherStudyPlaceController: _otherStudyPlaceController,
-          quizLiking: _quizLiking,
-          onQuizLikingChanged: (value) {
-            HapticFeedback.selectionClick();
-            setState(() => _quizLiking = value);
-          },
-          accentColor: accent,
-        ),
+        studyPlace: _studyPlace,
+        onStudyPlaceChanged: (value) => setState(() => _studyPlace = value),
+        otherStudyPlaceController: _otherStudyPlaceController,
+        quizLiking: _quizLiking,
+        onQuizLikingChanged: (value) => setState(() => _quizLiking = value),
+        accentColor: accent,
+      ),
     };
   }
 }
