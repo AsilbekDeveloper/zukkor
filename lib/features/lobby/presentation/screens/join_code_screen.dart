@@ -11,6 +11,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/lobby_join_error.dart';
 import '../controllers/lobby_controller.dart';
@@ -66,10 +67,12 @@ class _JoinCodeScreenState extends ConsumerState<JoinCodeScreen> {
     });
   }
 
-  String _errorMessage(BuildContext context, LobbyJoinErrorReason reason) => switch (reason) {
+  String _errorMessage(BuildContext context, LobbyJoinErrorReason reason) =>
+      switch (reason) {
         LobbyJoinErrorReason.notFound => context.t.joinCode.roomNotFound,
         LobbyJoinErrorReason.roomFull => context.t.joinCode.roomFull,
-        LobbyJoinErrorReason.alreadyStarted => context.t.joinCode.alreadyStarted,
+        LobbyJoinErrorReason.alreadyStarted =>
+          context.t.joinCode.alreadyStarted,
       };
 
   @override
@@ -78,7 +81,8 @@ class _JoinCodeScreenState extends ConsumerState<JoinCodeScreen> {
       if (next.room != null && next.room != previous?.room) {
         _joinTimeoutTimer?.cancel();
         context.pushReplacement(AppRoutes.lobby, extra: LobbyRole.guest);
-      } else if (next.joinError != null && next.joinError != previous?.joinError) {
+      } else if (next.joinError != null &&
+          next.joinError != previous?.joinError) {
         _joinTimeoutTimer?.cancel();
         setState(() => _joining = false);
         context.showSnack(_errorMessage(context, next.joinError!));
@@ -93,26 +97,50 @@ class _JoinCodeScreenState extends ConsumerState<JoinCodeScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.home.joinWithCode, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.home.joinWithCode,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 260),
-                  child: Text(
-                    context.t.joinCode.hint,
-                    textAlign: TextAlign.center,
-                    style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 260),
+                    child: Text(
+                      context.t.joinCode.hint,
+                      textAlign: TextAlign.center,
+                      style: context.textStyles.bodySmall?.copyWith(
+                        color: context.colors.muted,
+                      ),
+                    ),
                   ),
                 ),
               ),
               AppSpacing.xl.vGap,
-              CodeInputRow(onCodeChanged: (code) => setState(() => _code = code)),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: CodeInputRow(
+                  onCodeChanged: (code) => setState(() => _code = code),
+                ),
+              ),
               AppSpacing.xl.vGap,
-              AppButton.primary(
-                label: context.t.joinCode.joinButton,
-                icon: const Icon(TablerIcons.arrowRight, color: Colors.white, size: 18),
-                isLoading: _joining,
-                onPressed: _code.length == CodeInputRow.digitCount ? _join : null,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 140),
+                child: AppButton.primary(
+                  label: context.t.joinCode.joinButton,
+                  icon: const Icon(
+                    TablerIcons.arrowRight,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  isLoading: _joining,
+                  onPressed: _code.length == CodeInputRow.digitCount
+                      ? _join
+                      : null,
+                ),
               ),
             ],
           ),
