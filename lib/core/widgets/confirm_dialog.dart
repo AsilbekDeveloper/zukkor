@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../i18n/strings.g.dart';
 import '../error/failures.dart';
@@ -86,6 +89,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
   Future<void> _confirm() async {
     if (_needsPassword && !(_formKey.currentState?.validate() ?? false)) return;
 
+    unawaited(HapticFeedback.lightImpact());
     setState(() {
       _isSubmitting = true;
       _errorText = null;
@@ -104,7 +108,9 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final Color confirmColor = widget.isDanger ? context.colors.coralDeep : context.colors.coral;
+    final Color confirmColor = widget.isDanger
+        ? context.colors.coralDeep
+        : context.colors.coral;
 
     return AlertDialog(
       title: Text(widget.title),
@@ -132,14 +138,24 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
               ),
             ] else if (_errorText != null) ...[
               AppSpacing.sm.vGap,
-              Text(_errorText!, style: context.textStyles.bodySmall?.copyWith(color: confirmColor)),
+              Text(
+                _errorText!,
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: confirmColor,
+                ),
+              ),
             ],
           ],
         ),
       ),
       actions: [
         TextButton(
-          onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
+          onPressed: _isSubmitting
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  Navigator.of(context).pop();
+                },
           child: Text(context.t.common.cancel),
         ),
         TextButton(
@@ -147,9 +163,18 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
           child: _isSubmitting
               ? SizedBox.square(
                   dimension: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: confirmColor),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: confirmColor,
+                  ),
                 )
-              : Text(widget.confirmLabel, style: TextStyle(color: confirmColor, fontWeight: FontWeight.w700)),
+              : Text(
+                  widget.confirmLabel,
+                  style: TextStyle(
+                    color: confirmColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
         ),
       ],
     );

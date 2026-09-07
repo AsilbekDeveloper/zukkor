@@ -14,6 +14,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/theme_controller.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/confirm_dialog.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
@@ -40,89 +41,101 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  List<Widget> _generalGroup(BuildContext context, bool isDark, bool soundEnabled, String language) => [
-        _GroupLabel(context.t.settings.groupGeneral),
-        AppSpacing.xs.vGap,
-        SettingsList(
-          rows: [
-            SettingsRowData(
-              icon: TablerIcons.world,
-              label: context.t.settings.language,
-              trailingLabel: language,
-              onTap: () => context.push(AppRoutes.languageSettings),
-            ),
-            SettingsRowData(
-              icon: TablerIcons.bell,
-              label: context.t.settings.notifications,
-              onTap: () => context.push(AppRoutes.notificationSettings),
-            ),
-            SettingsRowData(
-              icon: TablerIcons.moon,
-              label: context.t.settings.theme,
-              trailingLabel: isDark ? context.t.settings.themeDark : context.t.settings.themeLight,
-              trailingWidget: Switch(
-                value: isDark,
-                onChanged: (value) => ref.read(themeControllerProvider.notifier).toggleDark(value),
-                activeThumbColor: context.colors.coral,
-              ),
-              onTap: () => ref.read(themeControllerProvider.notifier).toggleDark(!isDark),
-            ),
-            SettingsRowData(
-              icon: TablerIcons.volume2,
-              label: context.t.settings.soundEffects,
-              trailingWidget: Switch(
-                value: soundEnabled,
-                onChanged: (value) => ref.read(soundControllerProvider.notifier).setEnabled(value),
-                activeThumbColor: context.colors.coral,
-              ),
-              onTap: () => ref.read(soundControllerProvider.notifier).setEnabled(!soundEnabled),
-            ),
-          ],
+  List<Widget> _generalGroup(
+    BuildContext context,
+    bool isDark,
+    bool soundEnabled,
+    String language,
+  ) => [
+    _GroupLabel(context.t.settings.groupGeneral),
+    AppSpacing.xs.vGap,
+    SettingsList(
+      rows: [
+        SettingsRowData(
+          icon: TablerIcons.world,
+          label: context.t.settings.language,
+          trailingLabel: language,
+          onTap: () => context.push(AppRoutes.languageSettings),
         ),
-      ];
+        SettingsRowData(
+          icon: TablerIcons.bell,
+          label: context.t.settings.notifications,
+          onTap: () => context.push(AppRoutes.notificationSettings),
+        ),
+        SettingsRowData(
+          icon: TablerIcons.moon,
+          label: context.t.settings.theme,
+          trailingLabel: isDark
+              ? context.t.settings.themeDark
+              : context.t.settings.themeLight,
+          trailingWidget: Switch(
+            value: isDark,
+            onChanged: (value) =>
+                ref.read(themeControllerProvider.notifier).toggleDark(value),
+            activeThumbColor: context.colors.coral,
+          ),
+          onTap: () =>
+              ref.read(themeControllerProvider.notifier).toggleDark(!isDark),
+        ),
+        SettingsRowData(
+          icon: TablerIcons.volume2,
+          label: context.t.settings.soundEffects,
+          trailingWidget: Switch(
+            value: soundEnabled,
+            onChanged: (value) =>
+                ref.read(soundControllerProvider.notifier).setEnabled(value),
+            activeThumbColor: context.colors.coral,
+          ),
+          onTap: () => ref
+              .read(soundControllerProvider.notifier)
+              .setEnabled(!soundEnabled),
+        ),
+      ],
+    ),
+  ];
 
   List<Widget> _accountGroup(BuildContext context, bool isGoogleAccount) => [
-        _GroupLabel(context.t.settings.groupAccount),
-        AppSpacing.xs.vGap,
-        SettingsList(
-          rows: [
-            SettingsRowData(
-              icon: TablerIcons.lock,
-              label: context.t.settings.privacy,
-              onTap: () => context.push(AppRoutes.privacyPolicy),
-            ),
-            SettingsRowData(
-              icon: TablerIcons.helpCircle,
-              label: context.t.settings.helpCenter,
-              onTap: () => context.push(AppRoutes.helpCenter),
-            ),
-            SettingsRowData(
-              icon: TablerIcons.fileText,
-              label: context.t.settings.termsOfUse,
-              onTap: () => context.push(AppRoutes.termsOfUse),
-            ),
-            // A Google account has no password at all — this would only
-            // ever fail with a confusing "current password wrong" error,
-            // so the row isn't offered in the first place.
-            if (!isGoogleAccount)
-              SettingsRowData(
-                icon: TablerIcons.key,
-                label: context.t.settings.changePassword,
-                onTap: () => context.push(AppRoutes.changePassword),
-              ),
-            SettingsRowData(
-              icon: TablerIcons.users,
-              label: context.t.auth.accounts,
-              onTap: () => context.push(AppRoutes.accounts),
-            ),
-            SettingsRowData(
-              icon: TablerIcons.brandTelegram,
-              label: context.t.settings.telegramLink,
-              onTap: () => context.push(AppRoutes.telegramLink),
-            ),
-          ],
+    _GroupLabel(context.t.settings.groupAccount),
+    AppSpacing.xs.vGap,
+    SettingsList(
+      rows: [
+        SettingsRowData(
+          icon: TablerIcons.lock,
+          label: context.t.settings.privacy,
+          onTap: () => context.push(AppRoutes.privacyPolicy),
         ),
-      ];
+        SettingsRowData(
+          icon: TablerIcons.helpCircle,
+          label: context.t.settings.helpCenter,
+          onTap: () => context.push(AppRoutes.helpCenter),
+        ),
+        SettingsRowData(
+          icon: TablerIcons.fileText,
+          label: context.t.settings.termsOfUse,
+          onTap: () => context.push(AppRoutes.termsOfUse),
+        ),
+        // A Google account has no password at all — this would only
+        // ever fail with a confusing "current password wrong" error,
+        // so the row isn't offered in the first place.
+        if (!isGoogleAccount)
+          SettingsRowData(
+            icon: TablerIcons.key,
+            label: context.t.settings.changePassword,
+            onTap: () => context.push(AppRoutes.changePassword),
+          ),
+        SettingsRowData(
+          icon: TablerIcons.users,
+          label: context.t.auth.accounts,
+          onTap: () => context.push(AppRoutes.accounts),
+        ),
+        SettingsRowData(
+          icon: TablerIcons.brandTelegram,
+          label: context.t.settings.telegramLink,
+          onTap: () => context.push(AppRoutes.telegramLink),
+        ),
+      ],
+    ),
+  ];
 
   Future<void> _logOut() async {
     // Tokenlar lokal xotiradan har doim tozalanadi (repository'ning
@@ -139,16 +152,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _logOutGroup(BuildContext context) => SettingsList(
-        rows: [
-          SettingsRowData(
-            icon: TablerIcons.logout,
-            label: context.t.settings.logOut,
-            isDanger: true,
-            trailingWidget: const SizedBox.shrink(),
-            onTap: _logOut,
-          ),
-        ],
-      );
+    rows: [
+      SettingsRowData(
+        icon: TablerIcons.logout,
+        label: context.t.settings.logOut,
+        isDanger: true,
+        trailingWidget: const SizedBox.shrink(),
+        onTap: _logOut,
+      ),
+    ],
+  );
 
   Future<void> _deleteAccount(bool isGoogleAccount) async {
     final bool? deleted = await ConfirmDialog.show(
@@ -162,27 +175,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // field that could never actually be verified.
       passwordLabel: isGoogleAccount ? null : context.t.auth.passwordLabel,
       passwordHint: isGoogleAccount ? null : context.t.auth.passwordHint,
-      onConfirm: (password) => ref.read(authControllerProvider.notifier).deleteAccount(password),
+      onConfirm: (password) =>
+          ref.read(authControllerProvider.notifier).deleteAccount(password),
     );
     if (deleted != true || !mounted) return;
     context.go(AppRoutes.login);
   }
 
   List<Widget> _dangerZoneGroup(BuildContext context, bool isGoogleAccount) => [
-        _GroupLabel(context.t.settings.groupDangerZone),
-        AppSpacing.xs.vGap,
-        SettingsList(
-          rows: [
-            SettingsRowData(
-              icon: TablerIcons.userX,
-              label: context.t.settings.deleteAccount,
-              isDanger: true,
-              trailingWidget: const SizedBox.shrink(),
-              onTap: () => _deleteAccount(isGoogleAccount),
-            ),
-          ],
+    _GroupLabel(context.t.settings.groupDangerZone),
+    AppSpacing.xs.vGap,
+    SettingsList(
+      rows: [
+        SettingsRowData(
+          icon: TablerIcons.userX,
+          label: context.t.settings.deleteAccount,
+          isDanger: true,
+          trailingWidget: const SizedBox.shrink(),
+          onTap: () => _deleteAccount(isGoogleAccount),
         ),
-      ];
+      ],
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -190,23 +204,60 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final bool isDark = ref.watch(themeControllerProvider) == ThemeMode.dark;
     final bool soundEnabled = ref.watch(soundControllerProvider);
     final String language = ref.watch(localeControllerProvider).displayName;
-    final bool isGoogleAccount = ref.watch(currentUserControllerProvider).data?.isGoogleAccount ?? false;
+    final bool isGoogleAccount =
+        ref.watch(currentUserControllerProvider).data?.isGoogleAccount ?? false;
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
         child: ListView(
-          padding: EdgeInsets.fromLTRB(hPad, AppSpacing.xs, hPad, AppSpacing.lg),
+          padding: EdgeInsets.fromLTRB(
+            hPad,
+            AppSpacing.xs,
+            hPad,
+            AppSpacing.lg,
+          ),
           children: [
-            BackHeader(title: context.t.profile.settings, onBack: () => context.pop()),
+            FadeSlideIn(
+              child: BackHeader(
+                title: context.t.profile.settings,
+                onBack: () => context.pop(),
+              ),
+            ),
             AppSpacing.lg.vGap,
-            ..._generalGroup(context, isDark, soundEnabled, language),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 60),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _generalGroup(
+                  context,
+                  isDark,
+                  soundEnabled,
+                  language,
+                ),
+              ),
+            ),
             AppSpacing.md.vGap,
-            ..._accountGroup(context, isGoogleAccount),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 100),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _accountGroup(context, isGoogleAccount),
+              ),
+            ),
             AppSpacing.md.vGap,
-            _logOutGroup(context),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 140),
+              child: _logOutGroup(context),
+            ),
             AppSpacing.md.vGap,
-            ..._dangerZoneGroup(context, isGoogleAccount),
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 180),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _dangerZoneGroup(context, isGoogleAccount),
+              ),
+            ),
           ],
         ),
       ),
