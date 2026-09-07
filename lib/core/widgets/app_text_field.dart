@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
+import 'pressable_scale.dart';
 
 /// Yorliq + input birikmasi — prototipdagi forma maydonlari uslubida
 /// (yorliq tepada, kichik va qalin; input karta fonida, yumaloq burchak).
@@ -83,7 +85,8 @@ class _AppTextFieldState extends State<AppTextField> {
           // maydonlarida u ortiqcha, chegara jimgina qo'llaniladi.
           buildCounter: widget.maxLength == null
               ? null
-              : (_, {required currentLength, required isFocused, maxLength}) => null,
+              : (_, {required currentLength, required isFocused, maxLength}) =>
+                    null,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: context.textStyles.bodyMedium?.copyWith(
             color: context.colors.ink,
@@ -97,14 +100,17 @@ class _AppTextFieldState extends State<AppTextField> {
             hintText: widget.hint,
             errorText: widget.errorText,
             suffixIcon: widget.obscure
-                ? IconButton(
-                    onPressed: () => setState(() => _obscured = !_obscured),
-                    icon: Icon(
-                      _obscured
-                          ? TablerIcons.eye
-                          : TablerIcons.eyeOff,
-                      size: 20,
-                      color: context.colors.muted,
+                ? PressableScale(
+                    child: IconButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        setState(() => _obscured = !_obscured);
+                      },
+                      icon: Icon(
+                        _obscured ? TablerIcons.eye : TablerIcons.eyeOff,
+                        size: 20,
+                        color: context.colors.muted,
+                      ),
                     ),
                   )
                 : null,

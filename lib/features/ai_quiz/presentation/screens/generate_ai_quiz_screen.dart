@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -14,7 +15,9 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
@@ -35,7 +38,8 @@ class GenerateAiQuizScreen extends ConsumerStatefulWidget {
   const GenerateAiQuizScreen({super.key});
 
   @override
-  ConsumerState<GenerateAiQuizScreen> createState() => _GenerateAiQuizScreenState();
+  ConsumerState<GenerateAiQuizScreen> createState() =>
+      _GenerateAiQuizScreenState();
 }
 
 class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
@@ -56,7 +60,9 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+    Future.microtask(
+      () => ref.read(categoriesControllerProvider.notifier).load(),
+    );
     // Mavzu rejimida taxminiy narx foydalanuvchi yozayotganda JONLI
     // yangilanishi uchun - `_topicController.text`ning o'zi Flutter'da
     // rebuild'ni avtomatik qo'zg'atmaydi.
@@ -99,7 +105,9 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
     final PlatformFile file = result.files.single;
     if (file.size > _maxFileSizeBytes) {
       if (!mounted) return;
-      context.showSnack(context.t.aiQuiz.fileTooLarge(maxSizeMb: _maxFileSizeMb));
+      context.showSnack(
+        context.t.aiQuiz.fileTooLarge(maxSizeMb: _maxFileSizeMb),
+      );
       return;
     }
     setState(() => _pickedFile = file);
@@ -136,14 +144,20 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
     // ko'rmasdan to'g'ridan-to'g'ri davom etadi, chunki taxminni
     // ko'rsatolmaslik uni butunlay to'xtatishdan yomonroq emas).
     // [[ai_cost_architecture]] - "confirm-before-spend dialog" qarori.
-    final AsyncValue<DiamondPricing> pricingAsync = ref.read(diamondPricingProvider);
-    final int? estimatedCost = _estimatedDiamondCost(pricingAsync.hasValue ? pricingAsync.value : null);
+    final AsyncValue<DiamondPricing> pricingAsync = ref.read(
+      diamondPricingProvider,
+    );
+    final int? estimatedCost = _estimatedDiamondCost(
+      pricingAsync.hasValue ? pricingAsync.value : null,
+    );
     if (estimatedCost != null) {
       final bool? confirmed = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
           title: Text(context.t.aiQuiz.confirmGenerationTitle),
-          content: Text(context.t.aiQuiz.confirmGenerationMessage(diamonds: estimatedCost)),
+          content: Text(
+            context.t.aiQuiz.confirmGenerationMessage(diamonds: estimatedCost),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -151,7 +165,13 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: Text(context.t.aiQuiz.confirmGenerationConfirm),
+              child: Text(
+                context.t.aiQuiz.confirmGenerationConfirm,
+                style: TextStyle(
+                  color: context.colors.coral,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ],
         ),
@@ -163,7 +183,9 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
     context.hideKeyboard();
 
     try {
-      final String jobId = await ref.read(aiQuizControllerProvider.notifier).generateAsync(
+      final String jobId = await ref
+          .read(aiQuizControllerProvider.notifier)
+          .generateAsync(
             filePath: filePath,
             fileName: fileName,
             instruction: instruction,
@@ -181,11 +203,13 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
       // shunda foydalanuvchi ekrandan chiqarilmasdan, natijani shu yerda
       // kutadi (2026-09-06, foydalanuvchi ilgarigi xatti-harakatni so'rab
       // qaytardi: "avval tayyorlanmoqda deb chiqar edi").
-      final result = await showDialog<({String status, AiQuiz? quiz, String? error})?>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => _GeneratingDialog(jobId: jobId, estimatedCost: estimatedCost),
-      );
+      final result =
+          await showDialog<({String status, AiQuiz? quiz, String? error})?>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) =>
+                _GeneratingDialog(jobId: jobId, estimatedCost: estimatedCost),
+          );
       if (!mounted) return;
 
       if (result == null) {
@@ -197,7 +221,9 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
       } else if (result.status == 'completed') {
         final int? realCost = result.quiz?.diamondCost;
         context.showSnack(
-          realCost != null ? context.t.aiQuiz.generatedWithCost(diamonds: realCost) : context.t.aiQuiz.generated,
+          realCost != null
+              ? context.t.aiQuiz.generatedWithCost(diamonds: realCost)
+              : context.t.aiQuiz.generated,
         );
         // Diamond balansi shu generatsiya bilan kamaygan - Home'da darhol
         // (keyingi safar qo'lda pull-to-refresh qilinmasdan) ko'rinishi
@@ -229,8 +255,12 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isGenerating = ref.watch(aiQuizControllerProvider).isGenerating;
-    final AsyncValue<DiamondPricing> pricingAsyncWatch = ref.watch(diamondPricingProvider);
-    final DiamondPricing? pricing = pricingAsyncWatch.hasValue ? pricingAsyncWatch.value : null;
+    final AsyncValue<DiamondPricing> pricingAsyncWatch = ref.watch(
+      diamondPricingProvider,
+    );
+    final DiamondPricing? pricing = pricingAsyncWatch.hasValue
+        ? pricingAsyncWatch.value
+        : null;
     final int? estimatedCost = _estimatedDiamondCost(pricing);
 
     return Scaffold(
@@ -241,66 +271,116 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.aiQuiz.generateTitle, onBack: _goBack),
-              AppSpacing.xl.vGap,
-              Text(
-                context.t.aiQuiz.generateSubtitle,
-                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.aiQuiz.generateTitle,
+                  onBack: _goBack,
+                ),
               ),
               AppSpacing.xl.vGap,
-              PillSegmentControl<_GenerateMode>(
-                values: const [_GenerateMode.document, _GenerateMode.topic],
-                selected: _mode,
-                labelBuilder: (value) => value == _GenerateMode.document
-                    ? context.t.aiQuiz.modeDocumentLabel
-                    : context.t.aiQuiz.modeTopicLabel,
-                onChanged: isGenerating ? (_) {} : (value) => setState(() => _mode = value),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Text(
+                  context.t.aiQuiz.generateSubtitle,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: context.colors.muted,
+                  ),
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: PillSegmentControl<_GenerateMode>(
+                  values: const [_GenerateMode.document, _GenerateMode.topic],
+                  selected: _mode,
+                  labelBuilder: (value) => value == _GenerateMode.document
+                      ? context.t.aiQuiz.modeDocumentLabel
+                      : context.t.aiQuiz.modeTopicLabel,
+                  enabled: !isGenerating,
+                  onChanged: (value) => setState(() => _mode = value),
+                ),
               ),
               AppSpacing.lg.vGap,
-              if (_mode == _GenerateMode.document) ...[
-                _FilePickerCard(file: _pickedFile, onTap: isGenerating ? null : _pickFile),
-                AppSpacing.lg.vGap,
-                AppTextField(
-                  label: context.t.aiQuiz.instructionLabel,
-                  hint: context.t.aiQuiz.instructionHint,
-                  controller: _instructionController,
-                ),
-              ] else ...[
-                AppTextField(
-                  label: context.t.aiQuiz.topicLabel,
-                  hint: context.t.aiQuiz.topicHint,
-                  controller: _topicController,
-                ),
-                AppSpacing.lg.vGap,
-                AppTextField(
-                  label: context.t.aiQuiz.instructionLabel,
-                  hint: context.t.aiQuiz.instructionHint,
-                  controller: _instructionController,
-                ),
-              ],
-              AppSpacing.lg.vGap,
-              TopicSelectionRow(
-                selectedId: _topicCategoryId,
-                onChanged: (id) => setState(() => _topicCategoryId = id),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 140),
+                child: _mode == _GenerateMode.document
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _FilePickerCard(
+                            file: _pickedFile,
+                            onTap: isGenerating ? null : _pickFile,
+                          ),
+                          AppSpacing.lg.vGap,
+                          AppTextField(
+                            label: context.t.aiQuiz.instructionLabel,
+                            hint: context.t.aiQuiz.instructionHint,
+                            controller: _instructionController,
+                          ),
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppTextField(
+                            label: context.t.aiQuiz.topicLabel,
+                            hint: context.t.aiQuiz.topicHint,
+                            controller: _topicController,
+                          ),
+                          AppSpacing.lg.vGap,
+                          AppTextField(
+                            label: context.t.aiQuiz.instructionLabel,
+                            hint: context.t.aiQuiz.instructionHint,
+                            controller: _instructionController,
+                          ),
+                        ],
+                      ),
               ),
               AppSpacing.lg.vGap,
-              Text(context.t.aiQuiz.questionCountLabel, style: context.textStyles.labelSmall),
-              AppSpacing.sm.vGap,
-              PillSegmentControl<int>(
-                values: _questionCountOptions,
-                selected: _questionCount,
-                labelBuilder: (value) => '$value',
-                onChanged: isGenerating ? (_) {} : (value) => setState(() => _questionCount = value),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 180),
+                child: TopicSelectionRow(
+                  selectedId: _topicCategoryId,
+                  onChanged: (id) => setState(() => _topicCategoryId = id),
+                ),
+              ),
+              AppSpacing.lg.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 220),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      context.t.aiQuiz.questionCountLabel,
+                      style: context.textStyles.labelSmall,
+                    ),
+                    AppSpacing.sm.vGap,
+                    PillSegmentControl<int>(
+                      values: _questionCountOptions,
+                      selected: _questionCount,
+                      labelBuilder: (value) => '$value',
+                      enabled: !isGenerating,
+                      onChanged: (value) =>
+                          setState(() => _questionCount = value),
+                    ),
+                  ],
+                ),
               ),
               AppSpacing.xl.vGap,
               if (estimatedCost != null) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(TablerIcons.diamondFilled, color: context.colors.teal, size: 16),
+                    Icon(
+                      TablerIcons.diamondFilled,
+                      color: context.colors.teal,
+                      size: 16,
+                    ),
                     AppSpacing.xxs.hGap,
                     Text(
-                      context.t.aiQuiz.estimatedCostLabel(diamonds: estimatedCost),
+                      context.t.aiQuiz.estimatedCostLabel(
+                        diamonds: estimatedCost,
+                      ),
                       style: context.textStyles.bodySmall?.copyWith(
                         color: context.colors.ink2,
                         fontWeight: FontWeight.w600,
@@ -310,10 +390,13 @@ class _GenerateAiQuizScreenState extends ConsumerState<GenerateAiQuizScreen> {
                 ),
                 AppSpacing.sm.vGap,
               ],
-              AppButton.primary(
-                label: context.t.aiQuiz.generateButton,
-                isLoading: isGenerating,
-                onPressed: isGenerating ? null : _generate,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 260),
+                child: AppButton.primary(
+                  label: context.t.aiQuiz.generateButton,
+                  isLoading: isGenerating,
+                  onPressed: isGenerating ? null : _generate,
+                ),
               ),
               AppSpacing.lg.vGap,
             ],
@@ -333,37 +416,49 @@ class _FilePickerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool hasFile = file != null;
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      enabled: onTap != null,
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(color: hasFile ? context.colors.coral : context.colors.line),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                hasFile ? TablerIcons.fileCheck : TablerIcons.fileUpload,
-                color: hasFile ? context.colors.coral : context.colors.muted,
+        child: InkWell(
+          onTap: onTap == null
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  onTap!();
+                },
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              border: Border.all(
+                color: hasFile ? context.colors.coral : context.colors.line,
               ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Text(
-                  hasFile ? file!.name : context.t.aiQuiz.pickFileLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: context.textStyles.bodyMedium?.copyWith(
-                    color: hasFile ? context.colors.ink : context.colors.muted,
-                    fontWeight: hasFile ? FontWeight.w600 : FontWeight.w400,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  hasFile ? TablerIcons.fileCheck : TablerIcons.fileUpload,
+                  color: hasFile ? context.colors.coral : context.colors.muted,
+                ),
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Text(
+                    hasFile ? file!.name : context.t.aiQuiz.pickFileLabel,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.textStyles.bodyMedium?.copyWith(
+                      color: hasFile
+                          ? context.colors.ink
+                          : context.colors.muted,
+                      fontWeight: hasFile ? FontWeight.w600 : FontWeight.w400,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -408,8 +503,11 @@ class _GeneratingDialogState extends ConsumerState<_GeneratingDialog> {
       return;
     }
 
-    final result = await ref.read(aiQuizControllerProvider.notifier).checkJobStatus(widget.jobId);
-    if ((result.status == 'completed' || result.status == 'failed') && mounted) {
+    final result = await ref
+        .read(aiQuizControllerProvider.notifier)
+        .checkJobStatus(widget.jobId);
+    if ((result.status == 'completed' || result.status == 'failed') &&
+        mounted) {
       timer.cancel();
       Navigator.of(context).pop(result);
     }
@@ -441,9 +539,16 @@ class _GeneratingDialogState extends ConsumerState<_GeneratingDialog> {
                     SizedBox(
                       width: 64,
                       height: 64,
-                      child: CircularProgressIndicator(strokeWidth: 3, color: context.colors.coral),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: context.colors.coral,
+                      ),
                     ),
-                    Icon(TablerIcons.sparkle, color: context.colors.coral, size: 24),
+                    Icon(
+                      TablerIcons.sparkle,
+                      color: context.colors.coral,
+                      size: 24,
+                    ),
                   ],
                 ),
               ),
@@ -457,14 +562,20 @@ class _GeneratingDialogState extends ConsumerState<_GeneratingDialog> {
               Text(
                 context.t.aiQuiz.generatingSubtitle,
                 textAlign: TextAlign.center,
-                style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: context.colors.muted,
+                ),
               ),
               if (widget.estimatedCost != null) ...[
                 AppSpacing.xs.vGap,
                 Text(
-                  context.t.aiQuiz.generatingCostSubtitle(diamonds: widget.estimatedCost!),
+                  context.t.aiQuiz.generatingCostSubtitle(
+                    diamonds: widget.estimatedCost!,
+                  ),
                   textAlign: TextAlign.center,
-                  style: context.textStyles.labelSmall?.copyWith(color: context.colors.teal),
+                  style: context.textStyles.labelSmall?.copyWith(
+                    color: context.colors.teal,
+                  ),
                 ),
               ],
             ],

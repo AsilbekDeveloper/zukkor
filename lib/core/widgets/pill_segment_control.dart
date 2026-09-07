@@ -18,6 +18,7 @@ class PillSegmentControl<T> extends ConsumerWidget {
     required this.selected,
     required this.labelBuilder,
     required this.onChanged,
+    this.enabled = true,
     super.key,
   });
 
@@ -25,6 +26,13 @@ class PillSegmentControl<T> extends ConsumerWidget {
   final T selected;
   final String Function(T value) labelBuilder;
   final ValueChanged<T> onChanged;
+
+  /// False while switching segments doesn't make sense right now (e.g.
+  /// a generation in progress) - without this, callers used to pass a
+  /// no-op `onChanged` instead, which left the segments still visually
+  /// pressing and buzzing on tap even though nothing happened. Mirrors
+  /// [PressableScale.enabled]/[AnswerButton]'s `enabled` convention.
+  final bool enabled;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,6 +51,7 @@ class PillSegmentControl<T> extends ConsumerWidget {
               child: _SegmentButton(
                 label: labelBuilder(value),
                 isActive: value == selected,
+                enabled: enabled,
                 onTap: () {
                   ref.playSound(AppSound.tap);
                   HapticFeedback.lightImpact();
@@ -61,20 +70,23 @@ class _SegmentButton extends StatelessWidget {
     required this.label,
     required this.isActive,
     required this.onTap,
+    required this.enabled,
   });
 
   final String label;
   final bool isActive;
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     return PressableScale(
+      enabled: enabled,
       child: Material(
         color: isActive ? context.colors.surfaceDark : Colors.transparent,
         borderRadius: BorderRadius.circular(999),
         child: InkWell(
-          onTap: onTap,
+          onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(999),
           child: Padding(
             padding: const EdgeInsets.symmetric(
