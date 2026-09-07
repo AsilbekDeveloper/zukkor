@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -11,6 +12,8 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../domain/entities/manual_question_input.dart';
@@ -19,8 +22,8 @@ import '../widgets/topic_selection_row.dart';
 
 class _DraftQuestion {
   _DraftQuestion()
-      : questionController = TextEditingController(),
-        optionControllers = List.generate(4, (_) => TextEditingController());
+    : questionController = TextEditingController(),
+      optionControllers = List.generate(4, (_) => TextEditingController());
 
   final TextEditingController questionController;
   final List<TextEditingController> optionControllers;
@@ -40,10 +43,12 @@ class CreateManualQuizScreen extends ConsumerStatefulWidget {
   const CreateManualQuizScreen({super.key});
 
   @override
-  ConsumerState<CreateManualQuizScreen> createState() => _CreateManualQuizScreenState();
+  ConsumerState<CreateManualQuizScreen> createState() =>
+      _CreateManualQuizScreenState();
 }
 
-class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen> {
+class _CreateManualQuizScreenState
+    extends ConsumerState<CreateManualQuizScreen> {
   final TextEditingController _nameController = TextEditingController();
   final List<_DraftQuestion> _questions = [_DraftQuestion()];
   bool _isSubmitting = false;
@@ -52,7 +57,9 @@ class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen>
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
+    Future.microtask(
+      () => ref.read(categoriesControllerProvider.notifier).load(),
+    );
   }
 
   @override
@@ -92,13 +99,19 @@ class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen>
     final List<ManualQuestionInput> questions = [];
     for (final draft in _questions) {
       final String questionText = draft.questionController.text.trim();
-      final List<String> options = draft.optionControllers.map((c) => c.text.trim()).toList();
+      final List<String> options = draft.optionControllers
+          .map((c) => c.text.trim())
+          .toList();
       if (questionText.isEmpty || options.any((option) => option.isEmpty)) {
         context.showSnack(context.t.aiQuiz.manualFillAllFields);
         return;
       }
       questions.add(
-        ManualQuestionInput(questionText: questionText, options: options, correctOptionIndex: draft.correctIndex),
+        ManualQuestionInput(
+          questionText: questionText,
+          options: options,
+          correctOptionIndex: draft.correctIndex,
+        ),
       );
     }
 
@@ -107,7 +120,11 @@ class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen>
     try {
       await ref
           .read(aiQuizControllerProvider.notifier)
-          .createManual(name: name, questions: questions, topicCategoryId: _topicCategoryId);
+          .createManual(
+            name: name,
+            questions: questions,
+            topicCategoryId: _topicCategoryId,
+          );
       if (!mounted) return;
       context.showSnack(context.t.aiQuiz.generated);
       context.pop();
@@ -130,40 +147,70 @@ class _CreateManualQuizScreenState extends ConsumerState<CreateManualQuizScreen>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.aiQuiz.createManualTitle, onBack: _goBack),
-              AppSpacing.xl.vGap,
-              AppTextField(
-                label: context.t.aiQuiz.manualNameLabel,
-                hint: context.t.aiQuiz.manualNameHint,
-                controller: _nameController,
-                enabled: !_isSubmitting,
-              ),
-              AppSpacing.lg.vGap,
-              TopicSelectionRow(
-                selectedId: _topicCategoryId,
-                onChanged: (id) => setState(() => _topicCategoryId = id),
-              ),
-              AppSpacing.lg.vGap,
-              for (int i = 0; i < _questions.length; i++) ...[
-                _QuestionCard(
-                  index: i,
-                  draft: _questions[i],
-                  canRemove: _questions.length > 1 && !_isSubmitting,
-                  onRemove: () => _removeQuestion(i),
-                  onChanged: () => setState(() {}),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.aiQuiz.createManualTitle,
+                  onBack: _goBack,
                 ),
-                AppSpacing.md.vGap,
-              ],
-              OutlinedButton.icon(
-                onPressed: _isSubmitting ? null : _addQuestion,
-                icon: const Icon(TablerIcons.plus, size: 18),
-                label: Text(context.t.aiQuiz.manualAddQuestion),
               ),
               AppSpacing.xl.vGap,
-              AppButton.primary(
-                label: context.t.aiQuiz.manualSubmit,
-                isLoading: _isSubmitting,
-                onPressed: _isSubmitting ? null : _submit,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: AppTextField(
+                  label: context.t.aiQuiz.manualNameLabel,
+                  hint: context.t.aiQuiz.manualNameHint,
+                  controller: _nameController,
+                  enabled: !_isSubmitting,
+                ),
+              ),
+              AppSpacing.lg.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: TopicSelectionRow(
+                  selectedId: _topicCategoryId,
+                  onChanged: (id) => setState(() => _topicCategoryId = id),
+                ),
+              ),
+              AppSpacing.lg.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 140),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (int i = 0; i < _questions.length; i++) ...[
+                      _QuestionCard(
+                        index: i,
+                        draft: _questions[i],
+                        canRemove: _questions.length > 1 && !_isSubmitting,
+                        onRemove: () => _removeQuestion(i),
+                        onChanged: () => setState(() {}),
+                      ),
+                      AppSpacing.md.vGap,
+                    ],
+                    PressableScale(
+                      enabled: !_isSubmitting,
+                      child: OutlinedButton.icon(
+                        onPressed: _isSubmitting
+                            ? null
+                            : () {
+                                HapticFeedback.lightImpact();
+                                _addQuestion();
+                              },
+                        icon: const Icon(TablerIcons.plus, size: 18),
+                        label: Text(context.t.aiQuiz.manualAddQuestion),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 180),
+                child: AppButton.primary(
+                  label: context.t.aiQuiz.manualSubmit,
+                  isLoading: _isSubmitting,
+                  onPressed: _isSubmitting ? null : _submit,
+                ),
               ),
               AppSpacing.lg.vGap,
             ],
@@ -213,34 +260,53 @@ class _QuestionCard extends StatelessWidget {
                 ),
               ),
               if (canRemove)
-                InkWell(
-                  onTap: onRemove,
-                  borderRadius: AppRadius.smAll,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(TablerIcons.trash, size: 18, color: context.colors.coralDeep),
+                PressableScale(
+                  child: InkWell(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      onRemove();
+                    },
+                    borderRadius: AppRadius.smAll,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        TablerIcons.trash,
+                        size: 18,
+                        color: context.colors.coralDeep,
+                      ),
+                    ),
                   ),
                 ),
             ],
           ),
           AppSpacing.xs.vGap,
-          AppTextField(label: context.t.aiQuiz.manualQuestionTextLabel, controller: draft.questionController),
+          AppTextField(
+            label: context.t.aiQuiz.manualQuestionTextLabel,
+            controller: draft.questionController,
+          ),
           AppSpacing.sm.vGap,
           for (int i = 0; i < 4; i++) ...[
             Row(
               children: [
-                InkWell(
-                  onTap: () {
-                    draft.correctIndex = i;
-                    onChanged();
-                  },
-                  borderRadius: BorderRadius.circular(999),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(
-                      draft.correctIndex == i ? TablerIcons.circleCheckFilled : TablerIcons.circle,
-                      size: 22,
-                      color: draft.correctIndex == i ? context.colors.coral : context.colors.muted,
+                PressableScale(
+                  child: InkWell(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      draft.correctIndex = i;
+                      onChanged();
+                    },
+                    borderRadius: BorderRadius.circular(999),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        draft.correctIndex == i
+                            ? TablerIcons.circleCheckFilled
+                            : TablerIcons.circle,
+                        size: 22,
+                        color: draft.correctIndex == i
+                            ? context.colors.coral
+                            : context.colors.muted,
+                      ),
                     ),
                   ),
                 ),
