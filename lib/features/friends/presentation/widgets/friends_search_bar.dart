@@ -31,11 +31,10 @@ class FriendsSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // A fixed height - a standard, compact search-bar size (matches a
-    // default Material text field) regardless of font-metric rounding,
-    // rather than one derived from padding + line-height math.
+    // A fixed height - a standard, comfortable search-bar size, rather
+    // than one derived from padding + font-metric line-height math.
     return Container(
-      height: 44,
+      height: 48,
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       decoration: BoxDecoration(
         color: context.colors.card,
@@ -52,12 +51,20 @@ class FriendsSearchBar extends StatelessWidget {
             child: TextField(
               controller: controller,
               onChanged: onChanged,
+              textAlignVertical: TextAlignVertical.center,
               style: context.textStyles.bodySmall?.copyWith(
                 color: context.colors.ink,
               ),
               decoration: InputDecoration(
                 isDense: true,
-                isCollapsed: true,
+                // `isCollapsed` (used previously) sizes strictly to the
+                // raw text's own bounding box with no baseline centering
+                // help from InputDecorator, which is what made the text
+                // sit off-center in a taller field. `contentPadding: zero`
+                // + `textAlignVertical: center` above is the standard,
+                // reliable way to get a compact field that's still
+                // properly centered.
+                contentPadding: EdgeInsets.zero,
                 filled: false,
                 // The app's global InputDecorationTheme sets its OWN
                 // enabledBorder/focusedBorder (a full outline) - setting
