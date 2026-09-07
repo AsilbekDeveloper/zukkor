@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/currency_transaction.dart';
@@ -35,7 +36,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   void initState() {
     super.initState();
     if (ref.read(walletControllerProvider).entries == null) {
-      Future.microtask(() => ref.read(walletControllerProvider.notifier).load());
+      Future.microtask(
+        () => ref.read(walletControllerProvider.notifier).load(),
+      );
     }
     _scrollController.addListener(_onScroll);
   }
@@ -49,7 +52,10 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels < _scrollController.position.maxScrollExtent - 200) return;
+    if (_scrollController.position.pixels <
+        _scrollController.position.maxScrollExtent - 200) {
+      return;
+    }
     ref.read(walletControllerProvider.notifier).loadMore();
   }
 
@@ -65,8 +71,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
   Widget build(BuildContext context) {
     final WalletState walletState = ref.watch(walletControllerProvider);
     final List<CurrencyTransaction>? transactions = walletState.entries;
-    final List<WalletTransactionRow> rows =
-        transactions == null ? const [] : transactions.map(WalletTransactionRow.fromEntity).toList();
+    final List<WalletTransactionRow> rows = transactions == null
+        ? const []
+        : transactions.map(WalletTransactionRow.fromEntity).toList();
 
     return Scaffold(
       body: SafeArea(
@@ -76,43 +83,62 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.wallet.title, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.wallet.title,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
               Expanded(
                 child: walletState.hasError
-                    ? ErrorRetryView(onRetry: () => ref.read(walletControllerProvider.notifier).load())
+                    ? ErrorRetryView(
+                        onRetry: () =>
+                            ref.read(walletControllerProvider.notifier).load(),
+                      )
                     : transactions == null
-                        ? const ShimmerListSkeleton()
-                        : rows.isEmpty
-                            ? Center(
-                                child: Text(
-                                  context.t.wallet.emptyState,
-                                  textAlign: TextAlign.center,
-                                  style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-                                ),
-                              )
-                            : RefreshIndicator(
-                                onRefresh: () => ref.read(walletControllerProvider.notifier).load(),
-                                child: SingleChildScrollView(
-                                  controller: _scrollController,
-                                  physics: const AlwaysScrollableScrollPhysics(),
-                                  child: Column(
-                                    children: [
-                                      WalletTransactionList(rows: rows),
-                                      if (walletState.isLoadingMore) ...[
-                                        AppSpacing.md.vGap,
-                                        const Center(
-                                          child: SizedBox.square(
-                                            dimension: 22,
-                                            child: CircularProgressIndicator(strokeWidth: 2.5),
-                                          ),
-                                        ),
-                                        AppSpacing.md.vGap,
-                                      ],
-                                    ],
+                    ? const ShimmerListSkeleton()
+                    : rows.isEmpty
+                    ? FadeSlideIn(
+                        delay: const Duration(milliseconds: 60),
+                        child: Center(
+                          child: Text(
+                            context.t.wallet.emptyState,
+                            textAlign: TextAlign.center,
+                            style: context.textStyles.bodySmall?.copyWith(
+                              color: context.colors.muted,
+                            ),
+                          ),
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () =>
+                            ref.read(walletControllerProvider.notifier).load(),
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: FadeSlideIn(
+                            delay: const Duration(milliseconds: 60),
+                            child: Column(
+                              children: [
+                                WalletTransactionList(rows: rows),
+                                if (walletState.isLoadingMore) ...[
+                                  AppSpacing.md.vGap,
+                                  const Center(
+                                    child: SizedBox.square(
+                                      dimension: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                  AppSpacing.md.vGap,
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),
