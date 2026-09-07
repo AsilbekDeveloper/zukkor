@@ -10,6 +10,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../profile/presentation/widgets/settings_list.dart';
@@ -27,10 +28,12 @@ class NotificationSettingsScreen extends ConsumerStatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  ConsumerState<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  ConsumerState<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends ConsumerState<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends ConsumerState<NotificationSettingsScreen> {
   // Optimistic local copy — once set, takes priority over the provider's
   // state so a save-in-flight (or a revert after a failed save) doesn't
   // flicker back to a stale server value mid-toggle.
@@ -40,7 +43,10 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
   void initState() {
     super.initState();
     if (ref.read(notificationPreferencesControllerProvider).data == null) {
-      Future.microtask(() => ref.read(notificationPreferencesControllerProvider.notifier).load());
+      Future.microtask(
+        () =>
+            ref.read(notificationPreferencesControllerProvider.notifier).load(),
+      );
     }
   }
 
@@ -56,7 +62,9 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
     final NotificationPreferences? previous = _current;
     setState(() => _current = updated);
     try {
-      await ref.read(notificationPreferencesControllerProvider.notifier).update(updated);
+      await ref
+          .read(notificationPreferencesControllerProvider.notifier)
+          .update(updated);
     } on Failure catch (e) {
       if (!mounted) return;
       setState(() => _current = previous);
@@ -99,46 +107,64 @@ class _NotificationSettingsScreenState extends ConsumerState<NotificationSetting
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.notificationSettings.title, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.notificationSettings.title,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
               if (prefsState.hasError && prefs == null)
-                ErrorRetryView(onRetry: () => ref.read(notificationPreferencesControllerProvider.notifier).load())
+                ErrorRetryView(
+                  onRetry: () => ref
+                      .read(notificationPreferencesControllerProvider.notifier)
+                      .load(),
+                )
               else if (prefs == null)
                 const _NotificationPrefsShimmer()
               else
-                SettingsList(
-                  rows: [
-                    _toggleRow(
-                      icon: TablerIcons.swords,
-                      label: context.t.notificationSettings.duelInvites,
-                      value: prefs.duelInvites,
-                      onChanged: (v) => _toggle(prefs.copyWith(duelInvites: v)),
-                    ),
-                    _toggleRow(
-                      icon: TablerIcons.flame,
-                      label: context.t.notificationSettings.streakReminders,
-                      value: prefs.streakReminders,
-                      onChanged: (v) => _toggle(prefs.copyWith(streakReminders: v)),
-                    ),
-                    _toggleRow(
-                      icon: TablerIcons.trophy,
-                      label: context.t.notificationSettings.leaderboardUpdates,
-                      value: prefs.leaderboardUpdates,
-                      onChanged: (v) => _toggle(prefs.copyWith(leaderboardUpdates: v)),
-                    ),
-                    _toggleRow(
-                      icon: TablerIcons.userPlus,
-                      label: context.t.notificationSettings.friendRequests,
-                      value: prefs.friendRequests,
-                      onChanged: (v) => _toggle(prefs.copyWith(friendRequests: v)),
-                    ),
-                    _toggleRow(
-                      icon: TablerIcons.sparkles,
-                      label: context.t.notificationSettings.productUpdates,
-                      value: prefs.productUpdates,
-                      onChanged: (v) => _toggle(prefs.copyWith(productUpdates: v)),
-                    ),
-                  ],
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 60),
+                  child: SettingsList(
+                    rows: [
+                      _toggleRow(
+                        icon: TablerIcons.swords,
+                        label: context.t.notificationSettings.duelInvites,
+                        value: prefs.duelInvites,
+                        onChanged: (v) =>
+                            _toggle(prefs.copyWith(duelInvites: v)),
+                      ),
+                      _toggleRow(
+                        icon: TablerIcons.flame,
+                        label: context.t.notificationSettings.streakReminders,
+                        value: prefs.streakReminders,
+                        onChanged: (v) =>
+                            _toggle(prefs.copyWith(streakReminders: v)),
+                      ),
+                      _toggleRow(
+                        icon: TablerIcons.trophy,
+                        label:
+                            context.t.notificationSettings.leaderboardUpdates,
+                        value: prefs.leaderboardUpdates,
+                        onChanged: (v) =>
+                            _toggle(prefs.copyWith(leaderboardUpdates: v)),
+                      ),
+                      _toggleRow(
+                        icon: TablerIcons.userPlus,
+                        label: context.t.notificationSettings.friendRequests,
+                        value: prefs.friendRequests,
+                        onChanged: (v) =>
+                            _toggle(prefs.copyWith(friendRequests: v)),
+                      ),
+                      _toggleRow(
+                        icon: TablerIcons.sparkles,
+                        label: context.t.notificationSettings.productUpdates,
+                        value: prefs.productUpdates,
+                        onChanged: (v) =>
+                            _toggle(prefs.copyWith(productUpdates: v)),
+                      ),
+                    ],
+                  ),
                 ),
             ],
           ),
@@ -165,7 +191,10 @@ class _NotificationPrefsShimmer extends StatelessWidget {
           children: [
             for (int i = 0; i < 5; i++) ...[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm + 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.sm + 2,
+                ),
                 child: Row(
                   children: [
                     const ShimmerBox(width: 19, height: 19, radius: 5),
