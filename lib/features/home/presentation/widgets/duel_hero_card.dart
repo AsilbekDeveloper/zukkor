@@ -23,11 +23,16 @@ class DuelHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // Trimmed from the original lg+xxs/lg (24/20) padding - the card was
+      // tall enough to leave Home scrolling by a few pixels on common
+      // screen sizes. Shaved off top/bottom padding here plus the internal
+      // gaps below add up to ~36px total, without touching the text sizes
+      // or the weekly-activity row's legibility.
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.lg,
-        AppSpacing.lg + AppSpacing.xxs,
+        AppSpacing.md,
         AppSpacing.lg,
-        AppSpacing.lg,
+        AppSpacing.md,
       ),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
@@ -67,7 +72,9 @@ class DuelHeroCard extends StatelessWidget {
             children: [
               Text(
                 context.t.home.duelHeroTitle,
-                style: context.textStyles.headlineMedium?.copyWith(color: Colors.white),
+                style: context.textStyles.headlineMedium?.copyWith(
+                  color: Colors.white,
+                ),
               ),
               AppSpacing.xxs.vGap,
               Text(
@@ -77,10 +84,10 @@ class DuelHeroCard extends StatelessWidget {
                 ),
               ),
               if (weeklyActivity != null && weeklyActivity!.length == 7) ...[
-                AppSpacing.lg.vGap,
+                AppSpacing.sm.vGap,
                 _WeeklyActivityRow(days: weeklyActivity!),
               ],
-              AppSpacing.xl.vGap,
+              AppSpacing.md.vGap,
               // Both children stay at their natural (pill-shaped) width —
               // matching the prototype's `.hero-foot { justify-content:
               // space-between }` — instead of the button stretching to
@@ -119,7 +126,15 @@ class _WeeklyActivityRow extends StatelessWidget {
 
   final List<bool> days;
 
-  static const List<String> _labels = ['Du', 'Se', 'Cho', 'Pa', 'Ju', 'Sha', 'Ya'];
+  static const List<String> _labels = [
+    'Du',
+    'Se',
+    'Cho',
+    'Pa',
+    'Ju',
+    'Sha',
+    'Ya',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +144,7 @@ class _WeeklyActivityRow extends StatelessWidget {
       children: List.generate(7, (i) {
         final bool isToday = i == 6;
         final bool played = days[i];
-        final double size = isToday ? 36 : (played ? 26 : 24);
+        final double size = isToday ? 30 : (played ? 24 : 22);
         return Column(
           children: [
             Container(
@@ -140,16 +155,32 @@ class _WeeklyActivityRow extends StatelessWidget {
                 color: isToday
                     ? const Color(0xFFFFD9A8)
                     : played
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.20),
-                boxShadow: isToday ? [const BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 3))] : null,
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.20),
+                boxShadow: isToday
+                    ? [
+                        const BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 3),
+                        ),
+                      ]
+                    : null,
               ),
               alignment: Alignment.center,
               child: isToday
-                  ? Icon(TablerIcons.flame, color: context.colors.coralDeep, size: 18)
+                  ? Icon(
+                      TablerIcons.flame,
+                      color: context.colors.coralDeep,
+                      size: 16,
+                    )
                   : played
-                      ? Icon(TablerIcons.check, color: context.colors.coralDeep, size: 13)
-                      : null,
+                  ? Icon(
+                      TablerIcons.check,
+                      color: context.colors.coralDeep,
+                      size: 12,
+                    )
+                  : null,
             ),
             const SizedBox(height: 4),
             Text(
@@ -182,11 +213,18 @@ class _StartDuelButton extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(999),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 1, horizontal: AppSpacing.lg),
+            padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm,
+              horizontal: AppSpacing.lg,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(TablerIcons.swords, color: context.colors.coralDeep, size: 18),
+                Icon(
+                  TablerIcons.swords,
+                  color: context.colors.coralDeep,
+                  size: 18,
+                ),
                 AppSpacing.xs.hGap,
                 Flexible(
                   child: Text(
@@ -216,7 +254,10 @@ class _StreakChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs + 2,
+      ),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(999),
@@ -240,7 +281,10 @@ class _StreakChip extends StatelessWidget {
           const SizedBox(width: 3),
           Text(
             context.t.common.dayUnit(count: days),
-            style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.85)),
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.white.withValues(alpha: 0.85),
+            ),
           ),
         ],
       ),
