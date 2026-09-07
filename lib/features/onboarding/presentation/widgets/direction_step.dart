@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/step_header.dart';
 import '../../../../i18n/strings.g.dart';
 import '../models/onboarding_direction.dart';
@@ -60,44 +62,58 @@ class _DirectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color accent = direction.accentColor(context);
 
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(
-              color: isSelected ? accent : context.colors.line,
-              width: isSelected ? 2 : 1.5,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            onTap();
+          },
+          borderRadius: AppRadius.mdAll,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.all(AppSpacing.md),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              border: Border.all(
+                color: isSelected ? accent : context.colors.line,
+                width: isSelected ? 2 : 1.5,
+              ),
             ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
-                alignment: Alignment.center,
-                child: Icon(direction.icon, color: Colors.white, size: 22),
-              ),
-              AppSpacing.sm.hGap,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(direction.title(context), style: context.textStyles.titleMedium),
-                    Text(direction.subtitle(context), style: context.textStyles.bodySmall),
-                  ],
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: accent,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(direction.icon, color: Colors.white, size: 22),
                 ),
-              ),
-              AppSpacing.xs.hGap,
-              _RadioIndicator(isSelected: isSelected, accent: accent),
-            ],
+                AppSpacing.sm.hGap,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        direction.title(context),
+                        style: context.textStyles.titleMedium,
+                      ),
+                      Text(
+                        direction.subtitle(context),
+                        style: context.textStyles.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+                AppSpacing.xs.hGap,
+                _RadioIndicator(isSelected: isSelected, accent: accent),
+              ],
+            ),
           ),
         ),
       ),

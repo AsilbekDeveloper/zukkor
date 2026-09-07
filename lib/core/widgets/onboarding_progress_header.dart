@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../extensions/context_x.dart';
 import '../extensions/num_x.dart';
 import '../theme/app_spacing.dart';
+import 'pressable_scale.dart';
 
 /// Top bar shown on every wizard step: back button, a progress bar that
 /// fills as the user advances, and a "step / total" counter — mirrors the
-/// prototype's `.setup-topbar`. Shared by the Onboarding wizard and the
-/// Introduction walkthrough.
+/// prototype's `.setup-topbar`. Used by the Onboarding wizard - the
+/// Introduction walkthrough has since grown its own more playful
+/// [IntroProgressHeader] (segmented pips + Skip) instead of reusing this.
 class OnboardingProgressHeader extends StatelessWidget {
   const OnboardingProgressHeader({
     super.key,
@@ -33,10 +36,15 @@ class OnboardingProgressHeader extends StatelessWidget {
     return Row(
       children: [
         if (onBack != null)
-          IconButton(
-            onPressed: onBack,
-            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-            icon: const Icon(TablerIcons.arrowLeft),
+          PressableScale(
+            child: IconButton(
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                onBack!();
+              },
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              icon: const Icon(TablerIcons.arrowLeft),
+            ),
           )
         else
           const SizedBox(width: 48),
