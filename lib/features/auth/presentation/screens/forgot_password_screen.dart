@@ -13,6 +13,7 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/auth_controller.dart';
 
@@ -20,7 +21,8 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
@@ -38,9 +40,14 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     try {
-      await ref.read(authControllerProvider.notifier).forgotPassword(_emailController.text.trim());
+      await ref
+          .read(authControllerProvider.notifier)
+          .forgotPassword(_emailController.text.trim());
       if (!mounted) return;
-      await context.push(AppRoutes.resetPasswordScreen, extra: _emailController.text.trim());
+      await context.push(
+        AppRoutes.resetPasswordScreen,
+        extra: _emailController.text.trim(),
+      );
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
@@ -60,31 +67,47 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.forgotPassword.title, onBack: () => context.pop()),
-              AppSpacing.xl.vGap,
-              Text(
-                context.t.forgotPassword.subtitle,
-                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
-              ),
-              AppSpacing.xl.vGap,
-              Form(
-                key: _formKey,
-                child: AppTextField(
-                  label: context.t.auth.emailLabel,
-                  hint: context.t.auth.emailHint,
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.done,
-                  autofillHints: const [AutofillHints.email],
-                  validator: Validators.email,
-                  onSubmitted: (_) => _submit(),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.forgotPassword.title,
+                  onBack: () => context.pop(),
                 ),
               ),
               AppSpacing.xl.vGap,
-              AppButton.primary(
-                label: context.t.forgotPassword.sendCodeButton,
-                isLoading: isLoading,
-                onPressed: _submit,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Text(
+                  context.t.forgotPassword.subtitle,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: context.colors.muted,
+                  ),
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: Form(
+                  key: _formKey,
+                  child: AppTextField(
+                    label: context.t.auth.emailLabel,
+                    hint: context.t.auth.emailHint,
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.done,
+                    autofillHints: const [AutofillHints.email],
+                    validator: Validators.email,
+                    onSubmitted: (_) => _submit(),
+                  ),
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 140),
+                child: AppButton.primary(
+                  label: context.t.forgotPassword.sendCodeButton,
+                  isLoading: isLoading,
+                  onPressed: _submit,
+                ),
               ),
             ],
           ),

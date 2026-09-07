@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,6 +14,8 @@ import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../controllers/auth_controller.dart';
 
@@ -22,7 +25,8 @@ class ResetPasswordScreen extends ConsumerStatefulWidget {
   final String email;
 
   @override
-  ConsumerState<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
@@ -54,7 +58,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
 
   Future<void> _resendCode() async {
     try {
-      await ref.read(authControllerProvider.notifier).forgotPassword(widget.email);
+      await ref
+          .read(authControllerProvider.notifier)
+          .forgotPassword(widget.email);
       if (mounted) context.showSnack(context.t.forgotPassword.codeSent);
     } catch (_) {
       // Rates limited or network error, but the forgotPassword call
@@ -68,7 +74,9 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     try {
-      await ref.read(authControllerProvider.notifier).resetPassword(
+      await ref
+          .read(authControllerProvider.notifier)
+          .resetPassword(
             email: widget.email,
             code: _codeController.text.trim(),
             newPassword: _newPasswordController.text,
@@ -95,68 +103,95 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.resetPassword.title, onBack: () => context.pop()),
-              AppSpacing.xl.vGap,
-              Text(
-                context.t.resetPassword.subtitle(email: widget.email),
-                style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.resetPassword.title,
+                  onBack: () => context.pop(),
+                ),
               ),
               AppSpacing.xl.vGap,
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppTextField(
-                      label: context.t.resetPassword.codeLabel,
-                      hint: context.t.resetPassword.codeHint,
-                      controller: _codeController,
-                      keyboardType: TextInputType.number,
-                      maxLength: 6,
-                      validator: Validators.resetCode,
-                    ),
-                    AppSpacing.md.vGap,
-                    AppTextField(
-                      label: context.t.resetPassword.newPasswordLabel,
-                      hint: context.t.resetPassword.newPasswordHint,
-                      controller: _newPasswordController,
-                      obscure: true,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.newPassword],
-                      validator: Validators.password,
-                      maxLength: kPasswordMaxLength,
-                    ),
-                    AppSpacing.md.vGap,
-                    AppTextField(
-                      label: context.t.resetPassword.confirmPasswordLabel,
-                      hint: context.t.resetPassword.confirmPasswordHint,
-                      controller: _confirmPasswordController,
-                      obscure: true,
-                      textInputAction: TextInputAction.done,
-                      autofillHints: const [AutofillHints.newPassword],
-                      validator: (value) => Validators.confirmPassword(
-                        value,
-                        _newPasswordController.text,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Text(
+                  context.t.resetPassword.subtitle(email: widget.email),
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: context.colors.muted,
+                  ),
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppTextField(
+                        label: context.t.resetPassword.codeLabel,
+                        hint: context.t.resetPassword.codeHint,
+                        controller: _codeController,
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
+                        validator: Validators.resetCode,
                       ),
-                      onSubmitted: (_) => _submit(),
-                      maxLength: kPasswordMaxLength,
-                    ),
-                  ],
+                      AppSpacing.md.vGap,
+                      AppTextField(
+                        label: context.t.resetPassword.newPasswordLabel,
+                        hint: context.t.resetPassword.newPasswordHint,
+                        controller: _newPasswordController,
+                        obscure: true,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.newPassword],
+                        validator: Validators.password,
+                        maxLength: kPasswordMaxLength,
+                      ),
+                      AppSpacing.md.vGap,
+                      AppTextField(
+                        label: context.t.resetPassword.confirmPasswordLabel,
+                        hint: context.t.resetPassword.confirmPasswordHint,
+                        controller: _confirmPasswordController,
+                        obscure: true,
+                        textInputAction: TextInputAction.done,
+                        autofillHints: const [AutofillHints.newPassword],
+                        validator: (value) => Validators.confirmPassword(
+                          value,
+                          _newPasswordController.text,
+                        ),
+                        onSubmitted: (_) => _submit(),
+                        maxLength: kPasswordMaxLength,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               AppSpacing.sm.vGap,
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: isLoading ? null : _resendCode,
-                  child: Text(context.t.resetPassword.resendCode),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 140),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: PressableScale(
+                    enabled: !isLoading,
+                    child: TextButton(
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              HapticFeedback.lightImpact();
+                              _resendCode();
+                            },
+                      child: Text(context.t.resetPassword.resendCode),
+                    ),
+                  ),
                 ),
               ),
               AppSpacing.xl.vGap,
-              AppButton.primary(
-                label: context.t.resetPassword.resetButton,
-                isLoading: isLoading,
-                onPressed: _submit,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 180),
+                child: AppButton.primary(
+                  label: context.t.resetPassword.resetButton,
+                  isLoading: isLoading,
+                  onPressed: _submit,
+                ),
               ),
             ],
           ),
