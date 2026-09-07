@@ -14,6 +14,7 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/avatar_color_picker.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
@@ -89,8 +90,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (picked == null || !mounted) return;
 
       setState(() => _uploadingPhoto = true);
-      final User updated =
-          await ref.read(authControllerProvider.notifier).uploadAvatarImage(picked.path);
+      final User updated = await ref
+          .read(authControllerProvider.notifier)
+          .uploadAvatarImage(picked.path);
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
       if (!mounted) return;
       setState(() {
@@ -100,7 +102,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
-      if (mounted) context.showSnack(t.errors.unknown); 
+      if (mounted) context.showSnack(t.errors.unknown);
     } finally {
       if (mounted) setState(() => _uploadingPhoto = false);
     }
@@ -133,7 +135,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Future<bool?> _checkUsernameAvailable(String username) async {
     setState(() => _checkingUsername = true);
     try {
-      return await ref.read(checkUsernameAvailableUseCaseProvider).call(username);
+      return await ref
+          .read(checkUsernameAvailableUseCaseProvider)
+          .call(username);
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
       return null;
@@ -159,7 +163,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     final User? current = ref.read(currentUserControllerProvider).data;
     try {
-      final User updated = await ref.read(authControllerProvider.notifier).updateProfile(
+      final User updated = await ref
+          .read(authControllerProvider.notifier)
+          .updateProfile(
             username: newUsername,
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
@@ -168,10 +174,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             // bo'lsa (_avatarImagePath != null), bu maydonni yuborish
             // backend'da o'sha rasmni o'chirib, rangga qaytarib qo'yar edi
             // (ular bir-birini istisno qiladi).
-            avatarColor: _avatarImagePath == null ? _avatarColor.apiValue : null,
+            avatarColor: _avatarImagePath == null
+                ? _avatarColor.apiValue
+                : null,
             // Bu ekranda yo'nalish o'zgartirilmaydi — joriy qiymat
             // o'zgarishsiz qayta yuboriladi (backend uni ham talab qiladi).
-            direction: current?.direction ?? OnboardingDirection.casual.apiValue,
+            direction:
+                current?.direction ?? OnboardingDirection.casual.apiValue,
           );
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
       // Akkauntlar ro'yxatidagi ma'lumotni ham yangilash uchun.
@@ -188,7 +197,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoading = _checkingUsername || ref.watch(authControllerProvider);
+    final bool isLoading =
+        _checkingUsername || ref.watch(authControllerProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -198,63 +208,79 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.profile.editProfile, onBack: _goBack),
-              AppSpacing.xl.vGap,
-              AvatarColorPicker(
-                selectedColor: _avatarColor,
-                avatarImagePath: _avatarImagePath,
-                isUploading: _uploadingPhoto,
-                // Rang tanlash rasmni bekor qiladi — ikkalasi bir-birini
-                // istisno qiladi (Saqlash bosilganda backend ham shunday
-                // tozalaydi).
-                onColorSelected: (color) => setState(() {
-                  _avatarColor = color;
-                  _avatarImagePath = null;
-                }),
-                onUploadPhoto: _pickAndUploadPhoto,
-              ),
-              AppSpacing.xl.vGap,
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppTextField(
-                      label: context.t.onboarding.firstNameLabel,
-                      hint: context.t.onboarding.firstNameHint,
-                      controller: _firstNameController,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.givenName],
-                      validator: Validators.personName,
-                    ),
-                    AppSpacing.md.vGap,
-                    AppTextField(
-                      label: context.t.onboarding.lastNameLabel,
-                      hint: context.t.onboarding.lastNameHint,
-                      controller: _lastNameController,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.familyName],
-                      validator: Validators.personName,
-                    ),
-                    AppSpacing.md.vGap,
-                    AppTextField(
-                      label: context.t.onboarding.usernameLabel,
-                      hint: context.t.onboarding.usernameHint,
-                      controller: _usernameController,
-                      textInputAction: TextInputAction.done,
-                      autofillHints: const [AutofillHints.newUsername],
-                      validator: (value) =>
-                          Validators.username(value) ??
-                          (_usernameTaken ? t.authValidation.usernameTaken : null),
-                    ),
-                  ],
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.profile.editProfile,
+                  onBack: _goBack,
                 ),
               ),
               AppSpacing.xl.vGap,
-              AppButton.primary(
-                label: context.t.editProfile.save,
-                isLoading: isLoading,
-                onPressed: _save,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: AvatarColorPicker(
+                  selectedColor: _avatarColor,
+                  avatarImagePath: _avatarImagePath,
+                  isUploading: _uploadingPhoto,
+                  // Rang tanlash rasmni bekor qiladi — ikkalasi bir-birini
+                  // istisno qiladi (Saqlash bosilganda backend ham shunday
+                  // tozalaydi).
+                  onColorSelected: (color) => setState(() {
+                    _avatarColor = color;
+                    _avatarImagePath = null;
+                  }),
+                  onUploadPhoto: _pickAndUploadPhoto,
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppTextField(
+                        label: context.t.onboarding.firstNameLabel,
+                        hint: context.t.onboarding.firstNameHint,
+                        controller: _firstNameController,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.givenName],
+                        validator: Validators.personName,
+                      ),
+                      AppSpacing.md.vGap,
+                      AppTextField(
+                        label: context.t.onboarding.lastNameLabel,
+                        hint: context.t.onboarding.lastNameHint,
+                        controller: _lastNameController,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.familyName],
+                        validator: Validators.personName,
+                      ),
+                      AppSpacing.md.vGap,
+                      AppTextField(
+                        label: context.t.onboarding.usernameLabel,
+                        hint: context.t.onboarding.usernameHint,
+                        controller: _usernameController,
+                        textInputAction: TextInputAction.done,
+                        autofillHints: const [AutofillHints.newUsername],
+                        validator: (value) =>
+                            Validators.username(value) ??
+                            (_usernameTaken
+                                ? t.authValidation.usernameTaken
+                                : null),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              AppSpacing.xl.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 140),
+                child: AppButton.primary(
+                  label: context.t.editProfile.save,
+                  isLoading: isLoading,
+                  onPressed: _save,
+                ),
               ),
             ],
           ),
