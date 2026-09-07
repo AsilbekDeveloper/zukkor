@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
@@ -16,7 +17,10 @@ class ReportQuestionDialog extends StatefulWidget {
     BuildContext context, {
     required Future<void> Function(String reason, String? comment) onSubmit,
   }) {
-    return showDialog<bool>(context: context, builder: (_) => ReportQuestionDialog(onSubmit: onSubmit));
+    return showDialog<bool>(
+      context: context,
+      builder: (_) => ReportQuestionDialog(onSubmit: onSubmit),
+    );
   }
 
   @override
@@ -44,7 +48,12 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
     });
 
     try {
-      await widget.onSubmit(_selectedReason!, _commentController.text.trim().isEmpty ? null : _commentController.text.trim());
+      await widget.onSubmit(
+        _selectedReason!,
+        _commentController.text.trim().isEmpty
+            ? null
+            : _commentController.text.trim(),
+      );
       if (mounted) Navigator.of(context).pop(true);
     } on Failure catch (e) {
       if (mounted) setState(() => _errorText = e.message);
@@ -75,17 +84,24 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
             RadioGroup<String>(
               groupValue: _selectedReason,
               onChanged: (val) {
-                if (!_isSubmitting) setState(() => _selectedReason = val);
+                if (_isSubmitting) return;
+                HapticFeedback.selectionClick();
+                setState(() => _selectedReason = val);
               },
               child: Column(
                 children: reasons
-                    .map((r) => RadioListTile<String>(
-                          title: Text(r.label, style: context.textStyles.bodyMedium),
-                          value: r.value,
-                          contentPadding: EdgeInsets.zero,
-                          visualDensity: VisualDensity.compact,
-                          activeColor: context.colors.coral,
-                        ))
+                    .map(
+                      (r) => RadioListTile<String>(
+                        title: Text(
+                          r.label,
+                          style: context.textStyles.bodyMedium,
+                        ),
+                        value: r.value,
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                        activeColor: context.colors.coral,
+                      ),
+                    )
                     .toList(),
               ),
             ),
@@ -100,18 +116,33 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
             ),
             if (_errorText != null) ...[
               AppSpacing.sm.vGap,
-              Text(_errorText!, style: context.textStyles.bodySmall?.copyWith(color: context.colors.error)),
+              Text(
+                _errorText!,
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: context.colors.error,
+                ),
+              ),
             ],
           ],
         ),
       ),
       actions: [
         TextButton(
-          onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
+          onPressed: _isSubmitting
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  Navigator.of(context).pop();
+                },
           child: Text(t.common.cancel),
         ),
         TextButton(
-          onPressed: _isSubmitting || _selectedReason == null ? null : _submit,
+          onPressed: _isSubmitting || _selectedReason == null
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  _submit();
+                },
           child: _isSubmitting
               ? const SizedBox.square(
                   dimension: 16,
@@ -120,7 +151,9 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
               : Text(
                   t.report.submit,
                   style: TextStyle(
-                    color: _selectedReason == null ? context.colors.muted : context.colors.coral,
+                    color: _selectedReason == null
+                        ? context.colors.muted
+                        : context.colors.coral,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
