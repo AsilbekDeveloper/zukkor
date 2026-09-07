@@ -224,7 +224,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     if (quizzes == null) {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: context.screenHPad),
-        child: const ShimmerListSkeleton(count: 5, trailingWidth: 40),
+        child: const ShimmerQuizGridSkeleton(),
       );
     }
 
@@ -244,15 +244,24 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
     return RefreshIndicator(
       onRefresh: _loadFeed,
-      child: ListView.separated(
+      child: GridView.builder(
         padding: EdgeInsets.fromLTRB(
           context.screenHPad,
           0,
           context.screenHPad,
           AppSpacing.lg,
         ),
+        // Column count derives from the container's own width (2 on
+        // phones, more on tablets) - never a hardcoded crossAxisCount.
+        // Height is fixed content-driven extent (QuizCard.gridExtent),
+        // never a childAspectRatio - see [[responsive_methodology]].
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
+          mainAxisSpacing: AppSpacing.sm,
+          crossAxisSpacing: AppSpacing.sm,
+          mainAxisExtent: QuizCard.gridExtent(context),
+        ),
         itemCount: quizzes.length,
-        separatorBuilder: (_, _) => AppSpacing.xs.vGap,
         itemBuilder: (context, index) {
           final quiz = quizzes[index];
           return QuizCard(

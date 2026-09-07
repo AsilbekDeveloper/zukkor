@@ -202,6 +202,69 @@ class ShimmerCategoryGridSkeleton extends StatelessWidget {
   }
 }
 
+/// A skeleton for `DiscoverScreen`'s quiz grid — mirrors `QuizCard`'s own
+/// icon-block + 2-line-name + creator-line + footer-row shape, so the
+/// placeholder cards don't visibly "pop" into a different layout once
+/// the real quizzes load in.
+class ShimmerQuizGridSkeleton extends StatelessWidget {
+  const ShimmerQuizGridSkeleton({this.count = 6, super.key});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: count,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 220,
+          mainAxisSpacing: AppSpacing.sm,
+          crossAxisSpacing: AppSpacing.sm,
+          mainAxisExtent: 154,
+        ),
+        itemBuilder: (context, index) => _card(context),
+      ),
+    );
+  }
+
+  Widget _card(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: context.colors.card,
+        borderRadius: AppRadius.mdAll,
+        border: Border.all(color: context.colors.line),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ShimmerBox(width: 34, height: 34, radius: 10),
+              AppSpacing.xs.vGap,
+              const ShimmerBox(width: 110, height: 13),
+              const SizedBox(height: 4),
+              const ShimmerBox(width: 70, height: 10),
+            ],
+          ),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ShimmerBox(width: 50, height: 16, radius: 6),
+              ShimmerBox(width: 36, height: 10),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// A skeleton for [AchievementBadge]'s grid — same `maxCrossAxisExtent`
 /// layout as the real badge grid, so the placeholder cards land in the
 /// same columns/rows.
