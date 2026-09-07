@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/extensions/context_x.dart';
@@ -6,6 +7,7 @@ import '../../../../core/extensions/num_x.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// A short FAQ list, each question expandable to its answer.
@@ -13,12 +15,12 @@ class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});
 
   List<(String question, String answer)> _faqs(BuildContext context) => [
-        (context.t.helpCenter.duelQuestion, context.t.helpCenter.duelAnswer),
-        (context.t.helpCenter.xpQuestion, context.t.helpCenter.xpAnswer),
-        (context.t.helpCenter.streakQuestion, context.t.helpCenter.streakAnswer),
-        (context.t.helpCenter.lobbyQuestion, context.t.helpCenter.lobbyAnswer),
-        (context.t.helpCenter.reportQuestion, context.t.helpCenter.reportAnswer),
-      ];
+    (context.t.helpCenter.duelQuestion, context.t.helpCenter.duelAnswer),
+    (context.t.helpCenter.xpQuestion, context.t.helpCenter.xpAnswer),
+    (context.t.helpCenter.streakQuestion, context.t.helpCenter.streakAnswer),
+    (context.t.helpCenter.lobbyQuestion, context.t.helpCenter.lobbyAnswer),
+    (context.t.helpCenter.reportQuestion, context.t.helpCenter.reportAnswer),
+  ];
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -40,12 +42,25 @@ class HelpCenterScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.settings.helpCenter, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.settings.helpCenter,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
-              for (int i = 0; i < faqs.length; i++) ...[
-                _FaqTile(question: faqs[i].$1, answer: faqs[i].$2),
-                if (i < faqs.length - 1) AppSpacing.xs.vGap,
-              ],
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (int i = 0; i < faqs.length; i++) ...[
+                      _FaqTile(question: faqs[i].$1, answer: faqs[i].$2),
+                      if (i < faqs.length - 1) AppSpacing.xs.vGap,
+                    ],
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -74,19 +89,31 @@ class _FaqTile extends StatelessWidget {
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           tilePadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-          childrenPadding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.sm + 2),
+          childrenPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            0,
+            AppSpacing.md,
+            AppSpacing.sm + 2,
+          ),
           iconColor: context.colors.coralDeep,
           collapsedIconColor: context.colors.muted,
+          onExpansionChanged: (_) => HapticFeedback.lightImpact(),
           title: Text(
             question,
-            style: context.textStyles.bodySmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.5),
+            style: context.textStyles.bodySmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 13.5,
+            ),
           ),
           children: [
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 answer,
-                style: context.textStyles.bodySmall?.copyWith(color: context.colors.ink2, height: 1.5),
+                style: context.textStyles.bodySmall?.copyWith(
+                  color: context.colors.ink2,
+                  height: 1.5,
+                ),
               ),
             ),
           ],
