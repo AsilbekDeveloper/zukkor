@@ -22,7 +22,6 @@ import '../controllers/send_friend_request_controller.dart';
 import '../controllers/user_search_controller.dart';
 import '../models/discoverable_user.dart';
 import '../models/friend_entry.dart';
-import '../widgets/compact_invite_card.dart';
 import '../widgets/discoverable_user_list.dart';
 import '../widgets/friend_list.dart';
 import '../widgets/friends_header.dart';
@@ -40,7 +39,6 @@ class FriendsScreen extends ConsumerStatefulWidget {
 }
 
 class _FriendsScreenState extends ConsumerState<FriendsScreen> {
-  static const String _mockInviteCode = 'ZKR-AZ312';
   static const Duration _debounce = Duration(milliseconds: 350);
 
   final TextEditingController _searchController = TextEditingController();
@@ -203,17 +201,6 @@ class _FriendsScreenState extends ConsumerState<FriendsScreen> {
                         onChanged: _onQueryChanged,
                       ),
                     ),
-                    if (!isSearching) ...[
-                      AppSpacing.md.vGap,
-                      FadeSlideIn(
-                        delay: const Duration(milliseconds: 120),
-                        child: CompactInviteCard(
-                          code: _mockInviteCode,
-                          onShareTap: () =>
-                              context.showSnack(context.t.bottomNav.comingSoon),
-                        ),
-                      ),
-                    ],
                     AppSpacing.lg.vGap,
                     if (matchedFriends.isNotEmpty) ...[
                       FadeSlideIn(
