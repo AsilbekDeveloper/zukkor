@@ -23,12 +23,8 @@ import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../duel/presentation/controllers/duel_controller.dart';
 import '../../../history/presentation/controllers/weekly_activity_controller.dart';
-import '../../../leaderboard/data/repositories/leaderboard_repository_impl.dart';
-import '../../../leaderboard/domain/entities/leaderboard_data.dart';
-import '../../../leaderboard/domain/entities/leaderboard_scope.dart';
 import '../../../leaderboard/domain/entities/player_stats.dart';
 import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
-import '../../../leaderboard/presentation/models/leaderboard_entry.dart';
 import '../../../lobby/presentation/controllers/lobby_controller.dart';
 import '../../../lobby/presentation/screens/lobby_screen.dart';
 import '../../../notifications/presentation/controllers/notifications_controller.dart';
@@ -39,7 +35,6 @@ import '../widgets/category_scroll_row.dart';
 import '../widgets/duel_hero_card.dart';
 import '../widgets/home_header.dart';
 import '../widgets/multiplayer_row.dart';
-import '../widgets/rival_card.dart';
 import '../widgets/stats_strip.dart';
 
 /// The main screen — mirrors the prototype's `view-home` 1:1: greeting
@@ -311,65 +306,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ];
   }
 
-  /// New section with "Closest Rival" (nearest friend in XP) and a
-  /// Discover shortcut. "Continue Playing" and an achievements preview
-  /// used to live here too - both pulled per user feedback 2026-09-06
-  /// (continue-playing didn't earn its place; achievements is deferred to
-  /// a later version) - see [[home_dashboard_achievements_2026_09_06]].
-  /// The underlying widgets/models/screen/route for both are left intact,
-  /// just unreferenced from Home, so they're easy to bring back later.
+  /// A Discover shortcut. "Closest Rival" (nearest friend in XP),
+  /// "Continue Playing", and an achievements preview all used to live
+  /// here too - all pulled per user feedback (rival card 2026-09-08;
+  /// continue-playing/achievements 2026-09-06, see
+  /// [[home_dashboard_achievements_2026_09_06]]) - the underlying
+  /// widgets/models/screen/route for each are left intact, just
+  /// unreferenced from Home, so they're easy to bring back later.
   List<Widget> _enrichmentSection(BuildContext context) {
-    final friendsLeaderboard = ref.watch(_homeFriendsLeaderboardProvider);
-
-    final List<Widget> widgets = [];
-
-    if (friendsLeaderboard.hasError) {
-      // Ilgari bu holatda karta jimgina umuman ko'rinmasdi - foydalanuvchi
-      // nima bo'lganini bilmasdi. Endi boshqa bo'limlar (statistika,
-      // kategoriyalar) bilan bir xil "qayta urinish" qatori ko'rsatiladi.
-      widgets.addAll([
-        InlineRetryRow(
-          onRetry: () async => ref.invalidate(_homeFriendsLeaderboardProvider),
-        ),
-        AppSpacing.sm.vGap,
-      ]);
-    } else if (friendsLeaderboard.hasValue) {
-      final data = friendsLeaderboard.value!;
-      final meXp = data.me.totalXp;
-      final ahead =
-          data.entries.where((e) => !e.isMe && e.totalXp > meXp).toList()
-            ..sort((a, b) => a.totalXp.compareTo(b.totalXp));
-
-      if (ahead.isNotEmpty) {
-        final rival = ahead.first;
-        widgets.addAll([
-          RivalCard(
-            rival: LeaderboardEntry.fromEntity(rival),
-            xpGap: rival.totalXp - meXp,
-            onTap: () => context.push(
-              AppRoutes.playerDetail,
-              extra: {'userId': rival.userId},
-            ),
-          ),
-          AppSpacing.sm.vGap,
-        ]);
-      }
-    }
-
-    widgets.addAll([
-      _DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover)),
-    ]);
-
-    return widgets;
+    return [_DiscoverFeedCard(onTap: () => context.push(AppRoutes.discover))];
   }
 }
-
-final _homeFriendsLeaderboardProvider =
-    FutureProvider.autoDispose<LeaderboardData>((ref) {
-      return ref
-          .watch(getLeaderboardUseCaseProvider)
-          .call(scope: LeaderboardScope.friends, limit: 50);
-    });
 
 class _DiscoverFeedCard extends StatelessWidget {
   const _DiscoverFeedCard({required this.onTap});

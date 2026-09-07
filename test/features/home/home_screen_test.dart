@@ -43,7 +43,8 @@ import 'package:zukkor/i18n/strings.g.dart';
 
 class _FakeDuelRepository extends Fake implements DuelRepository {
   final StreamController<bool> _conn = StreamController<bool>.broadcast();
-  final StreamController<DuelInvite> _invites = StreamController<DuelInvite>.broadcast();
+  final StreamController<DuelInvite> _invites =
+      StreamController<DuelInvite>.broadcast();
 
   @override
   Stream<bool> get connectionStatus => _conn.stream;
@@ -56,7 +57,8 @@ class _FakeDuelRepository extends Fake implements DuelRepository {
   @override
   Stream<DuelQuestionEvent> get duelQuestion => const Stream.empty();
   @override
-  Stream<DuelOpponentProgressEvent> get opponentProgress => const Stream.empty();
+  Stream<DuelOpponentProgressEvent> get opponentProgress =>
+      const Stream.empty();
   @override
   Stream<DuelQuestionResult> get duelQuestionResult => const Stream.empty();
   @override
@@ -70,7 +72,8 @@ class _FakeDuelRepository extends Fake implements DuelRepository {
   Future<void> connect() async => _conn.add(true);
 }
 
-class _FakeNotificationsRepository extends Fake implements NotificationsRepository {
+class _FakeNotificationsRepository extends Fake
+    implements NotificationsRepository {
   @override
   Future<List<NotificationRecord>> getNotifications() async => [];
   @override
@@ -80,54 +83,53 @@ class _FakeNotificationsRepository extends Fake implements NotificationsReposito
 class _FakeQuizRepository extends Fake implements QuizRepository {
   @override
   Future<List<Category>> getCategories() async => [
-        const Category(id: 1, name: 'Math', iconName: 'math', colorKey: 'coral', questionCount: 10),
-        const Category(id: 2, name: 'Movies', iconName: 'movie', colorKey: 'pink', questionCount: 15),
-        const Category(id: 3, name: 'History', iconName: 'book', colorKey: 'terra', questionCount: 12),
-      ];
+    const Category(
+      id: 1,
+      name: 'Math',
+      iconName: 'math',
+      colorKey: 'coral',
+      questionCount: 10,
+    ),
+    const Category(
+      id: 2,
+      name: 'Movies',
+      iconName: 'movie',
+      colorKey: 'pink',
+      questionCount: 15,
+    ),
+    const Category(
+      id: 3,
+      name: 'History',
+      iconName: 'book',
+      colorKey: 'terra',
+      questionCount: 12,
+    ),
+  ];
 }
 
 class _FakeHistoryRepository extends Fake implements HistoryRepository {
   @override
-  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
-      (entries: <SessionHistoryEntry>[], hasMore: false);
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({
+    int limit = 50,
+    int offset = 0,
+  }) async => (entries: <SessionHistoryEntry>[], hasMore: false);
 
   @override
-  Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(days: [false, false, false, false, false, false, false]);
+  Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(
+    days: [false, false, false, false, false, false, false],
+  );
 }
 
 class _FakeLeaderboardRepository implements LeaderboardRepository {
-  // Rival Card bo'limining "InlineRetryRow" holatini sinash uchun - true
-  // bo'lsa do'stlar reytingi (Home'da rival kartani ta'minlaydigan) so'rovi
-  // muvaffaqiyatsiz bo'ladi.
-  bool failFriendsScope = false;
-
   @override
   Future<LeaderboardData> getLeaderboard({
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
   }) async {
-    if (scope == LeaderboardScope.friends && failFriendsScope) {
-      throw Exception('network error');
-    }
     return const LeaderboardData(
-        entries: [],
-        me: RankEntry(
-          userId: '1',
-          rank: 312,
-          username: 'aziz_karimov',
-          firstName: 'Aziz',
-          lastName: 'Karimov',
-          avatarColor: 'a-coral',
-          avatarImagePath: null,
-          totalXp: 2140,
-          isMe: true,
-        ),
-      );
-  }
-
-  @override
-  Future<PlayerStats> getPlayerStats(String userId) async => const PlayerStats(
+      entries: [],
+      me: RankEntry(
         userId: '1',
         rank: 312,
         username: 'aziz_karimov',
@@ -136,30 +138,45 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         avatarColor: 'a-coral',
         avatarImagePath: null,
         totalXp: 2140,
-        currentStreak: 5,
-        longestStreak: 15,
-        gamesPlayed: 40,
-        winRatePercent: 68,
-        totalWins: 27,
-        bestRankAchieved: 1,
-      );
+        isMe: true,
+      ),
+    );
+  }
+
+  @override
+  Future<PlayerStats> getPlayerStats(String userId) async => const PlayerStats(
+    userId: '1',
+    rank: 312,
+    username: 'aziz_karimov',
+    firstName: 'Aziz',
+    lastName: 'Karimov',
+    avatarColor: 'a-coral',
+    avatarImagePath: null,
+    totalXp: 2140,
+    currentStreak: 5,
+    longestStreak: 15,
+    gamesPlayed: 40,
+    winRatePercent: 68,
+    totalWins: 27,
+    bestRankAchieved: 1,
+  );
 }
 
 class _MockCurrentUserController extends CurrentUserController {
   @override
   LoadState<User> build() => LoadState(
-        data: User(
-          id: '1',
-          email: 'aziz@example.com',
-          username: 'aziz_karimov',
-          firstName: 'Aziz',
-          lastName: 'Karimov',
-          isActive: true,
-          createdAt: DateTime(2026),
-          onboardingCompleted: true,
-          authProvider: 'email',
-        ),
-      );
+    data: User(
+      id: '1',
+      email: 'aziz@example.com',
+      username: 'aziz_karimov',
+      firstName: 'Aziz',
+      lastName: 'Karimov',
+      isActive: true,
+      createdAt: DateTime(2026),
+      onboardingCompleted: true,
+      authProvider: 'email',
+    ),
+  );
 
   // Home's _reloadEssentialData() calls this unconditionally (no fake
   // authRepositoryProvider is wired here) - without this override, the
@@ -186,12 +203,31 @@ Future<void> _pumpHome(
   final router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
-      GoRoute(path: AppRoutes.notifications, builder: (context, state) => const Scaffold(body: Text('NOTIFICATIONS'))),
-      GoRoute(path: AppRoutes.duel, builder: (context, state) => const Scaffold(body: Text('DUEL_PICK'))),
-      GoRoute(path: AppRoutes.lobby, builder: (context, state) => const Scaffold(body: Text('LOBBY'))),
-      GoRoute(path: AppRoutes.joinCode, builder: (context, state) => const Scaffold(body: Text('JOIN_CODE'))),
-      GoRoute(path: AppRoutes.categories, builder: (context, state) => const Scaffold(body: Text('CATEGORIES'))),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, state) =>
+            const Scaffold(body: Text('NOTIFICATIONS')),
+      ),
+      GoRoute(
+        path: AppRoutes.duel,
+        builder: (context, state) => const Scaffold(body: Text('DUEL_PICK')),
+      ),
+      GoRoute(
+        path: AppRoutes.lobby,
+        builder: (context, state) => const Scaffold(body: Text('LOBBY')),
+      ),
+      GoRoute(
+        path: AppRoutes.joinCode,
+        builder: (context, state) => const Scaffold(body: Text('JOIN_CODE')),
+      ),
+      GoRoute(
+        path: AppRoutes.categories,
+        builder: (context, state) => const Scaffold(body: Text('CATEGORIES')),
+      ),
     ],
   );
 
@@ -200,11 +236,17 @@ Future<void> _pumpHome(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
         duelRepositoryProvider.overrideWithValue(_FakeDuelRepository()),
-        notificationsRepositoryProvider.overrideWithValue(_FakeNotificationsRepository()),
+        notificationsRepositoryProvider.overrideWithValue(
+          _FakeNotificationsRepository(),
+        ),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
         historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),
-        leaderboardRepositoryProvider.overrideWithValue(leaderboardRepository ?? _FakeLeaderboardRepository()),
-        currentUserControllerProvider.overrideWith(() => _MockCurrentUserController()),
+        leaderboardRepositoryProvider.overrideWithValue(
+          leaderboardRepository ?? _FakeLeaderboardRepository(),
+        ),
+        currentUserControllerProvider.overrideWith(
+          () => _MockCurrentUserController(),
+        ),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(
@@ -237,7 +279,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('shows real XP/rank/streak from GET /leaderboard/{my_user_id}', (tester) async {
+  testWidgets('shows real XP/rank/streak from GET /leaderboard/{my_user_id}', (
+    tester,
+  ) async {
     await _pumpHome(tester);
 
     // Stats are rendered.
@@ -248,7 +292,9 @@ void main() {
     expect(find.text('5'), findsOneWidget);
   });
 
-  testWidgets('tapping the notification bell opens Notifications', (tester) async {
+  testWidgets('tapping the notification bell opens Notifications', (
+    tester,
+  ) async {
     await _pumpHome(tester);
 
     await tester.tap(find.byIcon(TablerIcons.bell));
@@ -266,7 +312,9 @@ void main() {
     expect(find.text('LOBBY'), findsOneWidget);
   });
 
-  testWidgets('"Join with a code" navigates to the Join Code screen', (tester) async {
+  testWidgets('"Join with a code" navigates to the Join Code screen', (
+    tester,
+  ) async {
     await _pumpHome(tester);
 
     await tester.tap(find.text(AppStrings.joinWithCode));
@@ -283,22 +331,4 @@ void main() {
 
     expect(find.text('CATEGORIES'), findsOneWidget);
   });
-
-  testWidgets(
-    'rival card section shows a retry row when the friends leaderboard fails, and retry clears it',
-    (tester) async {
-      final repo = _FakeLeaderboardRepository()..failFriendsScope = true;
-      await _pumpHome(tester, leaderboardRepository: repo);
-
-      // Previously this section just silently showed nothing on failure -
-      // now it matches the stats/categories sections' own retry affordance.
-      expect(find.text(AppStrings.retry), findsOneWidget);
-
-      repo.failFriendsScope = false;
-      await tester.tap(find.text(AppStrings.retry));
-      await tester.pumpAndSettle();
-
-      expect(find.text(AppStrings.retry), findsNothing);
-    },
-  );
 }
