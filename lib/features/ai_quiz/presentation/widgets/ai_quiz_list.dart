@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/ai_quiz.dart';
 
@@ -43,8 +45,10 @@ class AiQuizList extends StatelessWidget {
     // ataylab generous slack qo'shilgan — [[responsive_methodology]]dagi
     // saboqqa mos (avvalgi safar aynan shunday tor byudjet 1px overflow
     // xatosiga olib kelgan edi).
-    final double badgeLine = (scaler.scale(10) * 1.3).ceilToDouble() + 4 /* gap */ + 4 /* padding */;
-    final double textBlock = titleLine + subLine + badgeLine + 4 /* qo'shimcha slack */;
+    final double badgeLine =
+        (scaler.scale(10) * 1.3).ceilToDouble() + 4 /* gap */ + 4 /* padding */;
+    final double textBlock =
+        titleLine + subLine + badgeLine + 4 /* qo'shimcha slack */;
     const double iconBlock = 40;
     const double verticalPadding = AppSpacing.sm * 2;
     return (textBlock > iconBlock ? textBlock : iconBlock) + verticalPadding;
@@ -94,8 +98,9 @@ class _AiQuizRow extends StatelessWidget {
   final bool selectionMode;
   final bool selected;
 
-  String _sourceLabel(BuildContext context) =>
-      quiz.source == 'manual' ? context.t.aiQuiz.sourceManual : context.t.aiQuiz.sourceAi;
+  String _sourceLabel(BuildContext context) => quiz.source == 'manual'
+      ? context.t.aiQuiz.sourceManual
+      : context.t.aiQuiz.sourceAi;
 
   IconData _visibilityIcon() {
     switch (quiz.visibility) {
@@ -121,111 +126,142 @@ class _AiQuizRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.smAll,
-            border: Border.all(color: selected ? context.colors.coral : context.colors.line, width: selected ? 1.5 : 1),
-            boxShadow: context.colors.shadowSm,
-          ),
-          child: Row(
-            children: [
-              if (selectionMode) ...[
-                Icon(
-                  selected ? TablerIcons.checkbox : TablerIcons.square,
-                  color: selected ? context.colors.coral : context.colors.muted,
-                  size: 22,
-                ),
-                AppSpacing.sm.hGap,
-              ] else ...[
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(color: context.colors.coral, borderRadius: AppRadius.smAll),
-                  alignment: Alignment.center,
-                  child: const Icon(TablerIcons.sparkle, color: Colors.white, size: 18),
-                ),
-                AppSpacing.sm.hGap,
-              ],
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      quiz.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textStyles.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: context.colors.ink,
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              border: Border.all(
+                color: selected ? context.colors.coral : context.colors.line,
+                width: selected ? 1.5 : 1,
+              ),
+              boxShadow: context.colors.shadowSm,
+            ),
+            child: Row(
+              children: [
+                if (selectionMode) ...[
+                  Icon(
+                    selected ? TablerIcons.checkbox : TablerIcons.square,
+                    color: selected
+                        ? context.colors.coral
+                        : context.colors.muted,
+                    size: 22,
+                  ),
+                  AppSpacing.sm.hGap,
+                ] else ...[
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: context.colors.coral,
+                      borderRadius: AppRadius.smAll,
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      TablerIcons.sparkle,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  AppSpacing.sm.hGap,
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        quiz.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: context.textStyles.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: context.colors.ink,
+                        ),
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          context.t.common.questionCount(count: quiz.questionCount),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                        ),
-                        Text(
-                          '  •  ',
-                          style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                        ),
-                        Text(
-                          _sourceLabel(context),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: context.textStyles.labelSmall?.copyWith(color: context.colors.muted),
-                        ),
-                      ],
-                    ),
-                    if (quiz.topicCategoryName != null) ...[
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                        decoration: BoxDecoration(
-                          color: context.colors.teal.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          quiz.topicCategoryName!,
-                          style: context.textStyles.labelSmall?.copyWith(
-                            color: context.colors.teal,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
+                      Row(
+                        children: [
+                          Text(
+                            context.t.common.questionCount(
+                              count: quiz.questionCount,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textStyles.labelSmall?.copyWith(
+                              color: context.colors.muted,
+                            ),
+                          ),
+                          Text(
+                            '  •  ',
+                            style: context.textStyles.labelSmall?.copyWith(
+                              color: context.colors.muted,
+                            ),
+                          ),
+                          Text(
+                            _sourceLabel(context),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: context.textStyles.labelSmall?.copyWith(
+                              color: context.colors.muted,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (quiz.topicCategoryName != null) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.colors.teal.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            quiz.topicCategoryName!,
+                            style: context.textStyles.labelSmall?.copyWith(
+                              color: context.colors.teal,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-              AppSpacing.sm.hGap,
-              _ActionButton(
-                icon: TablerIcons.tags,
-                tooltip: context.t.aiQuiz.changeTopicTitle,
-                enabled: !selectionMode,
-                onTap: onTopicTap,
-                color: context.colors.teal,
-              ),
-              AppSpacing.xs.hGap,
-              _ActionButton(
-                icon: _visibilityIcon(),
-                tooltip: _visibilityLabel(context),
-                enabled: !selectionMode,
-                onTap: onVisibilityTap,
-                color: context.colors.coral,
-              ),
-            ],
+                AppSpacing.sm.hGap,
+                _ActionButton(
+                  icon: TablerIcons.tags,
+                  tooltip: context.t.aiQuiz.changeTopicTitle,
+                  enabled: !selectionMode,
+                  onTap: onTopicTap,
+                  color: context.colors.teal,
+                ),
+                AppSpacing.xs.hGap,
+                _ActionButton(
+                  icon: _visibilityIcon(),
+                  tooltip: _visibilityLabel(context),
+                  enabled: !selectionMode,
+                  onTap: onVisibilityTap,
+                  color: context.colors.coral,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -252,16 +288,28 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
-      child: Material(
-        color: enabled ? color : context.colors.line,
-        borderRadius: BorderRadius.circular(11),
-        child: InkWell(
-          onTap: enabled ? onTap : null,
+      child: PressableScale(
+        enabled: enabled,
+        child: Material(
+          color: enabled ? color : context.colors.line,
           borderRadius: BorderRadius.circular(11),
-          child: SizedBox(
-            width: 40,
-            height: 40,
-            child: Icon(icon, color: enabled ? Colors.white : context.colors.muted, size: 18),
+          child: InkWell(
+            onTap: enabled
+                ? () {
+                    HapticFeedback.lightImpact();
+                    onTap();
+                  }
+                : null,
+            borderRadius: BorderRadius.circular(11),
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Icon(
+                icon,
+                color: enabled ? Colors.white : context.colors.muted,
+                size: 18,
+              ),
+            ),
           ),
         ),
       ),

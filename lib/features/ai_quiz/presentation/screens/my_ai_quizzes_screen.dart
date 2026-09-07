@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -10,6 +11,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../quiz/domain/entities/category.dart';
@@ -40,7 +43,9 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
   void initState() {
     super.initState();
     if (ref.read(aiQuizControllerProvider).quizzes == null) {
-      Future.microtask(() => ref.read(aiQuizControllerProvider.notifier).loadList());
+      Future.microtask(
+        () => ref.read(aiQuizControllerProvider.notifier).loadList(),
+      );
     }
   }
 
@@ -55,9 +60,9 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
   void _enterSelectionMode() => setState(() => _selectionMode = true);
 
   void _exitSelectionMode() => setState(() {
-        _selectionMode = false;
-        _selectedIds.clear();
-      });
+    _selectionMode = false;
+    _selectedIds.clear();
+  });
 
   void _toggleSelect(AiQuiz quiz) {
     setState(() {
@@ -99,7 +104,10 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     } else {
       context.push(
         AppRoutes.quizIntro,
-        extra: QuizLaunchArgs(category: category, questionCount: quiz.questionCount),
+        extra: QuizLaunchArgs(
+          category: category,
+          questionCount: quiz.questionCount,
+        ),
       );
     }
   }
@@ -112,10 +120,30 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(context.t.aiQuiz.deleteSelectedConfirmTitle),
-        content: Text(context.t.aiQuiz.deleteSelectedConfirmMessage(count: count)),
+        content: Text(
+          context.t.aiQuiz.deleteSelectedConfirmMessage(count: count),
+        ),
         actions: [
-          TextButton(onPressed: () => dialogContext.pop(false), child: Text(context.t.common.cancel)),
-          TextButton(onPressed: () => dialogContext.pop(true), child: Text(context.t.common.delete)),
+          TextButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              dialogContext.pop(false);
+            },
+            child: Text(context.t.common.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              dialogContext.pop(true);
+            },
+            child: Text(
+              context.t.common.delete,
+              style: TextStyle(
+                color: context.colors.coralDeep,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -149,7 +177,9 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     if (selected == null || selected == quiz.visibility || !mounted) return;
 
     try {
-      await ref.read(aiQuizControllerProvider.notifier).updateVisibility(quiz.id, selected);
+      await ref
+          .read(aiQuizControllerProvider.notifier)
+          .updateVisibility(quiz.id, selected);
       if (mounted) context.showSnack(context.t.aiQuiz.visibilityUpdated);
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
@@ -166,8 +196,13 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     if (selected == quiz.topicCategoryId || !mounted) return;
 
     try {
-      await ref.read(aiQuizControllerProvider.notifier).updateTopic(quiz.id, selected);
-      if (mounted) context.showSnack(context.t.aiQuiz.visibilityUpdated); // Reusing message is okay, or add new one
+      await ref
+          .read(aiQuizControllerProvider.notifier)
+          .updateTopic(quiz.id, selected);
+      if (mounted) {
+        // Reusing message is okay, or add new one
+        context.showSnack(context.t.aiQuiz.visibilityUpdated);
+      }
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
@@ -192,7 +227,9 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
           ),
           _HeaderIconButton(
             icon: TablerIcons.trash,
-            color: hasSelection ? context.colors.coralDeep : context.colors.muted,
+            color: hasSelection
+                ? context.colors.coralDeep
+                : context.colors.muted,
             onTap: hasSelection ? _confirmDeleteSelected : null,
           ),
         ],
@@ -211,9 +248,17 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
             style: context.textStyles.titleLarge,
           ),
         ),
-        TextButton(
-          onPressed: canSelect ? _enterSelectionMode : null,
-          child: Text(context.t.aiQuiz.selectAction),
+        PressableScale(
+          enabled: canSelect,
+          child: TextButton(
+            onPressed: canSelect
+                ? () {
+                    HapticFeedback.lightImpact();
+                    _enterSelectionMode();
+                  }
+                : null,
+            child: Text(context.t.aiQuiz.selectAction),
+          ),
         ),
       ],
     );
@@ -235,58 +280,68 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              _buildHeader(context, canSelect: canSelect),
+              FadeSlideIn(child: _buildHeader(context, canSelect: canSelect)),
               AppSpacing.lg.vGap,
               if (!_selectionMode) ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: _ActionTile(
-                        icon: TablerIcons.sparkle,
-                        color: context.colors.coral,
-                        label: context.t.aiQuiz.hubAiLabel,
-                        onTap: _createViaAi,
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 60),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _ActionTile(
+                          icon: TablerIcons.sparkle,
+                          color: context.colors.coral,
+                          label: context.t.aiQuiz.hubAiLabel,
+                          onTap: _createViaAi,
+                        ),
                       ),
-                    ),
-                    AppSpacing.sm.hGap,
-                    Expanded(
-                      child: _ActionTile(
-                        icon: TablerIcons.pencil,
-                        color: context.colors.green,
-                        label: context.t.aiQuiz.hubManualLabel,
-                        onTap: _createManual,
+                      AppSpacing.sm.hGap,
+                      Expanded(
+                        child: _ActionTile(
+                          icon: TablerIcons.pencil,
+                          color: context.colors.green,
+                          label: context.t.aiQuiz.hubManualLabel,
+                          onTap: _createManual,
+                        ),
                       ),
-                    ),
-                    AppSpacing.sm.hGap,
-                    Expanded(
-                      child: _ActionTile(
-                        icon: TablerIcons.help,
-                        color: context.colors.blue,
-                        label: context.t.questionSubmission.title,
-                        onTap: _openSubmitQuestion,
+                      AppSpacing.sm.hGap,
+                      Expanded(
+                        child: _ActionTile(
+                          icon: TablerIcons.help,
+                          color: context.colors.blue,
+                          label: context.t.questionSubmission.title,
+                          onTap: _openSubmitQuestion,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 AppSpacing.lg.vGap,
               ],
               Expanded(
                 child: state.hasListError
-                    ? ErrorRetryView(onRetry: () => ref.read(aiQuizControllerProvider.notifier).loadList())
+                    ? ErrorRetryView(
+                        onRetry: () => ref
+                            .read(aiQuizControllerProvider.notifier)
+                            .loadList(),
+                      )
                     : quizzes == null
-                        ? const ShimmerListSkeleton(count: 4, trailingWidth: 36)
-                        : quizzes.isEmpty
-                            ? _EmptyState(onCreate: _createViaAi)
-                            : SingleChildScrollView(
-                                child: AiQuizList(
-                                  quizzes: quizzes,
-                                  onTap: _rowTapped,
-                                  onVisibilityTap: _changeVisibility,
-                                  onTopicTap: _changeTopic,
-                                  selectionMode: _selectionMode,
-                                  selectedIds: _selectedIds,
-                                ),
-                              ),
+                    ? const ShimmerListSkeleton(count: 4, trailingWidth: 36)
+                    : quizzes.isEmpty
+                    ? _EmptyState(onCreate: _createViaAi)
+                    : SingleChildScrollView(
+                        child: FadeSlideIn(
+                          delay: const Duration(milliseconds: 100),
+                          child: AiQuizList(
+                            quizzes: quizzes,
+                            onTap: _rowTapped,
+                            onVisibilityTap: _changeVisibility,
+                            onTopicTap: _changeTopic,
+                            selectionMode: _selectionMode,
+                            selectedIds: _selectedIds,
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),
@@ -297,7 +352,11 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
 }
 
 class _HeaderIconButton extends StatelessWidget {
-  const _HeaderIconButton({required this.icon, required this.onTap, this.color});
+  const _HeaderIconButton({
+    required this.icon,
+    required this.onTap,
+    this.color,
+  });
 
   final IconData icon;
   final VoidCallback? onTap;
@@ -305,19 +364,27 @@ class _HeaderIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: AppRadius.smAll,
-        side: BorderSide(color: context.colors.line),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.smAll,
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(icon, color: color ?? context.colors.ink, size: 20),
+    return PressableScale(
+      enabled: onTap != null,
+      child: Material(
+        color: context.colors.card,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.smAll,
+          side: BorderSide(color: context.colors.line),
+        ),
+        child: InkWell(
+          onTap: onTap == null
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  onTap!();
+                },
+          borderRadius: AppRadius.smAll,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Icon(icon, color: color ?? context.colors.ink, size: 20),
+          ),
         ),
       ),
     );
@@ -339,37 +406,50 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: Border.all(color: context.colors.line),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(color: color, borderRadius: AppRadius.smAll),
-                alignment: Alignment.center,
-                child: Icon(icon, color: Colors.white, size: 16),
-              ),
-              AppSpacing.xs.vGap,
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: context.textStyles.labelSmall?.copyWith(fontWeight: FontWeight.w600),
-              ),
-            ],
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm,
+              horizontal: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              border: Border.all(color: context.colors.line),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: AppRadius.smAll,
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(icon, color: Colors.white, size: 16),
+                ),
+                AppSpacing.xs.vGap,
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: context.textStyles.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -395,13 +475,17 @@ class _EmptyState extends StatelessWidget {
             Text(
               context.t.aiQuiz.emptyTitle,
               textAlign: TextAlign.center,
-              style: context.textStyles.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              style: context.textStyles.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             AppSpacing.xs.vGap,
             Text(
               context.t.aiQuiz.emptySubtitle,
               textAlign: TextAlign.center,
-              style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
+              style: context.textStyles.bodySmall?.copyWith(
+                color: context.colors.muted,
+              ),
             ),
           ],
         ),
@@ -416,18 +500,37 @@ class _EmptyState extends StatelessWidget {
 /// row with real spacing between them, and the currently-active one is
 /// visually distinct (coral fill/border) instead of looking identical to
 /// the others.
-class _TopicDialog extends ConsumerWidget {
+class _TopicDialog extends ConsumerStatefulWidget {
   const _TopicDialog({required this.currentId});
 
   final int? currentId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_TopicDialog> createState() => _TopicDialogState();
+}
+
+class _TopicDialogState extends ConsumerState<_TopicDialog> {
+  @override
+  void initState() {
+    super.initState();
+    // Was previously triggered from build() itself (a plain ConsumerWidget)
+    // - every rebuild while categories were still null (any unrelated
+    // provider change re-running this dialog's build) fired ANOTHER
+    // .load() call. Moved here so it only ever fires once per dialog.
+    if (ref.read(categoriesControllerProvider).data == null) {
+      Future.microtask(
+        () => ref.read(categoriesControllerProvider.notifier).load(),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final categoriesState = ref.watch(categoriesControllerProvider);
     final List<Category>? categories = categoriesState.data;
+    final int? currentId = widget.currentId;
 
     if (categories == null) {
-      Future.microtask(() => ref.read(categoriesControllerProvider.notifier).load());
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -439,7 +542,10 @@ class _TopicDialog extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(context.t.aiQuiz.changeTopicTitle, style: context.textStyles.titleLarge),
+            Text(
+              context.t.aiQuiz.changeTopicTitle,
+              style: context.textStyles.titleLarge,
+            ),
             AppSpacing.lg.vGap,
             _TopicOption(
               label: context.t.discover.categoryAll,
@@ -450,7 +556,9 @@ class _TopicDialog extends ConsumerWidget {
             ),
             AppSpacing.sm.vGap,
             ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.4),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.sizeOf(context).height * 0.4,
+              ),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -505,23 +613,32 @@ class _TopicOption extends StatelessWidget {
             ),
           ),
         ),
-        if (selected) const Icon(TablerIcons.check, size: 20, color: Colors.white),
+        if (selected)
+          const Icon(TablerIcons.check, size: 20, color: Colors.white),
       ],
     );
 
-    final Widget card = Material(
-      color: selected ? color : context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    final Widget card = PressableScale(
+      child: Material(
+        color: selected ? color : context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: selected ? null : Border.all(color: context.colors.line),
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            onTap();
+          },
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              border: selected ? null : Border.all(color: context.colors.line),
+            ),
+            child: row,
           ),
-          child: row,
         ),
       ),
     );
@@ -575,7 +692,10 @@ class _VisibilityDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(context.t.aiQuiz.visibilityDialogTitle, style: context.textStyles.titleLarge),
+            Text(
+              context.t.aiQuiz.visibilityDialogTitle,
+              style: context.textStyles.titleLarge,
+            ),
             AppSpacing.lg.vGap,
             for (final (value, icon) in _options) ...[
               _VisibilityOption(
@@ -614,7 +734,11 @@ class _VisibilityOption extends StatelessWidget {
     // stays a plain neutral card (no complaint about that one).
     final Widget row = Row(
       children: [
-        Icon(icon, size: 20, color: selected ? Colors.white : context.colors.muted),
+        Icon(
+          icon,
+          size: 20,
+          color: selected ? Colors.white : context.colors.muted,
+        ),
         AppSpacing.sm.hGap,
         Expanded(
           child: Text(
@@ -625,23 +749,32 @@ class _VisibilityOption extends StatelessWidget {
             ),
           ),
         ),
-        if (selected) const Icon(TablerIcons.check, size: 20, color: Colors.white),
+        if (selected)
+          const Icon(TablerIcons.check, size: 20, color: Colors.white),
       ],
     );
 
-    final Widget card = Material(
-      color: selected ? context.colors.coral : context.colors.card,
-      borderRadius: AppRadius.mdAll,
-      child: InkWell(
-        onTap: onTap,
+    final Widget card = PressableScale(
+      child: Material(
+        color: selected ? context.colors.coral : context.colors.card,
         borderRadius: AppRadius.mdAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.md),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.mdAll,
-            border: selected ? null : Border.all(color: context.colors.line),
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            onTap();
+          },
+          borderRadius: AppRadius.mdAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.mdAll,
+              border: selected ? null : Border.all(color: context.colors.line),
+            ),
+            child: row,
           ),
-          child: row,
         ),
       ),
     );
@@ -651,7 +784,10 @@ class _VisibilityOption extends StatelessWidget {
     // while active.
     if (!selected) return card;
     return DecoratedBox(
-      decoration: BoxDecoration(borderRadius: AppRadius.mdAll, boxShadow: context.colors.shadowCoral),
+      decoration: BoxDecoration(
+        borderRadius: AppRadius.mdAll,
+        boxShadow: context.colors.shadowCoral,
+      ),
       child: card,
     );
   }
