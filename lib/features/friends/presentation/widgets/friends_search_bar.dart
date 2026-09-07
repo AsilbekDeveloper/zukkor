@@ -31,11 +31,12 @@ class FriendsSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A fixed height - a standard, compact search-bar size (matches a
+    // default Material text field) regardless of font-metric rounding,
+    // rather than one derived from padding + line-height math.
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
+      height: 44,
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
       decoration: BoxDecoration(
         color: context.colors.card,
         borderRadius: AppRadius.smAll,
@@ -43,6 +44,7 @@ class FriendsSearchBar extends StatelessWidget {
         boxShadow: context.colors.shadowSm,
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(TablerIcons.search, color: context.colors.muted, size: 18),
           AppSpacing.sm.hGap,
