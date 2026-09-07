@@ -56,7 +56,19 @@ class FriendsSearchBar extends StatelessWidget {
               decoration: InputDecoration(
                 isDense: true,
                 isCollapsed: true,
+                filled: false,
+                // The app's global InputDecorationTheme sets its OWN
+                // enabledBorder/focusedBorder (a full outline) - setting
+                // only `border` above doesn't override those, so a second,
+                // inner outline was leaking through around this field even
+                // though the surrounding Container already draws the one
+                // real border. Every state must be silenced explicitly.
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
                 hintText: placeholder,
                 hintMaxLines: 1,
                 hintStyle: context.textStyles.bodySmall?.copyWith(
