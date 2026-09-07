@@ -15,11 +15,18 @@ class TopicSelectionRow extends ConsumerWidget {
   const TopicSelectionRow({
     required this.selectedId,
     required this.onChanged,
+    this.enabled = true,
     super.key,
   });
 
   final int? selectedId;
   final ValueChanged<int?> onChanged;
+
+  /// Same convention as [PillSegmentControl.enabled] - false while
+  /// changing the topic doesn't make sense right now (e.g. a submission
+  /// in progress), instead of leaving chips looking tappable but doing
+  /// (and feeling, via a stray haptic) nothing.
+  final bool enabled;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -51,6 +58,7 @@ class TopicSelectionRow extends ConsumerWidget {
                 _CategoryChip(
                   category: cat,
                   isSelected: cat.id == selectedId,
+                  enabled: enabled,
                   onTap: () => onChanged(cat.id == selectedId ? null : cat.id),
                 ),
                 AppSpacing.sm.hGap,
@@ -68,25 +76,30 @@ class _CategoryChip extends StatelessWidget {
     required this.category,
     required this.isSelected,
     required this.onTap,
+    required this.enabled,
   });
 
   final QuizCategory category;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     final Color color = category.color(context);
 
     return PressableScale(
+      enabled: enabled,
       child: Material(
         color: isSelected ? color : context.colors.card,
         borderRadius: AppRadius.smAll,
         child: InkWell(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            onTap();
-          },
+          onTap: enabled
+              ? () {
+                  HapticFeedback.lightImpact();
+                  onTap();
+                }
+              : null,
           borderRadius: AppRadius.smAll,
           child: Container(
             padding: const EdgeInsets.symmetric(
