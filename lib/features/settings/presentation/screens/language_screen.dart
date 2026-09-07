@@ -10,6 +10,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/checkmark_option_list.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 
 /// Single-select "choose the app language" screen — drives
@@ -38,21 +39,31 @@ class LanguageScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.settings.language, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.settings.language,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
-              CheckmarkOptionList(
-                options: [
-                  for (final AppLocale locale in appLocaleDisplayOrder)
-                    CheckmarkOption(
-                      icon: TablerIcons.world,
-                      label: locale.displayName,
-                      isActive: locale == current,
-                      onTap: () {
-                        ref.read(localeControllerProvider.notifier).setLocale(locale);
-                        _goBack(context);
-                      },
-                    ),
-                ],
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: CheckmarkOptionList(
+                  options: [
+                    for (final AppLocale locale in appLocaleDisplayOrder)
+                      CheckmarkOption(
+                        icon: TablerIcons.world,
+                        label: locale.displayName,
+                        isActive: locale == current,
+                        onTap: () {
+                          ref
+                              .read(localeControllerProvider.notifier)
+                              .setLocale(locale);
+                          _goBack(context);
+                        },
+                      ),
+                  ],
+                ),
               ),
             ],
           ),
