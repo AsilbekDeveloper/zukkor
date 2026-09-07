@@ -42,6 +42,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$categories$uz categories = _Translations$categories$uz._(_root);
 	@override late final _Translations$leaderboard$uz leaderboard = _Translations$leaderboard$uz._(_root);
 	@override late final _Translations$fullLeaderboard$uz fullLeaderboard = _Translations$fullLeaderboard$uz._(_root);
+	@override late final _Translations$achievements$uz achievements = _Translations$achievements$uz._(_root);
 	@override late final _Translations$playerDetail$uz playerDetail = _Translations$playerDetail$uz._(_root);
 	@override late final _Translations$friends$uz friends = _Translations$friends$uz._(_root);
 	@override late final _Translations$addFriend$uz addFriend = _Translations$addFriend$uz._(_root);
@@ -179,6 +180,21 @@ class _Translations$fullLeaderboard$uz implements Translations$fullLeaderboard$e
 
 	// Translations
 	@override String get title => 'To\'liq reyting';
+}
+
+// Path: achievements
+class _Translations$achievements$uz implements Translations$achievements$en {
+	_Translations$achievements$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Yutuqlaringiz';
+	@override String streakBadge({required Object count}) => '${count} kunlik olov';
+	@override String winsBadge({required Object count}) => '${count}-g\'alaba';
+	@override String xpBadge({required Object xp}) => '${xp} XP';
+	@override String topRankBadge({required Object count}) => 'Top ${count}';
+	@override String get firstRankBadge => '#1 o\'rin';
 }
 
 // Path: playerDetail
@@ -1043,6 +1059,12 @@ extension on TranslationsUz {
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
 			'leaderboard.anonymousPlayer' => 'O\'yinchi',
 			'fullLeaderboard.title' => 'To\'liq reyting',
+			'achievements.title' => 'Yutuqlaringiz',
+			'achievements.streakBadge' => ({required Object count}) => '${count} kunlik olov',
+			'achievements.winsBadge' => ({required Object count}) => '${count}-g\'alaba',
+			'achievements.xpBadge' => ({required Object xp}) => '${xp} XP',
+			'achievements.topRankBadge' => ({required Object count}) => 'Top ${count}',
+			'achievements.firstRankBadge' => '#1 o\'rin',
 			'playerDetail.title' => 'Profil',
 			'playerDetail.streakLabel' => 'Seriya',
 			'playerDetail.addToFriends' => 'Do\'stlikka qo\'shish',

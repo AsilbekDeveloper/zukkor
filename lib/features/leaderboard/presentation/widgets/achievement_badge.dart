@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/extensions/context_x.dart';
+import '../../../../core/theme/app_spacing.dart';
 import '../models/achievement.dart';
 
 class AchievementBadge extends StatelessWidget {
-  const AchievementBadge({required this.achievement, required this.unlocked, super.key});
+  const AchievementBadge({
+    required this.achievement,
+    required this.unlocked,
+    super.key,
+  });
 
   final Achievement achievement;
   final bool unlocked;
 
   @override
   Widget build(BuildContext context) {
-    final Color iconColor = unlocked ? Colors.white : const Color(0xFFB5ACA5);
+    final Color iconColor = unlocked ? Colors.white : context.colors.muted;
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        border: Border.all(color: Theme.of(context).dividerColor),
-        borderRadius: BorderRadius.circular(12),
+        color: context.colors.card,
+        border: Border.all(color: context.colors.line),
+        borderRadius: AppRadius.mdAll,
+        boxShadow: context.colors.shadowSm,
       ),
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       child: Column(
@@ -26,26 +33,27 @@ class AchievementBadge extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
+              color: unlocked ? null : context.colors.line,
               gradient: unlocked
-                  ? const LinearGradient(
+                  ? LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Color(0xFFFF7A50), Color(0xFFE05D30)],
+                      colors: [context.colors.coral, context.colors.coralDeep],
                     )
-                  : const LinearGradient(colors: [Color(0xFFEEEEEE), Color(0xFFDDDDDD)]),
+                  : null,
             ),
             alignment: Alignment.center,
             child: Icon(achievement.icon, color: iconColor, size: 18),
           ),
           const SizedBox(height: 8),
           Text(
-            achievement.label,
+            achievement.label(context),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            style: context.textStyles.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: unlocked ? null : Colors.grey,
+              color: unlocked ? context.colors.ink : context.colors.muted,
             ),
           ),
         ],

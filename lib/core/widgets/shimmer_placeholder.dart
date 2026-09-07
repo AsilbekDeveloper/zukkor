@@ -18,8 +18,16 @@ class AppShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color base = context.colors.line;
-    final Color highlight = Color.lerp(base, Colors.white, context.isDark ? 0.12 : 0.9)!;
-    return Shimmer.fromColors(baseColor: base, highlightColor: highlight, child: child);
+    final Color highlight = Color.lerp(
+      base,
+      Colors.white,
+      context.isDark ? 0.12 : 0.9,
+    )!;
+    return Shimmer.fromColors(
+      baseColor: base,
+      highlightColor: highlight,
+      child: child,
+    );
   }
 }
 
@@ -38,7 +46,10 @@ class ShimmerBox extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(color: context.colors.line, borderRadius: BorderRadius.circular(radius)),
+      decoration: BoxDecoration(
+        color: context.colors.line,
+        borderRadius: BorderRadius.circular(radius),
+      ),
     );
   }
 }
@@ -54,7 +65,10 @@ class ShimmerCircle extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(color: context.colors.line, shape: BoxShape.circle),
+      decoration: BoxDecoration(
+        color: context.colors.line,
+        shape: BoxShape.circle,
+      ),
     );
   }
 }
@@ -86,7 +100,9 @@ class ShimmerListSkeleton extends StatelessWidget {
           children: [
             for (int i = 0; i < count; i++)
               Padding(
-                padding: EdgeInsets.only(bottom: i == count - 1 ? 0 : AppSpacing.xs),
+                padding: EdgeInsets.only(
+                  bottom: i == count - 1 ? 0 : AppSpacing.xs,
+                ),
                 child: _row(context),
               ),
           ],
@@ -97,7 +113,10 @@ class ShimmerListSkeleton extends StatelessWidget {
 
   Widget _row(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: context.colors.card,
         borderRadius: AppRadius.smAll,
@@ -177,6 +196,52 @@ class ShimmerCategoryGridSkeleton extends StatelessWidget {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A skeleton for [AchievementBadge]'s grid — same `maxCrossAxisExtent`
+/// layout as the real badge grid, so the placeholder cards land in the
+/// same columns/rows.
+class ShimmerAchievementGridSkeleton extends StatelessWidget {
+  const ShimmerAchievementGridSkeleton({this.count = 12, super.key});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: count,
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 140,
+          mainAxisSpacing: AppSpacing.sm,
+          crossAxisSpacing: AppSpacing.sm,
+          mainAxisExtent: 108,
+        ),
+        itemBuilder: (context, index) => _badge(context),
+      ),
+    );
+  }
+
+  Widget _badge(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      decoration: BoxDecoration(
+        color: context.colors.card,
+        borderRadius: AppRadius.mdAll,
+        border: Border.all(color: context.colors.line),
+      ),
+      child: const Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ShimmerCircle(size: 40),
+          SizedBox(height: 8),
+          ShimmerBox(width: 60, height: 11),
         ],
       ),
     );

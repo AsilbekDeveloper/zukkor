@@ -48,6 +48,14 @@
   "fullLeaderboard": {
     "title": "Full ranking"
   },
+  "achievements": {
+    "title": "Your achievements",
+    "streakBadge": "$count-day streak",
+    "winsBadge": "$count wins",
+    "xpBadge": "$xp XP",
+    "topRankBadge": "Top $count",
+    "firstRankBadge": "#1 rank"
+  },
   "playerDetail": {
     "title": "Profile",
     "streakLabel": "Streak",

@@ -48,6 +48,14 @@
   "fullLeaderboard": {
     "title": "To'liq reyting"
   },
+  "achievements": {
+    "title": "Yutuqlaringiz",
+    "streakBadge": "$count kunlik olov",
+    "winsBadge": "$count-g'alaba",
+    "xpBadge": "$xp XP",
+    "topRankBadge": "Top $count",
+    "firstRankBadge": "#1 o'rin"
+  },
   "playerDetail": {
     "title": "Profil",
     "streakLabel": "Seriya",

@@ -45,6 +45,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$categories$en categories = Translations$categories$en._(_root);
 	late final Translations$leaderboard$en leaderboard = Translations$leaderboard$en._(_root);
 	late final Translations$fullLeaderboard$en fullLeaderboard = Translations$fullLeaderboard$en._(_root);
+	late final Translations$achievements$en achievements = Translations$achievements$en._(_root);
 	late final Translations$playerDetail$en playerDetail = Translations$playerDetail$en._(_root);
 	late final Translations$friends$en friends = Translations$friends$en._(_root);
 	late final Translations$addFriend$en addFriend = Translations$addFriend$en._(_root);
@@ -260,6 +261,33 @@ class Translations$fullLeaderboard$en {
 
 	/// en: 'Full ranking'
 	String get title => 'Full ranking';
+}
+
+// Path: achievements
+class Translations$achievements$en {
+	Translations$achievements$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Your achievements'
+	String get title => 'Your achievements';
+
+	/// en: '$count-day streak'
+	String streakBadge({required Object count}) => '${count}-day streak';
+
+	/// en: '$count wins'
+	String winsBadge({required Object count}) => '${count} wins';
+
+	/// en: '$xp XP'
+	String xpBadge({required Object xp}) => '${xp} XP';
+
+	/// en: 'Top $count'
+	String topRankBadge({required Object count}) => 'Top ${count}';
+
+	/// en: '#1 rank'
+	String get firstRankBadge => '#1 rank';
 }
 
 // Path: playerDetail
@@ -1962,6 +1990,12 @@ extension on Translations {
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
 			'leaderboard.anonymousPlayer' => 'Player',
 			'fullLeaderboard.title' => 'Full ranking',
+			'achievements.title' => 'Your achievements',
+			'achievements.streakBadge' => ({required Object count}) => '${count}-day streak',
+			'achievements.winsBadge' => ({required Object count}) => '${count} wins',
+			'achievements.xpBadge' => ({required Object xp}) => '${xp} XP',
+			'achievements.topRankBadge' => ({required Object count}) => 'Top ${count}',
+			'achievements.firstRankBadge' => '#1 rank',
 			'playerDetail.title' => 'Profile',
 			'playerDetail.streakLabel' => 'Streak',
 			'playerDetail.addToFriends' => 'Add to friends',

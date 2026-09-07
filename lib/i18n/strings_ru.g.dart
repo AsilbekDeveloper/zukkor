@@ -42,6 +42,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$categories$ru categories = _Translations$categories$ru._(_root);
 	@override late final _Translations$leaderboard$ru leaderboard = _Translations$leaderboard$ru._(_root);
 	@override late final _Translations$fullLeaderboard$ru fullLeaderboard = _Translations$fullLeaderboard$ru._(_root);
+	@override late final _Translations$achievements$ru achievements = _Translations$achievements$ru._(_root);
 	@override late final _Translations$playerDetail$ru playerDetail = _Translations$playerDetail$ru._(_root);
 	@override late final _Translations$friends$ru friends = _Translations$friends$ru._(_root);
 	@override late final _Translations$addFriend$ru addFriend = _Translations$addFriend$ru._(_root);
@@ -185,6 +186,21 @@ class _Translations$fullLeaderboard$ru implements Translations$fullLeaderboard$e
 
 	// Translations
 	@override String get title => 'Полный рейтинг';
+}
+
+// Path: achievements
+class _Translations$achievements$ru implements Translations$achievements$en {
+	_Translations$achievements$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Ваши достижения';
+	@override String streakBadge({required Object count}) => '${count} дн. подряд';
+	@override String winsBadge({required Object count}) => '${count} побед';
+	@override String xpBadge({required Object xp}) => '${xp} XP';
+	@override String topRankBadge({required Object count}) => 'Топ ${count}';
+	@override String get firstRankBadge => '#1 место';
 }
 
 // Path: playerDetail
@@ -1049,6 +1065,12 @@ extension on TranslationsRu {
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
 			'leaderboard.anonymousPlayer' => 'Игрок',
 			'fullLeaderboard.title' => 'Полный рейтинг',
+			'achievements.title' => 'Ваши достижения',
+			'achievements.streakBadge' => ({required Object count}) => '${count} дн. подряд',
+			'achievements.winsBadge' => ({required Object count}) => '${count} побед',
+			'achievements.xpBadge' => ({required Object xp}) => '${xp} XP',
+			'achievements.topRankBadge' => ({required Object count}) => 'Топ ${count}',
+			'achievements.firstRankBadge' => '#1 место',
 			'playerDetail.title' => 'Профиль',
 			'playerDetail.streakLabel' => 'Серия',
 			'playerDetail.addToFriends' => 'Добавить в друзья',

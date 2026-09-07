@@ -63,6 +63,14 @@
   "fullLeaderboard": {
     "title": "Полный рейтинг"
   },
+  "achievements": {
+    "title": "Ваши достижения",
+    "streakBadge": "$count дн. подряд",
+    "winsBadge": "$count побед",
+    "xpBadge": "$xp XP",
+    "topRankBadge": "Топ $count",
+    "firstRankBadge": "#1 место"
+  },
   "playerDetail": {
     "title": "Профиль",
     "streakLabel": "Серия",
