@@ -9,6 +9,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -39,7 +40,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     // provider directly (see DuelController/LobbyController/QuizScreen),
     // so a stale list here would only happen if that hook were missing.
     if (ref.read(historyControllerProvider).entries == null) {
-      Future.microtask(() => ref.read(historyControllerProvider.notifier).load());
+      Future.microtask(
+        () => ref.read(historyControllerProvider.notifier).load(),
+      );
     }
     _scrollController.addListener(_onScroll);
   }
@@ -55,7 +58,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   // Fires the next page a little before the user actually hits the
   // bottom, so the new rows are ready by the time they get there.
   void _onScroll() {
-    if (_scrollController.position.pixels < _scrollController.position.maxScrollExtent - 200) return;
+    if (_scrollController.position.pixels <
+        _scrollController.position.maxScrollExtent - 200) {
+      return;
+    }
     ref.read(historyControllerProvider.notifier).loadMore();
   }
 
@@ -67,10 +73,19 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   /// (there's nothing to scroll), silently hiding real data. Called after
   /// every build, this keeps pulling pages until the filtered list either
   /// fills the viewport or [HistoryState.hasMore] runs out.
-  void _maybeLoadMoreForFilter(HistoryState state, List<GameHistoryEntry> filteredEntries) {
-    if (!mounted || state.entries == null || !state.hasMore || state.isLoadingMore) return;
+  void _maybeLoadMoreForFilter(
+    HistoryState state,
+    List<GameHistoryEntry> filteredEntries,
+  ) {
+    if (!mounted ||
+        state.entries == null ||
+        !state.hasMore ||
+        state.isLoadingMore) {
+      return;
+    }
     final bool viewportNotFull =
-        !_scrollController.hasClients || _scrollController.position.maxScrollExtent <= 0;
+        !_scrollController.hasClients ||
+        _scrollController.position.maxScrollExtent <= 0;
     if (filteredEntries.isEmpty || viewportNotFull) {
       ref.read(historyControllerProvider.notifier).loadMore();
     }
@@ -101,11 +116,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   Widget build(BuildContext context) {
     final HistoryState historyState = ref.watch(historyControllerProvider);
     final List<SessionHistoryEntry>? sessions = historyState.entries;
-    final List<GameHistoryEntry> entries = sessions == null ? const [] : _filteredEntries(sessions);
-    final String emptyMessage =
-        _selectedMode == null ? context.t.history.noGamesYet : context.t.history.emptyState;
+    final List<GameHistoryEntry> entries = sessions == null
+        ? const []
+        : _filteredEntries(sessions);
+    final String emptyMessage = _selectedMode == null
+        ? context.t.history.noGamesYet
+        : context.t.history.emptyState;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeLoadMoreForFilter(historyState, entries));
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _maybeLoadMoreForFilter(historyState, entries),
+    );
 
     return Scaffold(
       body: SafeArea(
@@ -115,50 +135,78 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               AppSpacing.xs.vGap,
-              BackHeader(title: context.t.profile.gameHistory, onBack: () => _goBack(context)),
+              FadeSlideIn(
+                child: BackHeader(
+                  title: context.t.profile.gameHistory,
+                  onBack: () => _goBack(context),
+                ),
+              ),
               AppSpacing.lg.vGap,
-              PillSegmentControl<GameMode?>(
-                values: const [null, GameMode.solo, GameMode.duel, GameMode.lobby],
-                selected: _selectedMode,
-                labelBuilder: (mode) => mode?.label(context) ?? context.t.history.segmentAll,
-                onChanged: (mode) => setState(() => _selectedMode = mode),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 60),
+                child: PillSegmentControl<GameMode?>(
+                  values: const [
+                    null,
+                    GameMode.solo,
+                    GameMode.duel,
+                    GameMode.lobby,
+                  ],
+                  selected: _selectedMode,
+                  labelBuilder: (mode) =>
+                      mode?.label(context) ?? context.t.history.segmentAll,
+                  onChanged: (mode) => setState(() => _selectedMode = mode),
+                ),
               ),
               AppSpacing.lg.vGap,
               Expanded(
                 child: historyState.hasError
-                    ? ErrorRetryView(onRetry: () => ref.read(historyControllerProvider.notifier).load())
+                    ? ErrorRetryView(
+                        onRetry: () =>
+                            ref.read(historyControllerProvider.notifier).load(),
+                      )
                     : sessions == null
                     ? const ShimmerListSkeleton()
                     : entries.isEmpty
-                        ? Center(
-                            child: Text(
-                              emptyMessage,
-                              textAlign: TextAlign.center,
-                              style: context.textStyles.bodySmall?.copyWith(color: context.colors.muted),
-                            ),
-                          )
-                        : RefreshIndicator(
-                            onRefresh: () => ref.read(historyControllerProvider.notifier).load(),
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              child: Column(
-                                children: [
-                                  HistoryList(entries: entries),
-                                  if (historyState.isLoadingMore) ...[
-                                    AppSpacing.md.vGap,
-                                    const Center(
-                                      child: SizedBox.square(
-                                        dimension: 22,
-                                        child: CircularProgressIndicator(strokeWidth: 2.5),
-                                      ),
-                                    ),
-                                    AppSpacing.md.vGap,
-                                  ],
-                                ],
-                              ),
+                    ? FadeSlideIn(
+                        delay: const Duration(milliseconds: 120),
+                        child: Center(
+                          child: Text(
+                            emptyMessage,
+                            textAlign: TextAlign.center,
+                            style: context.textStyles.bodySmall?.copyWith(
+                              color: context.colors.muted,
                             ),
                           ),
+                        ),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: () =>
+                            ref.read(historyControllerProvider.notifier).load(),
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: FadeSlideIn(
+                            delay: const Duration(milliseconds: 120),
+                            child: Column(
+                              children: [
+                                HistoryList(entries: entries),
+                                if (historyState.isLoadingMore) ...[
+                                  AppSpacing.md.vGap,
+                                  const Center(
+                                    child: SizedBox.square(
+                                      dimension: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                      ),
+                                    ),
+                                  ),
+                                  AppSpacing.md.vGap,
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),
