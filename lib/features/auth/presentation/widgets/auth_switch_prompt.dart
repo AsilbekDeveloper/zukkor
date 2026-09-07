@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/extensions/context_x.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 
 /// Ekran pastidagi "X? Y" qatori — Login'da Register'ga, Register'da
 /// Login'ga o'tish havolasi.
@@ -28,7 +30,15 @@ class AuthSwitchPrompt extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        TextButton(onPressed: onTap, child: Text(actionText)),
+        PressableScale(
+          child: TextButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              onTap();
+            },
+            child: Text(actionText),
+          ),
+        ),
       ],
     );
   }
