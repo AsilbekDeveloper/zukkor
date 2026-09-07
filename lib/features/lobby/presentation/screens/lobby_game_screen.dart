@@ -161,11 +161,17 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen>
         content: Text(context.t.gameLeave.lobbyMessage),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).pop(false);
+            },
             child: Text(context.t.gameLeave.stay),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).pop(true);
+            },
             child: Text(
               context.t.gameLeave.leave,
               style: TextStyle(

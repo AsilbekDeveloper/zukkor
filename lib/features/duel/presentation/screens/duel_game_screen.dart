@@ -158,11 +158,17 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen>
         content: Text(context.t.gameLeave.duelMessage),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).pop(false);
+            },
             child: Text(context.t.gameLeave.stay),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).pop(true);
+            },
             child: Text(
               context.t.gameLeave.leave,
               style: TextStyle(
@@ -188,7 +194,10 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen>
         title: Text(context.t.gameLeave.opponentLeft),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).pop();
+            },
             child: Text(context.t.common.ok),
           ),
         ],
