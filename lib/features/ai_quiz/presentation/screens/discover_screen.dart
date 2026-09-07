@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
@@ -11,6 +12,8 @@ import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
+import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../friends/presentation/widgets/friends_search_bar.dart';
@@ -42,6 +45,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   List<DiscoverQuiz>? _feed;
   List<DiscoverQuiz>? _searchResults;
   bool _hasError = false;
+  bool _searchHasError = false;
 
   @override
   void initState() {
@@ -65,9 +69,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       _feed = null;
     });
     try {
-      final quizzes = await ref.read(aiQuizControllerProvider.notifier).discover(
-            categoryId: _selectedCategoryId,
-          );
+      final quizzes = await ref
+          .read(aiQuizControllerProvider.notifier)
+          .discover(categoryId: _selectedCategoryId);
       if (!mounted) return;
       setState(() => _feed = quizzes);
     } catch (_) {
@@ -82,6 +86,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
       setState(() {
         _mode = _DiscoverMode.feed;
         _searchResults = null;
+        _searchHasError = false;
       });
       _loadFeed();
       return;
@@ -94,16 +99,28 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   Future<void> _searchQuizzes(String query) async {
-    setState(() => _searchResults = null);
+    setState(() {
+      _searchResults = null;
+      _searchHasError = false;
+    });
     try {
-      final results = await ref.read(aiQuizControllerProvider.notifier).searchDiscover(
-            query,
-            categoryId: _selectedCategoryId,
-          );
+      final results = await ref
+          .read(aiQuizControllerProvider.notifier)
+          .searchDiscover(query, categoryId: _selectedCategoryId);
       if (!mounted) return;
       setState(() => _searchResults = results);
     } catch (_) {
-      if (mounted) setState(() => _searchResults = []);
+      // Avval bu ham "natija yo'q" bilan bir xil holatga tushirilardi —
+      // foydalanuvchi buni "mos quiz topilmadi" deb tushunardi, aslida
+      // so'rovning o'zi muvaffaqiyatsiz bo'lgan, qayta urinish imkoni
+      // ham yo'q edi. Endi alohida xato holati.
+      if (mounted) setState(() => _searchHasError = true);
+    }
+  }
+
+  void _retrySearch() {
+    if (_searchController.text.isNotEmpty) {
+      _searchQuizzes(_searchController.text);
     }
   }
 
@@ -127,7 +144,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     );
     context.push(
       AppRoutes.quizIntro,
-      extra: QuizLaunchArgs(category: category, questionCount: quiz.questionCount),
+      extra: QuizLaunchArgs(
+        category: category,
+        questionCount: quiz.questionCount,
+      ),
     );
   }
 
@@ -141,18 +161,26 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppSpacing.xs.vGap,
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: hPad),
-              child: _buildHeader(),
+            FadeSlideIn(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: hPad),
+                child: _buildHeader(),
+              ),
             ),
             AppSpacing.md.vGap,
-            _CategoryFilterRow(
-              selectedId: _selectedCategoryId,
-              onSelected: _selectCategory,
+            FadeSlideIn(
+              delay: const Duration(milliseconds: 60),
+              child: _CategoryFilterRow(
+                selectedId: _selectedCategoryId,
+                onSelected: _selectCategory,
+              ),
             ),
             AppSpacing.lg.vGap,
             Expanded(
-              child: _buildBody(),
+              child: FadeSlideIn(
+                delay: const Duration(milliseconds: 120),
+                child: _buildBody(),
+              ),
             ),
           ],
         ),
@@ -163,9 +191,14 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   Widget _buildHeader() {
     return Row(
       children: [
-        IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(TablerIcons.arrowLeft),
+        PressableScale(
+          child: IconButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              context.pop();
+            },
+            icon: const Icon(TablerIcons.arrowLeft),
+          ),
         ),
         Expanded(
           child: FriendsSearchBar(
@@ -181,8 +214,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   Widget _buildBody() {
     final quizzes = _mode == _DiscoverMode.feed ? _feed : _searchResults;
 
-    if (_hasError && _mode == _DiscoverMode.feed) {
+    if (_mode == _DiscoverMode.feed && _hasError) {
       return ErrorRetryView(onRetry: _loadFeed);
+    }
+    if (_mode == _DiscoverMode.search && _searchHasError) {
+      return ErrorRetryView(onRetry: _retrySearch);
     }
 
     if (quizzes == null) {
@@ -195,9 +231,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     if (quizzes.isEmpty) {
       return Center(
         child: Text(
-          _mode == _DiscoverMode.feed ? context.t.discover.emptyFeed : context.t.discover.noResults,
+          _mode == _DiscoverMode.feed
+              ? context.t.discover.emptyFeed
+              : context.t.discover.noResults,
           textAlign: TextAlign.center,
-          style: context.textStyles.bodyMedium?.copyWith(color: context.colors.muted),
+          style: context.textStyles.bodyMedium?.copyWith(
+            color: context.colors.muted,
+          ),
         ),
       );
     }
@@ -205,7 +245,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     return RefreshIndicator(
       onRefresh: _loadFeed,
       child: ListView.separated(
-        padding: EdgeInsets.fromLTRB(context.screenHPad, 0, context.screenHPad, AppSpacing.lg),
+        padding: EdgeInsets.fromLTRB(
+          context.screenHPad,
+          0,
+          context.screenHPad,
+          AppSpacing.lg,
+        ),
         itemCount: quizzes.length,
         separatorBuilder: (_, _) => AppSpacing.xs.vGap,
         itemBuilder: (context, index) {
@@ -213,7 +258,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           return QuizCard(
             name: quiz.name,
             questionCount: quiz.questionCount,
-            creatorName: context.t.discover.byCreator(name: quiz.ownerUsername ?? 'user'),
+            creatorName: context.t.discover.byCreator(
+              name: quiz.ownerUsername ?? 'user',
+            ),
             topicName: quiz.topicCategoryName,
             onTap: () => _pick(quiz),
           );
@@ -224,7 +271,10 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 }
 
 class _CategoryFilterRow extends ConsumerWidget {
-  const _CategoryFilterRow({required this.selectedId, required this.onSelected});
+  const _CategoryFilterRow({
+    required this.selectedId,
+    required this.onSelected,
+  });
 
   final int? selectedId;
   final ValueChanged<int?> onSelected;
@@ -282,33 +332,47 @@ class _FilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color color = activeColor ?? context.colors.coral;
 
-    return Material(
-      color: isSelected ? color : context.colors.card,
-      borderRadius: AppRadius.smAll,
-      child: InkWell(
-        onTap: onTap,
+    return PressableScale(
+      child: Material(
+        color: isSelected ? color : context.colors.card,
         borderRadius: AppRadius.smAll,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm - 2),
-          decoration: BoxDecoration(
-            borderRadius: AppRadius.smAll,
-            border: Border.all(color: isSelected ? color : context.colors.line),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 16, color: isSelected ? Colors.white : color),
-                AppSpacing.xs.hGap,
-              ],
-              Text(
-                label,
-                style: context.textStyles.bodySmall?.copyWith(
-                  color: isSelected ? Colors.white : context.colors.ink,
-                  fontWeight: FontWeight.w600,
-                ),
+        child: InkWell(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            onTap();
+          },
+          borderRadius: AppRadius.smAll,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.sm - 2,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: AppRadius.smAll,
+              border: Border.all(
+                color: isSelected ? color : context.colors.line,
               ),
-            ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  Icon(
+                    icon,
+                    size: 16,
+                    color: isSelected ? Colors.white : color,
+                  ),
+                  AppSpacing.xs.hGap,
+                ],
+                Text(
+                  label,
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: isSelected ? Colors.white : context.colors.ink,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
