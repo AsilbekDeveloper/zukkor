@@ -481,11 +481,18 @@
     "manualOptionLabel(param=number)": "Option $number",
     "manualFillAllFields": "Fill in all fields",
     "manualAddQuestion": "+ Add question",
+    "manualSaveQuestion": "Save",
     "manualSubmit": "Create",
     "noSharedQuizzes": "This user hasn't shared any quizzes yet",
     "topicSelectionLabel": "Topic (optional)",
     "topicSelectionHint": "Choose a topic",
-    "changeTopicTitle": "Change topic"
+    "changeTopicTitle": "Change topic",
+    "filterAll": "All",
+    "editQuestionsTooltip": "Edit questions",
+    "questionAdded": "Question added",
+    "questionSaved": "Question saved",
+    "deleteQuestionConfirmTitle": "Delete question",
+    "deleteQuestionConfirmMessage": "Delete this question? This can't be undone."
   },
   "questionSubmission": {
     "title": "Add a question",

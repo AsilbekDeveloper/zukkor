@@ -22,6 +22,7 @@ class AiQuizList extends StatelessWidget {
     required this.onTap,
     required this.onVisibilityTap,
     required this.onTopicTap,
+    this.onEditTap,
     this.selectionMode = false,
     this.selectedIds = const {},
     super.key,
@@ -31,6 +32,10 @@ class AiQuizList extends StatelessWidget {
   final ValueChanged<AiQuiz> onTap;
   final ValueChanged<AiQuiz> onVisibilityTap;
   final ValueChanged<AiQuiz> onTopicTap;
+
+  /// Only ever called for `source == 'manual'` quizzes - see [_AiQuizRow].
+  /// Null hides the edit action everywhere (e.g. a read-only listing).
+  final ValueChanged<AiQuiz>? onEditTap;
   final bool selectionMode;
   final Set<int> selectedIds;
 
@@ -73,6 +78,7 @@ class AiQuizList extends StatelessWidget {
           onTap: () => onTap(quiz),
           onVisibilityTap: () => onVisibilityTap(quiz),
           onTopicTap: () => onTopicTap(quiz),
+          onEditTap: onEditTap == null ? null : () => onEditTap!(quiz),
           selectionMode: selectionMode,
           selected: selectedIds.contains(quiz.id),
         );
@@ -87,6 +93,7 @@ class _AiQuizRow extends StatelessWidget {
     required this.onTap,
     required this.onVisibilityTap,
     required this.onTopicTap,
+    required this.onEditTap,
     required this.selectionMode,
     required this.selected,
   });
@@ -95,6 +102,7 @@ class _AiQuizRow extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onVisibilityTap;
   final VoidCallback onTopicTap;
+  final VoidCallback? onEditTap;
   final bool selectionMode;
   final bool selected;
 
@@ -245,6 +253,16 @@ class _AiQuizRow extends StatelessWidget {
                   ),
                 ),
                 AppSpacing.sm.hGap,
+                if (quiz.source == 'manual' && onEditTap != null) ...[
+                  _ActionButton(
+                    icon: TablerIcons.pencil,
+                    tooltip: context.t.aiQuiz.editQuestionsTooltip,
+                    enabled: !selectionMode,
+                    onTap: onEditTap!,
+                    color: context.colors.green,
+                  ),
+                  AppSpacing.xs.hGap,
+                ],
                 _ActionButton(
                   icon: TablerIcons.tags,
                   tooltip: context.t.aiQuiz.changeTopicTitle,

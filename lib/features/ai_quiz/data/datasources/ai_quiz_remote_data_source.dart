@@ -6,6 +6,7 @@ import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/manual_question_input.dart';
 import '../models/ai_quiz_model.dart';
 import '../models/discover_quiz_model.dart';
+import '../models/quiz_question_model.dart';
 
 /// `/ai-quiz/*` endpoint'lariga xom (Dio) so'rovlar. Xatolikni ushlamaydi —
 /// [DioException] to'g'ridan-to'g'ri tashqariga chiqadi, uni [Failure]ga
@@ -30,7 +31,10 @@ class AiQuizRemoteDataSource {
   }) async {
     final Map<String, dynamic> fields = {'question_count': questionCount};
     if (filePath != null && fileName != null) {
-      fields['file'] = await MultipartFile.fromFile(filePath, filename: fileName);
+      fields['file'] = await MultipartFile.fromFile(
+        filePath,
+        filename: fileName,
+      );
     }
     if (instruction != null && instruction.isNotEmpty) {
       fields['instruction'] = instruction;
@@ -45,7 +49,10 @@ class AiQuizRemoteDataSource {
     final Response<dynamic> response = await _dio.post(
       ApiEndpoints.aiQuizGenerate,
       data: formData,
-      options: Options(sendTimeout: _generateTimeout, receiveTimeout: _generateTimeout),
+      options: Options(
+        sendTimeout: _generateTimeout,
+        receiveTimeout: _generateTimeout,
+      ),
     );
     return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
   }
@@ -60,7 +67,10 @@ class AiQuizRemoteDataSource {
   }) async {
     final Map<String, dynamic> fields = {'question_count': questionCount};
     if (filePath != null && fileName != null) {
-      fields['file'] = await MultipartFile.fromFile(filePath, filename: fileName);
+      fields['file'] = await MultipartFile.fromFile(
+        filePath,
+        filename: fileName,
+      );
     }
     if (instruction != null && instruction.isNotEmpty) {
       fields['instruction'] = instruction;
@@ -80,7 +90,9 @@ class AiQuizRemoteDataSource {
   }
 
   Future<Map<String, dynamic>> getAsyncJobStatus(String jobId) async {
-    final Response<dynamic> response = await _dio.get('${ApiEndpoints.aiQuiz}/generate-async/$jobId');
+    final Response<dynamic> response = await _dio.get(
+      '${ApiEndpoints.aiQuiz}/generate-async/$jobId',
+    );
     return response.data as Map<String, dynamic>;
   }
 
@@ -121,20 +133,16 @@ class AiQuizRemoteDataSource {
       data: {
         'name': name,
         'topic_category_id': topicCategoryId,
-        'questions': questions
-            .map((q) => {
-                  'question_text': q.questionText,
-                  'options': q.options,
-                  'correct_option_index': q.correctOptionIndex,
-                })
-            .toList(),
+        'questions': questions.map(_questionJson).toList(),
       },
     );
     return AiQuizModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   Future<List<AiQuizModel>> listForUser(String userId) async {
-    final Response<dynamic> response = await _dio.get(ApiEndpoints.aiQuizForUser(userId));
+    final Response<dynamic> response = await _dio.get(
+      ApiEndpoints.aiQuizForUser(userId),
+    );
     return (response.data as List<dynamic>)
         .map((json) => AiQuizModel.fromJson(json as Map<String, dynamic>))
         .toList();
@@ -150,7 +158,10 @@ class AiQuizRemoteDataSource {
         .toList();
   }
 
-  Future<List<DiscoverQuizModel>> searchDiscover(String query, {int? categoryId}) async {
+  Future<List<DiscoverQuizModel>> searchDiscover(
+    String query, {
+    int? categoryId,
+  }) async {
     final Map<String, dynamic> params = {'q': query};
     if (categoryId != null) {
       params['category_id'] = categoryId;
@@ -163,8 +174,51 @@ class AiQuizRemoteDataSource {
         .map((json) => DiscoverQuizModel.fromJson(json as Map<String, dynamic>))
         .toList();
   }
+
+  Future<List<QuizQuestionModel>> listQuestions(int quizId) async {
+    final Response<dynamic> response = await _dio.get(
+      ApiEndpoints.aiQuizQuestions(quizId),
+    );
+    return (response.data as List<dynamic>)
+        .map((json) => QuizQuestionModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<QuizQuestionModel> addQuestion(
+    int quizId,
+    ManualQuestionInput question,
+  ) async {
+    final Response<dynamic> response = await _dio.post(
+      ApiEndpoints.aiQuizQuestions(quizId),
+      data: _questionJson(question),
+    );
+    return QuizQuestionModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<QuizQuestionModel> updateQuestion(
+    int quizId,
+    int questionId,
+    ManualQuestionInput question,
+  ) async {
+    final Response<dynamic> response = await _dio.patch(
+      ApiEndpoints.aiQuizQuestion(quizId, questionId),
+      data: _questionJson(question),
+    );
+    return QuizQuestionModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<void> deleteQuestion(int quizId, int questionId) async {
+    await _dio.delete<void>(ApiEndpoints.aiQuizQuestion(quizId, questionId));
+  }
+
+  Map<String, dynamic> _questionJson(ManualQuestionInput question) => {
+    'question_text': question.questionText,
+    'options': question.options,
+    'correct_option_index': question.correctOptionIndex,
+  };
 }
 
-final Provider<AiQuizRemoteDataSource> aiQuizRemoteDataSourceProvider = Provider<AiQuizRemoteDataSource>(
-  (ref) => AiQuizRemoteDataSource(ref.watch(dioProvider)),
-);
+final Provider<AiQuizRemoteDataSource> aiQuizRemoteDataSourceProvider =
+    Provider<AiQuizRemoteDataSource>(
+      (ref) => AiQuizRemoteDataSource(ref.watch(dioProvider)),
+    );

@@ -2,8 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/ai_quiz/presentation/models/edit_manual_quiz_args.dart';
 import '../../features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/discover_screen.dart';
+import '../../features/ai_quiz/presentation/screens/edit_manual_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
 import '../../features/auth/presentation/screens/account_switcher_screen.dart';
@@ -70,25 +72,36 @@ import 'app_routes.dart';
 /// of a class so QuizSetupScreen doesn't need to import Friends'/Lobby's
 /// types just to carry this - only this router (which is allowed to
 /// know about every feature) ever constructs one.
-typedef QuizSetupExtra = ({QuizCategory category, void Function(BuildContext, WidgetRef, int) onStart});
+typedef QuizSetupExtra = ({
+  QuizCategory category,
+  void Function(BuildContext, WidgetRef, int) onStart,
+});
 
-CategoryPickedCallback _duelCategoryPicked(FriendEntry opponent) => (context, ref, category) => context.push(
+CategoryPickedCallback _duelCategoryPicked(FriendEntry opponent) =>
+    (context, ref, category) => context.push(
       AppRoutes.quizSetup,
       extra: (
         category: category,
         onStart: (BuildContext ctx, WidgetRef ref, int count) => ctx.push(
           AppRoutes.duelWaiting,
-          extra: DuelMatch(opponent: opponent, category: category, questionCount: count),
+          extra: DuelMatch(
+            opponent: opponent,
+            category: category,
+            questionCount: count,
+          ),
         ),
       ),
     );
 
-CategoryPickedCallback _lobbyCategoryPicked(String roomId) => (context, ref, category) => context.push(
+CategoryPickedCallback _lobbyCategoryPicked(String roomId) =>
+    (context, ref, category) => context.push(
       AppRoutes.quizSetup,
       extra: (
         category: category,
         onStart: (BuildContext ctx, WidgetRef ref, int count) {
-          ref.read(lobbyControllerProvider.notifier).startGame(category.id, questionCount: count);
+          ref
+              .read(lobbyControllerProvider.notifier)
+              .startGame(category.id, questionCount: count);
           ctx.pop();
         },
       ),
@@ -113,11 +126,13 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.login,
-        builder: (context, state) => LoginScreen(isAddingAccount: state.extra == true),
+        builder: (context, state) =>
+            LoginScreen(isAddingAccount: state.extra == true),
       ),
       GoRoute(
         path: AppRoutes.register,
-        builder: (context, state) => RegisterScreen(isAddingAccount: state.extra == true),
+        builder: (context, state) =>
+            RegisterScreen(isAddingAccount: state.extra == true),
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
@@ -125,14 +140,16 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.resetPasswordScreen,
-        builder: (context, state) => ResetPasswordScreen(email: state.extra! as String),
+        builder: (context, state) =>
+            ResetPasswordScreen(email: state.extra! as String),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
         builder: (context, state) => const OnboardingScreen(),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) => MainShell(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) =>
+            MainShell(navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(
             routes: [
@@ -182,13 +199,15 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
           if (extra is FriendEntry) {
             return CategoriesScreen(
               onCategoryPicked: _duelCategoryPicked(extra),
-              onAiQuizEntryTap: () => context.push(AppRoutes.myAiQuizzes, extra: extra),
+              onAiQuizEntryTap: () =>
+                  context.push(AppRoutes.myAiQuizzes, extra: extra),
             );
           }
           if (extra is String) {
             return CategoriesScreen(
               onCategoryPicked: _lobbyCategoryPicked(extra),
-              onAiQuizEntryTap: () => context.push(AppRoutes.myAiQuizzes, extra: extra),
+              onAiQuizEntryTap: () =>
+                  context.push(AppRoutes.myAiQuizzes, extra: extra),
             );
           }
           return const CategoriesScreen();
@@ -199,10 +218,14 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final Object? extra = state.extra;
           if (extra is FriendEntry) {
-            return MyAiQuizzesScreen(onCategoryPicked: _duelCategoryPicked(extra));
+            return MyAiQuizzesScreen(
+              onCategoryPicked: _duelCategoryPicked(extra),
+            );
           }
           if (extra is String) {
-            return MyAiQuizzesScreen(onCategoryPicked: _lobbyCategoryPicked(extra));
+            return MyAiQuizzesScreen(
+              onCategoryPicked: _lobbyCategoryPicked(extra),
+            );
           }
           return const MyAiQuizzesScreen();
         },
@@ -218,6 +241,11 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.createManualQuiz,
         builder: (context, state) => const CreateManualQuizScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.editManualQuiz,
+        builder: (context, state) =>
+            EditManualQuizScreen(args: state.extra! as EditManualQuizArgs),
       ),
       GoRoute(
         path: AppRoutes.submitQuestion,
@@ -240,20 +268,27 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       // lost on a hot restart), redirect to Home instead of crashing.
       GoRoute(
         path: AppRoutes.quizSetup,
-        redirect: (context, state) => state.extra is QuizSetupExtra ? null : AppRoutes.home,
+        redirect: (context, state) =>
+            state.extra is QuizSetupExtra ? null : AppRoutes.home,
         builder: (context, state) {
           final QuizSetupExtra extra = state.extra! as QuizSetupExtra;
-          return QuizSetupScreen(category: extra.category, onStart: extra.onStart);
+          return QuizSetupScreen(
+            category: extra.category,
+            onStart: extra.onStart,
+          );
         },
       ),
       GoRoute(
         path: AppRoutes.quizIntro,
-        redirect: (context, state) => state.extra is QuizLaunchArgs ? null : AppRoutes.home,
-        builder: (context, state) => QuizIntroScreen(args: state.extra! as QuizLaunchArgs),
+        redirect: (context, state) =>
+            state.extra is QuizLaunchArgs ? null : AppRoutes.home,
+        builder: (context, state) =>
+            QuizIntroScreen(args: state.extra! as QuizLaunchArgs),
       ),
       GoRoute(
         path: AppRoutes.quiz,
-        redirect: (context, state) => state.extra is QuizLaunchArgs ? null : AppRoutes.home,
+        redirect: (context, state) =>
+            state.extra is QuizLaunchArgs ? null : AppRoutes.home,
         builder: (context, state) {
           final QuizLaunchArgs args = state.extra! as QuizLaunchArgs;
           return QuizScreen(
@@ -264,18 +299,24 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.ballReveal,
-        redirect: (context, state) => state.extra is QuizResult ? null : AppRoutes.home,
-        builder: (context, state) => BallRevealScreen(result: state.extra! as QuizResult),
+        redirect: (context, state) =>
+            state.extra is QuizResult ? null : AppRoutes.home,
+        builder: (context, state) =>
+            BallRevealScreen(result: state.extra! as QuizResult),
       ),
       GoRoute(
         path: AppRoutes.result,
-        redirect: (context, state) => state.extra is QuizResult ? null : AppRoutes.home,
-        builder: (context, state) => ResultScreen(result: state.extra! as QuizResult),
+        redirect: (context, state) =>
+            state.extra is QuizResult ? null : AppRoutes.home,
+        builder: (context, state) =>
+            ResultScreen(result: state.extra! as QuizResult),
       ),
       GoRoute(
         path: AppRoutes.lobbyResult,
-        redirect: (context, state) => state.extra is LobbyResultArgs ? null : AppRoutes.home,
-        builder: (context, state) => LobbyResultScreen(args: state.extra! as LobbyResultArgs),
+        redirect: (context, state) =>
+            state.extra is LobbyResultArgs ? null : AppRoutes.home,
+        builder: (context, state) =>
+            LobbyResultScreen(args: state.extra! as LobbyResultArgs),
       ),
       GoRoute(
         path: AppRoutes.joinCode,
@@ -287,7 +328,8 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       // real room.
       GoRoute(
         path: AppRoutes.lobby,
-        builder: (context, state) => LobbyScreen(role: (state.extra as LobbyRole?) ?? LobbyRole.host),
+        builder: (context, state) =>
+            LobbyScreen(role: (state.extra as LobbyRole?) ?? LobbyRole.host),
       ),
       GoRoute(
         path: AppRoutes.lobbyGame,
@@ -305,7 +347,9 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.playerDetail,
         redirect: (context, state) =>
-            state.extra is Map && (state.extra! as Map)['userId'] is String ? null : AppRoutes.leaderboard,
+            state.extra is Map && (state.extra! as Map)['userId'] is String
+            ? null
+            : AppRoutes.leaderboard,
         builder: (context, state) {
           final Map<dynamic, dynamic> extra = state.extra! as Map;
           return PlayerDetailScreen(
@@ -339,13 +383,17 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.duelWaiting,
-        redirect: (context, state) => state.extra is DuelMatch ? null : AppRoutes.home,
-        builder: (context, state) => DuelWaitingScreen(match: state.extra! as DuelMatch),
+        redirect: (context, state) =>
+            state.extra is DuelMatch ? null : AppRoutes.home,
+        builder: (context, state) =>
+            DuelWaitingScreen(match: state.extra! as DuelMatch),
       ),
       GoRoute(
         path: AppRoutes.duelInvite,
-        redirect: (context, state) => state.extra is DuelInvite ? null : AppRoutes.home,
-        builder: (context, state) => DuelInviteScreen(invite: state.extra! as DuelInvite),
+        redirect: (context, state) =>
+            state.extra is DuelInvite ? null : AppRoutes.home,
+        builder: (context, state) =>
+            DuelInviteScreen(invite: state.extra! as DuelInvite),
       ),
       GoRoute(
         path: AppRoutes.duelGame,
@@ -353,8 +401,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.duelResult,
-        redirect: (context, state) => state.extra is DuelGameState ? null : AppRoutes.home,
-        builder: (context, state) => DuelResultScreen(game: state.extra! as DuelGameState),
+        redirect: (context, state) =>
+            state.extra is DuelGameState ? null : AppRoutes.home,
+        builder: (context, state) =>
+            DuelResultScreen(game: state.extra! as DuelGameState),
       ),
       GoRoute(
         path: AppRoutes.notifications,

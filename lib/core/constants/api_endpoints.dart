@@ -3,7 +3,8 @@ abstract final class ApiEndpoints {
   // Auth — FastAPI backendga 1:1 mos (2026-07-15 holatiga ko'ra tayyor).
   static const String register = '/auth/register';
   static const String login = '/auth/login';
-  static const String google = '/auth/google'; // endi Firebase ID token qabul qiladi — backendda Firebase Admin SDK bilan tekshiriladi
+  static const String google =
+      '/auth/google'; // endi Firebase ID token qabul qiladi — backendda Firebase Admin SDK bilan tekshiriladi
   static const String tokenRefresh = '/auth/refresh';
   static const String logout = '/auth/logout';
   static const String me = '/auth/me';
@@ -24,7 +25,8 @@ abstract final class ApiEndpoints {
   static const String resetPassword = '/auth/reset-password';
 
   // Bildirishnoma sozlamalari (2026-07-18'da qo'shildi, hali backend'da yo'q).
-  static const String notificationPreferences = '/users/me/notification-preferences';
+  static const String notificationPreferences =
+      '/users/me/notification-preferences';
 
   // Quiz (Zukkor_Ball_XP_Tizimi.docx, ball formulasi 2026-07-17'da yangilangan)
   static const String categories = '/categories';
@@ -32,18 +34,23 @@ abstract final class ApiEndpoints {
 
   static String quizAnswer(String sessionId) => '/quiz/$sessionId/answer';
 
-  static String reportQuestion(int questionId) => '/questions/$questionId/report';
+  static String reportQuestion(int questionId) =>
+      '/questions/$questionId/report';
 
   static const String submitQuestion = '/questions/submit';
 
   // Leaderboard (2026-07-17'da qo'shildi; scope 2026-07-19'da qo'shildi —
   // weekly/all_time/friends kesimlari).
-  static String leaderboard({int limit = 50, String scope = 'all_time', int offset = 0}) =>
-      '/leaderboard?limit=$limit&scope=$scope&offset=$offset';
+  static String leaderboard({
+    int limit = 50,
+    String scope = 'all_time',
+    int offset = 0,
+  }) => '/leaderboard?limit=$limit&scope=$scope&offset=$offset';
   static String playerStats(String userId) => '/leaderboard/$userId';
 
   // Game history (2026-07-18'da qo'shildi).
-  static String history({int limit = 50, int offset = 0}) => '/history?limit=$limit&offset=$offset';
+  static String history({int limit = 50, int offset = 0}) =>
+      '/history?limit=$limit&offset=$offset';
   static const String weeklyActivity = '/history/weekly-activity';
 
   // Coin/Diamond hamyon tarixi (2026-09-06'da qo'shildi).
@@ -53,14 +60,17 @@ abstract final class ApiEndpoints {
 
   // Friends (2026-07-18'da qo'shildi).
   static const String friends = '/friends';
-  static String friendsSearch(String query) => '/friends/search?q=${Uri.encodeQueryComponent(query)}';
+  static String friendsSearch(String query) =>
+      '/friends/search?q=${Uri.encodeQueryComponent(query)}';
 
   // Friend requests (2026-07-19'da qo'shildi, hali backend'da yo'q — instant
   // mutual add o'rniga request/accept oqimiga o'tildi).
   static const String friendRequests = '/friends/requests';
   static const String incomingFriendRequests = '/friends/requests/incoming';
-  static String acceptFriendRequest(String requestId) => '/friends/requests/$requestId/accept';
-  static String declineFriendRequest(String requestId) => '/friends/requests/$requestId/decline';
+  static String acceptFriendRequest(String requestId) =>
+      '/friends/requests/$requestId/accept';
+  static String declineFriendRequest(String requestId) =>
+      '/friends/requests/$requestId/decline';
 
   // Notifications (2026-07-19'da qo'shildi, hali backend'da yo'q).
   static const String notifications = '/notifications';
@@ -77,5 +87,12 @@ abstract final class ApiEndpoints {
   static const String aiQuizManual = '/ai-quiz/manual';
   static String aiQuizForUser(String userId) => '/ai-quiz/users/$userId';
   static const String aiQuizDiscover = '/ai-quiz/discover';
-  static String aiQuizDiscoverSearch(String query) => '/ai-quiz/discover/search?q=${Uri.encodeQueryComponent(query)}';
+  static String aiQuizDiscoverSearch(String query) =>
+      '/ai-quiz/discover/search?q=${Uri.encodeQueryComponent(query)}';
+
+  // Qo'lda yaratilgan quizga savol qo'shish/tahrirlash/o'chirish
+  // (2026-09-08'da qo'shildi) - faqat source == 'manual' quizlar uchun.
+  static String aiQuizQuestions(int quizId) => '/ai-quiz/$quizId/questions';
+  static String aiQuizQuestion(int quizId, int questionId) =>
+      '/ai-quiz/$quizId/questions/$questionId';
 }

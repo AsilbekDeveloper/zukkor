@@ -880,11 +880,18 @@ class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	@override String manualOptionLabel({required Object number}) => '${number}-variant';
 	@override String get manualFillAllFields => 'Barcha maydonlarni to\'ldiring';
 	@override String get manualAddQuestion => '+ Savol qo\'shish';
+	@override String get manualSaveQuestion => 'Saqlash';
 	@override String get manualSubmit => 'Yaratish';
 	@override String get noSharedQuizzes => 'Bu foydalanuvchi hali quiz ulashmagan';
 	@override String get topicSelectionLabel => 'Mavzu (ixtiyoriy)';
 	@override String get topicSelectionHint => 'Mavzu tanlang';
 	@override String get changeTopicTitle => 'Mavzuni o\'zgartirish';
+	@override String get filterAll => 'Barchasi';
+	@override String get editQuestionsTooltip => 'Savollarni tahrirlash';
+	@override String get questionAdded => 'Savol qo\'shildi';
+	@override String get questionSaved => 'Savol saqlandi';
+	@override String get deleteQuestionConfirmTitle => 'Savolni o\'chirish';
+	@override String get deleteQuestionConfirmMessage => 'Bu savol o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.';
 }
 
 // Path: questionSubmission
@@ -1418,11 +1425,18 @@ extension on TranslationsUz {
 			'aiQuiz.manualOptionLabel' => ({required Object number}) => '${number}-variant',
 			'aiQuiz.manualFillAllFields' => 'Barcha maydonlarni to\'ldiring',
 			'aiQuiz.manualAddQuestion' => '+ Savol qo\'shish',
+			'aiQuiz.manualSaveQuestion' => 'Saqlash',
 			'aiQuiz.manualSubmit' => 'Yaratish',
 			'aiQuiz.noSharedQuizzes' => 'Bu foydalanuvchi hali quiz ulashmagan',
 			'aiQuiz.topicSelectionLabel' => 'Mavzu (ixtiyoriy)',
 			'aiQuiz.topicSelectionHint' => 'Mavzu tanlang',
 			'aiQuiz.changeTopicTitle' => 'Mavzuni o\'zgartirish',
+			'aiQuiz.filterAll' => 'Barchasi',
+			'aiQuiz.editQuestionsTooltip' => 'Savollarni tahrirlash',
+			'aiQuiz.questionAdded' => 'Savol qo\'shildi',
+			'aiQuiz.questionSaved' => 'Savol saqlandi',
+			'aiQuiz.deleteQuestionConfirmTitle' => 'Savolni o\'chirish',
+			'aiQuiz.deleteQuestionConfirmMessage' => 'Bu savol o\'chirilsinmi? Bu amalni ortga qaytarib bo\'lmaydi.',
 			'questionSubmission.title' => 'Savol qo\'shish',
 			'questionSubmission.profileCardTitle' => 'Savol qo\'shing',
 			'questionSubmission.cardSubtitle' => 'Bilim bazasini birga boyitamiz',

@@ -48,5 +48,6 @@ abstract final class AppRoutes {
   static const String discover = '/ai-quiz/discover';
   static const String generateAiQuiz = '/ai-quiz/generate';
   static const String createManualQuiz = '/ai-quiz/manual';
+  static const String editManualQuiz = '/ai-quiz/manual/edit';
   static const String submitQuestion = '/questions/submit';
 }

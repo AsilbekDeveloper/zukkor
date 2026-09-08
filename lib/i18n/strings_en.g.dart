@@ -1678,6 +1678,9 @@ class Translations$aiQuiz$en {
 	/// en: '+ Add question'
 	String get manualAddQuestion => '+ Add question';
 
+	/// en: 'Save'
+	String get manualSaveQuestion => 'Save';
+
 	/// en: 'Create'
 	String get manualSubmit => 'Create';
 
@@ -1692,6 +1695,24 @@ class Translations$aiQuiz$en {
 
 	/// en: 'Change topic'
 	String get changeTopicTitle => 'Change topic';
+
+	/// en: 'All'
+	String get filterAll => 'All';
+
+	/// en: 'Edit questions'
+	String get editQuestionsTooltip => 'Edit questions';
+
+	/// en: 'Question added'
+	String get questionAdded => 'Question added';
+
+	/// en: 'Question saved'
+	String get questionSaved => 'Question saved';
+
+	/// en: 'Delete question'
+	String get deleteQuestionConfirmTitle => 'Delete question';
+
+	/// en: 'Delete this question? This can't be undone.'
+	String get deleteQuestionConfirmMessage => 'Delete this question? This can\'t be undone.';
 }
 
 // Path: questionSubmission
@@ -2351,11 +2372,18 @@ extension on Translations {
 			'aiQuiz.manualOptionLabel' => ({required Object number}) => 'Option ${number}',
 			'aiQuiz.manualFillAllFields' => 'Fill in all fields',
 			'aiQuiz.manualAddQuestion' => '+ Add question',
+			'aiQuiz.manualSaveQuestion' => 'Save',
 			'aiQuiz.manualSubmit' => 'Create',
 			'aiQuiz.noSharedQuizzes' => 'This user hasn\'t shared any quizzes yet',
 			'aiQuiz.topicSelectionLabel' => 'Topic (optional)',
 			'aiQuiz.topicSelectionHint' => 'Choose a topic',
 			'aiQuiz.changeTopicTitle' => 'Change topic',
+			'aiQuiz.filterAll' => 'All',
+			'aiQuiz.editQuestionsTooltip' => 'Edit questions',
+			'aiQuiz.questionAdded' => 'Question added',
+			'aiQuiz.questionSaved' => 'Question saved',
+			'aiQuiz.deleteQuestionConfirmTitle' => 'Delete question',
+			'aiQuiz.deleteQuestionConfirmMessage' => 'Delete this question? This can\'t be undone.',
 			'questionSubmission.title' => 'Add a question',
 			'questionSubmission.profileCardTitle' => 'Add a question',
 			'questionSubmission.cardSubtitle' => 'Help us grow the question bank',

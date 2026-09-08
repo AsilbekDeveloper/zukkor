@@ -18,24 +18,8 @@ import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../domain/entities/manual_question_input.dart';
 import '../controllers/ai_quiz_controller.dart';
+import '../widgets/draft_question_card.dart';
 import '../widgets/topic_selection_row.dart';
-
-class _DraftQuestion {
-  _DraftQuestion()
-    : questionController = TextEditingController(),
-      optionControllers = List.generate(4, (_) => TextEditingController());
-
-  final TextEditingController questionController;
-  final List<TextEditingController> optionControllers;
-  int correctIndex = 0;
-
-  void dispose() {
-    questionController.dispose();
-    for (final controller in optionControllers) {
-      controller.dispose();
-    }
-  }
-}
 
 /// AI chaqirmasdan, foydalanuvchi o'zi yozgan savollardan quiz yaratish —
 /// nom + dinamik savollar ro'yxati (har biri 4 variant + to'g'ri javob).
@@ -50,7 +34,7 @@ class CreateManualQuizScreen extends ConsumerStatefulWidget {
 class _CreateManualQuizScreenState
     extends ConsumerState<CreateManualQuizScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final List<_DraftQuestion> _questions = [_DraftQuestion()];
+  final List<DraftQuestion> _questions = [DraftQuestion()];
   bool _isSubmitting = false;
   int? _topicCategoryId;
 
@@ -71,7 +55,7 @@ class _CreateManualQuizScreenState
     super.dispose();
   }
 
-  void _addQuestion() => setState(() => _questions.add(_DraftQuestion()));
+  void _addQuestion() => setState(() => _questions.add(DraftQuestion()));
 
   void _removeQuestion(int index) {
     if (_questions.length <= 1) return;
@@ -98,21 +82,11 @@ class _CreateManualQuizScreenState
 
     final List<ManualQuestionInput> questions = [];
     for (final draft in _questions) {
-      final String questionText = draft.questionController.text.trim();
-      final List<String> options = draft.optionControllers
-          .map((c) => c.text.trim())
-          .toList();
-      if (questionText.isEmpty || options.any((option) => option.isEmpty)) {
+      if (!draft.isFilledIn) {
         context.showSnack(context.t.aiQuiz.manualFillAllFields);
         return;
       }
-      questions.add(
-        ManualQuestionInput(
-          questionText: questionText,
-          options: options,
-          correctOptionIndex: draft.correctIndex,
-        ),
-      );
+      questions.add(draft.toInput());
     }
 
     context.hideKeyboard();
@@ -178,10 +152,13 @@ class _CreateManualQuizScreenState
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     for (int i = 0; i < _questions.length; i++) ...[
-                      _QuestionCard(
-                        index: i,
+                      DraftQuestionCard(
+                        label: context.t.aiQuiz.manualQuestionLabel(
+                          number: i + 1,
+                        ),
                         draft: _questions[i],
                         canRemove: _questions.length > 1 && !_isSubmitting,
+                        enabled: !_isSubmitting,
                         onRemove: () => _removeQuestion(i),
                         onChanged: () => setState(() {}),
                       ),
@@ -216,112 +193,6 @@ class _CreateManualQuizScreenState
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _QuestionCard extends StatelessWidget {
-  const _QuestionCard({
-    required this.index,
-    required this.draft,
-    required this.canRemove,
-    required this.onRemove,
-    required this.onChanged,
-  });
-
-  final int index;
-  final _DraftQuestion draft;
-  final bool canRemove;
-  final VoidCallback onRemove;
-  final VoidCallback onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: context.colors.card,
-        borderRadius: AppRadius.mdAll,
-        border: Border.all(color: context.colors.line),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  context.t.aiQuiz.manualQuestionLabel(number: index + 1),
-                  style: context.textStyles.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: context.colors.ink2,
-                  ),
-                ),
-              ),
-              if (canRemove)
-                PressableScale(
-                  child: InkWell(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      onRemove();
-                    },
-                    borderRadius: AppRadius.smAll,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Icon(
-                        TablerIcons.trash,
-                        size: 18,
-                        color: context.colors.coralDeep,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          AppSpacing.xs.vGap,
-          AppTextField(
-            label: context.t.aiQuiz.manualQuestionTextLabel,
-            controller: draft.questionController,
-          ),
-          AppSpacing.sm.vGap,
-          for (int i = 0; i < 4; i++) ...[
-            Row(
-              children: [
-                PressableScale(
-                  child: InkWell(
-                    onTap: () {
-                      HapticFeedback.lightImpact();
-                      draft.correctIndex = i;
-                      onChanged();
-                    },
-                    borderRadius: BorderRadius.circular(999),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Icon(
-                        draft.correctIndex == i
-                            ? TablerIcons.circleCheckFilled
-                            : TablerIcons.circle,
-                        size: 22,
-                        color: draft.correctIndex == i
-                            ? context.colors.coral
-                            : context.colors.muted,
-                      ),
-                    ),
-                  ),
-                ),
-                AppSpacing.xs.hGap,
-                Expanded(
-                  child: AppTextField(
-                    label: context.t.aiQuiz.manualOptionLabel(number: i + 1),
-                    controller: draft.optionControllers[i],
-                  ),
-                ),
-              ],
-            ),
-            if (i < 3) AppSpacing.xs.vGap,
-          ],
-        ],
       ),
     );
   }

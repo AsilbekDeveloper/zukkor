@@ -5,15 +5,20 @@ import '../../../../core/network/failure_mapper.dart';
 import '../../domain/entities/ai_quiz.dart';
 import '../../domain/entities/discover_quiz.dart';
 import '../../domain/entities/manual_question_input.dart';
+import '../../domain/entities/quiz_question.dart';
 import '../../domain/repositories/ai_quiz_repository.dart';
+import '../../domain/usecases/add_quiz_question_use_case.dart';
 import '../../domain/usecases/create_manual_quiz_use_case.dart';
 import '../../domain/usecases/delete_ai_quiz_use_case.dart';
+import '../../domain/usecases/delete_quiz_question_use_case.dart';
 import '../../domain/usecases/discover_quizzes_use_case.dart';
 import '../../domain/usecases/generate_ai_quiz_use_case.dart';
 import '../../domain/usecases/list_ai_quizzes_use_case.dart';
+import '../../domain/usecases/list_quiz_questions_use_case.dart';
 import '../../domain/usecases/list_user_quizzes_use_case.dart';
 import '../../domain/usecases/search_discover_quizzes_use_case.dart';
 import '../../domain/usecases/update_ai_quiz_visibility_use_case.dart';
+import '../../domain/usecases/update_quiz_question_use_case.dart';
 import '../../domain/usecases/update_quiz_topic_use_case.dart';
 import '../datasources/ai_quiz_remote_data_source.dart';
 import '../models/ai_quiz_model.dart';
@@ -40,8 +45,7 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
         topic: topic,
         questionCount: questionCount,
         topicCategoryId: topicCategoryId,
-      ))
-          .toEntity();
+      )).toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -50,7 +54,9 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   @override
   Future<List<AiQuiz>> list() async {
     try {
-      return (await _remoteDataSource.list()).map((model) => model.toEntity()).toList();
+      return (await _remoteDataSource.list())
+          .map((model) => model.toEntity())
+          .toList();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -68,7 +74,10 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   @override
   Future<AiQuiz> updateVisibility(int id, String visibility) async {
     try {
-      return (await _remoteDataSource.updateVisibility(id, visibility)).toEntity();
+      return (await _remoteDataSource.updateVisibility(
+        id,
+        visibility,
+      )).toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -77,7 +86,10 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   @override
   Future<AiQuiz> updateTopic(int id, int? topicCategoryId) async {
     try {
-      return (await _remoteDataSource.updateTopic(id, topicCategoryId)).toEntity();
+      return (await _remoteDataSource.updateTopic(
+        id,
+        topicCategoryId,
+      )).toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -94,8 +106,7 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
         name: name,
         questions: questions,
         topicCategoryId: topicCategoryId,
-      ))
-          .toEntity();
+      )).toEntity();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -125,14 +136,19 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   }
 
   @override
-  Future<({String status, AiQuiz? quiz, String? error})> getAsyncJobStatus(String jobId) async {
+  Future<({String status, AiQuiz? quiz, String? error})> getAsyncJobStatus(
+    String jobId,
+  ) async {
     try {
       final json = await _remoteDataSource.getAsyncJobStatus(jobId);
       final String status = json['status'] as String;
-      final Map<String, dynamic>? quizJson = json['quiz'] as Map<String, dynamic>?;
+      final Map<String, dynamic>? quizJson =
+          json['quiz'] as Map<String, dynamic>?;
       return (
         status: status,
-        quiz: quizJson != null ? AiQuizModel.fromJson(quizJson).toEntity() : null,
+        quiz: quizJson != null
+            ? AiQuizModel.fromJson(quizJson).toEntity()
+            : null,
         error: json['error'] as String?,
       );
     } on DioException catch (e) {
@@ -143,7 +159,9 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   @override
   Future<List<AiQuiz>> listForUser(String userId) async {
     try {
-      return (await _remoteDataSource.listForUser(userId)).map((model) => model.toEntity()).toList();
+      return (await _remoteDataSource.listForUser(
+        userId,
+      )).map((model) => model.toEntity()).toList();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
@@ -152,62 +170,145 @@ class AiQuizRepositoryImpl implements AiQuizRepository {
   @override
   Future<List<DiscoverQuiz>> discover({int? categoryId}) async {
     try {
-      return (await _remoteDataSource.discover(categoryId: categoryId)).map((model) => model.toEntity()).toList();
+      return (await _remoteDataSource.discover(
+        categoryId: categoryId,
+      )).map((model) => model.toEntity()).toList();
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
   }
 
   @override
-  Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId}) async {
+  Future<List<DiscoverQuiz>> searchDiscover(
+    String query, {
+    int? categoryId,
+  }) async {
     try {
-      return (await _remoteDataSource.searchDiscover(query, categoryId: categoryId))
-          .map((model) => model.toEntity())
-          .toList();
+      return (await _remoteDataSource.searchDiscover(
+        query,
+        categoryId: categoryId,
+      )).map((model) => model.toEntity()).toList();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<List<QuizQuestion>> listQuestions(int quizId) async {
+    try {
+      return (await _remoteDataSource.listQuestions(
+        quizId,
+      )).map((model) => model.toEntity()).toList();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<QuizQuestion> addQuestion(
+    int quizId,
+    ManualQuestionInput question,
+  ) async {
+    try {
+      return (await _remoteDataSource.addQuestion(quizId, question)).toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<QuizQuestion> updateQuestion(
+    int quizId,
+    int questionId,
+    ManualQuestionInput question,
+  ) async {
+    try {
+      return (await _remoteDataSource.updateQuestion(
+        quizId,
+        questionId,
+        question,
+      )).toEntity();
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
+
+  @override
+  Future<void> deleteQuestion(int quizId, int questionId) async {
+    try {
+      await _remoteDataSource.deleteQuestion(quizId, questionId);
     } on DioException catch (e) {
       throw FailureMapper.fromDio(e);
     }
   }
 }
 
-final Provider<AiQuizRepository> aiQuizRepositoryProvider = Provider<AiQuizRepository>(
-  (ref) => AiQuizRepositoryImpl(ref.watch(aiQuizRemoteDataSourceProvider)),
-);
+final Provider<AiQuizRepository> aiQuizRepositoryProvider =
+    Provider<AiQuizRepository>(
+      (ref) => AiQuizRepositoryImpl(ref.watch(aiQuizRemoteDataSourceProvider)),
+    );
 
-final Provider<GenerateAiQuizUseCase> generateAiQuizUseCaseProvider = Provider<GenerateAiQuizUseCase>(
-  (ref) => GenerateAiQuizUseCase(ref.watch(aiQuizRepositoryProvider)),
-);
+final Provider<GenerateAiQuizUseCase> generateAiQuizUseCaseProvider =
+    Provider<GenerateAiQuizUseCase>(
+      (ref) => GenerateAiQuizUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
 
-final Provider<ListAiQuizzesUseCase> listAiQuizzesUseCaseProvider = Provider<ListAiQuizzesUseCase>(
-  (ref) => ListAiQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
-);
+final Provider<ListAiQuizzesUseCase> listAiQuizzesUseCaseProvider =
+    Provider<ListAiQuizzesUseCase>(
+      (ref) => ListAiQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
 
-final Provider<DeleteAiQuizUseCase> deleteAiQuizUseCaseProvider = Provider<DeleteAiQuizUseCase>(
-  (ref) => DeleteAiQuizUseCase(ref.watch(aiQuizRepositoryProvider)),
-);
+final Provider<DeleteAiQuizUseCase> deleteAiQuizUseCaseProvider =
+    Provider<DeleteAiQuizUseCase>(
+      (ref) => DeleteAiQuizUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
 
-final Provider<UpdateAiQuizVisibilityUseCase> updateAiQuizVisibilityUseCaseProvider =
-    Provider<UpdateAiQuizVisibilityUseCase>(
+final Provider<UpdateAiQuizVisibilityUseCase>
+updateAiQuizVisibilityUseCaseProvider = Provider<UpdateAiQuizVisibilityUseCase>(
   (ref) => UpdateAiQuizVisibilityUseCase(ref.watch(aiQuizRepositoryProvider)),
 );
 
-final Provider<UpdateQuizTopicUseCase> updateQuizTopicUseCaseProvider = Provider<UpdateQuizTopicUseCase>(
-  (ref) => UpdateQuizTopicUseCase(ref.watch(aiQuizRepositoryProvider)),
-);
+final Provider<UpdateQuizTopicUseCase> updateQuizTopicUseCaseProvider =
+    Provider<UpdateQuizTopicUseCase>(
+      (ref) => UpdateQuizTopicUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
 
-final Provider<CreateManualQuizUseCase> createManualQuizUseCaseProvider = Provider<CreateManualQuizUseCase>(
-  (ref) => CreateManualQuizUseCase(ref.watch(aiQuizRepositoryProvider)),
-);
+final Provider<CreateManualQuizUseCase> createManualQuizUseCaseProvider =
+    Provider<CreateManualQuizUseCase>(
+      (ref) => CreateManualQuizUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
 
-final Provider<ListUserQuizzesUseCase> listUserQuizzesUseCaseProvider = Provider<ListUserQuizzesUseCase>(
-  (ref) => ListUserQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
-);
+final Provider<ListUserQuizzesUseCase> listUserQuizzesUseCaseProvider =
+    Provider<ListUserQuizzesUseCase>(
+      (ref) => ListUserQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
 
-final Provider<DiscoverQuizzesUseCase> discoverQuizzesUseCaseProvider = Provider<DiscoverQuizzesUseCase>(
-  (ref) => DiscoverQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
-);
+final Provider<DiscoverQuizzesUseCase> discoverQuizzesUseCaseProvider =
+    Provider<DiscoverQuizzesUseCase>(
+      (ref) => DiscoverQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
 
-final Provider<SearchDiscoverQuizzesUseCase> searchDiscoverQuizzesUseCaseProvider =
-    Provider<SearchDiscoverQuizzesUseCase>(
+final Provider<SearchDiscoverQuizzesUseCase>
+searchDiscoverQuizzesUseCaseProvider = Provider<SearchDiscoverQuizzesUseCase>(
   (ref) => SearchDiscoverQuizzesUseCase(ref.watch(aiQuizRepositoryProvider)),
 );
+
+final Provider<ListQuizQuestionsUseCase> listQuizQuestionsUseCaseProvider =
+    Provider<ListQuizQuestionsUseCase>(
+      (ref) => ListQuizQuestionsUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
+
+final Provider<AddQuizQuestionUseCase> addQuizQuestionUseCaseProvider =
+    Provider<AddQuizQuestionUseCase>(
+      (ref) => AddQuizQuestionUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
+
+final Provider<UpdateQuizQuestionUseCase> updateQuizQuestionUseCaseProvider =
+    Provider<UpdateQuizQuestionUseCase>(
+      (ref) => UpdateQuizQuestionUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );
+
+final Provider<DeleteQuizQuestionUseCase> deleteQuizQuestionUseCaseProvider =
+    Provider<DeleteQuizQuestionUseCase>(
+      (ref) => DeleteQuizQuestionUseCase(ref.watch(aiQuizRepositoryProvider)),
+    );

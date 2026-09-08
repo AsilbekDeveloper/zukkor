@@ -7,7 +7,11 @@ import '../../domain/entities/discover_quiz.dart';
 import '../../domain/entities/manual_question_input.dart';
 
 class AiQuizState {
-  const AiQuizState({this.quizzes, this.hasListError = false, this.isGenerating = false});
+  const AiQuizState({
+    this.quizzes,
+    this.hasListError = false,
+    this.isGenerating = false,
+  });
 
   /// `null` — hali yuklanmagan (yoki yuklanmoqda); bo'sh ro'yxat — yuklandi,
   /// lekin hech qanday AI quiz yo'q.
@@ -19,12 +23,11 @@ class AiQuizState {
     List<AiQuiz>? Function()? quizzes,
     bool? hasListError,
     bool? isGenerating,
-  }) =>
-      AiQuizState(
-        quizzes: quizzes != null ? quizzes() : this.quizzes,
-        hasListError: hasListError ?? this.hasListError,
-        isGenerating: isGenerating ?? this.isGenerating,
-      );
+  }) => AiQuizState(
+    quizzes: quizzes != null ? quizzes() : this.quizzes,
+    hasListError: hasListError ?? this.hasListError,
+    isGenerating: isGenerating ?? this.isGenerating,
+  );
 }
 
 /// Foydalanuvchining shaxsiy AI-generatsiya qilingan quizlarini boshqaradi
@@ -38,7 +41,9 @@ class AiQuizController extends Notifier<AiQuizState> {
   Future<void> loadList() async {
     state = state.copyWith(hasListError: false);
     try {
-      final List<AiQuiz> quizzes = await ref.read(listAiQuizzesUseCaseProvider).call();
+      final List<AiQuiz> quizzes = await ref
+          .read(listAiQuizzesUseCaseProvider)
+          .call();
       state = state.copyWith(quizzes: () => quizzes);
     } catch (_) {
       state = state.copyWith(hasListError: true);
@@ -57,7 +62,9 @@ class AiQuizController extends Notifier<AiQuizState> {
   }) async {
     state = state.copyWith(isGenerating: true);
     try {
-      final AiQuiz quiz = await ref.read(generateAiQuizUseCaseProvider).call(
+      final AiQuiz quiz = await ref
+          .read(generateAiQuizUseCaseProvider)
+          .call(
             filePath: filePath,
             fileName: fileName,
             instruction: instruction,
@@ -75,23 +82,33 @@ class AiQuizController extends Notifier<AiQuizState> {
 
   Future<void> delete(int id) async {
     await ref.read(deleteAiQuizUseCaseProvider).call(id);
-    final List<AiQuiz> updated = (state.quizzes ?? const []).where((quiz) => quiz.id != id).toList();
+    final List<AiQuiz> updated = (state.quizzes ?? const [])
+        .where((quiz) => quiz.id != id)
+        .toList();
     state = state.copyWith(quizzes: () => updated);
   }
 
   /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran ushlab, xabar
   /// ko'rsatishi kerak.
   Future<void> updateVisibility(int id, String visibility) async {
-    final AiQuiz updated = await ref.read(updateAiQuizVisibilityUseCaseProvider).call(id, visibility);
-    final List<AiQuiz> list = (state.quizzes ?? const []).map((q) => q.id == id ? updated : q).toList();
+    final AiQuiz updated = await ref
+        .read(updateAiQuizVisibilityUseCaseProvider)
+        .call(id, visibility);
+    final List<AiQuiz> list = (state.quizzes ?? const [])
+        .map((q) => q.id == id ? updated : q)
+        .toList();
     state = state.copyWith(quizzes: () => list);
   }
 
   /// Failure'ni tashqariga chiqaradi — chaqiruvchi ekran ushlab, xabar
   /// ko'rsatishi kerak.
   Future<void> updateTopic(int id, int? topicCategoryId) async {
-    final AiQuiz updated = await ref.read(updateQuizTopicUseCaseProvider).call(id, topicCategoryId);
-    final List<AiQuiz> list = (state.quizzes ?? const []).map((q) => q.id == id ? updated : q).toList();
+    final AiQuiz updated = await ref
+        .read(updateQuizTopicUseCaseProvider)
+        .call(id, topicCategoryId);
+    final List<AiQuiz> list = (state.quizzes ?? const [])
+        .map((q) => q.id == id ? updated : q)
+        .toList();
     state = state.copyWith(quizzes: () => list);
   }
 
@@ -106,7 +123,11 @@ class AiQuizController extends Notifier<AiQuizState> {
     try {
       final AiQuiz quiz = await ref
           .read(createManualQuizUseCaseProvider)
-          .call(name: name, questions: questions, topicCategoryId: topicCategoryId);
+          .call(
+            name: name,
+            questions: questions,
+            topicCategoryId: topicCategoryId,
+          );
       final List<AiQuiz> updated = [quiz, ...?state.quizzes];
       state = state.copyWith(quizzes: () => updated);
       return quiz;
@@ -124,7 +145,9 @@ class AiQuizController extends Notifier<AiQuizState> {
     required int questionCount,
     int? topicCategoryId,
   }) async {
-    return ref.read(aiQuizRepositoryProvider).generateAsync(
+    return ref
+        .read(aiQuizRepositoryProvider)
+        .generateAsync(
           filePath: filePath,
           fileName: fileName,
           instruction: instruction,
@@ -135,8 +158,12 @@ class AiQuizController extends Notifier<AiQuizState> {
   }
 
   /// Berilgan job holatini tekshiradi. Agar tugagan bo'lsa ro'yxatni yangilaydi.
-  Future<({String status, AiQuiz? quiz, String? error})> checkJobStatus(String jobId) async {
-    final result = await ref.read(aiQuizRepositoryProvider).getAsyncJobStatus(jobId);
+  Future<({String status, AiQuiz? quiz, String? error})> checkJobStatus(
+    String jobId,
+  ) async {
+    final result = await ref
+        .read(aiQuizRepositoryProvider)
+        .getAsyncJobStatus(jobId);
     if (result.status == 'completed' && result.quiz != null) {
       final List<AiQuiz> current = state.quizzes ?? [];
       if (!current.any((q) => q.id == result.quiz!.id)) {
@@ -148,13 +175,33 @@ class AiQuizController extends Notifier<AiQuizState> {
 
   /// Failure'ni tashqariga chiqaradi. `state.quizzes`ga ta'sir qilmaydi —
   /// bu boshqa foydalanuvchining ro'yxati, "mening quizlarim" emas.
-  Future<List<AiQuiz>> listForUser(String userId) => ref.read(listUserQuizzesUseCaseProvider).call(userId);
+  Future<List<AiQuiz>> listForUser(String userId) =>
+      ref.read(listUserQuizzesUseCaseProvider).call(userId);
 
   Future<List<DiscoverQuiz>> discover({int? categoryId}) =>
       ref.read(discoverQuizzesUseCaseProvider).call(categoryId: categoryId);
 
   Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId}) =>
-      ref.read(searchDiscoverQuizzesUseCaseProvider).call(query, categoryId: categoryId);
+      ref
+          .read(searchDiscoverQuizzesUseCaseProvider)
+          .call(query, categoryId: categoryId);
+
+  /// `EditManualQuizScreen` savol qo'shgan/o'chirgandan keyin shu ekranga
+  /// qaytilganda ro'yxatdagi savollar soni ham darhol yangi ko'rinsin deb
+  /// (to'liq qayta yuklashni kutmasdan) - hozircha faqat shu ekran
+  /// chaqiradi, boshqa hech narsaga ta'sir qilmaydi.
+  void bumpQuestionCount(int quizId, int delta) {
+    final List<AiQuiz>? current = state.quizzes;
+    if (current == null) return;
+    final List<AiQuiz> updated = current
+        .map(
+          (q) => q.id == quizId
+              ? q.copyWith(questionCount: q.questionCount + delta)
+              : q,
+        )
+        .toList();
+    state = state.copyWith(quizzes: () => updated);
+  }
 }
 
 final NotifierProvider<AiQuizController, AiQuizState> aiQuizControllerProvider =

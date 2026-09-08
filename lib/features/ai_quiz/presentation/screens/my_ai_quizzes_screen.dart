@@ -12,6 +12,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -21,6 +22,7 @@ import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
 import '../../domain/entities/ai_quiz.dart';
 import '../controllers/ai_quiz_controller.dart';
+import '../models/edit_manual_quiz_args.dart';
 import '../widgets/ai_quiz_list.dart';
 
 /// "Mening AI quizlarim" — foydalanuvchi hujjatdan yaratgan shaxsiy
@@ -38,6 +40,23 @@ class MyAiQuizzesScreen extends ConsumerStatefulWidget {
 class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
   bool _selectionMode = false;
   final Set<int> _selectedIds = {};
+
+  /// null = "Barchasi", 'manual' = faqat qo'lda yaratilganlar, 'ai' =
+  /// faqat AI orqali yaratilganlar (`ai_document`/`ai_topic` ikkalasi
+  /// ham) - foydalanuvchi so'roviga ko'ra: "menga oson bo'lsin, faqat
+  /// qo'lda yasagan quizlarimni ko'ra olsam" (2026-09-08).
+  String? _sourceFilter;
+
+  List<AiQuiz> _filtered(List<AiQuiz> quizzes) {
+    switch (_sourceFilter) {
+      case 'manual':
+        return quizzes.where((q) => q.source == 'manual').toList();
+      case 'ai':
+        return quizzes.where((q) => q.source != 'manual').toList();
+      default:
+        return quizzes;
+    }
+  }
 
   @override
   void initState() {
@@ -76,6 +95,13 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
 
   Future<void> _createManual() async {
     await context.push(AppRoutes.createManualQuiz);
+  }
+
+  Future<void> _editManualQuiz(AiQuiz quiz) async {
+    await context.push(
+      AppRoutes.editManualQuiz,
+      extra: EditManualQuizArgs(quizId: quiz.id, quizName: quiz.name),
+    );
   }
 
   void _rowTapped(AiQuiz quiz) {
@@ -267,6 +293,9 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
     // Nothing to select once the list is empty (or still loading) - the
     // "Select" action would just open selection mode with nothing to act on.
     final bool canSelect = quizzes != null && quizzes.isNotEmpty;
+    final List<AiQuiz> filteredQuizzes = quizzes == null
+        ? const []
+        : _filtered(quizzes);
 
     return Scaffold(
       body: SafeArea(
@@ -296,6 +325,22 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                 ),
                 AppSpacing.lg.vGap,
               ],
+              if (!_selectionMode && quizzes != null && quizzes.isNotEmpty) ...[
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 120),
+                  child: PillSegmentControl<String?>(
+                    values: const [null, 'ai', 'manual'],
+                    selected: _sourceFilter,
+                    labelBuilder: (value) => switch (value) {
+                      'ai' => context.t.aiQuiz.sourceAi,
+                      'manual' => context.t.aiQuiz.sourceManual,
+                      _ => context.t.aiQuiz.filterAll,
+                    },
+                    onChanged: (value) => setState(() => _sourceFilter = value),
+                  ),
+                ),
+                AppSpacing.md.vGap,
+              ],
               Expanded(
                 child: state.hasListError
                     ? ErrorRetryView(
@@ -307,14 +352,25 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                     ? const ShimmerListSkeleton(count: 4, trailingWidth: 36)
                     : quizzes.isEmpty
                     ? _EmptyState(onCreate: _createViaAi)
+                    : filteredQuizzes.isEmpty
+                    ? Center(
+                        child: Text(
+                          context.t.discover.noResults,
+                          textAlign: TextAlign.center,
+                          style: context.textStyles.bodyMedium?.copyWith(
+                            color: context.colors.muted,
+                          ),
+                        ),
+                      )
                     : SingleChildScrollView(
                         child: FadeSlideIn(
                           delay: const Duration(milliseconds: 140),
                           child: AiQuizList(
-                            quizzes: quizzes,
+                            quizzes: filteredQuizzes,
                             onTap: _rowTapped,
                             onVisibilityTap: _changeVisibility,
                             onTopicTap: _changeTopic,
+                            onEditTap: _editManualQuiz,
                             selectionMode: _selectionMode,
                             selectedIds: _selectedIds,
                           ),

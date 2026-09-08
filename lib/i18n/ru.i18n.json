@@ -496,11 +496,18 @@
     "manualOptionLabel(param=number)": "Вариант $number",
     "manualFillAllFields": "Заполните все поля",
     "manualAddQuestion": "+ Добавить вопрос",
+    "manualSaveQuestion": "Сохранить",
     "manualSubmit": "Создать",
     "noSharedQuizzes": "Этот пользователь пока не поделился викторинами",
     "topicSelectionLabel": "Тема (необязательно)",
     "topicSelectionHint": "Выберите тему",
-    "changeTopicTitle": "Изменить тему"
+    "changeTopicTitle": "Изменить тему",
+    "filterAll": "Все",
+    "editQuestionsTooltip": "Редактировать вопросы",
+    "questionAdded": "Вопрос добавлен",
+    "questionSaved": "Вопрос сохранён",
+    "deleteQuestionConfirmTitle": "Удалить вопрос",
+    "deleteQuestionConfirmMessage": "Удалить этот вопрос? Это действие необратимо."
   },
   "questionSubmission": {
     "title": "Добавить вопрос",

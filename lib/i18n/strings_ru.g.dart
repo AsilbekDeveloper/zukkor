@@ -886,11 +886,18 @@ class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	@override String manualOptionLabel({required Object number}) => 'Вариант ${number}';
 	@override String get manualFillAllFields => 'Заполните все поля';
 	@override String get manualAddQuestion => '+ Добавить вопрос';
+	@override String get manualSaveQuestion => 'Сохранить';
 	@override String get manualSubmit => 'Создать';
 	@override String get noSharedQuizzes => 'Этот пользователь пока не поделился викторинами';
 	@override String get topicSelectionLabel => 'Тема (необязательно)';
 	@override String get topicSelectionHint => 'Выберите тему';
 	@override String get changeTopicTitle => 'Изменить тему';
+	@override String get filterAll => 'Все';
+	@override String get editQuestionsTooltip => 'Редактировать вопросы';
+	@override String get questionAdded => 'Вопрос добавлен';
+	@override String get questionSaved => 'Вопрос сохранён';
+	@override String get deleteQuestionConfirmTitle => 'Удалить вопрос';
+	@override String get deleteQuestionConfirmMessage => 'Удалить этот вопрос? Это действие необратимо.';
 }
 
 // Path: questionSubmission
@@ -1424,11 +1431,18 @@ extension on TranslationsRu {
 			'aiQuiz.manualOptionLabel' => ({required Object number}) => 'Вариант ${number}',
 			'aiQuiz.manualFillAllFields' => 'Заполните все поля',
 			'aiQuiz.manualAddQuestion' => '+ Добавить вопрос',
+			'aiQuiz.manualSaveQuestion' => 'Сохранить',
 			'aiQuiz.manualSubmit' => 'Создать',
 			'aiQuiz.noSharedQuizzes' => 'Этот пользователь пока не поделился викторинами',
 			'aiQuiz.topicSelectionLabel' => 'Тема (необязательно)',
 			'aiQuiz.topicSelectionHint' => 'Выберите тему',
 			'aiQuiz.changeTopicTitle' => 'Изменить тему',
+			'aiQuiz.filterAll' => 'Все',
+			'aiQuiz.editQuestionsTooltip' => 'Редактировать вопросы',
+			'aiQuiz.questionAdded' => 'Вопрос добавлен',
+			'aiQuiz.questionSaved' => 'Вопрос сохранён',
+			'aiQuiz.deleteQuestionConfirmTitle' => 'Удалить вопрос',
+			'aiQuiz.deleteQuestionConfirmMessage' => 'Удалить этот вопрос? Это действие необратимо.',
 			'questionSubmission.title' => 'Добавить вопрос',
 			'questionSubmission.profileCardTitle' => 'Добавьте вопрос',
 			'questionSubmission.cardSubtitle' => 'Помогите пополнить базу вопросов',

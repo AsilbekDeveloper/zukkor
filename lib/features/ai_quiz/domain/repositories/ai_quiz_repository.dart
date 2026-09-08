@@ -1,6 +1,7 @@
 import '../entities/ai_quiz.dart';
 import '../entities/discover_quiz.dart';
 import '../entities/manual_question_input.dart';
+import '../entities/quiz_question.dart';
 
 abstract interface class AiQuizRepository {
   /// `POST /ai-quiz/generate` — hujjatni yuklaydi, AI orqali savollar
@@ -47,7 +48,9 @@ abstract interface class AiQuizRepository {
   });
 
   /// `GET /ai-quiz/generate-async/{jobId}` — holatni tekshirish.
-  Future<({String status, AiQuiz? quiz, String? error})> getAsyncJobStatus(String jobId);
+  Future<({String status, AiQuiz? quiz, String? error})> getAsyncJobStatus(
+    String jobId,
+  );
 
   /// `GET /ai-quiz/users/{userId}` — shu foydalanuvchining sizga
   /// ko'rinadigan (ommaviy, yoki do'st bo'lsangiz — do'stlar uchun) quizlari.
@@ -59,4 +62,22 @@ abstract interface class AiQuizRepository {
 
   /// `GET /ai-quiz/discover/search?q=...` — quiz nomi bo'yicha qidiruv.
   Future<List<DiscoverQuiz>> searchDiscover(String query, {int? categoryId});
+
+  /// `GET /ai-quiz/{quizId}/questions` — faqat `source == 'manual'` quiz
+  /// uchun ishlaydi (boshqasida 400).
+  Future<List<QuizQuestion>> listQuestions(int quizId);
+
+  /// `POST /ai-quiz/{quizId}/questions` — yangi savol qo'shadi.
+  Future<QuizQuestion> addQuestion(int quizId, ManualQuestionInput question);
+
+  /// `PATCH /ai-quiz/{quizId}/questions/{questionId}`.
+  Future<QuizQuestion> updateQuestion(
+    int quizId,
+    int questionId,
+    ManualQuestionInput question,
+  );
+
+  /// `DELETE /ai-quiz/{quizId}/questions/{questionId}` — quizdagi oxirgi
+  /// savol bo'lsa backend 400 bilan rad etadi.
+  Future<void> deleteQuestion(int quizId, int questionId);
 }
