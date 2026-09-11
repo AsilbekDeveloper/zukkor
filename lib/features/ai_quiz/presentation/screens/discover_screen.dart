@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
@@ -13,9 +14,15 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../friends/domain/entities/discovered_user.dart';
+import '../../../friends/presentation/controllers/send_friend_request_controller.dart';
+import '../../../friends/presentation/controllers/user_search_controller.dart';
+import '../../../friends/presentation/models/discoverable_user.dart';
+import '../../../friends/presentation/widgets/discoverable_user_list.dart';
 import '../../../friends/presentation/widgets/friends_search_bar.dart';
 import '../../../quiz/domain/entities/category.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
@@ -26,6 +33,11 @@ import '../controllers/ai_quiz_controller.dart';
 import '../widgets/quiz_card.dart';
 
 enum _DiscoverMode { feed, search }
+
+/// What the shared search bar searches - quizzes (the screen's original
+/// purpose) or people (2026-09-12, reuses Friends/Add Friend's own
+/// search rather than a second implementation).
+enum _SearchTarget { quizzes, people }
 
 class DiscoverScreen extends ConsumerStatefulWidget {
   const DiscoverScreen({super.key});
@@ -38,6 +50,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   static const Duration _debounce = Duration(milliseconds: 350);
 
   _DiscoverMode _mode = _DiscoverMode.feed;
+  _SearchTarget _searchTarget = _SearchTarget.quizzes;
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounceTimer;
 
@@ -46,6 +59,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   List<DiscoverQuiz>? _searchResults;
   bool _hasError = false;
   bool _searchHasError = false;
+
+  final Set<String> _addedIds = {};
+
+  /// So'rov hali javob kutayotgan foydalanuvchilar — tugma shu vaqtda
+  /// o'chirilgan turadi (qo'sh so'rov yuborilmasligi uchun).
+  final Set<String> _sendingIds = {};
 
   @override
   void initState() {
@@ -88,14 +107,66 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         _searchResults = null;
         _searchHasError = false;
       });
-      _loadFeed();
+      ref.read(userSearchControllerProvider.notifier).clear();
+      if (_searchTarget == _SearchTarget.quizzes) _loadFeed();
       return;
     }
 
     _debounceTimer = Timer(_debounce, () {
-      setState(() => _mode = _DiscoverMode.search);
-      _searchQuizzes(value);
+      if (_searchTarget == _SearchTarget.quizzes) {
+        setState(() => _mode = _DiscoverMode.search);
+        _searchQuizzes(value);
+      } else {
+        ref.read(userSearchControllerProvider.notifier).search(value);
+      }
     });
+  }
+
+  /// Switching mode re-runs the SAME text the user already typed against
+  /// whichever search it now targets - feels continuous instead of
+  /// forcing them to retype to see the other kind of result.
+  void _onSearchTargetChanged(_SearchTarget target) {
+    if (_searchTarget == target) return;
+    setState(() => _searchTarget = target);
+    final String query = _searchController.text;
+    if (query.isEmpty) return;
+    if (target == _SearchTarget.quizzes) {
+      setState(() => _mode = _DiscoverMode.search);
+      _searchQuizzes(query);
+    } else {
+      ref.read(userSearchControllerProvider.notifier).search(query);
+    }
+  }
+
+  void _openDiscoveredDetail(DiscoverableUser user) {
+    context.push(
+      AppRoutes.playerDetail,
+      extra: {
+        'userId': user.id,
+        if (user.requestPending || _addedIds.contains(user.id))
+          'requestSent': true,
+      },
+    );
+  }
+
+  Future<void> _addFriend(DiscoverableUser user) async {
+    if (_sendingIds.contains(user.id)) return;
+    setState(() => _sendingIds.add(user.id));
+    try {
+      await ref
+          .read(sendFriendRequestControllerProvider.notifier)
+          .sendRequest(user.id);
+      if (!mounted) return;
+      setState(() => _addedIds.add(user.id));
+    } on Failure catch (e) {
+      if (!mounted) return;
+      context.showSnack(e.message);
+    } catch (_) {
+      if (!mounted) return;
+      context.showSnack(t.errors.unknown);
+    } finally {
+      if (mounted) setState(() => _sendingIds.remove(user.id));
+    }
   }
 
   Future<void> _searchQuizzes(String query) async {
@@ -170,11 +241,29 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             AppSpacing.md.vGap,
             FadeSlideIn(
               delay: const Duration(milliseconds: 60),
-              child: _CategoryFilterRow(
-                selectedId: _selectedCategoryId,
-                onSelected: _selectCategory,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: hPad),
+                child: PillSegmentControl<_SearchTarget>(
+                  values: _SearchTarget.values,
+                  selected: _searchTarget,
+                  labelBuilder: (target) => switch (target) {
+                    _SearchTarget.quizzes => context.t.discover.modeQuizzes,
+                    _SearchTarget.people => context.t.discover.modePeople,
+                  },
+                  onChanged: _onSearchTargetChanged,
+                ),
               ),
             ),
+            if (_searchTarget == _SearchTarget.quizzes) ...[
+              AppSpacing.md.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 100),
+                child: _CategoryFilterRow(
+                  selectedId: _selectedCategoryId,
+                  onSelected: _selectCategory,
+                ),
+              ),
+            ],
             AppSpacing.lg.vGap,
             Expanded(
               child: FadeSlideIn(
@@ -202,7 +291,9 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         ),
         Expanded(
           child: FriendsSearchBar(
-            placeholder: context.t.discover.searchQuizHint,
+            placeholder: _searchTarget == _SearchTarget.quizzes
+                ? context.t.discover.searchQuizHint
+                : context.t.discover.searchUserHint,
             controller: _searchController,
             onChanged: _onQueryChanged,
           ),
@@ -212,6 +303,8 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   Widget _buildBody() {
+    if (_searchTarget == _SearchTarget.people) return _buildPeopleBody();
+
     final quizzes = _mode == _DiscoverMode.feed ? _feed : _searchResults;
 
     if (_mode == _DiscoverMode.feed && _hasError) {
@@ -274,6 +367,73 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             onTap: () => _pick(quiz),
           );
         },
+      ),
+    );
+  }
+
+  /// People mode intentionally has no browsable "everyone" feed (unlike
+  /// quizzes) - only a search, matching the earlier product decision to
+  /// not offer an open user-browsing surface anywhere in the app.
+  Widget _buildPeopleBody() {
+    // Watched unconditionally (even while the query is still empty) - if
+    // this were only reached AFTER the empty-query check below, the
+    // subscription would never be established while the prompt shows,
+    // and the eventual search result arriving later would have nothing
+    // listening to trigger a rebuild.
+    final List<DiscoveredUser>? results = ref.watch(
+      userSearchControllerProvider,
+    );
+
+    if (_searchController.text.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: context.screenHPad),
+          child: Text(
+            context.t.discover.peopleSearchPrompt,
+            textAlign: TextAlign.center,
+            style: context.textStyles.bodyMedium?.copyWith(
+              color: context.colors.muted,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (results == null) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: context.screenHPad),
+        child: const ShimmerListSkeleton(count: 5, trailingWidth: 70),
+      );
+    }
+
+    final List<DiscoverableUser> discovered = results
+        .map(DiscoverableUser.fromEntity)
+        .toList();
+    if (discovered.isEmpty) {
+      return Center(
+        child: Text(
+          context.t.addFriend.noUsersFound,
+          textAlign: TextAlign.center,
+          style: context.textStyles.bodyMedium?.copyWith(
+            color: context.colors.muted,
+          ),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        context.screenHPad,
+        0,
+        context.screenHPad,
+        AppSpacing.lg,
+      ),
+      child: DiscoverableUserList(
+        users: discovered,
+        addedIds: _addedIds,
+        sendingIds: _sendingIds,
+        onAddTap: _addFriend,
+        onRowTap: _openDiscoveredDetail,
       ),
     );
   }

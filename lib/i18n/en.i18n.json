@@ -536,7 +536,10 @@
     "noResults": "No results found",
     "byCreator": "by $name",
     "userFilter": "Filter by user",
-    "categoryAll": "All"
+    "categoryAll": "All",
+    "modeQuizzes": "Quizzes",
+    "modePeople": "People",
+    "peopleSearchPrompt": "Type a name or username to search"
   },
   "gameLeave": {
     "soloTitle": "Are you sure you want to leave?",

@@ -964,6 +964,9 @@ class _Translations$discover$uz implements Translations$discover$en {
 	@override String byCreator({required Object name}) => '${name} tomonidan';
 	@override String get userFilter => 'Foydalanuvchini tanlang';
 	@override String get categoryAll => 'Hammasi';
+	@override String get modeQuizzes => 'Quizlar';
+	@override String get modePeople => 'Odamlar';
+	@override String get peopleSearchPrompt => 'Qidirish uchun ism yoki foydalanuvchi nomini yozing';
 }
 
 // Path: gameLeave
@@ -1476,6 +1479,9 @@ extension on TranslationsUz {
 			'discover.byCreator' => ({required Object name}) => '${name} tomonidan',
 			'discover.userFilter' => 'Foydalanuvchini tanlang',
 			'discover.categoryAll' => 'Hammasi',
+			'discover.modeQuizzes' => 'Quizlar',
+			'discover.modePeople' => 'Odamlar',
+			'discover.peopleSearchPrompt' => 'Qidirish uchun ism yoki foydalanuvchi nomini yozing',
 			'gameLeave.soloTitle' => 'Chiqishni xohlaysizmi?',
 			'gameLeave.soloMessage' => 'Bu o\'yin hisoblanmaydi va ball berilmaydi.',
 			'gameLeave.duelTitle' => 'Duelni tark etmoqchimisiz?',

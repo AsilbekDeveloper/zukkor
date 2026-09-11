@@ -551,7 +551,10 @@
     "noResults": "Ничего не найдено",
     "byCreator": "от $name",
     "userFilter": "Фильтр по автору",
-    "categoryAll": "Все"
+    "categoryAll": "Все",
+    "modeQuizzes": "Викторины",
+    "modePeople": "Люди",
+    "peopleSearchPrompt": "Введите имя или имя пользователя для поиска"
   },
   "gameLeave": {
     "soloTitle": "Вы уверены, что хотите выйти?",

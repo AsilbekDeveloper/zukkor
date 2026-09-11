@@ -88,6 +88,12 @@ abstract final class AppStrings {
   static const String friendRequestsTitle = 'Friend requests';
   static const String friendRequestsEmptyState = 'No requests yet';
 
+  // Discover screen
+  static const String discoverModeQuizzes = 'Quizzes';
+  static const String discoverModePeople = 'People';
+  static const String discoverPeopleSearchPrompt =
+      'Type a name or username to search';
+
   // Duel (choose a friend) screen
   static const String duelScreenTitle = '1v1 Duel';
   static const String chooseYourFriend = 'Choose your friend';

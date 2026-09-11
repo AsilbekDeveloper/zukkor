@@ -970,6 +970,9 @@ class _Translations$discover$ru implements Translations$discover$en {
 	@override String byCreator({required Object name}) => 'от ${name}';
 	@override String get userFilter => 'Фильтр по автору';
 	@override String get categoryAll => 'Все';
+	@override String get modeQuizzes => 'Викторины';
+	@override String get modePeople => 'Люди';
+	@override String get peopleSearchPrompt => 'Введите имя или имя пользователя для поиска';
 }
 
 // Path: gameLeave
@@ -1482,6 +1485,9 @@ extension on TranslationsRu {
 			'discover.byCreator' => ({required Object name}) => 'от ${name}',
 			'discover.userFilter' => 'Фильтр по автору',
 			'discover.categoryAll' => 'Все',
+			'discover.modeQuizzes' => 'Викторины',
+			'discover.modePeople' => 'Люди',
+			'discover.peopleSearchPrompt' => 'Введите имя или имя пользователя для поиска',
 			'gameLeave.soloTitle' => 'Вы уверены, что хотите выйти?',
 			'gameLeave.soloMessage' => 'Эта игра не будет засчитана, и баллы не будут начислены.',
 			'gameLeave.duelTitle' => 'Покинуть дуэль?',

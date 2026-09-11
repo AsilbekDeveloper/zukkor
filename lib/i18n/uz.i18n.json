@@ -536,7 +536,10 @@
     "noResults": "Hech narsa topilmadi",
     "byCreator": "$name tomonidan",
     "userFilter": "Foydalanuvchini tanlang",
-    "categoryAll": "Hammasi"
+    "categoryAll": "Hammasi",
+    "modeQuizzes": "Quizlar",
+    "modePeople": "Odamlar",
+    "peopleSearchPrompt": "Qidirish uchun ism yoki foydalanuvchi nomini yozing"
   },
   "gameLeave": {
     "soloTitle": "Chiqishni xohlaysizmi?",

@@ -1857,6 +1857,15 @@ class Translations$discover$en {
 
 	/// en: 'All'
 	String get categoryAll => 'All';
+
+	/// en: 'Quizzes'
+	String get modeQuizzes => 'Quizzes';
+
+	/// en: 'People'
+	String get modePeople => 'People';
+
+	/// en: 'Type a name or username to search'
+	String get peopleSearchPrompt => 'Type a name or username to search';
 }
 
 // Path: gameLeave
@@ -2429,6 +2438,9 @@ extension on Translations {
 			'discover.byCreator' => ({required Object name}) => 'by ${name}',
 			'discover.userFilter' => 'Filter by user',
 			'discover.categoryAll' => 'All',
+			'discover.modeQuizzes' => 'Quizzes',
+			'discover.modePeople' => 'People',
+			'discover.peopleSearchPrompt' => 'Type a name or username to search',
 			'gameLeave.soloTitle' => 'Are you sure you want to leave?',
 			'gameLeave.soloMessage' => 'This game won\'t be counted and no points will be awarded.',
 			'gameLeave.duelTitle' => 'Quit the duel?',
