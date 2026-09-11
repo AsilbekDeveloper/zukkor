@@ -126,7 +126,8 @@ class _WeeklyActivityRow extends StatelessWidget {
 
   final List<bool> days;
 
-  static const List<String> _labels = [
+  // Indexed by `DateTime.weekday` (Monday = 1 ... Sunday = 7).
+  static const List<String> _weekdayLabels = [
     'Du',
     'Se',
     'Cho',
@@ -135,6 +136,19 @@ class _WeeklyActivityRow extends StatelessWidget {
     'Sha',
     'Ya',
   ];
+
+  /// [days] is a rolling 7-day window ending TODAY (index 6 = today, index
+  /// 0 = 6 days ago) - it does NOT start on Monday just because it has 7
+  /// entries. A fixed Mon..Sun label array indexed by POSITION used to be
+  /// used here directly, which only happened to line up on a Sunday (the
+  /// one day the rolling window and the calendar week both end on the same
+  /// day) - any other day of the week showed every prior day's weekday
+  /// label wrong. Deriving each label from the actual calendar date fixes
+  /// that for every day, not just Sundays.
+  String _labelFor(int index) {
+    final DateTime date = DateTime.now().subtract(Duration(days: 6 - index));
+    return _weekdayLabels[date.weekday - 1];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +198,7 @@ class _WeeklyActivityRow extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              isToday ? 'Bugun' : _labels[i],
+              isToday ? 'Bugun' : _labelFor(i),
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: isToday ? FontWeight.w700 : FontWeight.w400,
