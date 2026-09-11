@@ -24,10 +24,6 @@ class CompactInviteCard extends StatelessWidget {
   final String code;
   final VoidCallback onShareTap;
 
-  static const List<BoxShadow> _shadow = [
-    BoxShadow(color: Color(0x38211410), offset: Offset(0, 10), blurRadius: 22),
-  ];
-
   Future<void> _copyCode(BuildContext context) async {
     unawaited(HapticFeedback.lightImpact());
     await Clipboard.setData(ClipboardData(text: code));
@@ -48,9 +44,9 @@ class CompactInviteCard extends StatelessWidget {
               horizontal: AppSpacing.md,
               vertical: AppSpacing.sm + 2,
             ),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: AppRadius.smAll,
-              boxShadow: _shadow,
+              boxShadow: context.colors.shadowMd,
             ),
             child: Row(
               children: [

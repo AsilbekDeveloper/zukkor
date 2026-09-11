@@ -120,7 +120,7 @@ class AppColors extends ThemeExtension<AppColors> {
     line: Color(0xFF372B23),
     cream: Color(0xFF17120E),
     card: Color(0xFF221A15),
-    surfaceDark: Color(0xFF0B0806),
+    surfaceDark: Color(0xFF4D3B2C),
     terra: Color(0xFFD97706),
     teal: Color(0xFF0D9488),
     pink: Color(0xFFDB2777),

@@ -22,12 +22,6 @@ class InviteCodeCard extends StatelessWidget {
   final String label;
   final String code;
 
-  // rgba(33,20,16,.22), matching the prototype's `.room-card` box-shadow —
-  // a one-off, heavier than any of the shared AppColors shadow tiers.
-  static const List<BoxShadow> _shadow = [
-    BoxShadow(color: Color(0x38211410), offset: Offset(0, 14), blurRadius: 30),
-  ];
-
   Future<void> _copyCode(BuildContext context) async {
     unawaited(HapticFeedback.lightImpact());
     await Clipboard.setData(ClipboardData(text: code));
@@ -46,9 +40,9 @@ class InviteCodeCard extends StatelessWidget {
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: AppRadius.lgAll,
-              boxShadow: _shadow,
+              boxShadow: context.colors.shadowMd,
             ),
             child: Column(
               children: [

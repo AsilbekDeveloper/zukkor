@@ -12,11 +12,6 @@ class ShareLinkButton extends StatelessWidget {
 
   final VoidCallback onTap;
 
-  // rgba(33,20,16,.22), matching the prototype's `.mp-btn.dark` box-shadow.
-  static const List<BoxShadow> _shadow = [
-    BoxShadow(color: Color(0x38211410), offset: Offset(0, 10), blurRadius: 22),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return PressableScale(
@@ -31,9 +26,9 @@ class ShareLinkButton extends StatelessWidget {
           borderRadius: AppRadius.smAll,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: AppRadius.smAll,
-              boxShadow: _shadow,
+              boxShadow: context.colors.shadowMd,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
