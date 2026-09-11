@@ -9,6 +9,7 @@ abstract final class AppStrings {
   static const String appTagline = 'Knowledge competition';
   static const String ok = 'OK';
   static const String cancel = 'Cancel';
+  static const String delete = 'Delete';
   static const String retry = 'Retry';
   static const String loading = 'Loading...';
 
@@ -40,6 +41,20 @@ abstract final class AppStrings {
   // AI quiz
   static const String myAiQuizzesScreenTitle = 'My quizzes';
   static const String generatingTitle = 'AI is generating questions...';
+
+  // Manual quiz creation/editing
+  static const String createManualTitle = 'Create a quiz manually';
+  static String manualQuestionLabel(int number) => 'Question $number';
+  static const String manualQuestionTextLabel = 'Question text';
+  static String manualOptionLabel(int number) => 'Option $number';
+  static const String manualFillAllFields = 'Fill in all fields';
+  static const String manualAddQuestion = '+ Add question';
+  static const String manualSaveQuestion = 'Save';
+  static const String questionAdded = 'Question added';
+  static const String questionSaved = 'Question saved';
+  static const String deleteQuestionConfirmTitle = 'Delete question';
+  static const String deleteQuestionConfirmMessage =
+      "Delete this question? This can't be undone.";
 
   // Leaderboard
   static const String leaderboardGreeting = 'Leaderboard';
