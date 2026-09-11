@@ -20,6 +20,7 @@ import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../widgets/profile_banner.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_name_block.dart';
+import '../widgets/profile_social_row.dart';
 import '../widgets/profile_stats_row.dart';
 import '../widgets/settings_list.dart';
 import '../widgets/submit_question_card.dart';
@@ -69,10 +70,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  /// Stats row (games/win-rate/streak). Shows an [InlineRetryRow] instead
-  /// of silently falling back to 0/0 when the load failed - the rest of
-  /// the screen (header, banner, settings list) stays fully usable either
-  /// way.
+  /// Stats row (games/win-rate/streak) + a social/content row (friends,
+  /// public quizzes). Shows an [InlineRetryRow] instead of silently
+  /// falling back to 0/0 when the load failed - the rest of the screen
+  /// (header, banner, settings list) stays fully usable either way.
   List<Widget> _progressSection(BuildContext context) {
     final myStatsState = ref.watch(myStatsControllerProvider);
     final PlayerStats? stats = myStatsState.data;
@@ -84,6 +85,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         totalGames: stats?.gamesPlayed ?? 0,
         winRatePercent: stats?.winRatePercent ?? 0,
         longestStreak: stats?.longestStreak ?? 0,
+      ),
+      AppSpacing.sm.vGap,
+      ProfileSocialRow(
+        friendsCount: stats?.friendsCount ?? 0,
+        publicQuizCount: stats?.publicQuizCount ?? 0,
+        onFriendsTap: () => context.go(AppRoutes.friends),
+        onPublicQuizzesTap: () => context.push(AppRoutes.myAiQuizzes),
       ),
     ];
   }

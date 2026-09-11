@@ -212,6 +212,7 @@ class _Translations$playerDetail$ru implements Translations$playerDetail$en {
 	// Translations
 	@override String get title => 'Профиль';
 	@override String get streakLabel => 'Серия';
+	@override String get friendsLabel => 'Друзья';
 	@override String get addToFriends => 'Добавить в друзья';
 	@override String get requestSent => 'Отправлено';
 	@override String rankedLabel({required Object rank, required Object xp}) => '#${rank} место · ${xp} XP';
@@ -288,6 +289,8 @@ class _Translations$profile$ru implements Translations$profile$en {
 	@override String get statLongestStreak => 'Самая длинная серия';
 	@override String get gameHistory => 'История игр';
 	@override String get settingsAndHelp => 'Настройки и помощь';
+	@override String get friendsChipLabel => 'Друзья';
+	@override String get publicQuizzesChipLabel => 'Открытые викторины';
 }
 
 // Path: settings
@@ -1081,6 +1084,7 @@ extension on TranslationsRu {
 			'achievements.firstRankBadge' => '#1 место',
 			'playerDetail.title' => 'Профиль',
 			'playerDetail.streakLabel' => 'Серия',
+			'playerDetail.friendsLabel' => 'Друзья',
 			'playerDetail.addToFriends' => 'Добавить в друзья',
 			'playerDetail.requestSent' => 'Отправлено',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => '#${rank} место · ${xp} XP',
@@ -1112,6 +1116,8 @@ extension on TranslationsRu {
 			'profile.statLongestStreak' => 'Самая длинная серия',
 			'profile.gameHistory' => 'История игр',
 			'profile.settingsAndHelp' => 'Настройки и помощь',
+			'profile.friendsChipLabel' => 'Друзья',
+			'profile.publicQuizzesChipLabel' => 'Открытые викторины',
 			'settings.groupGeneral' => 'Общее',
 			'settings.language' => 'Язык',
 			'settings.notifications' => 'Уведомления',

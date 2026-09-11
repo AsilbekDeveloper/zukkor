@@ -239,6 +239,7 @@ class _PlayerDetailScreenState extends ConsumerState<PlayerDetailScreen> {
                 child: _PlayerStatsRow(
                   winRatePercent: stats.winRatePercent,
                   streak: stats.currentStreak,
+                  friendsCount: stats.friendsCount,
                 ),
               ),
               AppSpacing.xl.vGap,
@@ -339,6 +340,9 @@ class _PlayerDetailShimmer extends StatelessWidget {
                 Expanded(
                   child: Center(child: ShimmerBox(width: 30, height: 24)),
                 ),
+                Expanded(
+                  child: Center(child: ShimmerBox(width: 30, height: 24)),
+                ),
               ],
             ),
           ),
@@ -381,10 +385,15 @@ class _AlreadyFriendsBadge extends StatelessWidget {
 }
 
 class _PlayerStatsRow extends StatelessWidget {
-  const _PlayerStatsRow({required this.winRatePercent, required this.streak});
+  const _PlayerStatsRow({
+    required this.winRatePercent,
+    required this.streak,
+    required this.friendsCount,
+  });
 
   final int winRatePercent;
   final int streak;
+  final int friendsCount;
 
   @override
   Widget build(BuildContext context) {
@@ -412,6 +421,13 @@ class _PlayerStatsRow extends StatelessWidget {
             child: _Stat(
               value: '$streak',
               label: context.t.playerDetail.streakLabel,
+            ),
+          ),
+          _divider(context),
+          Expanded(
+            child: _Stat(
+              value: '$friendsCount',
+              label: context.t.playerDetail.friendsLabel,
             ),
           ),
         ],

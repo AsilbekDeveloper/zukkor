@@ -59,6 +59,7 @@
   "playerDetail": {
     "title": "Profil",
     "streakLabel": "Seriya",
+    "friendsLabel": "Do'stlar",
     "addToFriends": "Do'stlikka qo'shish",
     "requestSent": "Yuborildi",
     "rankedLabel": "#$rank o'rin · $xp XP",
@@ -99,7 +100,9 @@
     "statWinRate": "G'alaba foizi",
     "statLongestStreak": "Eng uzun seriya",
     "gameHistory": "O'yinlar tarixi",
-    "settingsAndHelp": "Sozlamalar va yordam"
+    "settingsAndHelp": "Sozlamalar va yordam",
+    "friendsChipLabel": "Do'stlar",
+    "publicQuizzesChipLabel": "Ochiq quizlar"
   },
   "settings": {
     "groupGeneral": "Umumiy",

@@ -88,6 +88,8 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
         winRatePercent: 68,
         totalWins: 0,
         bestRankAchieved: 0,
+        friendsCount: 0,
+        publicQuizCount: 0,
       );
 }
 

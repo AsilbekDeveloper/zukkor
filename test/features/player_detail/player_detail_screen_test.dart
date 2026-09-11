@@ -33,26 +33,27 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
-        userId: userId,
-        rank: 2,
-        username: 'malika',
-        firstName: 'Malika',
-        lastName: 'Yusupova',
-        avatarColor: 'a-teal',
-        avatarImagePath: null,
-        totalXp: 4510,
-        currentStreak: 8,
-        longestStreak: 20,
-        gamesPlayed: 40,
-        winRatePercent: 62,
-        totalWins: 0,
-        bestRankAchieved: 0,
-      );
+    userId: userId,
+    rank: 2,
+    username: 'malika',
+    firstName: 'Malika',
+    lastName: 'Yusupova',
+    avatarColor: 'a-teal',
+    avatarImagePath: null,
+    totalXp: 4510,
+    currentStreak: 8,
+    longestStreak: 20,
+    gamesPlayed: 40,
+    winRatePercent: 62,
+    totalWins: 0,
+    bestRankAchieved: 0,
+    friendsCount: 4,
+    publicQuizCount: 2,
+  );
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — "Add to
@@ -64,22 +65,27 @@ class _FakeFriendsRepository implements FriendsRepository {
   Future<List<Friend>> getFriends() async => const [];
 
   @override
-  Future<List<DiscoveredUser>> searchUsers(String query) => throw UnimplementedError();
+  Future<List<DiscoveredUser>> searchUsers(String query) =>
+      throw UnimplementedError();
 
   @override
-  Future<void> sendFriendRequest(String userId) async => sentRequestUserIds.add(userId);
+  Future<void> sendFriendRequest(String userId) async =>
+      sentRequestUserIds.add(userId);
 
   @override
   Future<List<FriendRequest>> getIncomingRequests() async => const [];
 
   @override
-  Future<void> acceptFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> acceptFriendRequest(String requestId) =>
+      throw UnimplementedError();
 
   @override
-  Future<void> declineFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> declineFriendRequest(String requestId) =>
+      throw UnimplementedError();
 }
 
-Future<({GoRouter router, _FakeFriendsRepository friendsRepository})> _pumpPlayerDetail(
+Future<({GoRouter router, _FakeFriendsRepository friendsRepository})>
+_pumpPlayerDetail(
   WidgetTester tester, {
   Size size = const Size(390, 844),
 }) async {
@@ -91,10 +97,14 @@ Future<({GoRouter router, _FakeFriendsRepository friendsRepository})> _pumpPlaye
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
       GoRoute(
         path: AppRoutes.playerDetail,
-        builder: (context, state) => const PlayerDetailScreen(args: PlayerDetailArgs(userId: '2')),
+        builder: (context, state) =>
+            const PlayerDetailScreen(args: PlayerDetailArgs(userId: '2')),
       ),
     ],
   );
@@ -107,11 +117,16 @@ Future<({GoRouter router, _FakeFriendsRepository friendsRepository})> _pumpPlaye
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(
+          _FakeLeaderboardRepository(),
+        ),
         friendsRepositoryProvider.overrideWithValue(friendsRepository),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -121,16 +136,21 @@ Future<({GoRouter router, _FakeFriendsRepository friendsRepository})> _pumpPlaye
 }
 
 void main() {
-  testWidgets('renders name, rank, real stats and the Add to friends button, no overflow', (tester) async {
-    await _pumpPlayerDetail(tester);
+  testWidgets(
+    'renders name, rank, real stats and the Add to friends button, no overflow',
+    (tester) async {
+      await _pumpPlayerDetail(tester);
 
-    expect(find.text('Malika Yusupova'), findsOneWidget);
-    expect(find.text(AppStrings.rankedLabel(2, 4510)), findsOneWidget);
-    expect(find.text('62%'), findsOneWidget); // win rate
-    expect(find.text('8'), findsOneWidget); // streak
-    expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      expect(find.text('Malika Yusupova'), findsOneWidget);
+      expect(find.text(AppStrings.rankedLabel(2, 4510)), findsOneWidget);
+      expect(find.text('62%'), findsOneWidget); // win rate
+      expect(find.text('8'), findsOneWidget); // streak
+      expect(find.text('4'), findsOneWidget); // friends count
+      expect(find.text(AppStrings.friendsLabel), findsOneWidget);
+      expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('fits on the smallest supported phone width', (tester) async {
     await _pumpPlayerDetail(tester, size: const Size(360, 780));
@@ -139,25 +159,33 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping "Add to friends" sends a real request and shows a disabled "Sent" state', (tester) async {
-    final result = await _pumpPlayerDetail(tester);
+  testWidgets(
+    'tapping "Add to friends" sends a real request and shows a disabled "Sent" state',
+    (tester) async {
+      final result = await _pumpPlayerDetail(tester);
 
-    await tester.tap(find.text(AppStrings.addToFriendsButton));
-    await tester.pump();
-    await tester.pump();
+      await tester.tap(find.text(AppStrings.addToFriendsButton));
+      await tester.pump();
+      await tester.pump();
 
-    expect(result.friendsRepository.sentRequestUserIds, ['2']);
-    expect(find.text(AppStrings.friendRequestSentLabel), findsOneWidget);
-    expect(find.text(AppStrings.addToFriendsButton), findsNothing);
+      expect(result.friendsRepository.sentRequestUserIds, ['2']);
+      expect(find.text(AppStrings.friendRequestSentLabel), findsOneWidget);
+      expect(find.text(AppStrings.addToFriendsButton), findsNothing);
 
-    // Tapping again (now disabled) is a no-op, not a crash.
-    await tester.tap(find.text(AppStrings.friendRequestSentLabel), warnIfMissed: false);
-    await tester.pump();
-    expect(find.text(AppStrings.friendRequestSentLabel), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      // Tapping again (now disabled) is a no-op, not a crash.
+      await tester.tap(
+        find.text(AppStrings.friendRequestSentLabel),
+        warnIfMissed: false,
+      );
+      await tester.pump();
+      expect(find.text(AppStrings.friendRequestSentLabel), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('the close button returns to Home when pushed on top of it', (tester) async {
+  testWidgets('the close button returns to Home when pushed on top of it', (
+    tester,
+  ) async {
     final result = await _pumpPlayerDetail(tester);
     final GoRouter router = result.router;
     router.go(AppRoutes.home);

@@ -59,6 +59,7 @@
   "playerDetail": {
     "title": "Profile",
     "streakLabel": "Streak",
+    "friendsLabel": "Friends",
     "addToFriends": "Add to friends",
     "requestSent": "Sent",
     "rankedLabel": "Ranked #$rank · $xp XP",
@@ -99,7 +100,9 @@
     "statWinRate": "Win rate",
     "statLongestStreak": "Longest streak",
     "gameHistory": "Game history",
-    "settingsAndHelp": "Settings & help"
+    "settingsAndHelp": "Settings & help",
+    "friendsChipLabel": "Friends",
+    "publicQuizzesChipLabel": "Public quizzes"
   },
   "settings": {
     "groupGeneral": "General",

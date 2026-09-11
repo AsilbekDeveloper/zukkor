@@ -41,7 +41,10 @@ import 'package:zukkor/i18n/strings.g.dart';
 /// bo'lmasligi kerak.
 class _FakeAuthRepository implements AuthRepository {
   @override
-  Future<void> register({required String email, required String password}) async {}
+  Future<void> register({
+    required String email,
+    required String password,
+  }) async {}
 
   @override
   Future<void> login({required String email, required String password}) async {}
@@ -51,16 +54,16 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<User> getCurrentUser() async => User(
-        id: '1',
-        email: 'aziz@example.com',
-        username: 'aziz_karimov',
-        firstName: 'Aziz',
-        lastName: 'Karimov',
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: true,
-        authProvider: 'email',
-      );
+    id: '1',
+    email: 'aziz@example.com',
+    username: 'aziz_karimov',
+    firstName: 'Aziz',
+    lastName: 'Karimov',
+    isActive: true,
+    createdAt: DateTime(2026),
+    onboardingCompleted: true,
+    authProvider: 'email',
+  );
 
   @override
   Future<User> updateProfile({
@@ -72,8 +75,7 @@ class _FakeAuthRepository implements AuthRepository {
     List<String>? interests,
     String? studyPlace,
     String? quizLiking,
-  }) async =>
-      getCurrentUser();
+  }) async => getCurrentUser();
 
   @override
   Future<bool> isUsernameAvailable(String username) async => true;
@@ -88,8 +90,10 @@ class _FakeAuthRepository implements AuthRepository {
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
-  Future<void> changePassword({required String currentPassword, required String newPassword}) =>
-      throw UnimplementedError();
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => throw UnimplementedError();
   @override
   Future<void> linkTelegram(String code) => throw UnimplementedError();
 
@@ -119,11 +123,14 @@ class _FakeAuthRepository implements AuthRepository {
   Future<void> removeAccount(String userId) async {}
 
   @override
-  Future<User> addAccount({required String email, required String password}) => throw UnimplementedError();
+  Future<User> addAccount({required String email, required String password}) =>
+      throw UnimplementedError();
 
   @override
-  Future<User> addAccountViaRegister({required String email, required String password}) =>
-      throw UnimplementedError();
+  Future<User> addAccountViaRegister({
+    required String email,
+    required String password,
+  }) => throw UnimplementedError();
 
   @override
   Future<User?> addAccountWithGoogle() => throw UnimplementedError();
@@ -138,51 +145,52 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
-  }) async =>
-      const LeaderboardData(
-        entries: [
-          RankEntry(
-            userId: '1',
-            rank: 1,
-            username: 'aziz',
-            firstName: 'Aziz',
-            lastName: 'K.',
-            avatarColor: 'a-coral',
-            avatarImagePath: null,
-            totalXp: 4820,
-            isMe: false,
-          ),
-        ],
-        me: RankEntry(
-          userId: 'me',
-          rank: 42,
-          username: 'me',
-          firstName: null,
-          lastName: null,
-          avatarColor: 'a-coral',
-          avatarImagePath: null,
-          totalXp: 2140,
-          isMe: true,
-        ),
-      );
+  }) async => const LeaderboardData(
+    entries: [
+      RankEntry(
+        userId: '1',
+        rank: 1,
+        username: 'aziz',
+        firstName: 'Aziz',
+        lastName: 'K.',
+        avatarColor: 'a-coral',
+        avatarImagePath: null,
+        totalXp: 4820,
+        isMe: false,
+      ),
+    ],
+    me: RankEntry(
+      userId: 'me',
+      rank: 42,
+      username: 'me',
+      firstName: null,
+      lastName: null,
+      avatarColor: 'a-coral',
+      avatarImagePath: null,
+      totalXp: 2140,
+      isMe: true,
+    ),
+  );
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => const PlayerStats(
-        userId: '1',
-        rank: 42,
-        username: 'aziz_karimov',
-        firstName: 'Aziz',
-        lastName: 'Karimov',
-        avatarColor: 'a-coral',
-        avatarImagePath: null,
-        totalXp: 2140,
-        currentStreak: 8,
-        longestStreak: 12,
-        gamesPlayed: 184,
-        winRatePercent: 68,
-        totalWins: 0,
-        bestRankAchieved: 0,
-      );
+    userId: '1',
+    rank: 42,
+    username: 'aziz_karimov',
+    firstName: 'Aziz',
+    lastName: 'Karimov',
+    avatarColor: 'a-coral',
+    avatarImagePath: null,
+    totalXp: 2140,
+    currentStreak: 8,
+    longestStreak: 12,
+    gamesPlayed: 184,
+    winRatePercent: 68,
+    totalWins: 0,
+    bestRankAchieved: 0,
+    friendsCount: 5,
+    publicQuizCount: 2,
+  );
 }
 
 /// Backendga murojaat qilmaydigan soxta history repository — History
@@ -190,25 +198,31 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
 /// bo'lmasligi kerak.
 class _FakeHistoryRepository implements HistoryRepository {
   @override
-  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({int limit = 50, int offset = 0}) async =>
-      (hasMore: false, entries: [
-        SessionHistoryEntry(
-          sessionId: '1',
-          categoryId: 1,
-          categoryName: 'Math',
-          categoryIconName: 'math-symbols',
-          categoryColorKey: 'coral',
-          finishedAt: DateTime.now(),
-          correctCount: 8,
-          totalQuestions: 10,
-          totalBall: 7200,
-          totalXpEarned: 72,
-          mode: HistorySessionMode.solo,
-        ),
-      ]);
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({
+    int limit = 50,
+    int offset = 0,
+  }) async => (
+    hasMore: false,
+    entries: [
+      SessionHistoryEntry(
+        sessionId: '1',
+        categoryId: 1,
+        categoryName: 'Math',
+        categoryIconName: 'math-symbols',
+        categoryColorKey: 'coral',
+        finishedAt: DateTime.now(),
+        correctCount: 8,
+        totalQuestions: 10,
+        totalBall: 7200,
+        totalXpEarned: 72,
+        mode: HistorySessionMode.solo,
+      ),
+    ],
+  );
 
   @override
-  Future<WeeklyActivity> getWeeklyActivity() async => const WeeklyActivity(days: []);
+  Future<WeeklyActivity> getWeeklyActivity() async =>
+      const WeeklyActivity(days: []);
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — Friends tab'i
@@ -216,18 +230,19 @@ class _FakeHistoryRepository implements HistoryRepository {
 class _FakeFriendsRepository implements FriendsRepository {
   @override
   Future<List<Friend>> getFriends() async => const [
-        Friend(
-          id: '1',
-          username: 'malika_yusupova',
-          firstName: 'Malika',
-          lastName: 'Yusupova',
-          avatarColor: 'a-teal',
-          avatarImagePath: null,
-        ),
-      ];
+    Friend(
+      id: '1',
+      username: 'malika_yusupova',
+      firstName: 'Malika',
+      lastName: 'Yusupova',
+      avatarColor: 'a-teal',
+      avatarImagePath: null,
+    ),
+  ];
 
   @override
-  Future<List<DiscoveredUser>> searchUsers(String query) => throw UnimplementedError();
+  Future<List<DiscoveredUser>> searchUsers(String query) =>
+      throw UnimplementedError();
 
   @override
   Future<void> sendFriendRequest(String userId) => throw UnimplementedError();
@@ -236,10 +251,12 @@ class _FakeFriendsRepository implements FriendsRepository {
   Future<List<FriendRequest>> getIncomingRequests() async => const [];
 
   @override
-  Future<void> acceptFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> acceptFriendRequest(String requestId) =>
+      throw UnimplementedError();
 
   @override
-  Future<void> declineFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> declineFriendRequest(String requestId) =>
+      throw UnimplementedError();
 }
 
 // Profile pushes to SettingsScreen, which reads themeControllerProvider —
@@ -247,7 +264,10 @@ class _FakeFriendsRepository implements FriendsRepository {
 // bare MaterialApp.router. setMockInitialValues must run before any
 // SharedPreferences.getInstance() call, or it hits a real platform
 // channel with no test handler and hangs instead of failing.
-Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 844)}) async {
+Future<GoRouter> _pumpProfile(
+  WidgetTester tester, {
+  Size size = const Size(390, 844),
+}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -259,13 +279,34 @@ Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.profile,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
-      GoRoute(path: AppRoutes.leaderboard, builder: (context, state) => const LeaderboardScreen()),
-      GoRoute(path: AppRoutes.friends, builder: (context, state) => const FriendsScreen()),
-      GoRoute(path: AppRoutes.profile, builder: (context, state) => const ProfileScreen()),
-      GoRoute(path: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
-      GoRoute(path: AppRoutes.history, builder: (context, state) => const HistoryScreen()),
-      GoRoute(path: AppRoutes.editProfile, builder: (context, state) => const EditProfileScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.leaderboard,
+        builder: (context, state) => const LeaderboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.friends,
+        builder: (context, state) => const FriendsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.profile,
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.history,
+        builder: (context, state) => const HistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.editProfile,
+        builder: (context, state) => const EditProfileScreen(),
+      ),
     ],
   );
 
@@ -274,12 +315,17 @@ Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
         authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
-        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(
+          _FakeLeaderboardRepository(),
+        ),
         historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -288,7 +334,9 @@ Future<GoRouter> _pumpProfile(WidgetTester tester, {Size size = const Size(390, 
 }
 
 void main() {
-  testWidgets('renders banner, name, stats and settings with no overflow', (tester) async {
+  testWidgets('renders banner, name, stats and settings with no overflow', (
+    tester,
+  ) async {
     await _pumpProfile(tester);
 
     // "Profile" also appears as the (disabled, active) bottom-nav tab label.
@@ -301,10 +349,25 @@ void main() {
     expect(find.text('184'), findsOneWidget);
     expect(find.text('68%'), findsOneWidget);
     expect(find.text('12'), findsOneWidget); // longest-streak value
+    expect(find.text(AppStrings.friendsChipLabel), findsOneWidget);
+    expect(find.text(AppStrings.publicQuizzesChipLabel), findsOneWidget);
+    expect(find.text('5'), findsOneWidget); // friends count
+    expect(find.text('2'), findsOneWidget); // public quiz count
     expect(find.text(AppStrings.gameHistory), findsOneWidget);
     expect(find.text(AppStrings.settingsAndHelp), findsOneWidget);
 
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tapping the friends chip switches to the Friends tab', (
+    tester,
+  ) async {
+    await _pumpProfile(tester);
+
+    await tester.tap(find.text(AppStrings.friendsChipLabel));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FriendsScreen), findsOneWidget);
   });
 
   testWidgets('fits on the smallest supported phone width', (tester) async {
@@ -314,7 +377,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping the header settings button opens Settings', (tester) async {
+  testWidgets('tapping the header settings button opens Settings', (
+    tester,
+  ) async {
     await _pumpProfile(tester);
 
     await tester.tap(find.byIcon(TablerIcons.settings).first);
@@ -323,7 +388,9 @@ void main() {
     expect(find.byType(SettingsScreen), findsOneWidget);
   });
 
-  testWidgets('tapping the edit-profile button opens Edit Profile', (tester) async {
+  testWidgets('tapping the edit-profile button opens Edit Profile', (
+    tester,
+  ) async {
     await _pumpProfile(tester);
 
     await tester.tap(find.byIcon(TablerIcons.pencil));

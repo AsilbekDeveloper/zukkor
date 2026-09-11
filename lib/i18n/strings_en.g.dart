@@ -304,6 +304,9 @@ class Translations$playerDetail$en {
 	/// en: 'Streak'
 	String get streakLabel => 'Streak';
 
+	/// en: 'Friends'
+	String get friendsLabel => 'Friends';
+
 	/// en: 'Add to friends'
 	String get addToFriends => 'Add to friends';
 
@@ -441,6 +444,12 @@ class Translations$profile$en {
 
 	/// en: 'Settings & help'
 	String get settingsAndHelp => 'Settings & help';
+
+	/// en: 'Friends'
+	String get friendsChipLabel => 'Friends';
+
+	/// en: 'Public quizzes'
+	String get publicQuizzesChipLabel => 'Public quizzes';
 }
 
 // Path: settings
@@ -2022,6 +2031,7 @@ extension on Translations {
 			'achievements.firstRankBadge' => '#1 rank',
 			'playerDetail.title' => 'Profile',
 			'playerDetail.streakLabel' => 'Streak',
+			'playerDetail.friendsLabel' => 'Friends',
 			'playerDetail.addToFriends' => 'Add to friends',
 			'playerDetail.requestSent' => 'Sent',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => 'Ranked #${rank} · ${xp} XP',
@@ -2053,6 +2063,8 @@ extension on Translations {
 			'profile.statLongestStreak' => 'Longest streak',
 			'profile.gameHistory' => 'Game history',
 			'profile.settingsAndHelp' => 'Settings & help',
+			'profile.friendsChipLabel' => 'Friends',
+			'profile.publicQuizzesChipLabel' => 'Public quizzes',
 			'settings.groupGeneral' => 'General',
 			'settings.language' => 'Language',
 			'settings.notifications' => 'Notifications',

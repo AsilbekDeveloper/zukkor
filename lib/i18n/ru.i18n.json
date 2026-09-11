@@ -74,6 +74,7 @@
   "playerDetail": {
     "title": "Профиль",
     "streakLabel": "Серия",
+    "friendsLabel": "Друзья",
     "addToFriends": "Добавить в друзья",
     "requestSent": "Отправлено",
     "rankedLabel": "#$rank место · $xp XP",
@@ -114,7 +115,9 @@
     "statWinRate": "Процент побед",
     "statLongestStreak": "Самая длинная серия",
     "gameHistory": "История игр",
-    "settingsAndHelp": "Настройки и помощь"
+    "settingsAndHelp": "Настройки и помощь",
+    "friendsChipLabel": "Друзья",
+    "publicQuizzesChipLabel": "Открытые викторины"
   },
   "settings": {
     "groupGeneral": "Общее",

@@ -15,7 +15,8 @@ abstract final class AppStrings {
   // Home
   static const String homeGreeting = 'Good morning';
   static const String duelHeroTitle = "Who's strong today?";
-  static const String duelHeroSubtitle = 'Challenge a friend or a random opponent';
+  static const String duelHeroSubtitle =
+      'Challenge a friend or a random opponent';
   static const String startDuel = 'Start a duel';
   static const String totalXpLabel = 'Total XP';
   static const String rankLabel = 'Rank';
@@ -25,10 +26,12 @@ abstract final class AppStrings {
   static const String seeAll = 'See all';
   static const String challengeToDuel = 'Challenge to a duel';
   static const String createQuizTitle = 'Create your own quiz';
-  static const String createQuizSubtitle = 'Write your questions and challenge your friends';
+  static const String createQuizSubtitle =
+      'Write your questions and challenge your friends';
 
   static String dayUnit(int count) => count == 1 ? 'day' : 'days';
-  static String friendsCount(int count) => '$count friend${count == 1 ? '' : 's'}';
+  static String friendsCount(int count) =>
+      '$count friend${count == 1 ? '' : 's'}';
   static String questionCount(int count) => '$count questions';
 
   // Categories screen
@@ -55,9 +58,11 @@ abstract final class AppStrings {
   // Player detail screen
   static const String playerDetailTitle = 'Profile';
   static const String streakLabel = 'Streak';
+  static const String friendsLabel = 'Friends';
   static const String addToFriendsButton = 'Add to friends';
   static const String friendRequestSentLabel = 'Sent';
-  static String rankedLabel(int rank, int xp) => 'Ranked #$rank · ${formatThousands(xp)} XP';
+  static String rankedLabel(int rank, int xp) =>
+      'Ranked #$rank · ${formatThousands(xp)} XP';
   static const String alreadyFriendsLabel = "You're friends";
   static const String acceptRequestButton = 'Accept';
   static const String declineRequestButton = 'Decline';
@@ -95,6 +100,8 @@ abstract final class AppStrings {
   static const String statLongestStreak = 'Longest streak';
   static const String gameHistory = 'Game history';
   static const String settingsAndHelp = 'Settings & help';
+  static const String friendsChipLabel = 'Friends';
+  static const String publicQuizzesChipLabel = 'Public quizzes';
 
   // Settings screen
   static const String settingsGroupGeneral = 'General';
@@ -142,7 +149,8 @@ abstract final class AppStrings {
   static const String quizStartLabel = 'Start!';
 
   // Quiz (question) screen
-  static String questionProgress(int current, int total) => 'Question $current/$total';
+  static String questionProgress(int current, int total) =>
+      'Question $current/$total';
 
   // Ball reveal screen
   static const String ballRevealTitle = 'Your points';
@@ -150,7 +158,8 @@ abstract final class AppStrings {
 
   // Result screen
   static const String resultLabel = 'Result';
-  static String resultSummary(int correct, int total) => '$correct out of $total correct';
+  static String resultSummary(int correct, int total) =>
+      '$correct out of $total correct';
   static String totalBallLabel(int ball) => '$ball points';
   static String xpEarnedLabel(int xp) => '+$xp XP';
   static const String playAgain = 'Play again';
@@ -158,12 +167,14 @@ abstract final class AppStrings {
   static const String backToHome = 'Back to home';
 
   // Join with a code screen
-  static const String joinCodeHint = 'Enter the 6-digit room code your friend sent you';
+  static const String joinCodeHint =
+      'Enter the 6-digit room code your friend sent you';
   static const String joinButton = 'Join';
   static String codeDigitLabel(int position) => 'Code digit $position';
   static const String roomNotFound = 'No room found with that code';
   static const String roomFull = 'That room is full';
-  static const String joinCodeTimedOut = "Couldn't connect — check your connection and try again";
+  static const String joinCodeTimedOut =
+      "Couldn't connect — check your connection and try again";
 
   // Lobby (multiplayer room) screen
   static const String lobbyScreenTitle = 'Multiplayer room';
@@ -175,28 +186,34 @@ abstract final class AppStrings {
   static const String waitingForHostLabel = 'Waiting for the host to start…';
   static const String lobbyClosedMessage = 'The host left, the room closed';
   static const String lobbyCreatingRoom = 'Creating room…';
-  static const String lobbyCreateFailed = "Couldn't create the room — check your connection and try again";
+  static const String lobbyCreateFailed =
+      "Couldn't create the room — check your connection and try again";
 
   static String playerCount(int current, int max) => '$current/$max';
 
   // Lobby game screen
   static const String lobbyGameTitle = 'Room';
   static const String lobbyWaitingForQuestion = 'Preparing the question…';
-  static String lobbyAnsweredProgress(int answered, int total) => '$answered/$total answered';
-  static const String lobbyGameStartFailed = "The game didn't start — check your connection and try again";
+  static String lobbyAnsweredProgress(int answered, int total) =>
+      '$answered/$total answered';
+  static const String lobbyGameStartFailed =
+      "The game didn't start — check your connection and try again";
   static const String lobbyGameBackToHome = 'Back to home';
 
   // Lobby result (room leaderboard) screen
   static const String lobbyResultTitle = 'Room results';
-  static const String lobbyResultSubtitle = "Here's how everyone in the room did";
+  static const String lobbyResultSubtitle =
+      "Here's how everyone in the room did";
   static const String backToLobby = 'Play again';
 
   // Duel waiting screen
   static const String duelWaitingTitle = 'Duel';
-  static const String waitingForAcceptLabel = 'Invite sent, waiting for a response…';
+  static const String waitingForAcceptLabel =
+      'Invite sent, waiting for a response…';
   static const String duelDeclinedLabel = 'Invite declined';
   static const String duelExpiredLabel = 'Invite expired';
-  static const String duelTimedOutLabel = "Couldn't reach your friend — check your connection and try again";
+  static const String duelTimedOutLabel =
+      "Couldn't reach your friend — check your connection and try again";
   static const String duelWaitingBackToHome = 'Back to home';
 
   // Duel invite screen
@@ -209,7 +226,8 @@ abstract final class AppStrings {
   static const String duelGameTitle = 'Duel';
   static const String duelWaitingForQuestion = 'Preparing the question…';
   static const String duelOpponentAnsweredLabel = 'Opponent answered';
-  static const String duelGameStartFailed = "The game didn't start — check your connection and try again";
+  static const String duelGameStartFailed =
+      "The game didn't start — check your connection and try again";
   static const String duelGameBackToHome = 'Back to home';
 
   // Duel result screen
@@ -221,12 +239,17 @@ abstract final class AppStrings {
 
   // Notifications screen
   static const String notificationsTitle = 'Notifications';
-  static String notifDuelChallenge(String name) => '$name challenged you to a duel';
-  static const String notifDuelChallengeGeneric = 'You were challenged to a duel';
-  static const String notifStreakReminder = "Don't lose your 5-day streak — play today!";
+  static String notifDuelChallenge(String name) =>
+      '$name challenged you to a duel';
+  static const String notifDuelChallengeGeneric =
+      'You were challenged to a duel';
+  static const String notifStreakReminder =
+      "Don't lose your 5-day streak — play today!";
   static const String notifTop50 = 'You made it into the weekly Top 50';
-  static String notifFriendRequest(String name) => '$name sent you a friend request';
-  static const String notifFriendRequestGeneric = 'You have a new friend request';
+  static String notifFriendRequest(String name) =>
+      '$name sent you a friend request';
+  static const String notifFriendRequestGeneric =
+      'You have a new friend request';
   static const String notifWelcome = 'Welcome to Zukkor! Start your first quiz';
   static const String notifEmptyState = 'No notifications yet';
 
@@ -288,8 +311,10 @@ abstract final class AppStrings {
   static const String faqStreakAnswer =
       'Your streak resets to zero if you skip a full day without playing at least one quiz.';
   static const String faqLobbyQuestion = 'How many players can join a room?';
-  static const String faqLobbyAnswer = 'Rooms currently support up to 10 players.';
-  static const String faqReportQuestion = 'How do I report a bug or a bad question?';
+  static const String faqLobbyAnswer =
+      'Rooms currently support up to 10 players.';
+  static const String faqReportQuestion =
+      'How do I report a bug or a bad question?';
   static const String faqReportAnswer =
       'Reach out to us through this Help Center. We are a small team and every report helps us improve Zukkor.';
 
@@ -365,7 +390,8 @@ abstract final class AppStrings {
   static const String introStudyTitle = 'Almost done!';
   static const String introStudySubtitle = 'A couple more quick questions';
   static const String introStudyPlaceLabel = 'Where do you study?';
-  static const String introQuizLikingLabel = 'Do you enjoy solving quizzes and puzzles?';
+  static const String introQuizLikingLabel =
+      'Do you enjoy solving quizzes and puzzles?';
 
   static const String introStudyPlaceSchool = 'School';
   static const String introStudyPlaceUniversity = 'University';
@@ -403,7 +429,8 @@ abstract final class AppStrings {
   static const String emailRequired = 'Email is required';
   static const String emailInvalid = 'Invalid email format';
   static const String passwordRequired = 'Password is required';
-  static const String passwordTooShort = 'Password must be at least 6 characters and include at least 1 number';
+  static const String passwordTooShort =
+      'Password must be at least 6 characters and include at least 1 number';
   static const String passwordMismatch = "Passwords don't match";
   static const String usernameRequired = 'Username is required';
   static const String usernameInvalid =
@@ -421,6 +448,7 @@ abstract final class AppStrings {
       'A server error occurred. Please try again shortly.';
   static const String errorUnknown = 'An unexpected error occurred.';
   static const String errorInvalidCredentials = 'Incorrect email or password.';
-  static const String errorSessionExpired = 'Your session has expired. Please sign in again.';
+  static const String errorSessionExpired =
+      'Your session has expired. Please sign in again.';
   static const String errorGoogleCancelled = 'Google sign-in was cancelled.';
 }
