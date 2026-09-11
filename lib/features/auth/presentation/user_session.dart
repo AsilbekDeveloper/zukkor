@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/session_expired_notifier.dart';
@@ -8,7 +10,9 @@ import '../../ai_quiz/data/repositories/ai_quiz_repository_impl.dart';
 import '../../ai_quiz/presentation/controllers/ai_quiz_controller.dart';
 import '../../auth/data/repositories/auth_repository_impl.dart';
 import '../../duel/data/datasources/duel_socket_data_source.dart';
+import '../../duel/data/models/duel_invite_model.dart';
 import '../../duel/data/repositories/duel_repository_impl.dart';
+import '../../duel/domain/entities/duel_invite.dart';
 import '../../duel/presentation/controllers/duel_controller.dart';
 import '../../friends/data/repositories/friends_repository_impl.dart';
 import '../../friends/presentation/controllers/friend_requests_controller.dart';
@@ -135,7 +139,9 @@ Future<void> reloadEssentialDataForNewAccount(Ref ref) async {
 /// esa Home'ni qayta ochmasdan sodir bo'lishi mumkin, shuning uchun bu
 /// alohida, aniq chaqiriladigan funksiya kerak.
 Future<void> syncPushTokenForActiveAccount(Ref ref) async {
-  final String? token = await ref.read(pushNotificationServiceProvider).requestTokenOrNull();
+  final String? token = await ref
+      .read(pushNotificationServiceProvider)
+      .requestTokenOrNull();
   if (token != null) {
     await ref.read(registerPushTokenUseCaseProvider).call(token);
   }
@@ -153,13 +159,48 @@ final Provider<void> sessionExpiryHandlerProvider = Provider<void>((ref) {
   });
 });
 
-/// Push-bildirishnoma bosilganda kerakli ekranga yo'naltiradi.
+/// Push-bildirishnoma bosilganda kerakli ekranga yo'naltiradi - har bir
+/// push endi backend'dan `data: {"type": "..."}` bilan keladi
+/// (`app/services/push.py`), shu turga qarab mos ekran ochiladi.
 /// [ZukkorApp] uni `watch` qiladi.
 final Provider<void> pushNotificationHandlerProvider = Provider<void>((ref) {
   final service = ref.read(pushNotificationServiceProvider);
   service.onTap.listen((message) {
-    // Hozircha barcha push'lar (pdf_ready va h.k.) foydalanuvchini
-    // "Mening quizlarim" bo'limiga yo'naltiradi.
-    ref.read(appRouterProvider).push(AppRoutes.myAiQuizzes);
+    final String? type = message.data['type'] as String?;
+    switch (type) {
+      case 'duel_challenge':
+        _openDuelInviteFromPush(ref, message.data['invite'] as String?);
+      case 'friend_request':
+        ref.read(appRouterProvider).push(AppRoutes.friendRequests);
+      case 'ai_quiz_ready':
+      case 'ai_quiz_failed':
+        // Muvaffaqiyatli bo'lsa yangi quiz ro'yxat boshida ko'rinadi;
+        // muvaffaqiyatsiz bo'lsa ham qayta urinish shu yerdan qulay.
+        ref.read(appRouterProvider).push(AppRoutes.myAiQuizzes);
+      case 'streak_reminder':
+        ref.read(appRouterProvider).go(AppRoutes.home);
+      default:
+        // Eski ilova versiyasidan kelgan yoki hali routing yozilmagan
+        // kelajakdagi tur - eng xavfsiz variant sifatida Home.
+        ref.read(appRouterProvider).go(AppRoutes.home);
+    }
   });
 });
+
+/// `duel_challenge` push payload'i `duel_invite_received` WebSocket
+/// xabari bilan bir xil JSON shaklda keladi (backend'dagi
+/// `_handle_duel_invite`) - ilova sovuq/fonda bo'lib socket hali
+/// ulanmagan bo'lsa ham, HECH QANDAY qo'shimcha so'rovsiz to'liq
+/// [DuelInvite] qurish mumkin.
+void _openDuelInviteFromPush(Ref ref, String? inviteJson) {
+  if (inviteJson == null) return;
+  try {
+    final DuelInvite invite = DuelInviteModel.fromJson(
+      jsonDecode(inviteJson) as Map<String, dynamic>,
+    ).toEntity();
+    ref.read(appRouterProvider).push(AppRoutes.duelInvite, extra: invite);
+  } catch (_) {
+    // Yaroqsiz/eskirgan payload - hech bo'lmasa ilova ochiq qolaveradi,
+    // foydalanuvchi Home'dan davom etadi.
+  }
+}
