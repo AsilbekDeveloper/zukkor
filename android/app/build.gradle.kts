@@ -39,6 +39,18 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+
+            // R8 (kod siqish/optimallashtirish/nomlarni xiralashtirish) va
+            // resurslarni siqish - avval o'chirilgan edi (2026-09-13
+            // prod-tayyorlik auditi topilmasi), shuning uchun "release"
+            // build aslida faqat nomi bilan release, hajmi ham,
+            // himoyalanishi ham debug'dan farq qilmasdi.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }
