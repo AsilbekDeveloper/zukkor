@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -41,7 +42,8 @@ class LobbySocketDataSource {
 
   static const Duration _healthCheckInterval = Duration(seconds: 20);
 
-  final StreamController<bool> _connectionController = StreamController<bool>.broadcast();
+  final StreamController<bool> _connectionController =
+      StreamController<bool>.broadcast();
   final StreamController<Map<String, dynamic>> _roomUpdateController =
       StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _joinErrorController =
@@ -65,9 +67,12 @@ class LobbySocketDataSource {
   Stream<Map<String, dynamic>> get closed => _closedController.stream;
   Stream<Map<String, dynamic>> get gameStarted => _gameStartedController.stream;
   Stream<Map<String, dynamic>> get question => _questionController.stream;
-  Stream<Map<String, dynamic>> get waitingForOthers => _waitingForOthersController.stream;
-  Stream<Map<String, dynamic>> get questionResult => _questionResultController.stream;
-  Stream<Map<String, dynamic>> get gameFinished => _gameFinishedController.stream;
+  Stream<Map<String, dynamic>> get waitingForOthers =>
+      _waitingForOthersController.stream;
+  Stream<Map<String, dynamic>> get questionResult =>
+      _questionResultController.stream;
+  Stream<Map<String, dynamic>> get gameFinished =>
+      _gameFinishedController.stream;
 
   /// Never throws — a failed connect (no token yet, no network, the
   /// endpoint not being up) just leaves the lobby features quietly
@@ -115,8 +120,14 @@ class LobbySocketDataSource {
           _connectionController.add(false);
         },
       );
-      _keepAliveTimer = Timer.periodic(_keepAliveInterval, (_) => unawaited(send({'type': 'ping'})));
-      _healthCheckTimer = Timer.periodic(_healthCheckInterval, (_) => _checkConnectionHealth());
+      _keepAliveTimer = Timer.periodic(
+        _keepAliveInterval,
+        (_) => unawaited(send({'type': 'ping'})),
+      );
+      _healthCheckTimer = Timer.periodic(
+        _healthCheckInterval,
+        (_) => _checkConnectionHealth(),
+      );
       _connectionController.add(true);
     } catch (_) {
       _channel = null;
@@ -133,7 +144,9 @@ class LobbySocketDataSource {
 
   void _checkConnectionHealth() {
     if (_channel == null) return;
-    if (DateTime.now().difference(_lastActivityAt) <= _deadConnectionThreshold) return;
+    if (DateTime.now().difference(_lastActivityAt) <= _deadConnectionThreshold) {
+      return;
+    }
     disconnect();
     unawaited(connect());
   }
@@ -143,7 +156,18 @@ class LobbySocketDataSource {
     final Map<String, dynamic> json;
     try {
       json = jsonDecode(raw as String) as Map<String, dynamic>;
-    } catch (_) {
+    } catch (e, st) {
+      // Bo'lmasligi kerak (server har doim to'g'ri JSON yuboradi), lekin
+      // sodir bo'lsa avval bu yerda hech qayerga yozilmasdan jim
+      // yutilardi - production'da nima bo'layotganini bilib bo'lmasdi.
+      unawaited(
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          st,
+          fatal: false,
+          reason: 'lobby socket: malformed message',
+        ),
+      );
       return;
     }
     switch (json['type'] as String?) {
@@ -187,10 +211,9 @@ class LobbySocketDataSource {
   }
 }
 
-final Provider<LobbySocketDataSource> lobbySocketDataSourceProvider = Provider<LobbySocketDataSource>(
-  (ref) {
-    final ds = LobbySocketDataSource(ref.watch(tokenStorageProvider));
-    ref.onDispose(() => ds.disconnect());
-    return ds;
-  },
-);
+final Provider<LobbySocketDataSource> lobbySocketDataSourceProvider =
+    Provider<LobbySocketDataSource>((ref) {
+      final ds = LobbySocketDataSource(ref.watch(tokenStorageProvider));
+      ref.onDispose(() => ds.disconnect());
+      return ds;
+    });

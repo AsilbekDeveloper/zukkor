@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -44,7 +45,8 @@ class DuelSocketDataSource {
 
   static const Duration _healthCheckInterval = Duration(seconds: 20);
 
-  final StreamController<bool> _connectionController = StreamController<bool>.broadcast();
+  final StreamController<bool> _connectionController =
+      StreamController<bool>.broadcast();
   final StreamController<Map<String, dynamic>> _inviteReceivedController =
       StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _inviteAckController =
@@ -73,18 +75,28 @@ class DuelSocketDataSource {
       StreamController<Map<String, dynamic>>.broadcast();
 
   Stream<bool> get connectionStatus => _connectionController.stream;
-  Stream<Map<String, dynamic>> get inviteReceived => _inviteReceivedController.stream;
+  Stream<Map<String, dynamic>> get inviteReceived =>
+      _inviteReceivedController.stream;
   Stream<Map<String, dynamic>> get inviteAck => _inviteAckController.stream;
-  Stream<Map<String, dynamic>> get inviteAccepted => _inviteAcceptedController.stream;
-  Stream<Map<String, dynamic>> get inviteDeclined => _inviteDeclinedController.stream;
-  Stream<Map<String, dynamic>> get inviteExpired => _inviteExpiredController.stream;
+  Stream<Map<String, dynamic>> get inviteAccepted =>
+      _inviteAcceptedController.stream;
+  Stream<Map<String, dynamic>> get inviteDeclined =>
+      _inviteDeclinedController.stream;
+  Stream<Map<String, dynamic>> get inviteExpired =>
+      _inviteExpiredController.stream;
   Stream<Map<String, dynamic>> get duelStarted => _duelStartedController.stream;
-  Stream<Map<String, dynamic>> get duelQuestion => _duelQuestionController.stream;
-  Stream<Map<String, dynamic>> get opponentProgress => _opponentProgressController.stream;
-  Stream<Map<String, dynamic>> get duelQuestionResult => _duelQuestionResultController.stream;
-  Stream<Map<String, dynamic>> get waitingForOpponent => _waitingForOpponentController.stream;
-  Stream<Map<String, dynamic>> get duelFinished => _duelFinishedController.stream;
-  Stream<Map<String, dynamic>> get duelCancelled => _duelCancelledController.stream;
+  Stream<Map<String, dynamic>> get duelQuestion =>
+      _duelQuestionController.stream;
+  Stream<Map<String, dynamic>> get opponentProgress =>
+      _opponentProgressController.stream;
+  Stream<Map<String, dynamic>> get duelQuestionResult =>
+      _duelQuestionResultController.stream;
+  Stream<Map<String, dynamic>> get waitingForOpponent =>
+      _waitingForOpponentController.stream;
+  Stream<Map<String, dynamic>> get duelFinished =>
+      _duelFinishedController.stream;
+  Stream<Map<String, dynamic>> get duelCancelled =>
+      _duelCancelledController.stream;
 
   /// `{"type": "error", "detail": ..., "client_invite_id": ...?}` — sent
   /// when the server rejects an outgoing `duel_invite` (e.g. the other
@@ -142,8 +154,14 @@ class DuelSocketDataSource {
           _connectionController.add(false);
         },
       );
-      _keepAliveTimer = Timer.periodic(_keepAliveInterval, (_) => unawaited(send({'type': 'ping'})));
-      _healthCheckTimer = Timer.periodic(_healthCheckInterval, (_) => _checkConnectionHealth());
+      _keepAliveTimer = Timer.periodic(
+        _keepAliveInterval,
+        (_) => unawaited(send({'type': 'ping'})),
+      );
+      _healthCheckTimer = Timer.periodic(
+        _healthCheckInterval,
+        (_) => _checkConnectionHealth(),
+      );
       _connectionController.add(true);
     } catch (_) {
       _channel = null;
@@ -160,7 +178,9 @@ class DuelSocketDataSource {
 
   void _checkConnectionHealth() {
     if (_channel == null) return;
-    if (DateTime.now().difference(_lastActivityAt) <= _deadConnectionThreshold) return;
+    if (DateTime.now().difference(_lastActivityAt) <= _deadConnectionThreshold) {
+      return;
+    }
     disconnect();
     unawaited(connect());
   }
@@ -170,7 +190,18 @@ class DuelSocketDataSource {
     final Map<String, dynamic> json;
     try {
       json = jsonDecode(raw as String) as Map<String, dynamic>;
-    } catch (_) {
+    } catch (e, st) {
+      // Bo'lmasligi kerak (server har doim to'g'ri JSON yuboradi), lekin
+      // sodir bo'lsa avval bu yerda hech qayerga yozilmasdan jim
+      // yutilardi - production'da nima bo'layotganini bilib bo'lmasdi.
+      unawaited(
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          st,
+          fatal: false,
+          reason: 'duel socket: malformed message',
+        ),
+      );
       return;
     }
     switch (json['type'] as String?) {
@@ -223,10 +254,9 @@ class DuelSocketDataSource {
   }
 }
 
-final Provider<DuelSocketDataSource> duelSocketDataSourceProvider = Provider<DuelSocketDataSource>(
-  (ref) {
-    final ds = DuelSocketDataSource(ref.watch(tokenStorageProvider));
-    ref.onDispose(() => ds.disconnect());
-    return ds;
-  },
-);
+final Provider<DuelSocketDataSource> duelSocketDataSourceProvider =
+    Provider<DuelSocketDataSource>((ref) {
+      final ds = DuelSocketDataSource(ref.watch(tokenStorageProvider));
+      ref.onDispose(() => ds.disconnect());
+      return ds;
+    });
