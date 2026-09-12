@@ -31,33 +31,6 @@ class _FakeTokenStorage implements TokenStorage {
 
   @override
   Future<void> clear() async {}
-
-  @override
-  Future<String?> activeAccountId() async => null;
-
-  @override
-  Future<List<StoredAccountInfo>> listAccounts() async => const [];
-
-  @override
-  Future<void> registerActiveSession({
-    required String userId,
-    required StoredAccountInfo info,
-  }) async {}
-
-  @override
-  Future<void> setActiveAccount(String userId) async {}
-
-  @override
-  Future<void> removeAccount(String userId) async {}
-
-  @override
-  Future<void> updateAccountInfo(String userId, StoredAccountInfo info) async {}
-
-  @override
-  Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
-
-  @override
-  Future<String?> readRefreshTokenFor(String userId) async => null;
 }
 
 /// Backendga murojaat qilmaydigan soxta auth repository — "happy path"
@@ -72,7 +45,10 @@ class _FakeAuthRepository implements AuthRepository {
   String? receivedQuizLiking;
 
   @override
-  Future<void> register({required String email, required String password}) async {}
+  Future<void> register({
+    required String email,
+    required String password,
+  }) async {}
 
   @override
   Future<void> login({required String email, required String password}) async {}
@@ -82,13 +58,13 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<User> getCurrentUser() async => User(
-        id: '1',
-        email: 'aziz@example.com',
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: false,
-        authProvider: 'email',
-      );
+    id: '1',
+    email: 'aziz@example.com',
+    isActive: true,
+    createdAt: DateTime(2026),
+    onboardingCompleted: false,
+    authProvider: 'email',
+  );
 
   @override
   Future<User> updateProfile({
@@ -132,8 +108,10 @@ class _FakeAuthRepository implements AuthRepository {
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
-  Future<void> changePassword({required String currentPassword, required String newPassword}) =>
-      throw UnimplementedError();
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => throw UnimplementedError();
   @override
   Future<void> linkTelegram(String code) => throw UnimplementedError();
 
@@ -149,28 +127,6 @@ class _FakeAuthRepository implements AuthRepository {
     required String code,
     required String newPassword,
   }) async {}
-
-  @override
-  Future<List<StoredAccountInfo>> listAccounts() async => const [];
-
-  @override
-  Future<String?> activeAccountId() async => null;
-
-  @override
-  Future<void> switchAccount(String userId) async {}
-
-  @override
-  Future<void> removeAccount(String userId) async {}
-
-  @override
-  Future<User> addAccount({required String email, required String password}) => throw UnimplementedError();
-
-  @override
-  Future<User> addAccountViaRegister({required String email, required String password}) =>
-      throw UnimplementedError();
-
-  @override
-  Future<User?> addAccountWithGoogle() => throw UnimplementedError();
 }
 
 /// The onboarding wizard has no entry point wired up yet (login/register
@@ -199,7 +155,9 @@ Future<SharedPreferences> _pumpAppOnOnboarding(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        authRepositoryProvider.overrideWithValue(authRepository ?? _FakeAuthRepository()),
+        authRepositoryProvider.overrideWithValue(
+          authRepository ?? _FakeAuthRepository(),
+        ),
         tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
       ],
       child: const ZukkorApp(),
@@ -214,7 +172,9 @@ Future<SharedPreferences> _pumpAppOnOnboarding(
 }
 
 void main() {
-  testWidgets('step 1: avatar step renders and Continue advances to step 2', (tester) async {
+  testWidgets('step 1: avatar step renders and Continue advances to step 2', (
+    tester,
+  ) async {
     await _pumpAppOnOnboarding(tester);
 
     expect(find.text(AppStrings.avatarStepTitle), findsOneWidget);
@@ -227,7 +187,9 @@ void main() {
     expect(find.text('2/3'), findsOneWidget);
   });
 
-  testWidgets('step 2: empty form blocks advancing and shows errors', (tester) async {
+  testWidgets('step 2: empty form blocks advancing and shows errors', (
+    tester,
+  ) async {
     await _pumpAppOnOnboarding(tester);
     await tester.tap(find.text(AppStrings.onboardingContinue));
     await tester.pumpAndSettle();
@@ -241,33 +203,41 @@ void main() {
     expect(find.text(AppStrings.usernameRequired), findsOneWidget);
   });
 
-  testWidgets('step 2: taken username blocks advancing and shows an inline error', (tester) async {
-    await _pumpAppOnOnboarding(tester, authRepository: _FakeAuthRepository(usernameAvailable: false));
+  testWidgets(
+    'step 2: taken username blocks advancing and shows an inline error',
+    (tester) async {
+      await _pumpAppOnOnboarding(
+        tester,
+        authRepository: _FakeAuthRepository(usernameAvailable: false),
+      );
 
-    await tester.tap(find.text(AppStrings.onboardingContinue));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.onboardingContinue));
+      await tester.pumpAndSettle();
 
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.firstNameHint),
-      'Aziz',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.lastNameHint),
-      'Karimov',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.usernameHint),
-      'aziz_karimov',
-    );
-    await tester.tap(find.text(AppStrings.onboardingContinue));
-    await tester.pumpAndSettle();
+      await tester.enterText(
+        find.widgetWithText(TextFormField, AppStrings.firstNameHint),
+        'Aziz',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, AppStrings.lastNameHint),
+        'Karimov',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, AppStrings.usernameHint),
+        'aziz_karimov',
+      );
+      await tester.tap(find.text(AppStrings.onboardingContinue));
+      await tester.pumpAndSettle();
 
-    // Still on step 2 — the username is reported as taken.
-    expect(find.text(AppStrings.profileStepTitle), findsOneWidget);
-    expect(find.text(AppStrings.usernameTaken), findsOneWidget);
-  });
+      // Still on step 2 — the username is reported as taken.
+      expect(find.text(AppStrings.profileStepTitle), findsOneWidget);
+      expect(find.text(AppStrings.usernameTaken), findsOneWidget);
+    },
+  );
 
-  testWidgets('step 3: no direction selected blocks Start and shows a hint', (tester) async {
+  testWidgets('step 3: no direction selected blocks Start and shows a hint', (
+    tester,
+  ) async {
     await _pumpAppOnOnboarding(tester);
 
     // Step 1 → 2.
@@ -301,7 +271,9 @@ void main() {
     expect(find.text(AppStrings.directionRequired), findsOneWidget);
   });
 
-  testWidgets('happy path: all 3 steps completed lands on Home', (tester) async {
+  testWidgets('happy path: all 3 steps completed lands on Home', (
+    tester,
+  ) async {
     await _pumpAppOnOnboarding(tester);
 
     // Step 1 → 2.
@@ -333,45 +305,56 @@ void main() {
     expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
   });
 
-  testWidgets('folds in Introduction survey answers saved before registration, then clears them',
-      (tester) async {
-    final _FakeAuthRepository repository = _FakeAuthRepository();
-    final SharedPreferences prefs = await _pumpAppOnOnboarding(
-      tester,
-      authRepository: repository,
-      extraPrefs: {
-        'zukkor.intro_interests': ['Math', 'Movies'],
-        'zukkor.intro_study_place': 'school',
-        'zukkor.intro_quiz_liking': 'love_it',
-      },
-    );
+  testWidgets(
+    'folds in Introduction survey answers saved before registration, then clears them',
+    (tester) async {
+      final _FakeAuthRepository repository = _FakeAuthRepository();
+      final SharedPreferences prefs = await _pumpAppOnOnboarding(
+        tester,
+        authRepository: repository,
+        extraPrefs: {
+          'zukkor.intro_interests': ['Math', 'Movies'],
+          'zukkor.intro_study_place': 'school',
+          'zukkor.intro_quiz_liking': 'love_it',
+        },
+      );
 
-    // Step 1 → 2.
-    await tester.tap(find.text(AppStrings.onboardingContinue));
-    await tester.pumpAndSettle();
+      // Step 1 → 2.
+      await tester.tap(find.text(AppStrings.onboardingContinue));
+      await tester.pumpAndSettle();
 
-    // Step 2 → 3.
-    await tester.enterText(find.widgetWithText(TextFormField, AppStrings.firstNameHint), 'Aziz');
-    await tester.enterText(find.widgetWithText(TextFormField, AppStrings.lastNameHint), 'Karimov');
-    await tester.enterText(find.widgetWithText(TextFormField, AppStrings.usernameHint), 'aziz_karimov');
-    await tester.tap(find.text(AppStrings.onboardingContinue));
-    await tester.pumpAndSettle();
+      // Step 2 → 3.
+      await tester.enterText(
+        find.widgetWithText(TextFormField, AppStrings.firstNameHint),
+        'Aziz',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, AppStrings.lastNameHint),
+        'Karimov',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, AppStrings.usernameHint),
+        'aziz_karimov',
+      );
+      await tester.tap(find.text(AppStrings.onboardingContinue));
+      await tester.pumpAndSettle();
 
-    // Step 3: pick a direction, then Start.
-    await tester.tap(find.text(AppStrings.directionStudentUniTitle));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(AppStrings.onboardingStart));
-    await tester.pumpAndSettle();
+      // Step 3: pick a direction, then Start.
+      await tester.tap(find.text(AppStrings.directionStudentUniTitle));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.onboardingStart));
+      await tester.pumpAndSettle();
 
-    expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
-    expect(repository.receivedInterests, ['Math', 'Movies']);
-    expect(repository.receivedStudyPlace, 'school');
-    expect(repository.receivedQuizLiking, 'love_it');
-    // Cleared afterward — never resent on a future profile update.
-    expect(prefs.getStringList('zukkor.intro_interests'), isNull);
-    expect(prefs.getString('zukkor.intro_study_place'), isNull);
-    expect(prefs.getString('zukkor.intro_quiz_liking'), isNull);
-  });
+      expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
+      expect(repository.receivedInterests, ['Math', 'Movies']);
+      expect(repository.receivedStudyPlace, 'school');
+      expect(repository.receivedQuizLiking, 'love_it');
+      // Cleared afterward — never resent on a future profile update.
+      expect(prefs.getStringList('zukkor.intro_interests'), isNull);
+      expect(prefs.getString('zukkor.intro_study_place'), isNull);
+      expect(prefs.getString('zukkor.intro_quiz_liking'), isNull);
+    },
+  );
 
   testWidgets('back button steps back through the wizard', (tester) async {
     await _pumpAppOnOnboarding(tester);

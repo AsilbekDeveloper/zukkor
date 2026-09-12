@@ -23,9 +23,7 @@ import '../widgets/google_button.dart';
 /// Kirish ekrani. Ro'yxatdan o'tish alohida sahifada — [RegisterScreen]
 /// (pastdagi havola shu sahifaga o'tkazadi).
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({this.isAddingAccount = false, super.key});
-
-  final bool isAddingAccount;
+  const LoginScreen({super.key});
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -48,23 +46,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     try {
-      if (widget.isAddingAccount) {
-        await ref
-            .read(authControllerProvider.notifier)
-            .addAccount(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            );
-      } else {
-        await ref
-            .read(authControllerProvider.notifier)
-            .login(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            );
-      }
+      await ref
+          .read(authControllerProvider.notifier)
+          .login(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
       if (!mounted) return;
-      context.go(widget.isAddingAccount ? AppRoutes.splash : AppRoutes.home);
+      context.go(AppRoutes.home);
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
@@ -74,11 +63,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _signInWithGoogle() async {
     try {
-      final user = widget.isAddingAccount
-          ? await ref
-                .read(authControllerProvider.notifier)
-                .addAccountWithGoogle()
-          : await ref.read(authControllerProvider.notifier).signInWithGoogle();
+      final user = await ref
+          .read(authControllerProvider.notifier)
+          .signInWithGoogle();
 
       if (!mounted || user == null) {
         return; // foydalanuvchi tanlagichni yopdi — bekor qilingan
@@ -100,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // qilinmaydi.
     if (ModalRoute.of(context)?.isCurrent != true) return;
     context.hideKeyboard();
-    context.push(AppRoutes.register, extra: widget.isAddingAccount);
+    context.push(AppRoutes.register);
   }
 
   @override
@@ -108,9 +95,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final bool isLoading = ref.watch(authControllerProvider);
 
     return Scaffold(
-      appBar: widget.isAddingAccount
-          ? AppBar(title: Text(context.t.auth.addAccount))
-          : null,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(

@@ -398,11 +398,7 @@
     "haveAccountPrompt": "Hisobingiz bormi?",
     "switchToRegister": "Ro'yxatdan o'tish",
     "switchToLogin": "Kirish",
-    "forgotPasswordLink": "Parolni unutdingizmi?",
-    "addAccount": "Akkaunt qo'shish",
-    "accounts": "Akkauntlar",
-    "removeAccountConfirmTitle": "Akkauntni o'chirish",
-    "removeAccountConfirmMessage": "Bu akkauntni ro'yxatdan olib tashlaysizmi?"
+    "forgotPasswordLink": "Parolni unutdingizmi?"
   },
   "authValidation": {
     "emailRequired": "Email kiritilishi shart",

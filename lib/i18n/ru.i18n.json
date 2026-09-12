@@ -413,11 +413,7 @@
     "haveAccountPrompt": "Уже есть аккаунт?",
     "switchToRegister": "Зарегистрироваться",
     "switchToLogin": "Войти",
-    "forgotPasswordLink": "Забыли пароль?",
-    "addAccount": "Добавить аккаунт",
-    "accounts": "Аккаунты",
-    "removeAccountConfirmTitle": "Удалить аккаунт",
-    "removeAccountConfirmMessage": "Вы хотите удалить этот аккаунт из списка?"
+    "forgotPasswordLink": "Забыли пароль?"
   },
   "authValidation": {
     "emailRequired": "Введите email",

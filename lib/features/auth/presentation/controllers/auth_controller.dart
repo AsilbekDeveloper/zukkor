@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/storage/app_preferences.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/entities/user.dart';
 import '../user_session.dart';
@@ -14,10 +13,15 @@ class AuthController extends Notifier<bool> {
   @override
   bool build() => false;
 
-  Future<void> register({required String email, required String password}) async {
+  Future<void> register({
+    required String email,
+    required String password,
+  }) async {
     state = true;
     try {
-      await ref.read(registerUseCaseProvider).call(email: email, password: password);
+      await ref
+          .read(registerUseCaseProvider)
+          .call(email: email, password: password);
       // Yangi hisob — oldingi sessiyadan qolgan keshni tozalab, "eski
       // foydalanuvchi ko'rinib turishi" xatosining oldini olamiz.
       resetUserScopedState(ref);
@@ -30,66 +34,15 @@ class AuthController extends Notifier<bool> {
   Future<void> login({required String email, required String password}) async {
     state = true;
     try {
-      await ref.read(loginUseCaseProvider).call(email: email, password: password);
+      await ref
+          .read(loginUseCaseProvider)
+          .call(email: email, password: password);
       resetUserScopedState(ref);
       await reloadEssentialDataForNewAccount(ref);
     } finally {
       state = false;
     }
   }
-
-  Future<User> addAccount({required String email, required String password}) async {
-    state = true;
-    try {
-      final User user = await ref.read(authRepositoryProvider).addAccount(email: email, password: password);
-      resetUserScopedState(ref);
-      await _clearStaleIntroSurvey();
-      await syncPushTokenForActiveAccount(ref);
-      await reloadEssentialDataForNewAccount(ref);
-      return user;
-    } finally {
-      state = false;
-    }
-  }
-
-  Future<User> addAccountViaRegister({required String email, required String password}) async {
-    state = true;
-    try {
-      final User user =
-          await ref.read(authRepositoryProvider).addAccountViaRegister(email: email, password: password);
-      resetUserScopedState(ref);
-      await _clearStaleIntroSurvey();
-      await syncPushTokenForActiveAccount(ref);
-      await reloadEssentialDataForNewAccount(ref);
-      return user;
-    } finally {
-      state = false;
-    }
-  }
-
-  Future<User?> addAccountWithGoogle() async {
-    state = true;
-    try {
-      final User? user = await ref.read(authRepositoryProvider).addAccountWithGoogle();
-      if (user != null) {
-        resetUserScopedState(ref);
-        await _clearStaleIntroSurvey();
-        await syncPushTokenForActiveAccount(ref);
-        await reloadEssentialDataForNewAccount(ref);
-      }
-      return user;
-    } finally {
-      state = false;
-    }
-  }
-
-  // Introduction so'rovnomasi javoblari ("qurilma"da, birinchi hech qanday
-  // akkaunt yo'q paytda to'planadi) qaysidir OLDINGI akkauntning tugallanmagan
-  // Onboarding'idan qolib ketgan bo'lishi mumkin. Akkaunt QO'SHISHDA (bu
-  // metodlar FAQAT shu oqim uchun) buni ehtiyot chorasi sifatida tozalab
-  // qo'yamiz — aks holda yangi qo'shilgan akkauntning Onboarding'i boshqa
-  // (eski) akkauntning javoblarini "meros qilib olishi" mumkin edi.
-  Future<void> _clearStaleIntroSurvey() => ref.read(appPreferencesProvider).clearIntroSurvey();
 
   /// Google hisob tanlagichini ochadi. Foydalanuvchi hech kimni
   /// tanlamasdan yopsa `null` qaytaradi (xato emas, chaqiruvchi hech
@@ -138,7 +91,9 @@ class AuthController extends Notifier<bool> {
   }) async {
     state = true;
     try {
-      return await ref.read(updateProfileUseCaseProvider).call(
+      return await ref
+          .read(updateProfileUseCaseProvider)
+          .call(
             username: username,
             firstName: firstName,
             lastName: lastName,
@@ -166,13 +121,15 @@ class AuthController extends Notifier<bool> {
   }
 
   /// `POST /auth/change-password`ni chaqiradi.
-  Future<void> changePassword({required String currentPassword, required String newPassword}) async {
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
     state = true;
     try {
-      await ref.read(changePasswordUseCaseProvider).call(
-            currentPassword: currentPassword,
-            newPassword: newPassword,
-          );
+      await ref
+          .read(changePasswordUseCaseProvider)
+          .call(currentPassword: currentPassword, newPassword: newPassword);
     } finally {
       state = false;
     }
@@ -221,11 +178,9 @@ class AuthController extends Notifier<bool> {
   }) async {
     state = true;
     try {
-      await ref.read(resetPasswordUseCaseProvider).call(
-            email: email,
-            code: code,
-            newPassword: newPassword,
-          );
+      await ref
+          .read(resetPasswordUseCaseProvider)
+          .call(email: email, code: code, newPassword: newPassword);
     } finally {
       state = false;
     }

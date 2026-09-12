@@ -10,7 +10,6 @@ import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/error/failures.dart';
 import 'package:zukkor/core/router/app_routes.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
-import 'package:zukkor/core/storage/token_storage.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:zukkor/features/auth/domain/entities/user.dart';
@@ -42,7 +41,10 @@ class _FakeAuthRepository implements AuthRepository {
   String? deletedWithPassword;
 
   @override
-  Future<void> register({required String email, required String password}) async {}
+  Future<void> register({
+    required String email,
+    required String password,
+  }) async {}
 
   @override
   Future<void> login({required String email, required String password}) async {}
@@ -52,14 +54,14 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<User> getCurrentUser() async => User(
-        id: '1',
-        email: 'aziz@example.com',
-        username: 'aziz',
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: true,
-        authProvider: 'email',
-      );
+    id: '1',
+    email: 'aziz@example.com',
+    username: 'aziz',
+    isActive: true,
+    createdAt: DateTime(2026),
+    onboardingCompleted: true,
+    authProvider: 'email',
+  );
 
   @override
   Future<User> updateProfile({
@@ -71,20 +73,19 @@ class _FakeAuthRepository implements AuthRepository {
     List<String>? interests,
     String? studyPlace,
     String? quizLiking,
-  }) async =>
-      User(
-        id: '1',
-        email: 'aziz@example.com',
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        avatarColor: avatarColor,
-        direction: direction,
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: true,
-        authProvider: 'email',
-      );
+  }) async => User(
+    id: '1',
+    email: 'aziz@example.com',
+    username: username,
+    firstName: firstName,
+    lastName: lastName,
+    avatarColor: avatarColor,
+    direction: direction,
+    isActive: true,
+    createdAt: DateTime(2026),
+    onboardingCompleted: true,
+    authProvider: 'email',
+  );
 
   @override
   Future<bool> isUsernameAvailable(String username) async => true;
@@ -99,8 +100,10 @@ class _FakeAuthRepository implements AuthRepository {
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
-  Future<void> changePassword({required String currentPassword, required String newPassword}) =>
-      throw UnimplementedError();
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => throw UnimplementedError();
   @override
   Future<void> linkTelegram(String code) => throw UnimplementedError();
 
@@ -119,35 +122,15 @@ class _FakeAuthRepository implements AuthRepository {
     required String code,
     required String newPassword,
   }) async {}
-
-  @override
-  Future<List<StoredAccountInfo>> listAccounts() async => const [];
-
-  @override
-  Future<String?> activeAccountId() async => null;
-
-  @override
-  Future<void> switchAccount(String userId) async {}
-
-  @override
-  Future<void> removeAccount(String userId) async {}
-
-  @override
-  Future<User> addAccount({required String email, required String password}) => throw UnimplementedError();
-
-  @override
-  Future<User> addAccountViaRegister({required String email, required String password}) =>
-      throw UnimplementedError();
-
-  @override
-  Future<User?> addAccountWithGoogle() => throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta repository — Notifications testi
 /// (tapping Notifications) haqiqiy tarmoqqa bog'liq bo'lmasligi kerak.
-class _FakeNotificationPreferencesRepository implements NotificationPreferencesRepository {
+class _FakeNotificationPreferencesRepository
+    implements NotificationPreferencesRepository {
   @override
-  Future<NotificationPreferences> getPreferences() async => const NotificationPreferences(
+  Future<NotificationPreferences> getPreferences() async =>
+      const NotificationPreferences(
         duelInvites: true,
         streakReminders: true,
         leaderboardUpdates: true,
@@ -156,7 +139,9 @@ class _FakeNotificationPreferencesRepository implements NotificationPreferencesR
       );
 
   @override
-  Future<NotificationPreferences> updatePreferences(NotificationPreferences preferences) async => preferences;
+  Future<NotificationPreferences> updatePreferences(
+    NotificationPreferences preferences,
+  ) async => preferences;
 }
 
 // SettingsScreen's theme switch reads/writes themeControllerProvider,
@@ -179,9 +164,18 @@ Future<GoRouter> _pumpSettings(
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
-      GoRoute(path: AppRoutes.login, builder: (context, state) => const LoginScreen()),
-      GoRoute(path: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (context, state) => const SettingsScreen(),
+      ),
       GoRoute(
         path: AppRoutes.languageSettings,
         builder: (context, state) => const LanguageScreen(),
@@ -190,10 +184,22 @@ Future<GoRouter> _pumpSettings(
         path: AppRoutes.notificationSettings,
         builder: (context, state) => const NotificationSettingsScreen(),
       ),
-      GoRoute(path: AppRoutes.privacyPolicy, builder: (context, state) => const PrivacyPolicyScreen()),
-      GoRoute(path: AppRoutes.helpCenter, builder: (context, state) => const HelpCenterScreen()),
-      GoRoute(path: AppRoutes.termsOfUse, builder: (context, state) => const TermsOfUseScreen()),
-      GoRoute(path: AppRoutes.changePassword, builder: (context, state) => const ChangePasswordScreen()),
+      GoRoute(
+        path: AppRoutes.privacyPolicy,
+        builder: (context, state) => const PrivacyPolicyScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.helpCenter,
+        builder: (context, state) => const HelpCenterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.termsOfUse,
+        builder: (context, state) => const TermsOfUseScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.changePassword,
+        builder: (context, state) => const ChangePasswordScreen(),
+      ),
     ],
   );
 
@@ -201,11 +207,18 @@ Future<GoRouter> _pumpSettings(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        authRepositoryProvider.overrideWithValue(repository ?? _FakeAuthRepository()),
-        notificationPreferencesRepositoryProvider.overrideWithValue(_FakeNotificationPreferencesRepository()),
+        authRepositoryProvider.overrideWithValue(
+          repository ?? _FakeAuthRepository(),
+        ),
+        notificationPreferencesRepositoryProvider.overrideWithValue(
+          _FakeNotificationPreferencesRepository(),
+        ),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -215,7 +228,9 @@ Future<GoRouter> _pumpSettings(
 }
 
 void main() {
-  testWidgets('renders both groups, all rows, and Log out, no overflow', (tester) async {
+  testWidgets('renders both groups, all rows, and Log out, no overflow', (
+    tester,
+  ) async {
     await _pumpSettings(tester);
 
     expect(find.text(AppStrings.settings), findsOneWidget);
@@ -241,7 +256,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping the theme row toggles the label from Light to Dark', (tester) async {
+  testWidgets('tapping the theme row toggles the label from Light to Dark', (
+    tester,
+  ) async {
     await _pumpSettings(tester);
 
     expect(find.text(AppStrings.settingsThemeLight), findsOneWidget);
@@ -265,23 +282,28 @@ void main() {
     expect(tester.widget<Switch>(find.byType(Switch).last).value, isTrue);
   });
 
-  testWidgets('tapping Language opens the Language picker, and picking one updates the row', (tester) async {
-    await _pumpSettings(tester);
+  testWidgets(
+    'tapping Language opens the Language picker, and picking one updates the row',
+    (tester) async {
+      await _pumpSettings(tester);
 
-    await tester.tap(find.text(AppStrings.settingsLanguage));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.settingsLanguage));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(LanguageScreen), findsOneWidget);
-    expect(find.text(AppStrings.languageUzbek), findsOneWidget);
+      expect(find.byType(LanguageScreen), findsOneWidget);
+      expect(find.text(AppStrings.languageUzbek), findsOneWidget);
 
-    await tester.tap(find.text(AppStrings.languageUzbek));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.languageUzbek));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(LanguageScreen), findsNothing);
-    expect(find.text(AppStrings.languageUzbek), findsOneWidget);
-  });
+      expect(find.byType(LanguageScreen), findsNothing);
+      expect(find.text(AppStrings.languageUzbek), findsOneWidget);
+    },
+  );
 
-  testWidgets('tapping Notifications opens Notification preferences', (tester) async {
+  testWidgets('tapping Notifications opens Notification preferences', (
+    tester,
+  ) async {
     await _pumpSettings(tester);
 
     await tester.tap(find.text(AppStrings.settingsNotifications));
@@ -327,7 +349,9 @@ void main() {
     expect(find.byType(SettingsScreen), findsNothing);
   });
 
-  testWidgets('tapping Change password opens the Change Password screen', (tester) async {
+  testWidgets('tapping Change password opens the Change Password screen', (
+    tester,
+  ) async {
     await _pumpSettings(tester);
 
     await tester.tap(find.text(AppStrings.settingsChangePassword));
@@ -337,58 +361,71 @@ void main() {
     expect(find.text(AppStrings.changePasswordTitle), findsWidgets);
   });
 
-  testWidgets('tapping Delete account opens a confirmation dialog, cancel dismisses it', (tester) async {
-    final _FakeAuthRepository repository = _FakeAuthRepository();
-    await _pumpSettings(tester, repository: repository);
+  testWidgets(
+    'tapping Delete account opens a confirmation dialog, cancel dismisses it',
+    (tester) async {
+      final _FakeAuthRepository repository = _FakeAuthRepository();
+      await _pumpSettings(tester, repository: repository);
 
-    await tester.tap(find.text(AppStrings.settingsDeleteAccount));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.settingsDeleteAccount));
+      await tester.pumpAndSettle();
 
-    // "Delete account" appears both as the settings row label and the
-    // dialog title while the dialog is open — scope to the dialog itself.
-    expect(find.byType(AlertDialog), findsOneWidget);
+      // "Delete account" appears both as the settings row label and the
+      // dialog title while the dialog is open — scope to the dialog itself.
+      expect(find.byType(AlertDialog), findsOneWidget);
 
-    await tester.tap(find.text(AppStrings.cancel));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.cancel));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(AlertDialog), findsNothing);
-    expect(find.byType(SettingsScreen), findsOneWidget);
-    expect(repository.deletedWithPassword, isNull);
-  });
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byType(SettingsScreen), findsOneWidget);
+      expect(repository.deletedWithPassword, isNull);
+    },
+  );
 
-  testWidgets('deleting the account with a wrong password shows an inline error and stays open', (tester) async {
-    final _FakeAuthRepository repository = _FakeAuthRepository(deleteAccountFails: true);
-    await _pumpSettings(tester, repository: repository);
+  testWidgets(
+    'deleting the account with a wrong password shows an inline error and stays open',
+    (tester) async {
+      final _FakeAuthRepository repository = _FakeAuthRepository(
+        deleteAccountFails: true,
+      );
+      await _pumpSettings(tester, repository: repository);
 
-    await tester.tap(find.text(AppStrings.settingsDeleteAccount));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.settingsDeleteAccount));
+      await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextFormField), 'wrong-password');
-    await tester.tap(find.text(AppStrings.deleteAccountConfirmButton));
-    await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextFormField), 'wrong-password');
+      await tester.tap(find.text(AppStrings.deleteAccountConfirmButton));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(AlertDialog), findsOneWidget);
-    expect(find.text('Wrong password'), findsOneWidget);
-    expect(find.byType(SettingsScreen), findsOneWidget);
-  });
+      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('Wrong password'), findsOneWidget);
+      expect(find.byType(SettingsScreen), findsOneWidget);
+    },
+  );
 
-  testWidgets('confirming account deletion with the correct password navigates to Login', (tester) async {
-    final _FakeAuthRepository repository = _FakeAuthRepository();
-    await _pumpSettings(tester, repository: repository);
+  testWidgets(
+    'confirming account deletion with the correct password navigates to Login',
+    (tester) async {
+      final _FakeAuthRepository repository = _FakeAuthRepository();
+      await _pumpSettings(tester, repository: repository);
 
-    await tester.tap(find.text(AppStrings.settingsDeleteAccount));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.settingsDeleteAccount));
+      await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextFormField), 'correct-password');
-    await tester.tap(find.text(AppStrings.deleteAccountConfirmButton));
-    await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextFormField), 'correct-password');
+      await tester.tap(find.text(AppStrings.deleteAccountConfirmButton));
+      await tester.pumpAndSettle();
 
-    expect(repository.deletedWithPassword, 'correct-password');
-    expect(find.byType(LoginScreen), findsOneWidget);
-    expect(find.byType(SettingsScreen), findsNothing);
-  });
+      expect(repository.deletedWithPassword, 'correct-password');
+      expect(find.byType(LoginScreen), findsOneWidget);
+      expect(find.byType(SettingsScreen), findsNothing);
+    },
+  );
 
-  testWidgets('the back button returns to Home when pushed on top of it', (tester) async {
+  testWidgets('the back button returns to Home when pushed on top of it', (
+    tester,
+  ) async {
     await _pumpSettings(tester);
 
     await tester.tap(find.byIcon(TablerIcons.arrowLeft));

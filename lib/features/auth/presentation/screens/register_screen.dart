@@ -25,9 +25,7 @@ import '../widgets/google_button.dart';
 /// Faqat email + parol so'raladi — ism, familiya, username Profil
 /// yaratish (Onboarding) oqimida to'ldiriladi.
 class RegisterScreen extends ConsumerStatefulWidget {
-  const RegisterScreen({this.isAddingAccount = false, super.key});
-
-  final bool isAddingAccount;
+  const RegisterScreen({super.key});
 
   @override
   ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
@@ -68,32 +66,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     try {
-      if (widget.isAddingAccount) {
-        await ref
-            .read(authControllerProvider.notifier)
-            .addAccountViaRegister(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            );
-      } else {
-        await ref
-            .read(authControllerProvider.notifier)
-            .register(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            );
-      }
+      await ref
+          .read(authControllerProvider.notifier)
+          .register(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          );
       if (!mounted) return;
       // Ro'yxatdan o'tgach profil sozlashga (Onboarding) yo'naltiramiz —
       // Register/Login'ga qaytmasin uchun `go` bilan.
-      if (widget.isAddingAccount) {
-        context.go(AppRoutes.splash);
-      } else {
-        context.go(AppRoutes.onboarding);
-      }
-      if (!widget.isAddingAccount) {
-        unawaited(ref.read(analyticsServiceProvider).logSignUp('email'));
-      }
+      context.go(AppRoutes.onboarding);
+      unawaited(ref.read(analyticsServiceProvider).logSignUp('email'));
     } on Failure catch (e) {
       if (mounted) context.showSnack(e.message);
     } catch (_) {
@@ -103,16 +86,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _signInWithGoogle() async {
     try {
-      final user = widget.isAddingAccount
-          ? await ref
-                .read(authControllerProvider.notifier)
-                .addAccountWithGoogle()
-          : await ref.read(authControllerProvider.notifier).signInWithGoogle();
+      final user = await ref
+          .read(authControllerProvider.notifier)
+          .signInWithGoogle();
 
       if (!mounted || user == null) {
         return; // foydalanuvchi tanlagichni yopdi — bekor qilingan
       }
-      if (!user.onboardingCompleted && !widget.isAddingAccount) {
+      if (!user.onboardingCompleted) {
         unawaited(ref.read(analyticsServiceProvider).logSignUp('google'));
       }
       context.go(
@@ -144,9 +125,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final bool isLoading = ref.watch(authControllerProvider);
 
     return Scaffold(
-      appBar: widget.isAddingAccount
-          ? AppBar(title: Text(context.t.auth.addAccount))
-          : null,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(

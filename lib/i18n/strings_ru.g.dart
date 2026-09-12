@@ -783,10 +783,6 @@ class _Translations$auth$ru implements Translations$auth$en {
 	@override String get switchToRegister => 'Зарегистрироваться';
 	@override String get switchToLogin => 'Войти';
 	@override String get forgotPasswordLink => 'Забыли пароль?';
-	@override String get addAccount => 'Добавить аккаунт';
-	@override String get accounts => 'Аккаунты';
-	@override String get removeAccountConfirmTitle => 'Удалить аккаунт';
-	@override String get removeAccountConfirmMessage => 'Вы хотите удалить этот аккаунт из списка?';
 }
 
 // Path: authValidation
@@ -1361,10 +1357,6 @@ extension on TranslationsRu {
 			'auth.switchToRegister' => 'Зарегистрироваться',
 			'auth.switchToLogin' => 'Войти',
 			'auth.forgotPasswordLink' => 'Забыли пароль?',
-			'auth.addAccount' => 'Добавить аккаунт',
-			'auth.accounts' => 'Аккаунты',
-			'auth.removeAccountConfirmTitle' => 'Удалить аккаунт',
-			'auth.removeAccountConfirmMessage' => 'Вы хотите удалить этот аккаунт из списка?',
 			'authValidation.emailRequired' => 'Введите email',
 			'authValidation.emailInvalid' => 'Неверный формат email',
 			'authValidation.passwordRequired' => 'Введите пароль',

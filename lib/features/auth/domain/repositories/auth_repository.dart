@@ -1,4 +1,3 @@
-import '../../../../core/storage/token_storage.dart';
 import '../entities/user.dart';
 
 /// Auth backend bilan ishlash shartnomasi — amalga oshirilishi
@@ -8,16 +7,10 @@ abstract interface class AuthRepository {
   /// saqlanadi — chaqiruvchi qo'shimcha ish qilmaydi, foydalanuvchi
   /// shu zahoti tizimga kirgan hisoblanadi. `username` bu bosqichda
   /// so'ralmaydi — u Onboarding'da ([updateProfile]) beriladi.
-  Future<void> register({
-    required String email,
-    required String password,
-  });
+  Future<void> register({required String email, required String password});
 
   /// `POST /auth/login`. Muvaffaqiyatli bo'lsa tokenlar avtomatik saqlanadi.
-  Future<void> login({
-    required String email,
-    required String password,
-  });
+  Future<void> login({required String email, required String password});
 
   /// Google hisob tanlagichini ochadi, so'ng `POST /auth/google`ni
   /// chaqiradi. Foydalanuvchi hech kimni tanlamasdan tanlagichni yopsa
@@ -106,24 +99,4 @@ abstract interface class AuthRepository {
     required String code,
     required String newPassword,
   });
-
-  /// "Akkaunt qo'shish" oqimi: yangi login qiladi, uning egasini aniqlaydi,
-  /// va joriy faol sessiyani buzg'un qilmasdan tokenlarni ro'yxatga
-  /// o'tkazadi. Muvaffaqiyatli bo'lsa yangi foydalanuvchini qaytaradi.
-  Future<User> addAccount({required String email, required String password});
-
-  /// Ro'yxatdan o'tish orqali yangi akkaunt qo'shish.
-  Future<User> addAccountViaRegister({required String email, required String password});
-
-  /// Google orqali yangi akkaunt qo'shish.
-  Future<User?> addAccountWithGoogle();
-
-  Future<List<StoredAccountInfo>> listAccounts();
-  Future<String?> activeAccountId();
-
-  /// Boshqa (albatta joriy faol bo'lmagan) akkauntga o'tadi.
-  Future<void> switchAccount(String userId);
-
-  /// Akkauntni butunlay o'chiradi.
-  Future<void> removeAccount(String userId);
 }

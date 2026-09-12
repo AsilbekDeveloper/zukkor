@@ -102,48 +102,30 @@ void resetUserScopedState(Ref ref) {
 }
 
 /// [resetUserScopedState]dan KEYIN, agar ENDI HAQIQATAN HAM YANGI faol
-/// sessiya bo'lsa (login, register, Google, akkaunt almashtirish/qo'shish —
-/// logout/sessiya-tugashida EMAS, u yerda faol sessiya yo'q) chaqiriladi —
-/// asosiy ekranlarning ma'lumotini DARHOL qayta yuklaydi.
+/// sessiya bo'lsa (login, register, Google — logout/sessiya-tugashida
+/// EMAS, u yerda faol sessiya yo'q) chaqiriladi — asosiy ekranlarning
+/// ma'lumotini DARHOL qayta yuklaydi.
 ///
 /// MUHIM: bu shart, chunki doimiy pastki-navigatsiya qobig'i ([MainShell] /
-/// `StatefulShellRoute.indexedStack`) Home/Profile kabi ekranlarni akkaunt
-/// almashtirilganda QAYTA QURMAYDI — ular `IndexedStack`da tirik saqlanadi,
-/// shuning uchun ularning `initState`dagi "ma'lumot yo'q bo'lsa yukla"
-/// mantig'i qayta ishga TUSHMAYDI. `resetUserScopedState` faqat holatni
-/// bo'shatadi (invalidate) — buni chaqirmasak, akkaunt almashtirilgandan
-/// keyin ma'lumot abadiy bo'sh qolib ketardi (2026-09-06'da real
-/// qurilmada aynan shu holat topilgan).
+/// `StatefulShellRoute.indexedStack`) Home/Profile kabi ekranlarni qayta
+/// QURMAYDI — ular `IndexedStack`da tirik saqlanadi, shuning uchun
+/// ularning `initState`dagi "ma'lumot yo'q bo'lsa yukla" mantig'i qayta
+/// ishga TUSHMAYDI. `resetUserScopedState` faqat holatni bo'shatadi
+/// (invalidate) — buni chaqirmasak, yangi sessiyadan keyin ma'lumot
+/// abadiy bo'sh qolib ketardi (2026-09-06'da real qurilmada aynan shu
+/// holat topilgan).
 Future<void> reloadEssentialDataForNewAccount(Ref ref) async {
-  await ref.read(currentUserControllerProvider.notifier).load();
+  // Profil, kategoriyalar va bildirishnomalar bir-biriga bog'liq emas —
+  // ketma-ket kutish o'rniga birga yuboriladi. Statistika esa profildan
+  // olingan userId'ga muhtoj, shuning uchun keyin.
+  await Future.wait([
+    ref.read(currentUserControllerProvider.notifier).load(),
+    ref.read(categoriesControllerProvider.notifier).load(),
+    ref.read(notificationsControllerProvider.notifier).load(),
+  ]);
   final String? userId = ref.read(currentUserControllerProvider).data?.id;
   if (userId != null) {
     await ref.read(myStatsControllerProvider.notifier).load(userId);
-  }
-  await ref.read(categoriesControllerProvider.notifier).load();
-  await ref.read(notificationsControllerProvider.notifier).load();
-}
-
-/// Bir necha akkaunt orasida almashtirilganda (yoki yangi akkaunt
-/// qo'shilib, u darhol faol bo'lganda) FCM push-tokenni ENDI FAOL bo'lgan
-/// akkauntga qayta bog'laydi.
-///
-/// `PUT /users/me/push-token` allaqachon "token boshqa userga bog'langan
-/// bo'lsa, undan olib qayta bog'laydi" mantig'iga ega (bitta qurilma
-/// tokeni bir vaqtda faqat bitta userga tegishli bo'ladi) — shuning uchun
-/// bu yerda faqat SHU SO'ROVNI QAYTA YUBORISH kifoya, alohida
-/// "unregister" chaqiruvi shart emas.
-///
-/// `HomeScreen._syncPushToken` buni ilova sessiyasi davomida FAQAT BIR
-/// MARTA (birinchi Home ochilganda) qiladi — akkaunt almashtirish/qo'shish
-/// esa Home'ni qayta ochmasdan sodir bo'lishi mumkin, shuning uchun bu
-/// alohida, aniq chaqiriladigan funksiya kerak.
-Future<void> syncPushTokenForActiveAccount(Ref ref) async {
-  final String? token = await ref
-      .read(pushNotificationServiceProvider)
-      .requestTokenOrNull();
-  if (token != null) {
-    await ref.read(registerPushTokenUseCaseProvider).call(token);
   }
 }
 

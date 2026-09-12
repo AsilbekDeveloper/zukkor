@@ -18,7 +18,6 @@ import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
-import '../../../auth/presentation/controllers/accounts_controller.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../../onboarding/presentation/models/onboarding_direction.dart';
@@ -183,8 +182,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 current?.direction ?? OnboardingDirection.casual.apiValue,
           );
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
-      // Akkauntlar ro'yxatidagi ma'lumotni ham yangilash uchun.
-      ref.invalidate(accountsControllerProvider);
       if (!mounted) return;
       context.showSnack(context.t.editProfile.updated);
       _goBack();

@@ -8,7 +8,6 @@ import '../../features/ai_quiz/presentation/screens/discover_screen.dart';
 import '../../features/ai_quiz/presentation/screens/edit_manual_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/generate_ai_quiz_screen.dart';
 import '../../features/ai_quiz/presentation/screens/my_ai_quizzes_screen.dart';
-import '../../features/auth/presentation/screens/account_switcher_screen.dart';
 import '../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -126,13 +125,11 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.login,
-        builder: (context, state) =>
-            LoginScreen(isAddingAccount: state.extra == true),
+        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: AppRoutes.register,
-        builder: (context, state) =>
-            RegisterScreen(isAddingAccount: state.extra == true),
+        builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
@@ -441,10 +438,6 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.telegramLink,
         builder: (context, state) => const TelegramLinkScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.accounts,
-        builder: (context, state) => const AccountSwitcherScreen(),
       ),
     ],
   );

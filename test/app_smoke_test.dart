@@ -31,33 +31,6 @@ class _FakeTokenStorage implements TokenStorage {
 
   @override
   Future<void> clear() async {}
-
-  @override
-  Future<String?> activeAccountId() async => null;
-
-  @override
-  Future<List<StoredAccountInfo>> listAccounts() async => const [];
-
-  @override
-  Future<void> registerActiveSession({
-    required String userId,
-    required StoredAccountInfo info,
-  }) async {}
-
-  @override
-  Future<void> setActiveAccount(String userId) async {}
-
-  @override
-  Future<void> removeAccount(String userId) async {}
-
-  @override
-  Future<void> updateAccountInfo(String userId, StoredAccountInfo info) async {}
-
-  @override
-  Future<void> savePendingLoginTokens({required String access, String? refresh}) async {}
-
-  @override
-  Future<String?> readRefreshTokenFor(String userId) async => null;
 }
 
 /// Backendga murojaat qilmaydigan soxta auth repository — bu smoke testlar
@@ -65,7 +38,10 @@ class _FakeTokenStorage implements TokenStorage {
 /// bo'lmasligi kerak.
 class _FakeAuthRepository implements AuthRepository {
   @override
-  Future<void> register({required String email, required String password}) async {}
+  Future<void> register({
+    required String email,
+    required String password,
+  }) async {}
 
   @override
   Future<void> login({required String email, required String password}) async {}
@@ -75,14 +51,14 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<User> getCurrentUser() async => User(
-        id: '1',
-        email: 'aziz@example.com',
-        username: 'aziz',
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: false,
-        authProvider: 'email',
-      );
+    id: '1',
+    email: 'aziz@example.com',
+    username: 'aziz',
+    isActive: true,
+    createdAt: DateTime(2026),
+    onboardingCompleted: false,
+    authProvider: 'email',
+  );
 
   @override
   Future<User> updateProfile({
@@ -94,20 +70,19 @@ class _FakeAuthRepository implements AuthRepository {
     List<String>? interests,
     String? studyPlace,
     String? quizLiking,
-  }) async =>
-      User(
-        id: '1',
-        email: 'aziz@example.com',
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        avatarColor: avatarColor,
-        direction: direction,
-        isActive: true,
-        createdAt: DateTime(2026),
-        onboardingCompleted: true,
-        authProvider: 'email',
-      );
+  }) async => User(
+    id: '1',
+    email: 'aziz@example.com',
+    username: username,
+    firstName: firstName,
+    lastName: lastName,
+    avatarColor: avatarColor,
+    direction: direction,
+    isActive: true,
+    createdAt: DateTime(2026),
+    onboardingCompleted: true,
+    authProvider: 'email',
+  );
 
   @override
   Future<bool> isUsernameAvailable(String username) async => true;
@@ -122,8 +97,10 @@ class _FakeAuthRepository implements AuthRepository {
   Future<User> uploadAvatarImage(String filePath) => throw UnimplementedError();
 
   @override
-  Future<void> changePassword({required String currentPassword, required String newPassword}) =>
-      throw UnimplementedError();
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => throw UnimplementedError();
   @override
   Future<void> linkTelegram(String code) => throw UnimplementedError();
 
@@ -139,28 +116,6 @@ class _FakeAuthRepository implements AuthRepository {
     required String code,
     required String newPassword,
   }) async {}
-
-  @override
-  Future<List<StoredAccountInfo>> listAccounts() async => const [];
-
-  @override
-  Future<String?> activeAccountId() async => null;
-
-  @override
-  Future<void> switchAccount(String userId) async {}
-
-  @override
-  Future<void> removeAccount(String userId) async {}
-
-  @override
-  Future<User> addAccount({required String email, required String password}) => throw UnimplementedError();
-
-  @override
-  Future<User> addAccountViaRegister({required String email, required String password}) =>
-      throw UnimplementedError();
-
-  @override
-  Future<User?> addAccountWithGoogle() => throw UnimplementedError();
 }
 
 class _FakePushNotificationService implements PushNotificationService {
@@ -186,7 +141,9 @@ void main() {
   testWidgets('ilova Login ekranida ochiladi', (tester) async {
     // These tests exercise the post-Introduction Login/Register/Onboarding
     // flow directly, so the walkthrough gate is pre-cleared here.
-    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      'zukkor.has_seen_introduction': true,
+    });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -194,7 +151,9 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
-          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
+          pushNotificationServiceProvider.overrideWithValue(
+            _FakePushNotificationService(),
+          ),
         ],
         child: const ZukkorApp(),
       ),
@@ -208,7 +167,9 @@ void main() {
     expect(find.text(AppStrings.continueWithGoogle), findsOneWidget);
   });
 
-  testWidgets('Login → Register sahifasiga o\'tish va orqaga qaytish', (tester) async {
+  testWidgets('Login → Register sahifasiga o\'tish va orqaga qaytish', (
+    tester,
+  ) async {
     // Standart test oynasi (800x600) telefon ekranidan torroq — pastdagi
     // havola ko'rinmay qolib, tap() xato beradi. Haqiqiy telefon o'lchamiga
     // moslashtiramiz.
@@ -219,7 +180,9 @@ void main() {
 
     // These tests exercise the post-Introduction Login/Register/Onboarding
     // flow directly, so the walkthrough gate is pre-cleared here.
-    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      'zukkor.has_seen_introduction': true,
+    });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -227,7 +190,9 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
-          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
+          pushNotificationServiceProvider.overrideWithValue(
+            _FakePushNotificationService(),
+          ),
         ],
         child: const ZukkorApp(),
       ),
@@ -265,7 +230,9 @@ void main() {
     expect(find.text(AppStrings.registerTitle), findsNothing);
   });
 
-  testWidgets('Register with a valid form navigates to Onboarding', (tester) async {
+  testWidgets('Register with a valid form navigates to Onboarding', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -273,7 +240,9 @@ void main() {
 
     // These tests exercise the post-Introduction Login/Register/Onboarding
     // flow directly, so the walkthrough gate is pre-cleared here.
-    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      'zukkor.has_seen_introduction': true,
+    });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -282,7 +251,9 @@ void main() {
           sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
-          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
+          pushNotificationServiceProvider.overrideWithValue(
+            _FakePushNotificationService(),
+          ),
         ],
         child: const ZukkorApp(),
       ),
@@ -295,7 +266,10 @@ void main() {
     unawaited(context.push(AppRoutes.register));
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'aziz@example.com');
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'aziz@example.com',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), 'Parol12345');
     await tester.enterText(find.byType(TextFormField).at(2), 'Parol12345');
     await tester.tap(find.text(AppStrings.registerButton));
@@ -313,7 +287,9 @@ void main() {
 
     // These tests exercise the post-Introduction Login/Register/Onboarding
     // flow directly, so the walkthrough gate is pre-cleared here.
-    SharedPreferences.setMockInitialValues(<String, Object>{'zukkor.has_seen_introduction': true});
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      'zukkor.has_seen_introduction': true,
+    });
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await tester.pumpWidget(
@@ -322,7 +298,9 @@ void main() {
           sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
           authRepositoryProvider.overrideWithValue(_FakeAuthRepository()),
-          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
+          pushNotificationServiceProvider.overrideWithValue(
+            _FakePushNotificationService(),
+          ),
         ],
         child: const ZukkorApp(),
       ),
@@ -333,7 +311,10 @@ void main() {
     unawaited(context.push(AppRoutes.login));
     await tester.pumpAndSettle();
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'aziz@example.com');
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'aziz@example.com',
+    );
     await tester.enterText(find.byType(TextFormField).at(1), 'Parol12345');
     await tester.tap(find.text(AppStrings.loginButton).first);
     await tester.pumpAndSettle();
@@ -342,7 +323,9 @@ void main() {
     expect(find.text(AppStrings.loginTitle), findsNothing);
   });
 
-  testWidgets('first launch shows the Introduction walkthrough before Login', (tester) async {
+  testWidgets('first launch shows the Introduction walkthrough before Login', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
@@ -360,7 +343,9 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
           tokenStorageProvider.overrideWithValue(_FakeTokenStorage()),
-          pushNotificationServiceProvider.overrideWithValue(_FakePushNotificationService()),
+          pushNotificationServiceProvider.overrideWithValue(
+            _FakePushNotificationService(),
+          ),
         ],
         child: const ZukkorApp(),
       ),

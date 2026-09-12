@@ -8,7 +8,6 @@ import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/models/avatar_color_option.dart';
 import 'package:zukkor/core/notifications/push_notification_service.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
-import 'package:zukkor/core/storage/token_storage.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/ai_quiz/presentation/models/edit_manual_quiz_args.dart';
 import 'package:zukkor/features/ai_quiz/presentation/screens/create_manual_quiz_screen.dart';
@@ -411,24 +410,6 @@ class _FakeAuthRepository implements AuthRepository {
     required String code,
     required String newPassword,
   }) async {}
-  @override
-  Future<List<StoredAccountInfo>> listAccounts() async => const [];
-  @override
-  Future<String?> activeAccountId() async => null;
-  @override
-  Future<void> switchAccount(String userId) async {}
-  @override
-  Future<void> removeAccount(String userId) async {}
-  @override
-  Future<User> addAccount({required String email, required String password}) =>
-      throw UnimplementedError();
-  @override
-  Future<User> addAccountViaRegister({
-    required String email,
-    required String password,
-  }) => throw UnimplementedError();
-  @override
-  Future<User?> addAccountWithGoogle() => throw UnimplementedError();
 }
 
 class _FakePushNotificationService implements PushNotificationService {
