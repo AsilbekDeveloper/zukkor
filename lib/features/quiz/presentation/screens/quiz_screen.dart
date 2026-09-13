@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/analytics/analytics_service.dart';
-import '../../../../core/audio/app_sound.dart';
-import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -155,9 +153,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
       _lastCorrectIndex = correctIndex;
     });
     final bool wasCorrect = pickedIndex == correctIndex;
-    ref.playSound(wasCorrect ? AppSound.correct : AppSound.wrong);
-    // Duel/Lobby o'yin ekranlari bilan bir xil - tovushdan tashqari,
-    // alohida his qilinadigan haptic ([[duel_game_screen]]).
+    // Duel/Lobby o'yin ekranlari bilan bir xil - alohida his qilinadigan
+    // haptic ([[duel_game_screen]]).
     unawaited(
       wasCorrect ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact(),
     );

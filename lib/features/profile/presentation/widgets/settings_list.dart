@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/audio/app_sound.dart';
-import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -67,19 +64,18 @@ class SettingsRowData {
   final bool isDanger;
 }
 
-class _SettingsRow extends ConsumerWidget {
+class _SettingsRow extends StatelessWidget {
   const _SettingsRow({required this.data});
 
   final SettingsRowData data;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final Color? dangerColor = data.isDanger ? context.colors.coralDeep : null;
     return PressableScale(
       child: InkWell(
         onTap: () {
           HapticFeedback.lightImpact();
-          ref.playSound(AppSound.tap);
           data.onTap();
         },
         child: Padding(

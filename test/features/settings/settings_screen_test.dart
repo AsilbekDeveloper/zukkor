@@ -239,7 +239,6 @@ void main() {
     expect(find.text(AppStrings.settingsNotifications), findsOneWidget);
     expect(find.text(AppStrings.settingsTheme), findsOneWidget);
     expect(find.text(AppStrings.settingsThemeLight), findsOneWidget);
-    expect(find.text(AppStrings.settingsSoundEffects), findsOneWidget);
     expect(find.text(AppStrings.settingsPrivacy), findsOneWidget);
     expect(find.text(AppStrings.settingsHelpCenter), findsOneWidget);
     expect(find.text(AppStrings.settingsTermsOfUse), findsOneWidget);
@@ -268,18 +267,6 @@ void main() {
 
     expect(find.text(AppStrings.settingsThemeDark), findsOneWidget);
     expect(find.text(AppStrings.settingsThemeLight), findsNothing);
-  });
-
-  testWidgets('tapping the sound effects row toggles it on', (tester) async {
-    await _pumpSettings(tester);
-
-    // Off by default for now — see AppPreferences.soundEffectsEnabled.
-    expect(tester.widget<Switch>(find.byType(Switch).last).value, isFalse);
-
-    await tester.tap(find.text(AppStrings.settingsSoundEffects));
-    await tester.pump();
-
-    expect(tester.widget<Switch>(find.byType(Switch).last).value, isTrue);
   });
 
   testWidgets(

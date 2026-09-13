@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/locale/locale_controller.dart';
@@ -26,9 +25,7 @@ import '../../../profile/presentation/widgets/settings_list.dart';
 /// row.
 ///
 /// CURRENT STATE: the theme switch is real — it drives [themeControllerProvider],
-/// which persists the choice and re-themes the whole app. The sound
-/// effects switch is likewise real — it drives [soundControllerProvider],
-/// which every [AppSound] call site checks before playing. Language is
+/// which persists the choice and re-themes the whole app. Language is
 /// also real — it drives [localeControllerProvider], which persists the
 /// choice and retranslates the app. Notification toggles and the Log out
 /// row are otherwise real; Log out clears back to the Login screen,
@@ -44,7 +41,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   List<Widget> _generalGroup(
     BuildContext context,
     bool isDark,
-    bool soundEnabled,
     String language,
   ) => [
     _GroupLabel(context.t.settings.groupGeneral),
@@ -76,19 +72,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
           onTap: () =>
               ref.read(themeControllerProvider.notifier).toggleDark(!isDark),
-        ),
-        SettingsRowData(
-          icon: TablerIcons.volume2,
-          label: context.t.settings.soundEffects,
-          trailingWidget: Switch(
-            value: soundEnabled,
-            onChanged: (value) =>
-                ref.read(soundControllerProvider.notifier).setEnabled(value),
-            activeThumbColor: context.colors.coral,
-          ),
-          onTap: () => ref
-              .read(soundControllerProvider.notifier)
-              .setEnabled(!soundEnabled),
         ),
       ],
     ),
@@ -197,7 +180,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final double hPad = context.screenHPad;
     final bool isDark = ref.watch(themeControllerProvider) == ThemeMode.dark;
-    final bool soundEnabled = ref.watch(soundControllerProvider);
     final String language = ref.watch(localeControllerProvider).displayName;
     final bool isGoogleAccount =
         ref.watch(currentUserControllerProvider).data?.isGoogleAccount ?? false;
@@ -224,12 +206,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               delay: const Duration(milliseconds: 60),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _generalGroup(
-                  context,
-                  isDark,
-                  soundEnabled,
-                  language,
-                ),
+                children: _generalGroup(context, isDark, language),
               ),
             ),
             AppSpacing.md.vGap,

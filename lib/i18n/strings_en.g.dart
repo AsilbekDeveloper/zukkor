@@ -481,9 +481,6 @@ class Translations$settings$en {
 	/// en: 'Dark'
 	String get themeDark => 'Dark';
 
-	/// en: 'Sound effects'
-	String get soundEffects => 'Sound effects';
-
 	/// en: 'Account'
 	String get groupAccount => 'Account';
 
@@ -2075,7 +2072,6 @@ extension on Translations {
 			'settings.theme' => 'Theme',
 			'settings.themeLight' => 'Light',
 			'settings.themeDark' => 'Dark',
-			'settings.soundEffects' => 'Sound effects',
 			'settings.groupAccount' => 'Account',
 			'settings.privacy' => 'Privacy',
 			'settings.helpCenter' => 'Help center',

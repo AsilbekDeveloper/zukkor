@@ -6,8 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/audio/app_sound.dart';
-import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -81,7 +79,6 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
   void _adjust(int delta) {
     final int next = (_selectedCount + delta).clamp(_minCustom, _maxCustom);
     if (next == _selectedCount) return;
-    ref.playSound(AppSound.tap);
     HapticFeedback.lightImpact();
     setState(() => _selectedCount = next);
   }

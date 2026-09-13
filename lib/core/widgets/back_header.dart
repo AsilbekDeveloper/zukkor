@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../audio/app_sound.dart';
-import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
 import 'pressable_scale.dart';
@@ -42,13 +39,13 @@ class BackHeader extends StatelessWidget {
   }
 }
 
-class _BackIconButton extends ConsumerWidget {
+class _BackIconButton extends StatelessWidget {
   const _BackIconButton({required this.onTap});
 
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return PressableScale(
       child: Material(
         color: context.colors.card,
@@ -58,7 +55,6 @@ class _BackIconButton extends ConsumerWidget {
         ),
         child: InkWell(
           onTap: () {
-            ref.playSound(AppSound.tap);
             HapticFeedback.lightImpact();
             onTap();
           },

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../features/auth/presentation/controllers/current_user_controller.dart' show activeUserIdSignalProvider;
+import '../../features/auth/presentation/controllers/current_user_controller.dart'
+    show activeUserIdSignalProvider;
 
 /// Oddiy (maxfiy bo'lmagan) sozlamalar ombori: tema rejimi va h.k.
 /// Token kabi maxfiy ma'lumotlar bu yerda EMAS — ular [TokenStorage]da.
@@ -12,11 +13,11 @@ class AppPreferences {
   final SharedPreferences _prefs;
   final String? activeUserId;
 
-  String _key(String base) => activeUserId != null ? 'zukkor.${activeUserId!}.$base' : base;
+  String _key(String base) =>
+      activeUserId != null ? 'zukkor.${activeUserId!}.$base' : base;
 
   static const String _themeModeKey = 'zukkor.theme_mode';
   static const String _hasSeenIntroductionKey = 'zukkor.has_seen_introduction';
-  static const String _soundEffectsEnabledKey = 'zukkor.sound_effects_enabled';
   static const String _localeCodeKey = 'zukkor.locale_code';
   static const String _introInterestsKey = 'zukkor.intro_interests';
   static const String _introStudyPlaceKey = 'zukkor.intro_study_place';
@@ -35,15 +36,11 @@ class AppPreferences {
       _prefs.setString(_key(_themeModeKey), mode.name);
 
   // Global (device-level) setting.
-  bool get hasSeenIntroduction => _prefs.getBool(_hasSeenIntroductionKey) ?? false;
+  bool get hasSeenIntroduction =>
+      _prefs.getBool(_hasSeenIntroductionKey) ?? false;
 
   Future<void> saveHasSeenIntroduction(bool value) =>
       _prefs.setBool(_hasSeenIntroductionKey, value);
-
-  bool get soundEffectsEnabled => _prefs.getBool(_key(_soundEffectsEnabledKey)) ?? false;
-
-  Future<void> saveSoundEffectsEnabled(bool value) =>
-      _prefs.setBool(_key(_soundEffectsEnabledKey), value);
 
   /// Saqlangan til kodi ('en'/'uz'/'ru').
   String? get localeCode => _prefs.getString(_key(_localeCodeKey));
@@ -88,9 +85,12 @@ class AppPreferences {
 }
 
 /// main() da yuklangach override qilinadi.
-final Provider<SharedPreferences> sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError('sharedPreferencesProvider override qilinishi shart');
-});
+final Provider<SharedPreferences> sharedPreferencesProvider =
+    Provider<SharedPreferences>((ref) {
+      throw UnimplementedError(
+        'sharedPreferencesProvider override qilinishi shart',
+      );
+    });
 
 /// Faol akkauntga bog'langan holda sozlamalarni qaytaradi.
 ///
@@ -104,8 +104,9 @@ final Provider<SharedPreferences> sharedPreferencesProvider = Provider<SharedPre
 /// butunlay buzgan xato). O'rniga hech narsaga bog'liq bo'lmagan
 /// [activeUserIdSignalProvider]ni o'qiymiz — uni faqat
 /// `CurrentUserController` yangilaydi.
-final Provider<AppPreferences> appPreferencesProvider = Provider<AppPreferences>((ref) {
-  final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-  final String? activeId = ref.watch(activeUserIdSignalProvider);
-  return AppPreferences(prefs, activeUserId: activeId);
-});
+final Provider<AppPreferences> appPreferencesProvider =
+    Provider<AppPreferences>((ref) {
+      final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
+      final String? activeId = ref.watch(activeUserIdSignalProvider);
+      return AppPreferences(prefs, activeUserId: activeId);
+    });

@@ -307,7 +307,6 @@ class _Translations$settings$ru implements Translations$settings$en {
 	@override String get theme => 'Тема';
 	@override String get themeLight => 'Светлая';
 	@override String get themeDark => 'Тёмная';
-	@override String get soundEffects => 'Звуковые эффекты';
 	@override String get groupAccount => 'Аккаунт';
 	@override String get privacy => 'Конфиденциальность';
 	@override String get helpCenter => 'Центр помощи';
@@ -1126,7 +1125,6 @@ extension on TranslationsRu {
 			'settings.theme' => 'Тема',
 			'settings.themeLight' => 'Светлая',
 			'settings.themeDark' => 'Тёмная',
-			'settings.soundEffects' => 'Звуковые эффекты',
 			'settings.groupAccount' => 'Аккаунт',
 			'settings.privacy' => 'Конфиденциальность',
 			'settings.helpCenter' => 'Центр помощи',

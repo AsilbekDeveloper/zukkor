@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/audio/app_sound.dart';
-import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/constants/app_durations.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -21,16 +18,16 @@ import '../models/quiz_result.dart';
 /// fires and the XP it converts into fades in — purely transitional,
 /// isn't meant to be interacted with, mirrors [QuizIntroScreen]'s
 /// auto-advancing pattern.
-class BallRevealScreen extends ConsumerStatefulWidget {
+class BallRevealScreen extends StatefulWidget {
   const BallRevealScreen({required this.result, super.key});
 
   final QuizResult result;
 
   @override
-  ConsumerState<BallRevealScreen> createState() => _BallRevealScreenState();
+  State<BallRevealScreen> createState() => _BallRevealScreenState();
 }
 
-class _BallRevealScreenState extends ConsumerState<BallRevealScreen>
+class _BallRevealScreenState extends State<BallRevealScreen>
     with SingleTickerProviderStateMixin {
   static const Duration _countDuration = Duration(milliseconds: 1400);
 
@@ -54,7 +51,6 @@ class _BallRevealScreenState extends ConsumerState<BallRevealScreen>
   void _onStatusChanged(AnimationStatus status) {
     if (status != AnimationStatus.completed || !mounted) return;
     setState(() => _revealed = true);
-    ref.playSound(AppSound.success);
     // Ekranning eng katta nishonlash lahzasi - Quiz Introning hisoblash
     // haptigi bilan bir xil mantiq ([[quiz_intro_screen]]).
     HapticFeedback.mediumImpact();

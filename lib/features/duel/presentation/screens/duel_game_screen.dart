@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/audio/app_sound.dart';
-import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
@@ -127,10 +125,9 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen>
       _revealedForIndex = game.lastResult!.questionIndex;
       final bool wasCorrect = game.lastResult!.yourCorrect;
       if (wasCorrect) _correctCount++;
-      ref.playSound(wasCorrect ? AppSound.correct : AppSound.wrong);
-      // To'g'ri/noto'g'ri bo'lganda alohida, tovushdan tashqari, aniq
-      // his qilinadigan haptic - to'g'ri bo'lsa qoniqarli (o'rtacha),
-      // noto'g'ri bo'lsa kuchliroq (og'irroq) signal.
+      // To'g'ri/noto'g'ri bo'lganda alohida his qilinadigan haptic -
+      // to'g'ri bo'lsa qoniqarli (o'rtacha), noto'g'ri bo'lsa kuchliroq
+      // (og'irroq) signal.
       wasCorrect ? HapticFeedback.mediumImpact() : HapticFeedback.heavyImpact();
     }
 

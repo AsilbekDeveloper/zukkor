@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../i18n/strings.g.dart';
-import '../audio/app_sound.dart';
-import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
 
@@ -15,7 +12,7 @@ enum AppTab { home, leaderboard, friends, profile }
 
 /// Bottom navigation bar shared by every top-level screen — mirrors the
 /// prototype's `.tabbar` (5 items, elevated center "play" button).
-class AppBottomNavBar extends ConsumerWidget {
+class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
     super.key,
     required this.current,
@@ -35,12 +32,7 @@ class AppBottomNavBar extends ConsumerWidget {
   final VoidCallback onPlayTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    void tap(VoidCallback action) {
-      ref.playSound(AppSound.tap);
-      action();
-    }
-
+  Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: context.colors.card,
@@ -71,7 +63,7 @@ class AppBottomNavBar extends ConsumerWidget {
                     icon: TablerIcons.home,
                     label: context.t.bottomNav.home,
                     isActive: current == AppTab.home,
-                    onTap: () => tap(() => onTabTap(AppTab.home)),
+                    onTap: () => onTabTap(AppTab.home),
                   ),
                 ),
                 Expanded(
@@ -79,16 +71,16 @@ class AppBottomNavBar extends ConsumerWidget {
                     icon: TablerIcons.trophy,
                     label: context.t.bottomNav.leaderboard,
                     isActive: current == AppTab.leaderboard,
-                    onTap: () => tap(() => onTabTap(AppTab.leaderboard)),
+                    onTap: () => onTabTap(AppTab.leaderboard),
                   ),
                 ),
-                _CenterPlayButton(onTap: () => tap(onPlayTap)),
+                _CenterPlayButton(onTap: onPlayTap),
                 Expanded(
                   child: _TabItem(
                     icon: TablerIcons.users,
                     label: context.t.bottomNav.friends,
                     isActive: current == AppTab.friends,
-                    onTap: () => tap(() => onTabTap(AppTab.friends)),
+                    onTap: () => onTabTap(AppTab.friends),
                   ),
                 ),
                 Expanded(
@@ -96,7 +88,7 @@ class AppBottomNavBar extends ConsumerWidget {
                     icon: TablerIcons.user,
                     label: context.t.bottomNav.profile,
                     isActive: current == AppTab.profile,
-                    onTap: () => tap(() => onTabTap(AppTab.profile)),
+                    onTap: () => onTabTap(AppTab.profile),
                   ),
                 ),
               ],
@@ -123,13 +115,18 @@ class _TabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = isActive ? context.colors.coralDeep : context.colors.muted;
+    final Color color = isActive
+        ? context.colors.coralDeep
+        : context.colors.muted;
 
     return InkWell(
       onTap: onTap,
       customBorder: const CircleBorder(),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs, horizontal: AppSpacing.xs),
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.xxs,
+          horizontal: AppSpacing.xs,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

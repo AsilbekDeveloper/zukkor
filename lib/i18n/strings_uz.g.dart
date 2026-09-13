@@ -301,7 +301,6 @@ class _Translations$settings$uz implements Translations$settings$en {
 	@override String get theme => 'Mavzu';
 	@override String get themeLight => 'Yorug\'';
 	@override String get themeDark => 'Qorong\'i';
-	@override String get soundEffects => 'Ovoz effektlari';
 	@override String get groupAccount => 'Hisob';
 	@override String get privacy => 'Maxfiylik';
 	@override String get helpCenter => 'Yordam markazi';
@@ -1120,7 +1119,6 @@ extension on TranslationsUz {
 			'settings.theme' => 'Mavzu',
 			'settings.themeLight' => 'Yorug\'',
 			'settings.themeDark' => 'Qorong\'i',
-			'settings.soundEffects' => 'Ovoz effektlari',
 			'settings.groupAccount' => 'Hisob',
 			'settings.privacy' => 'Maxfiylik',
 			'settings.helpCenter' => 'Yordam markazi',

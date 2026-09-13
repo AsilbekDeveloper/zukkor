@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../audio/app_sound.dart';
-import '../audio/sound_controller.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
 import 'pressable_scale.dart';
@@ -12,7 +9,7 @@ import 'pressable_scale.dart';
 /// `.segment` / `.seg-btn`. Generic over any value type so both the
 /// Leaderboard's 3-way segment and Game History's 4-way filter share one
 /// implementation.
-class PillSegmentControl<T> extends ConsumerWidget {
+class PillSegmentControl<T> extends StatelessWidget {
   const PillSegmentControl({
     required this.values,
     required this.selected,
@@ -35,7 +32,7 @@ class PillSegmentControl<T> extends ConsumerWidget {
   final bool enabled;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xxs),
       decoration: BoxDecoration(
@@ -53,7 +50,6 @@ class PillSegmentControl<T> extends ConsumerWidget {
                 isActive: value == selected,
                 enabled: enabled,
                 onTap: () {
-                  ref.playSound(AppSound.tap);
                   HapticFeedback.lightImpact();
                   onChanged(value);
                 },

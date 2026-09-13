@@ -44,8 +44,6 @@ dependencies:
   firebase_analytics: ^12.4.5
   firebase_crashlytics: ^5.0.4
 
-  # UI sound effects
-  audioplayers: ^6.5.1
   flutter_local_notifications: ^18.0.1
 
   # Skeleton loading placeholders
@@ -74,7 +72,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/sounds/
     - assets/branding/
 
   fonts:

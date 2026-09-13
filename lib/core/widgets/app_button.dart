@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../audio/app_sound.dart';
-import '../audio/sound_controller.dart';
 import '../constants/app_durations.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
@@ -17,9 +14,7 @@ enum AppButtonVariant { primary, secondary }
 ///  - [isLoading] paytida tugma bosilmaydi va spinner ko'rsatiladi,
 ///    LEKIN o'lchami o'zgarmaydi (layout sakramaydi).
 ///  - Primary variantda prototipdagi coral soya bor.
-///  - Har bir bosilishda [AppSound.tap] eshittiriladi (Sozlamalar'dagi
-///    sound effects o'chirilgan bo'lsa — yo'q).
-class AppButton extends ConsumerWidget {
+class AppButton extends StatelessWidget {
   const AppButton.primary({
     super.key,
     required this.label,
@@ -45,14 +40,13 @@ class AppButton extends ConsumerWidget {
   bool get _isPrimary => variant == AppButtonVariant.primary;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final VoidCallback? onPressedCallback = onPressed;
     final VoidCallback? effectiveOnPressed =
         isLoading || onPressedCallback == null
         ? null
         : () {
             HapticFeedback.lightImpact();
-            ref.playSound(AppSound.tap);
             onPressedCallback();
           };
 

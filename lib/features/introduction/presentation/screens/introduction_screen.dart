@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/audio/app_sound.dart';
-import '../../../../core/audio/sound_controller.dart';
 import '../../../../core/constants/app_durations.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -29,9 +27,8 @@ import '../widgets/welcome_step.dart';
 /// false — see [AppRoutes.introduction] in the router.
 ///
 /// Each page carries its own accent color (background wash + icon badge)
-/// and finishing the last page plays a short confetti burst plus
-/// [AppSound.success] before handing off to Login. Haptics and
-/// [AppSound.tap] accompany navigation and selections.
+/// and finishing the last page plays a short confetti burst before
+/// handing off to Login. Haptics accompany navigation and selections.
 ///
 /// CURRENT STATE: survey answers are saved locally ([AppPreferences]) on
 /// finish — there's no user account yet at this point, so they can't be
@@ -83,7 +80,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   void _toggleInterest(String label) {
     HapticFeedback.selectionClick();
-    ref.playSound(AppSound.tap);
     setState(() {
       if (!_selectedInterests.remove(label)) {
         _selectedInterests.add(label);
@@ -93,7 +89,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   void _toggleOtherInterest() {
     HapticFeedback.selectionClick();
-    ref.playSound(AppSound.tap);
     setState(() => _otherInterestSelected = !_otherInterestSelected);
   }
 
@@ -111,7 +106,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
   void _back() {
     context.hideKeyboard();
     HapticFeedback.selectionClick();
-    ref.playSound(AppSound.tap);
     if (_step > 1) {
       setState(() => _step--);
     }
@@ -119,7 +113,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
 
   void _skip() {
     HapticFeedback.selectionClick();
-    ref.playSound(AppSound.tap);
     _finish();
   }
 
@@ -127,7 +120,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
   /// handing off (see [_finish]), unlike [_skip] which leaves right away.
   void _complete() {
     HapticFeedback.mediumImpact();
-    ref.playSound(AppSound.success);
     setState(() => _isFinishing = true);
   }
 
