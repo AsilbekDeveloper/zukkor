@@ -106,10 +106,6 @@ class AuthRepositoryImpl implements AuthRepository {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   }) async {
     try {
       final User user = (await _remoteDataSource.updateProfile(
@@ -117,10 +113,6 @@ class AuthRepositoryImpl implements AuthRepository {
         firstName: firstName,
         lastName: lastName,
         avatarColor: avatarColor,
-        direction: direction,
-        interests: interests,
-        studyPlace: studyPlace,
-        quizLiking: quizLiking,
       )).toEntity();
 
       return user;

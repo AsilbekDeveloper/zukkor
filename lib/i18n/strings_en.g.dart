@@ -1230,39 +1230,6 @@ class Translations$onboarding$en {
 
 	/// en: 'aziz_karimov'
 	String get usernameHint => 'aziz_karimov';
-
-	/// en: 'Why are you using Zukkor?'
-	String get directionTitle => 'Why are you using Zukkor?';
-
-	/// en: 'We'll recommend content and categories that fit you'
-	String get directionSubtitle => 'We\'ll recommend content and categories that fit you';
-
-	/// en: 'Please choose one to continue'
-	String get directionRequired => 'Please choose one to continue';
-
-	/// en: 'Student'
-	String get studentUniTitle => 'Student';
-
-	/// en: 'I study at university or college'
-	String get studentUniSubtitle => 'I study at university or college';
-
-	/// en: 'Pupil'
-	String get studentSchoolTitle => 'Pupil';
-
-	/// en: 'I study at school'
-	String get studentSchoolSubtitle => 'I study at school';
-
-	/// en: 'Exam prep'
-	String get examPrepTitle => 'Exam prep';
-
-	/// en: 'I'm preparing for an exam (e.g. IELTS)'
-	String get examPrepSubtitle => 'I\'m preparing for an exam (e.g. IELTS)';
-
-	/// en: 'Just for fun'
-	String get casualTitle => 'Just for fun';
-
-	/// en: 'Playing and passing the time'
-	String get casualSubtitle => 'Playing and passing the time';
 }
 
 // Path: introduction
@@ -1305,51 +1272,6 @@ class Translations$introduction$en {
 
 	/// en: 'Every correct answer earns XP — track your rank among friends and everyone else'
 	String get leaderboardSubtitle => 'Every correct answer earns XP — track your rank among friends and everyone else';
-
-	/// en: 'What are you into?'
-	String get interestsTitle => 'What are you into?';
-
-	/// en: 'Pick a few — we'll use these to recommend categories'
-	String get interestsSubtitle => 'Pick a few — we\'ll use these to recommend categories';
-
-	/// en: 'Almost done!'
-	String get studyTitle => 'Almost done!';
-
-	/// en: 'A couple more quick questions'
-	String get studySubtitle => 'A couple more quick questions';
-
-	/// en: 'Where do you study?'
-	String get studyPlaceLabel => 'Where do you study?';
-
-	/// en: 'Do you enjoy solving quizzes and puzzles?'
-	String get quizLikingLabel => 'Do you enjoy solving quizzes and puzzles?';
-
-	/// en: 'School'
-	String get studyPlaceSchool => 'School';
-
-	/// en: 'University'
-	String get studyPlaceUniversity => 'University';
-
-	/// en: 'Exam prep'
-	String get studyPlaceExamPrep => 'Exam prep';
-
-	/// en: 'Love it'
-	String get quizLikingLoveIt => 'Love it';
-
-	/// en: 'It's ok'
-	String get quizLikingItsOk => 'It\'s ok';
-
-	/// en: 'Not really'
-	String get quizLikingNotReally => 'Not really';
-
-	/// en: 'Other'
-	String get otherOption => 'Other';
-
-	/// en: 'Tell us more'
-	String get otherFieldLabel => 'Tell us more';
-
-	/// en: 'Type here...'
-	String get otherFieldHint => 'Type here...';
 }
 
 // Path: auth
@@ -2238,17 +2160,6 @@ extension on Translations {
 			'onboarding.lastNameHint' => 'Karimov',
 			'onboarding.usernameLabel' => 'Username',
 			'onboarding.usernameHint' => 'aziz_karimov',
-			'onboarding.directionTitle' => 'Why are you using Zukkor?',
-			'onboarding.directionSubtitle' => 'We\'ll recommend content and categories that fit you',
-			'onboarding.directionRequired' => 'Please choose one to continue',
-			'onboarding.studentUniTitle' => 'Student',
-			'onboarding.studentUniSubtitle' => 'I study at university or college',
-			'onboarding.studentSchoolTitle' => 'Pupil',
-			'onboarding.studentSchoolSubtitle' => 'I study at school',
-			'onboarding.examPrepTitle' => 'Exam prep',
-			'onboarding.examPrepSubtitle' => 'I\'m preparing for an exam (e.g. IELTS)',
-			'onboarding.casualTitle' => 'Just for fun',
-			'onboarding.casualSubtitle' => 'Playing and passing the time',
 			'introduction.skip' => 'Skip',
 			'introduction.getStarted' => 'Get started',
 			'introduction.welcomeTitle' => 'Welcome to Zukkor!',
@@ -2260,21 +2171,6 @@ extension on Translations {
 			'introduction.duelSubtitle' => 'Duel a friend head-to-head, or create a room and play with a whole group in real time',
 			'introduction.leaderboardTitle' => 'Climb the leaderboard',
 			'introduction.leaderboardSubtitle' => 'Every correct answer earns XP — track your rank among friends and everyone else',
-			'introduction.interestsTitle' => 'What are you into?',
-			'introduction.interestsSubtitle' => 'Pick a few — we\'ll use these to recommend categories',
-			'introduction.studyTitle' => 'Almost done!',
-			'introduction.studySubtitle' => 'A couple more quick questions',
-			'introduction.studyPlaceLabel' => 'Where do you study?',
-			'introduction.quizLikingLabel' => 'Do you enjoy solving quizzes and puzzles?',
-			'introduction.studyPlaceSchool' => 'School',
-			'introduction.studyPlaceUniversity' => 'University',
-			'introduction.studyPlaceExamPrep' => 'Exam prep',
-			'introduction.quizLikingLoveIt' => 'Love it',
-			'introduction.quizLikingItsOk' => 'It\'s ok',
-			'introduction.quizLikingNotReally' => 'Not really',
-			'introduction.otherOption' => 'Other',
-			'introduction.otherFieldLabel' => 'Tell us more',
-			'introduction.otherFieldHint' => 'Type here...',
 			'auth.loginTitle' => 'Welcome back!',
 			'auth.loginSubtitle' => 'Sign in and continue the game',
 			'auth.registerTitle' => 'Create an account',

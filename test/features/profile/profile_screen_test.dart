@@ -70,10 +70,6 @@ class _FakeAuthRepository implements AuthRepository {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   }) async => getCurrentUser();
 
   @override

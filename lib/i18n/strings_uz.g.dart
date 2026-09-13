@@ -701,17 +701,6 @@ class _Translations$onboarding$uz implements Translations$onboarding$en {
 	@override String get lastNameHint => 'Karimov';
 	@override String get usernameLabel => 'Foydalanuvchi nomi';
 	@override String get usernameHint => 'aziz_karimov';
-	@override String get directionTitle => 'Zukkordan nima uchun foydalanyapsiz?';
-	@override String get directionSubtitle => 'Sizga mos kontent va kategoriyalarni tavsiya qilamiz';
-	@override String get directionRequired => 'Davom etish uchun birini tanlang';
-	@override String get studentUniTitle => 'Talaba';
-	@override String get studentUniSubtitle => 'Universitet yoki kollejda o\'qiyman';
-	@override String get studentSchoolTitle => 'O\'quvchi';
-	@override String get studentSchoolSubtitle => 'Maktabda o\'qiyman';
-	@override String get examPrepTitle => 'Imtihonga tayyorgarlik';
-	@override String get examPrepSubtitle => 'Imtihonga tayyorlanyapman (masalan, IELTS)';
-	@override String get casualTitle => 'Shunchaki qiziqib';
-	@override String get casualSubtitle => 'O\'ynab, vaqt o\'tkazyapman';
 }
 
 // Path: introduction
@@ -732,21 +721,6 @@ class _Translations$introduction$uz implements Translations$introduction$en {
 	@override String get duelSubtitle => 'Do\'st bilan yakkama-yakka duel qiling yoki xona yaratib, butun guruh bilan real vaqtda o\'ynang';
 	@override String get leaderboardTitle => 'Reytingda ko\'tariling';
 	@override String get leaderboardSubtitle => 'Har bir to\'g\'ri javob XP beradi — do\'stlaringiz va boshqalar orasidagi o\'rningizni kuzating';
-	@override String get interestsTitle => 'Nimalarga qiziqasiz?';
-	@override String get interestsSubtitle => 'Bir nechtasini tanlang — ulardan kategoriyalarni tavsiya qilishda foydalanamiz';
-	@override String get studyTitle => 'Deyarli tayyor!';
-	@override String get studySubtitle => 'Yana bir nechta qisqa savol';
-	@override String get studyPlaceLabel => 'Qayerda o\'qiysiz?';
-	@override String get quizLikingLabel => 'Viktorina va topishmoqlarni yechishni yoqtirasizmi?';
-	@override String get studyPlaceSchool => 'Maktab';
-	@override String get studyPlaceUniversity => 'Universitet';
-	@override String get studyPlaceExamPrep => 'Imtihonga tayyorgarlik';
-	@override String get quizLikingLoveIt => 'Juda yoqtiraman';
-	@override String get quizLikingItsOk => 'Yomon emas';
-	@override String get quizLikingNotReally => 'Unchalik emas';
-	@override String get otherOption => 'Boshqa';
-	@override String get otherFieldLabel => 'Batafsilroq ayting';
-	@override String get otherFieldHint => 'Shu yerga yozing...';
 }
 
 // Path: auth
@@ -1291,17 +1265,6 @@ extension on TranslationsUz {
 			'onboarding.lastNameHint' => 'Karimov',
 			'onboarding.usernameLabel' => 'Foydalanuvchi nomi',
 			'onboarding.usernameHint' => 'aziz_karimov',
-			'onboarding.directionTitle' => 'Zukkordan nima uchun foydalanyapsiz?',
-			'onboarding.directionSubtitle' => 'Sizga mos kontent va kategoriyalarni tavsiya qilamiz',
-			'onboarding.directionRequired' => 'Davom etish uchun birini tanlang',
-			'onboarding.studentUniTitle' => 'Talaba',
-			'onboarding.studentUniSubtitle' => 'Universitet yoki kollejda o\'qiyman',
-			'onboarding.studentSchoolTitle' => 'O\'quvchi',
-			'onboarding.studentSchoolSubtitle' => 'Maktabda o\'qiyman',
-			'onboarding.examPrepTitle' => 'Imtihonga tayyorgarlik',
-			'onboarding.examPrepSubtitle' => 'Imtihonga tayyorlanyapman (masalan, IELTS)',
-			'onboarding.casualTitle' => 'Shunchaki qiziqib',
-			'onboarding.casualSubtitle' => 'O\'ynab, vaqt o\'tkazyapman',
 			'introduction.skip' => 'O\'tkazib yuborish',
 			'introduction.getStarted' => 'Boshlash',
 			'introduction.welcomeTitle' => 'Zukkorga xush kelibsiz!',
@@ -1313,21 +1276,6 @@ extension on TranslationsUz {
 			'introduction.duelSubtitle' => 'Do\'st bilan yakkama-yakka duel qiling yoki xona yaratib, butun guruh bilan real vaqtda o\'ynang',
 			'introduction.leaderboardTitle' => 'Reytingda ko\'tariling',
 			'introduction.leaderboardSubtitle' => 'Har bir to\'g\'ri javob XP beradi — do\'stlaringiz va boshqalar orasidagi o\'rningizni kuzating',
-			'introduction.interestsTitle' => 'Nimalarga qiziqasiz?',
-			'introduction.interestsSubtitle' => 'Bir nechtasini tanlang — ulardan kategoriyalarni tavsiya qilishda foydalanamiz',
-			'introduction.studyTitle' => 'Deyarli tayyor!',
-			'introduction.studySubtitle' => 'Yana bir nechta qisqa savol',
-			'introduction.studyPlaceLabel' => 'Qayerda o\'qiysiz?',
-			'introduction.quizLikingLabel' => 'Viktorina va topishmoqlarni yechishni yoqtirasizmi?',
-			'introduction.studyPlaceSchool' => 'Maktab',
-			'introduction.studyPlaceUniversity' => 'Universitet',
-			'introduction.studyPlaceExamPrep' => 'Imtihonga tayyorgarlik',
-			'introduction.quizLikingLoveIt' => 'Juda yoqtiraman',
-			'introduction.quizLikingItsOk' => 'Yomon emas',
-			'introduction.quizLikingNotReally' => 'Unchalik emas',
-			'introduction.otherOption' => 'Boshqa',
-			'introduction.otherFieldLabel' => 'Batafsilroq ayting',
-			'introduction.otherFieldHint' => 'Shu yerga yozing...',
 			'auth.loginTitle' => 'Xush kelibsiz!',
 			'auth.loginSubtitle' => 'Tizimga kiring va o\'yinni davom ettiring',
 			'auth.registerTitle' => 'Hisob yaratish',

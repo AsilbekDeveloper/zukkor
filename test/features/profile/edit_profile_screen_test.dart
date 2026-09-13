@@ -60,7 +60,6 @@ class _FakeAuthRepository implements AuthRepository {
     lastName: 'Karimov',
     avatarColor: hasUploadedAvatar ? null : 'a-coral',
     avatarImagePath: hasUploadedAvatar ? '/uploads/avatars/aziz.jpg' : null,
-    direction: 'casual',
     isActive: true,
     createdAt: DateTime(2026),
     onboardingCompleted: true,
@@ -73,10 +72,6 @@ class _FakeAuthRepository implements AuthRepository {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   }) async {
     lastUpdateProfileAvatarColor = avatarColor;
     return User(
@@ -87,7 +82,6 @@ class _FakeAuthRepository implements AuthRepository {
       lastName: lastName,
       avatarColor: avatarColor,
       avatarImagePath: hasUploadedAvatar ? '/uploads/avatars/aziz.jpg' : null,
-      direction: direction,
       isActive: true,
       createdAt: DateTime(2026),
       onboardingCompleted: true,

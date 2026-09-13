@@ -12,28 +12,19 @@ import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../i18n/strings.g.dart';
-import '../models/study_survey.dart';
 import '../widgets/confetti_burst.dart';
-import '../widgets/interests_step.dart';
 import '../widgets/intro_explainer_page.dart';
 import '../widgets/intro_progress_header.dart';
-import '../widgets/study_survey_step.dart';
 import '../widgets/welcome_step.dart';
 
-/// 6-page first-launch walkthrough shown once, before Login/Register:
-/// 4 "what is Zukkor" explainer pages, then a short 2-page survey
-/// (interests, study place + quiz-liking) that feeds into onboarding
-/// later. Reachable only when [AppPreferences.hasSeenIntroduction] is
-/// false — see [AppRoutes.introduction] in the router.
+/// 4-page first-launch walkthrough shown once, before Login/Register:
+/// a welcome page + 3 "what is Zukkor" explainer pages. Reachable only
+/// when [AppPreferences.hasSeenIntroduction] is false — see
+/// [AppRoutes.introduction] in the router.
 ///
 /// Each page carries its own accent color (background wash + icon badge)
 /// and finishing the last page plays a short confetti burst before
 /// handing off to Login. Haptics accompany navigation and selections.
-///
-/// CURRENT STATE: survey answers are saved locally ([AppPreferences]) on
-/// finish — there's no user account yet at this point, so they can't be
-/// sent directly. [OnboardingScreen] picks them up and folds them into its
-/// `PATCH /users/me/profile` call once registration completes.
 class IntroductionScreen extends ConsumerStatefulWidget {
   const IntroductionScreen({super.key});
 
@@ -42,54 +33,18 @@ class IntroductionScreen extends ConsumerStatefulWidget {
 }
 
 class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
-  static const int _totalSteps = 6;
+  static const int _totalSteps = 4;
 
   int _step = 1;
   bool _isFinishing = false;
-
-  // Skip can fire from any page, including before the survey pages (5-6)
-  // are ever shown — in that case there's nothing real to save, just the
-  // untouched defaults below.
-  bool _reachedSurvey = false;
-
-  final Set<String> _selectedInterests = {};
-  bool _otherInterestSelected = false;
-  final _otherInterestController = TextEditingController();
-
-  StudyPlace _studyPlace = StudyPlace.school;
-  final _otherStudyPlaceController = TextEditingController();
-  QuizLiking _quizLiking = QuizLiking.loveIt;
-
-  @override
-  void dispose() {
-    _otherInterestController.dispose();
-    _otherStudyPlaceController.dispose();
-    super.dispose();
-  }
 
   Color _accentFor(int step) {
     return switch (step) {
       1 => context.colors.coral,
       2 => context.colors.teal,
       3 => context.colors.pink,
-      4 => context.colors.green,
-      5 => context.colors.blue,
-      _ => context.colors.terra,
+      _ => context.colors.green,
     };
-  }
-
-  void _toggleInterest(String label) {
-    HapticFeedback.selectionClick();
-    setState(() {
-      if (!_selectedInterests.remove(label)) {
-        _selectedInterests.add(label);
-      }
-    });
-  }
-
-  void _toggleOtherInterest() {
-    HapticFeedback.selectionClick();
-    setState(() => _otherInterestSelected = !_otherInterestSelected);
   }
 
   void _next() {
@@ -97,7 +52,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
     HapticFeedback.selectionClick();
     if (_step < _totalSteps) {
       setState(() => _step++);
-      if (_step >= 5) _reachedSurvey = true;
     } else {
       _complete();
     }
@@ -124,27 +78,6 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
   }
 
   Future<void> _finish() async {
-    if (_reachedSurvey) {
-      final List<String> interests = [
-        ..._selectedInterests,
-        if (_otherInterestSelected &&
-            _otherInterestController.text.trim().isNotEmpty)
-          _otherInterestController.text.trim(),
-      ];
-      final String studyPlace =
-          _studyPlace == StudyPlace.other &&
-              _otherStudyPlaceController.text.trim().isNotEmpty
-          ? _otherStudyPlaceController.text.trim()
-          : _studyPlace.apiValue;
-
-      await ref
-          .read(appPreferencesProvider)
-          .saveIntroSurvey(
-            interests: interests,
-            studyPlace: studyPlace,
-            quizLiking: _quizLiking.apiValue,
-          );
-    }
     await ref.read(appPreferencesProvider).saveHasSeenIntroduction(true);
     if (!mounted) return;
     context.go(AppRoutes.login);
@@ -253,29 +186,11 @@ class _IntroductionScreenState extends ConsumerState<IntroductionScreen> {
         title: context.t.introduction.duelTitle,
         subtitle: context.t.introduction.duelSubtitle,
       ),
-      4 => IntroExplainerPage(
+      _ => IntroExplainerPage(
         icon: TablerIcons.trophy,
         iconColor: accent,
         title: context.t.introduction.leaderboardTitle,
         subtitle: context.t.introduction.leaderboardSubtitle,
-      ),
-      5 => InterestsStep(
-        selected: _selectedInterests,
-        onToggle: _toggleInterest,
-        otherSelected: _otherInterestSelected,
-        onToggleOther: _toggleOtherInterest,
-        otherController: _otherInterestController,
-        accentColor: accent,
-      ),
-      // Both callbacks go straight into a PillSegmentControl, which
-      // already fires its own tap sound + haptic internally.
-      _ => StudySurveyStep(
-        studyPlace: _studyPlace,
-        onStudyPlaceChanged: (value) => setState(() => _studyPlace = value),
-        otherStudyPlaceController: _otherStudyPlaceController,
-        quizLiking: _quizLiking,
-        onQuizLikingChanged: (value) => setState(() => _quizLiking = value),
-        accentColor: accent,
       ),
     };
   }

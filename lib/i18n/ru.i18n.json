@@ -351,18 +351,7 @@
     "lastNameLabel": "Фамилия",
     "lastNameHint": "Каримов",
     "usernameLabel": "Имя пользователя",
-    "usernameHint": "aziz_karimov",
-    "directionTitle": "Зачем вы используете Zukkor?",
-    "directionSubtitle": "Мы порекомендуем подходящий контент и категории",
-    "directionRequired": "Выберите один вариант, чтобы продолжить",
-    "studentUniTitle": "Студент",
-    "studentUniSubtitle": "Учусь в университете или колледже",
-    "studentSchoolTitle": "Школьник",
-    "studentSchoolSubtitle": "Учусь в школе",
-    "examPrepTitle": "Подготовка к экзамену",
-    "examPrepSubtitle": "Готовлюсь к экзамену (например, IELTS)",
-    "casualTitle": "Просто для удовольствия",
-    "casualSubtitle": "Играю, провожу время"
+    "usernameHint": "aziz_karimov"
   },
   "introduction": {
     "skip": "Пропустить",
@@ -375,22 +364,7 @@
     "duelTitle": "Бросьте вызов друзьям",
     "duelSubtitle": "Сразитесь с другом один на один или создайте комнату и играйте с целой группой в реальном времени",
     "leaderboardTitle": "Поднимайтесь в рейтинге",
-    "leaderboardSubtitle": "Каждый правильный ответ приносит XP — следите за своим местом среди друзей и всех остальных",
-    "interestsTitle": "Что вам интересно?",
-    "interestsSubtitle": "Выберите несколько вариантов — мы используем их для рекомендации категорий",
-    "studyTitle": "Почти готово!",
-    "studySubtitle": "Ещё пара быстрых вопросов",
-    "studyPlaceLabel": "Где вы учитесь?",
-    "quizLikingLabel": "Вам нравится решать викторины и головоломки?",
-    "studyPlaceSchool": "Школа",
-    "studyPlaceUniversity": "Университет",
-    "studyPlaceExamPrep": "Подготовка к экзамену",
-    "quizLikingLoveIt": "Очень нравится",
-    "quizLikingItsOk": "Нормально",
-    "quizLikingNotReally": "Не особо",
-    "otherOption": "Другое",
-    "otherFieldLabel": "Расскажите подробнее",
-    "otherFieldHint": "Введите здесь..."
+    "leaderboardSubtitle": "Каждый правильный ответ приносит XP — следите за своим местом среди друзей и всех остальных"
   },
   "auth": {
     "loginTitle": "С возвращением!",

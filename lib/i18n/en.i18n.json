@@ -336,18 +336,7 @@
     "lastNameLabel": "Last name",
     "lastNameHint": "Karimov",
     "usernameLabel": "Username",
-    "usernameHint": "aziz_karimov",
-    "directionTitle": "Why are you using Zukkor?",
-    "directionSubtitle": "We'll recommend content and categories that fit you",
-    "directionRequired": "Please choose one to continue",
-    "studentUniTitle": "Student",
-    "studentUniSubtitle": "I study at university or college",
-    "studentSchoolTitle": "Pupil",
-    "studentSchoolSubtitle": "I study at school",
-    "examPrepTitle": "Exam prep",
-    "examPrepSubtitle": "I'm preparing for an exam (e.g. IELTS)",
-    "casualTitle": "Just for fun",
-    "casualSubtitle": "Playing and passing the time"
+    "usernameHint": "aziz_karimov"
   },
   "introduction": {
     "skip": "Skip",
@@ -360,22 +349,7 @@
     "duelTitle": "Challenge your friends",
     "duelSubtitle": "Duel a friend head-to-head, or create a room and play with a whole group in real time",
     "leaderboardTitle": "Climb the leaderboard",
-    "leaderboardSubtitle": "Every correct answer earns XP — track your rank among friends and everyone else",
-    "interestsTitle": "What are you into?",
-    "interestsSubtitle": "Pick a few — we'll use these to recommend categories",
-    "studyTitle": "Almost done!",
-    "studySubtitle": "A couple more quick questions",
-    "studyPlaceLabel": "Where do you study?",
-    "quizLikingLabel": "Do you enjoy solving quizzes and puzzles?",
-    "studyPlaceSchool": "School",
-    "studyPlaceUniversity": "University",
-    "studyPlaceExamPrep": "Exam prep",
-    "quizLikingLoveIt": "Love it",
-    "quizLikingItsOk": "It's ok",
-    "quizLikingNotReally": "Not really",
-    "otherOption": "Other",
-    "otherFieldLabel": "Tell us more",
-    "otherFieldHint": "Type here..."
+    "leaderboardSubtitle": "Every correct answer earns XP — track your rank among friends and everyone else"
   },
   "auth": {
     "loginTitle": "Welcome back!",

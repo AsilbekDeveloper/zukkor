@@ -116,100 +116,33 @@ void main() {
     expect(find.text(AppStrings.introWelcomeTitle), findsOneWidget);
   });
 
-  testWidgets('interests page: selecting Other reveals a free-text field', (
+  testWidgets('Skip jumps straight to Login and persists the flag', (
     tester,
   ) async {
-    await _pumpAppOnIntroduction(tester);
+    final SharedPreferences prefs = await _pumpAppOnIntroduction(tester);
 
-    for (int i = 0; i < 4; i++) {
+    await tester.tap(find.text(AppStrings.introSkip));
+    await _settle(tester);
+
+    expect(find.text(AppStrings.loginTitle), findsOneWidget);
+    expect(prefs.getBool('zukkor.has_seen_introduction'), isTrue);
+  });
+
+  testWidgets('completing all 4 pages lands on Login and persists the flag', (
+    tester,
+  ) async {
+    final SharedPreferences prefs = await _pumpAppOnIntroduction(tester);
+
+    for (int i = 0; i < 3; i++) {
       await tester.tap(find.text(AppStrings.onboardingContinue));
       await _settle(tester);
     }
+    expect(find.text(AppStrings.introLeaderboardTitle), findsOneWidget);
 
-    expect(find.text(AppStrings.introInterestsTitle), findsOneWidget);
-    expect(find.byType(TextFormField), findsNothing);
+    await tester.tap(find.text(AppStrings.introGetStarted));
+    await _settleAfterConfetti(tester);
 
-    await tester.tap(find.text('Math'));
-    await tester.pump();
-
-    await tester.tap(find.text(AppStrings.introOtherOption));
-    await tester.pump();
-
-    expect(find.byType(TextFormField), findsOneWidget);
-    await tester.enterText(find.byType(TextFormField), 'Chess');
-    expect(find.text('Chess'), findsOneWidget);
+    expect(find.text(AppStrings.loginTitle), findsOneWidget);
+    expect(prefs.getBool('zukkor.has_seen_introduction'), isTrue);
   });
-
-  testWidgets(
-    'study page: choosing "Other" for study place reveals a text field, quiz-liking is selectable',
-    (tester) async {
-      await _pumpAppOnIntroduction(tester);
-
-      for (int i = 0; i < 5; i++) {
-        await tester.tap(find.text(AppStrings.onboardingContinue));
-        await _settle(tester);
-      }
-
-      expect(find.text(AppStrings.introStudyTitle), findsOneWidget);
-      expect(find.text(AppStrings.introGetStarted), findsOneWidget);
-      expect(find.byType(TextFormField), findsNothing);
-
-      await tester.tap(find.text(AppStrings.introOtherOption));
-      await tester.pump();
-      expect(find.byType(TextFormField), findsOneWidget);
-
-      await tester.tap(find.text(AppStrings.introQuizLikingNotReally));
-      await tester.pump();
-      expect(tester.takeException(), isNull);
-    },
-  );
-
-  testWidgets(
-    'Skip jumps straight to Login and persists the flag (no unvisited survey data saved)',
-    (tester) async {
-      final SharedPreferences prefs = await _pumpAppOnIntroduction(tester);
-
-      await tester.tap(find.text(AppStrings.introSkip));
-      await _settle(tester);
-
-      expect(find.text(AppStrings.loginTitle), findsOneWidget);
-      expect(prefs.getBool('zukkor.has_seen_introduction'), isTrue);
-      // Never reached the survey pages — nothing fabricated gets saved.
-      expect(prefs.getStringList('zukkor.intro_interests'), isNull);
-      expect(prefs.getString('zukkor.intro_study_place'), isNull);
-      expect(prefs.getString('zukkor.intro_quiz_liking'), isNull);
-    },
-  );
-
-  testWidgets(
-    'completing all 6 pages lands on Login, persists the flag and the real survey answers',
-    (tester) async {
-      final SharedPreferences prefs = await _pumpAppOnIntroduction(tester);
-
-      for (int i = 0; i < 4; i++) {
-        await tester.tap(find.text(AppStrings.onboardingContinue));
-        await _settle(tester);
-      }
-      expect(find.text(AppStrings.introInterestsTitle), findsOneWidget);
-
-      await tester.tap(find.text('Math'));
-      await tester.pump();
-      await tester.tap(find.text(AppStrings.onboardingContinue));
-      await _settle(tester);
-
-      expect(find.text(AppStrings.introStudyTitle), findsOneWidget);
-      await tester.tap(find.text(AppStrings.introQuizLikingNotReally));
-      await tester.pump();
-
-      await tester.tap(find.text(AppStrings.introGetStarted));
-      await _settleAfterConfetti(tester);
-
-      expect(find.text(AppStrings.loginTitle), findsOneWidget);
-      expect(prefs.getBool('zukkor.has_seen_introduction'), isTrue);
-      expect(prefs.getStringList('zukkor.intro_interests'), ['Math']);
-      // Study place left untouched — the default (school).
-      expect(prefs.getString('zukkor.intro_study_place'), 'school');
-      expect(prefs.getString('zukkor.intro_quiz_liking'), 'not_really');
-    },
-  );
 }

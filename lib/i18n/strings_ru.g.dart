@@ -707,17 +707,6 @@ class _Translations$onboarding$ru implements Translations$onboarding$en {
 	@override String get lastNameHint => 'Каримов';
 	@override String get usernameLabel => 'Имя пользователя';
 	@override String get usernameHint => 'aziz_karimov';
-	@override String get directionTitle => 'Зачем вы используете Zukkor?';
-	@override String get directionSubtitle => 'Мы порекомендуем подходящий контент и категории';
-	@override String get directionRequired => 'Выберите один вариант, чтобы продолжить';
-	@override String get studentUniTitle => 'Студент';
-	@override String get studentUniSubtitle => 'Учусь в университете или колледже';
-	@override String get studentSchoolTitle => 'Школьник';
-	@override String get studentSchoolSubtitle => 'Учусь в школе';
-	@override String get examPrepTitle => 'Подготовка к экзамену';
-	@override String get examPrepSubtitle => 'Готовлюсь к экзамену (например, IELTS)';
-	@override String get casualTitle => 'Просто для удовольствия';
-	@override String get casualSubtitle => 'Играю, провожу время';
 }
 
 // Path: introduction
@@ -738,21 +727,6 @@ class _Translations$introduction$ru implements Translations$introduction$en {
 	@override String get duelSubtitle => 'Сразитесь с другом один на один или создайте комнату и играйте с целой группой в реальном времени';
 	@override String get leaderboardTitle => 'Поднимайтесь в рейтинге';
 	@override String get leaderboardSubtitle => 'Каждый правильный ответ приносит XP — следите за своим местом среди друзей и всех остальных';
-	@override String get interestsTitle => 'Что вам интересно?';
-	@override String get interestsSubtitle => 'Выберите несколько вариантов — мы используем их для рекомендации категорий';
-	@override String get studyTitle => 'Почти готово!';
-	@override String get studySubtitle => 'Ещё пара быстрых вопросов';
-	@override String get studyPlaceLabel => 'Где вы учитесь?';
-	@override String get quizLikingLabel => 'Вам нравится решать викторины и головоломки?';
-	@override String get studyPlaceSchool => 'Школа';
-	@override String get studyPlaceUniversity => 'Университет';
-	@override String get studyPlaceExamPrep => 'Подготовка к экзамену';
-	@override String get quizLikingLoveIt => 'Очень нравится';
-	@override String get quizLikingItsOk => 'Нормально';
-	@override String get quizLikingNotReally => 'Не особо';
-	@override String get otherOption => 'Другое';
-	@override String get otherFieldLabel => 'Расскажите подробнее';
-	@override String get otherFieldHint => 'Введите здесь...';
 }
 
 // Path: auth
@@ -1297,17 +1271,6 @@ extension on TranslationsRu {
 			'onboarding.lastNameHint' => 'Каримов',
 			'onboarding.usernameLabel' => 'Имя пользователя',
 			'onboarding.usernameHint' => 'aziz_karimov',
-			'onboarding.directionTitle' => 'Зачем вы используете Zukkor?',
-			'onboarding.directionSubtitle' => 'Мы порекомендуем подходящий контент и категории',
-			'onboarding.directionRequired' => 'Выберите один вариант, чтобы продолжить',
-			'onboarding.studentUniTitle' => 'Студент',
-			'onboarding.studentUniSubtitle' => 'Учусь в университете или колледже',
-			'onboarding.studentSchoolTitle' => 'Школьник',
-			'onboarding.studentSchoolSubtitle' => 'Учусь в школе',
-			'onboarding.examPrepTitle' => 'Подготовка к экзамену',
-			'onboarding.examPrepSubtitle' => 'Готовлюсь к экзамену (например, IELTS)',
-			'onboarding.casualTitle' => 'Просто для удовольствия',
-			'onboarding.casualSubtitle' => 'Играю, провожу время',
 			'introduction.skip' => 'Пропустить',
 			'introduction.getStarted' => 'Начать',
 			'introduction.welcomeTitle' => 'Добро пожаловать в Zukkor!',
@@ -1319,21 +1282,6 @@ extension on TranslationsRu {
 			'introduction.duelSubtitle' => 'Сразитесь с другом один на один или создайте комнату и играйте с целой группой в реальном времени',
 			'introduction.leaderboardTitle' => 'Поднимайтесь в рейтинге',
 			'introduction.leaderboardSubtitle' => 'Каждый правильный ответ приносит XP — следите за своим местом среди друзей и всех остальных',
-			'introduction.interestsTitle' => 'Что вам интересно?',
-			'introduction.interestsSubtitle' => 'Выберите несколько вариантов — мы используем их для рекомендации категорий',
-			'introduction.studyTitle' => 'Почти готово!',
-			'introduction.studySubtitle' => 'Ещё пара быстрых вопросов',
-			'introduction.studyPlaceLabel' => 'Где вы учитесь?',
-			'introduction.quizLikingLabel' => 'Вам нравится решать викторины и головоломки?',
-			'introduction.studyPlaceSchool' => 'Школа',
-			'introduction.studyPlaceUniversity' => 'Университет',
-			'introduction.studyPlaceExamPrep' => 'Подготовка к экзамену',
-			'introduction.quizLikingLoveIt' => 'Очень нравится',
-			'introduction.quizLikingItsOk' => 'Нормально',
-			'introduction.quizLikingNotReally' => 'Не особо',
-			'introduction.otherOption' => 'Другое',
-			'introduction.otherFieldLabel' => 'Расскажите подробнее',
-			'introduction.otherFieldHint' => 'Введите здесь...',
 			'auth.loginTitle' => 'С возвращением!',
 			'auth.loginSubtitle' => 'Войдите и продолжите игру',
 			'auth.registerTitle' => 'Создать аккаунт',

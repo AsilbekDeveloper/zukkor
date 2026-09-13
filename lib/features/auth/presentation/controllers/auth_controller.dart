@@ -84,10 +84,6 @@ class AuthController extends Notifier<bool> {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   }) async {
     state = true;
     try {
@@ -98,10 +94,6 @@ class AuthController extends Notifier<bool> {
             firstName: firstName,
             lastName: lastName,
             avatarColor: avatarColor,
-            direction: direction,
-            interests: interests,
-            studyPlace: studyPlace,
-            quizLiking: quizLiking,
           );
     } finally {
       state = false;

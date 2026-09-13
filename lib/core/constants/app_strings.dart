@@ -344,7 +344,7 @@ abstract final class AppStrings {
   static const String comingSoon = 'Coming soon';
   static const String manualQuizScreenTitle = 'Create a quiz manually';
 
-  // Onboarding — 3-step wizard (Zukkor_Profil_Yaratish.docx)
+  // Onboarding — 2-step wizard (Zukkor_Profil_Yaratish.docx)
   static const String onboardingStepCount = 'Step';
   static const String onboardingContinue = 'Continue';
   static const String onboardingStart = 'Start';
@@ -363,23 +363,7 @@ abstract final class AppStrings {
   static const String usernameLabel = 'Username';
   static const String usernameHint = 'aziz_karimov';
 
-  static const String directionStepTitle = 'Why are you using Zukkor?';
-  static const String directionStepSubtitle =
-      "We'll recommend content and categories that fit you";
-  static const String directionRequired = 'Please choose one to continue';
-
-  static const String directionStudentUniTitle = 'Student';
-  static const String directionStudentUniSubtitle =
-      'I study at university or college';
-  static const String directionStudentSchoolTitle = 'Pupil';
-  static const String directionStudentSchoolSubtitle = 'I study at school';
-  static const String directionExamPrepTitle = 'Exam prep';
-  static const String directionExamPrepSubtitle =
-      "I'm preparing for an exam (e.g. IELTS)";
-  static const String directionCasualTitle = 'Just for fun';
-  static const String directionCasualSubtitle = 'Playing and passing the time';
-
-  // Introduction — 6-page first-launch walkthrough, shown once before
+  // Introduction — 4-page first-launch walkthrough, shown once before
   // Login/Register.
   static const String introSkip = 'Skip';
   static const String introGetStarted = 'Get started';
@@ -400,28 +384,6 @@ abstract final class AppStrings {
   static const String introLeaderboardTitle = 'Climb the leaderboard';
   static const String introLeaderboardSubtitle =
       'Every correct answer earns XP — track your rank among friends and everyone else';
-
-  static const String introInterestsTitle = 'What are you into?';
-  static const String introInterestsSubtitle =
-      "Pick a few — we'll use these to recommend categories";
-
-  static const String introStudyTitle = 'Almost done!';
-  static const String introStudySubtitle = 'A couple more quick questions';
-  static const String introStudyPlaceLabel = 'Where do you study?';
-  static const String introQuizLikingLabel =
-      'Do you enjoy solving quizzes and puzzles?';
-
-  static const String introStudyPlaceSchool = 'School';
-  static const String introStudyPlaceUniversity = 'University';
-  static const String introStudyPlaceExamPrep = 'Exam prep';
-
-  static const String introQuizLikingLoveIt = 'Love it';
-  static const String introQuizLikingItsOk = "It's ok";
-  static const String introQuizLikingNotReally = 'Not really';
-
-  static const String introOtherOption = 'Other';
-  static const String introOtherFieldLabel = 'Tell us more';
-  static const String introOtherFieldHint = 'Type here...';
 
   // Auth — screen
   static const String loginTitle = 'Welcome back!';

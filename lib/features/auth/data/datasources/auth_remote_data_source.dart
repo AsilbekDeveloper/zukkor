@@ -54,11 +54,13 @@ class AuthRemoteDataSource {
   /// mustaqil. "Akkaunt qo'shish" oqimida yangi login qilingan tokenning
   /// egasini bilish uchun, uni hali faol qilmasdan turib ishlatiladi.
   Future<UserModel> getCurrentUserForToken(String accessToken) async {
-    final Dio oneOffDio = Dio(BaseOptions(
-      baseUrl: AppConfig.apiBaseUrl,
-      connectTimeout: AppConfig.connectTimeout,
-      receiveTimeout: AppConfig.receiveTimeout,
-    ));
+    final Dio oneOffDio = Dio(
+      BaseOptions(
+        baseUrl: AppConfig.apiBaseUrl,
+        connectTimeout: AppConfig.connectTimeout,
+        receiveTimeout: AppConfig.receiveTimeout,
+      ),
+    );
     final Response<dynamic> response = await oneOffDio.get(
       ApiEndpoints.me,
       options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
@@ -71,10 +73,6 @@ class AuthRemoteDataSource {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   }) async {
     final Response<dynamic> response = await _dio.patch(
       ApiEndpoints.profileSetup,
@@ -82,15 +80,11 @@ class AuthRemoteDataSource {
         'username': username,
         'first_name': firstName,
         'last_name': lastName,
-        'direction': direction,
         // Omitted entirely (not even sent as null) when the user's active
         // choice is an uploaded photo, not a color — avatar_color and the
         // photo are mutually exclusive server-side, so sending this would
         // wipe out a just-uploaded avatar image.
         'avatar_color': ?avatarColor,
-        'interests': ?interests,
-        'study_place': ?studyPlace,
-        'quiz_liking': ?quizLiking,
       },
     );
     return UserModel.fromJson(response.data as Map<String, dynamic>);
@@ -170,5 +164,5 @@ class AuthRemoteDataSource {
 
 final Provider<AuthRemoteDataSource> authRemoteDataSourceProvider =
     Provider<AuthRemoteDataSource>(
-  (ref) => AuthRemoteDataSource(ref.watch(dioProvider)),
-);
+      (ref) => AuthRemoteDataSource(ref.watch(dioProvider)),
+    );

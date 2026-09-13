@@ -40,9 +40,6 @@ class _FakeAuthRepository implements AuthRepository {
   _FakeAuthRepository({this.usernameAvailable = true});
 
   final bool usernameAvailable;
-  List<String>? receivedInterests;
-  String? receivedStudyPlace;
-  String? receivedQuizLiking;
 
   @override
   Future<void> register({
@@ -72,28 +69,18 @@ class _FakeAuthRepository implements AuthRepository {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
-  }) async {
-    receivedInterests = interests;
-    receivedStudyPlace = studyPlace;
-    receivedQuizLiking = quizLiking;
-    return User(
-      id: '1',
-      email: 'aziz@example.com',
-      username: username,
-      firstName: firstName,
-      lastName: lastName,
-      avatarColor: avatarColor,
-      direction: direction,
-      isActive: true,
-      createdAt: DateTime(2026),
-      onboardingCompleted: true,
-      authProvider: 'email',
-    );
-  }
+  }) async => User(
+    id: '1',
+    email: 'aziz@example.com',
+    username: username,
+    firstName: firstName,
+    lastName: lastName,
+    avatarColor: avatarColor,
+    isActive: true,
+    createdAt: DateTime(2026),
+    onboardingCompleted: true,
+    authProvider: 'email',
+  );
 
   @override
   Future<bool> isUsernameAvailable(String username) async => usernameAvailable;
@@ -135,7 +122,6 @@ class _FakeAuthRepository implements AuthRepository {
 Future<SharedPreferences> _pumpAppOnOnboarding(
   WidgetTester tester, {
   AuthRepository? authRepository,
-  Map<String, Object>? extraPrefs,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1.0;
@@ -147,7 +133,6 @@ Future<SharedPreferences> _pumpAppOnOnboarding(
   // this file only cares about the Onboarding wizard itself.
   SharedPreferences.setMockInitialValues(<String, Object>{
     'zukkor.has_seen_introduction': true,
-    ...?extraPrefs,
   });
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -178,13 +163,13 @@ void main() {
     await _pumpAppOnOnboarding(tester);
 
     expect(find.text(AppStrings.avatarStepTitle), findsOneWidget);
-    expect(find.text('1/3'), findsOneWidget);
+    expect(find.text('1/2'), findsOneWidget);
 
     await tester.tap(find.text(AppStrings.onboardingContinue));
     await tester.pumpAndSettle();
 
     expect(find.text(AppStrings.profileStepTitle), findsOneWidget);
-    expect(find.text('2/3'), findsOneWidget);
+    expect(find.text('2/2'), findsOneWidget);
   });
 
   testWidgets('step 2: empty form blocks advancing and shows errors', (
@@ -194,7 +179,8 @@ void main() {
     await tester.tap(find.text(AppStrings.onboardingContinue));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text(AppStrings.onboardingContinue));
+    // Step 2 is the last step — its button reads "Start".
+    await tester.tap(find.text(AppStrings.onboardingStart));
     await tester.pumpAndSettle();
 
     // Still on step 2 — nothing progressed.
@@ -226,7 +212,7 @@ void main() {
         find.widgetWithText(TextFormField, AppStrings.usernameHint),
         'aziz_karimov',
       );
-      await tester.tap(find.text(AppStrings.onboardingContinue));
+      await tester.tap(find.text(AppStrings.onboardingStart));
       await tester.pumpAndSettle();
 
       // Still on step 2 — the username is reported as taken.
@@ -235,16 +221,14 @@ void main() {
     },
   );
 
-  testWidgets('step 3: no direction selected blocks Start and shows a hint', (
-    tester,
-  ) async {
+  testWidgets('happy path: both steps completed lands on Home', (tester) async {
     await _pumpAppOnOnboarding(tester);
 
     // Step 1 → 2.
     await tester.tap(find.text(AppStrings.onboardingContinue));
     await tester.pumpAndSettle();
 
-    // Fill step 2 and advance to 3.
+    // Step 2: fill the form, then Start.
     await tester.enterText(
       find.widgetWithText(TextFormField, AppStrings.firstNameHint),
       'Aziz',
@@ -257,104 +241,11 @@ void main() {
       find.widgetWithText(TextFormField, AppStrings.usernameHint),
       'aziz_karimov',
     );
-    await tester.tap(find.text(AppStrings.onboardingContinue));
-    await tester.pumpAndSettle();
-
-    expect(find.text(AppStrings.directionStepTitle), findsOneWidget);
-    expect(find.text(AppStrings.onboardingStart), findsWidgets);
-
-    await tester.tap(find.text(AppStrings.onboardingStart));
-    await tester.pumpAndSettle();
-
-    // Still on step 3 — direction is required.
-    expect(find.text(AppStrings.directionStepTitle), findsOneWidget);
-    expect(find.text(AppStrings.directionRequired), findsOneWidget);
-  });
-
-  testWidgets('happy path: all 3 steps completed lands on Home', (
-    tester,
-  ) async {
-    await _pumpAppOnOnboarding(tester);
-
-    // Step 1 → 2.
-    await tester.tap(find.text(AppStrings.onboardingContinue));
-    await tester.pumpAndSettle();
-
-    // Step 2 → 3.
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.firstNameHint),
-      'Aziz',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.lastNameHint),
-      'Karimov',
-    );
-    await tester.enterText(
-      find.widgetWithText(TextFormField, AppStrings.usernameHint),
-      'aziz_karimov',
-    );
-    await tester.tap(find.text(AppStrings.onboardingContinue));
-    await tester.pumpAndSettle();
-
-    // Step 3: pick a direction, then Start.
-    await tester.tap(find.text(AppStrings.directionStudentUniTitle));
-    await tester.pumpAndSettle();
     await tester.tap(find.text(AppStrings.onboardingStart));
     await tester.pumpAndSettle();
 
     expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
   });
-
-  testWidgets(
-    'folds in Introduction survey answers saved before registration, then clears them',
-    (tester) async {
-      final _FakeAuthRepository repository = _FakeAuthRepository();
-      final SharedPreferences prefs = await _pumpAppOnOnboarding(
-        tester,
-        authRepository: repository,
-        extraPrefs: {
-          'zukkor.intro_interests': ['Math', 'Movies'],
-          'zukkor.intro_study_place': 'school',
-          'zukkor.intro_quiz_liking': 'love_it',
-        },
-      );
-
-      // Step 1 → 2.
-      await tester.tap(find.text(AppStrings.onboardingContinue));
-      await tester.pumpAndSettle();
-
-      // Step 2 → 3.
-      await tester.enterText(
-        find.widgetWithText(TextFormField, AppStrings.firstNameHint),
-        'Aziz',
-      );
-      await tester.enterText(
-        find.widgetWithText(TextFormField, AppStrings.lastNameHint),
-        'Karimov',
-      );
-      await tester.enterText(
-        find.widgetWithText(TextFormField, AppStrings.usernameHint),
-        'aziz_karimov',
-      );
-      await tester.tap(find.text(AppStrings.onboardingContinue));
-      await tester.pumpAndSettle();
-
-      // Step 3: pick a direction, then Start.
-      await tester.tap(find.text(AppStrings.directionStudentUniTitle));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(AppStrings.onboardingStart));
-      await tester.pumpAndSettle();
-
-      expect(find.text(AppStrings.duelHeroTitle), findsOneWidget);
-      expect(repository.receivedInterests, ['Math', 'Movies']);
-      expect(repository.receivedStudyPlace, 'school');
-      expect(repository.receivedQuizLiking, 'love_it');
-      // Cleared afterward — never resent on a future profile update.
-      expect(prefs.getStringList('zukkor.intro_interests'), isNull);
-      expect(prefs.getString('zukkor.intro_study_place'), isNull);
-      expect(prefs.getString('zukkor.intro_quiz_liking'), isNull);
-    },
-  );
 
   testWidgets('back button steps back through the wizard', (tester) async {
     await _pumpAppOnOnboarding(tester);
@@ -367,6 +258,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(AppStrings.avatarStepTitle), findsOneWidget);
-    expect(find.text('1/3'), findsOneWidget);
+    expect(find.text('1/2'), findsOneWidget);
   });
 }

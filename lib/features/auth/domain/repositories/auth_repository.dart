@@ -24,28 +24,19 @@ abstract interface class AuthRepository {
   Future<User> getCurrentUser();
 
   /// `PATCH /users/me/profile` — profil ma'lumotlarini (avatar rangi,
-  /// ism/familiya/username, yo'nalish) saqlaydi. Onboarding wizard'ini
-  /// yakunlash uchun ham, keyinroq Profilni tahrirlash uchun ham
-  /// ishlatiladi.
+  /// ism/familiya/username) saqlaydi. Onboarding wizard'ini yakunlash
+  /// uchun ham, keyinroq Profilni tahrirlash uchun ham ishlatiladi.
   ///
   /// [avatarColor] — faqat foydalanuvchining joriy tanlovi rang bo'lsa
   /// beriladi; `null` bo'lsa umuman yuborilmaydi. Rasm (`avatar_image`)
   /// va rang backend'da bir-birini istisno qiladi — agar foydalanuvchi
   /// hozir yuklangan rasmni ishlatayotgan bo'lsa, shu maydonni yuborish
   /// o'sha rasmni o'chirib tashlar edi.
-  ///
-  /// [interests]/[studyPlace]/[quizLiking] — faqat Onboarding'ni
-  /// Introduction so'rovnomasidan keyin yakunlaganda beriladi (Profilni
-  /// tahrirlashda `null` — mavjud qiymatlar backend'da o'zgarishsiz qoladi).
   Future<User> updateProfile({
     required String username,
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   });
 
   /// `POST /users/me/avatar` — tanlangan rasmni yuklaydi va uni joriy

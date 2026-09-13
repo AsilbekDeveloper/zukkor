@@ -336,18 +336,7 @@
     "lastNameLabel": "Familiya",
     "lastNameHint": "Karimov",
     "usernameLabel": "Foydalanuvchi nomi",
-    "usernameHint": "aziz_karimov",
-    "directionTitle": "Zukkordan nima uchun foydalanyapsiz?",
-    "directionSubtitle": "Sizga mos kontent va kategoriyalarni tavsiya qilamiz",
-    "directionRequired": "Davom etish uchun birini tanlang",
-    "studentUniTitle": "Talaba",
-    "studentUniSubtitle": "Universitet yoki kollejda o'qiyman",
-    "studentSchoolTitle": "O'quvchi",
-    "studentSchoolSubtitle": "Maktabda o'qiyman",
-    "examPrepTitle": "Imtihonga tayyorgarlik",
-    "examPrepSubtitle": "Imtihonga tayyorlanyapman (masalan, IELTS)",
-    "casualTitle": "Shunchaki qiziqib",
-    "casualSubtitle": "O'ynab, vaqt o'tkazyapman"
+    "usernameHint": "aziz_karimov"
   },
   "introduction": {
     "skip": "O'tkazib yuborish",
@@ -360,22 +349,7 @@
     "duelTitle": "Do'stlaringizga qarshi chiqing",
     "duelSubtitle": "Do'st bilan yakkama-yakka duel qiling yoki xona yaratib, butun guruh bilan real vaqtda o'ynang",
     "leaderboardTitle": "Reytingda ko'tariling",
-    "leaderboardSubtitle": "Har bir to'g'ri javob XP beradi — do'stlaringiz va boshqalar orasidagi o'rningizni kuzating",
-    "interestsTitle": "Nimalarga qiziqasiz?",
-    "interestsSubtitle": "Bir nechtasini tanlang — ulardan kategoriyalarni tavsiya qilishda foydalanamiz",
-    "studyTitle": "Deyarli tayyor!",
-    "studySubtitle": "Yana bir nechta qisqa savol",
-    "studyPlaceLabel": "Qayerda o'qiysiz?",
-    "quizLikingLabel": "Viktorina va topishmoqlarni yechishni yoqtirasizmi?",
-    "studyPlaceSchool": "Maktab",
-    "studyPlaceUniversity": "Universitet",
-    "studyPlaceExamPrep": "Imtihonga tayyorgarlik",
-    "quizLikingLoveIt": "Juda yoqtiraman",
-    "quizLikingItsOk": "Yomon emas",
-    "quizLikingNotReally": "Unchalik emas",
-    "otherOption": "Boshqa",
-    "otherFieldLabel": "Batafsilroq ayting",
-    "otherFieldHint": "Shu yerga yozing..."
+    "leaderboardSubtitle": "Har bir to'g'ri javob XP beradi — do'stlaringiz va boshqalar orasidagi o'rningizni kuzating"
   },
   "auth": {
     "loginTitle": "Xush kelibsiz!",

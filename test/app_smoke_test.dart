@@ -66,10 +66,6 @@ class _FakeAuthRepository implements AuthRepository {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   }) async => User(
     id: '1',
     email: 'aziz@example.com',
@@ -77,7 +73,6 @@ class _FakeAuthRepository implements AuthRepository {
     firstName: firstName,
     lastName: lastName,
     avatarColor: avatarColor,
-    direction: direction,
     isActive: true,
     createdAt: DateTime(2026),
     onboardingCompleted: true,

@@ -368,10 +368,6 @@ class _FakeAuthRepository implements AuthRepository {
     required String firstName,
     required String lastName,
     String? avatarColor,
-    required String direction,
-    List<String>? interests,
-    String? studyPlace,
-    String? quizLiking,
   }) async => User(
     id: '1',
     email: 'aziz@example.com',
@@ -379,7 +375,6 @@ class _FakeAuthRepository implements AuthRepository {
     firstName: firstName,
     lastName: lastName,
     avatarColor: avatarColor,
-    direction: direction,
     isActive: true,
     createdAt: DateTime(2026),
     onboardingCompleted: true,
@@ -639,32 +634,32 @@ void main() {
       Size(1024, 768),
     ];
     for (final Size size in walkSizes) {
-      testWidgets(
-        'all 3 steps @ ${size.width.toInt()}x${size.height.toInt()}',
-        (tester) async {
-          await _pumpAt(
-            tester,
-            size,
-            (_) => const OnboardingScreen(),
-            useFakeAuthRepository: true,
-          );
-          expect(tester.takeException(), isNull, reason: 'step 1 overflowed');
-          await tester.tap(find.text(AppStrings.onboardingContinue));
-          await tester.pump(const Duration(milliseconds: 400));
-          expect(tester.takeException(), isNull, reason: 'step 2 overflowed');
-          await tester.enterText(find.byType(TextFormField).at(0), 'Aziz');
-          await tester.enterText(find.byType(TextFormField).at(1), 'Karimov');
-          await tester.enterText(
-            find.byType(TextFormField).at(2),
-            'aziz_karimov',
-          );
-          await tester.pump();
-          await tester.tap(find.text(AppStrings.onboardingContinue));
-          await tester.pump(const Duration(milliseconds: 400));
-          expect(tester.takeException(), isNull, reason: 'step 3 overflowed');
-          expect(find.text(AppStrings.directionStepTitle), findsOneWidget);
-        },
-      );
+      testWidgets('both steps @ ${size.width.toInt()}x${size.height.toInt()}', (
+        tester,
+      ) async {
+        await _pumpAt(
+          tester,
+          size,
+          (_) => const OnboardingScreen(),
+          useFakeAuthRepository: true,
+        );
+        expect(tester.takeException(), isNull, reason: 'step 1 overflowed');
+        await tester.tap(find.text(AppStrings.onboardingContinue));
+        await tester.pump(const Duration(milliseconds: 400));
+        expect(tester.takeException(), isNull, reason: 'step 2 overflowed');
+        await tester.enterText(find.byType(TextFormField).at(0), 'Aziz');
+        await tester.enterText(find.byType(TextFormField).at(1), 'Karimov');
+        await tester.enterText(
+          find.byType(TextFormField).at(2),
+          'aziz_karimov',
+        );
+        await tester.pump();
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: 'step 2 after fill overflowed',
+        );
+      });
     }
   });
 
@@ -677,11 +672,11 @@ void main() {
     ];
     for (final Size size in walkSizes) {
       testWidgets(
-        'all 6 pages @ ${size.width.toInt()}x${size.height.toInt()}',
+        'all 4 pages @ ${size.width.toInt()}x${size.height.toInt()}',
         (tester) async {
           await _pumpAt(tester, size, (_) => const IntroductionScreen());
           expect(tester.takeException(), isNull, reason: 'page 1 overflowed');
-          for (int page = 2; page <= 5; page++) {
+          for (int page = 2; page <= 4; page++) {
             await tester.tap(find.text(AppStrings.onboardingContinue));
             await tester.pump(const Duration(milliseconds: 400));
             expect(
@@ -690,36 +685,6 @@ void main() {
               reason: 'page $page overflowed',
             );
           }
-          await tester.ensureVisible(find.text('Math'));
-          await tester.tap(find.text('Math'));
-          await tester.ensureVisible(find.text(AppStrings.introOtherOption));
-          await tester.tap(find.text(AppStrings.introOtherOption));
-          await tester.pump();
-          expect(
-            tester.takeException(),
-            isNull,
-            reason: 'page 5 (interests) overflowed',
-          );
-          await tester.enterText(find.byType(TextFormField), 'Chess');
-          await tester.pump();
-          await tester.tap(find.text(AppStrings.onboardingContinue));
-          await tester.pump(const Duration(milliseconds: 400));
-          expect(tester.takeException(), isNull, reason: 'page 6 overflowed');
-          await tester.ensureVisible(
-            find.text(AppStrings.introStudyPlaceExamPrep),
-          );
-          await tester.tap(find.text(AppStrings.introStudyPlaceExamPrep));
-          await tester.ensureVisible(
-            find.text(AppStrings.introQuizLikingNotReally),
-          );
-          await tester.tap(find.text(AppStrings.introQuizLikingNotReally));
-          await tester.pump();
-          expect(
-            tester.takeException(),
-            isNull,
-            reason: 'page 6 after selection overflowed',
-          );
-          expect(find.text(AppStrings.introQuizLikingLabel), findsOneWidget);
         },
       );
     }

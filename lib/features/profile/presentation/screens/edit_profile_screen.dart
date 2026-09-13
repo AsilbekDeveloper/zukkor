@@ -20,7 +20,6 @@ import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
-import '../../../onboarding/presentation/models/onboarding_direction.dart';
 
 /// Edit the current user's first name, last name, username and avatar
 /// color — pre-filled from and saved to the real backend (the same
@@ -160,7 +159,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       }
     }
 
-    final User? current = ref.read(currentUserControllerProvider).data;
     try {
       final User updated = await ref
           .read(authControllerProvider.notifier)
@@ -176,10 +174,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             avatarColor: _avatarImagePath == null
                 ? _avatarColor.apiValue
                 : null,
-            // Bu ekranda yo'nalish o'zgartirilmaydi — joriy qiymat
-            // o'zgarishsiz qayta yuboriladi (backend uni ham talab qiladi).
-            direction:
-                current?.direction ?? OnboardingDirection.casual.apiValue,
           );
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
       if (!mounted) return;

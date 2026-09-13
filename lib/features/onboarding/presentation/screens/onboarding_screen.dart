@@ -12,7 +12,6 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/onboarding_progress_header.dart';
@@ -21,22 +20,14 @@ import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/domain/entities/user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
-import '../models/onboarding_direction.dart';
 import '../widgets/avatar_step.dart';
-import '../widgets/direction_step.dart';
 import '../widgets/profile_info_step.dart';
 
-/// 3-step profile setup wizard: Avatar → Name/Username → Direction
-/// (Zukkor_Profil_Yaratish.docx). All the data collected here is sent in a
-/// single request on the last step (`PATCH /users/me/profile`) — there is
-/// no per-step network call, EXCEPT step 2, which does a lightweight
-/// `GET /users/username-available` check before advancing so a taken
-/// username is caught immediately rather than only after step 3.
-///
-/// That final request also folds in whatever Introduction-survey answers
-/// [AppPreferences] is holding (interests/study place/quiz liking, saved
-/// pre-registration since there was no user yet to attach them to) —
-/// cleared afterward so they're never resent.
+/// 2-step profile setup wizard: Avatar → Name/Username. All the data
+/// collected here is sent in a single request on the last step
+/// (`PATCH /users/me/profile`) — there is no per-step network call, EXCEPT
+/// step 2, which does a lightweight `GET /users/username-available` check
+/// before advancing so a taken username is caught immediately.
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -45,7 +36,7 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 }
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
-  static const int _totalSteps = 3;
+  static const int _totalSteps = 2;
 
   int _step = 1;
   AvatarColorOption _avatarColor = AvatarColorOption.fallback;
@@ -55,8 +46,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   /// rang bir-birini istisno qiladi, rangni yuborish rasmni o'chirar edi).
   String? _avatarImagePath;
   bool _uploadingPhoto = false;
-  OnboardingDirection? _direction;
-  bool _directionTouched = false;
   bool _usernameTaken = false;
   bool _checkingUsername = false;
 
@@ -104,8 +93,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       if (picked == null || !mounted) return;
 
       setState(() => _uploadingPhoto = true);
-      final User updated =
-          await ref.read(authControllerProvider.notifier).uploadAvatarImage(picked.path);
+      final User updated = await ref
+          .read(authControllerProvider.notifier)
+          .uploadAvatarImage(picked.path);
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
       if (!mounted) return;
       setState(() => _avatarImagePath = updated.avatarImagePath);
@@ -131,14 +121,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         return;
       }
     }
-    if (_step == 3 && _direction == null) {
-      setState(() => _directionTouched = true);
-      return;
-    }
 
     if (_step < _totalSteps) {
       setState(() => _step++);
-      unawaited(ref.read(analyticsServiceProvider).logOnboardingStepViewed(_step));
+      unawaited(
+        ref.read(analyticsServiceProvider).logOnboardingStepViewed(_step),
+      );
     } else {
       unawaited(_finish());
     }
@@ -162,20 +150,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Future<void> _finish() async {
     try {
-      final AppPreferences prefs = ref.read(appPreferencesProvider);
-      final User updated = await ref.read(authControllerProvider.notifier).updateProfile(
+      final User updated = await ref
+          .read(authControllerProvider.notifier)
+          .updateProfile(
             username: _usernameController.text.trim(),
             firstName: _firstNameController.text.trim(),
             lastName: _lastNameController.text.trim(),
             // Faqat rasm yuklanmagan bo'lsa yuboriladi — aks holda
             // backend yangi yuklangan rasmni o'chirib, rangga qaytarardi.
-            avatarColor: _avatarImagePath == null ? _avatarColor.apiValue : null,
-            direction: _direction!.apiValue,
-            interests: prefs.introInterests,
-            studyPlace: prefs.introStudyPlace,
-            quizLiking: prefs.introQuizLiking,
+            avatarColor: _avatarImagePath == null
+                ? _avatarColor.apiValue
+                : null,
           );
-      await prefs.clearIntroSurvey();
       ref.read(currentUserControllerProvider.notifier).setUser(updated);
       if (!mounted) return;
       context.go(AppRoutes.home);
@@ -205,7 +191,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLoading = _checkingUsername || ref.watch(authControllerProvider);
+    final bool isLoading =
+        _checkingUsername || ref.watch(authControllerProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -262,44 +249,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget _buildStep() {
     return switch (_step) {
       1 => AvatarStep(
-          selectedColor: _avatarColor,
-          onColorSelected: (color) => setState(() {
-            _avatarColor = color;
-            // Rang tanlash yuklangan rasmdan voz kechish demakdir —
-            // ular bir-birini istisno qiladi.
-            _avatarImagePath = null;
-          }),
-          onUploadPhoto: () => unawaited(_uploadPhoto()),
-          avatarImagePath: _avatarImagePath,
-          isUploading: _uploadingPhoto,
-        ),
-      2 => ProfileInfoStep(
-          formKey: _profileFormKey,
-          firstNameController: _firstNameController,
-          lastNameController: _lastNameController,
-          usernameController: _usernameController,
-          usernameTaken: _usernameTaken,
-        ),
-      _ => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            DirectionStep(
-              selected: _direction,
-              onSelected: (direction) => setState(() {
-                _direction = direction;
-                _directionTouched = false;
-              }),
-            ),
-            if (_directionTouched && _direction == null) ...[
-              AppSpacing.xs.vGap,
-              Text(
-                context.t.onboarding.directionRequired,
-                style: context.textStyles.bodySmall?.copyWith(color: context.colors.error),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ],
-        ),
+        selectedColor: _avatarColor,
+        onColorSelected: (color) => setState(() {
+          _avatarColor = color;
+          // Rang tanlash yuklangan rasmdan voz kechish demakdir —
+          // ular bir-birini istisno qiladi.
+          _avatarImagePath = null;
+        }),
+        onUploadPhoto: () => unawaited(_uploadPhoto()),
+        avatarImagePath: _avatarImagePath,
+        isUploading: _uploadingPhoto,
+      ),
+      _ => ProfileInfoStep(
+        formKey: _profileFormKey,
+        firstNameController: _firstNameController,
+        lastNameController: _lastNameController,
+        usernameController: _usernameController,
+        usernameTaken: _usernameTaken,
+      ),
     };
   }
 }
