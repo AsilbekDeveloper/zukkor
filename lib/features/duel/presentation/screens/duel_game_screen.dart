@@ -413,15 +413,20 @@ class _DuelGameScreenState extends ConsumerState<DuelGameScreen>
       );
     }
 
+    // This device's own dropped connection takes priority over the
+    // opponent's — if we're the one who's offline, nothing else matters
+    // until that's back.
+    final Widget banner = !duelState.isConnected
+        ? const ReconnectingBanner(visible: true)
+        : ReconnectingBanner(
+            visible: game?.opponentDisconnected ?? false,
+            message: context.t.duelGame.opponentReconnecting,
+          );
+
     return Stack(
       children: [
         content,
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: ReconnectingBanner(isConnected: duelState.isConnected),
-        ),
+        Positioned(top: 0, left: 0, right: 0, child: banner),
       ],
     );
   }

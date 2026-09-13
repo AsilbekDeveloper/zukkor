@@ -383,7 +383,7 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen>
           top: 0,
           left: 0,
           right: 0,
-          child: ReconnectingBanner(isConnected: lobbyState.isConnected),
+          child: ReconnectingBanner(visible: !lobbyState.isConnected),
         ),
       ],
     );

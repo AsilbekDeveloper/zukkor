@@ -67,6 +67,10 @@ class _FakeDuelRepository extends Fake implements DuelRepository {
   Stream<DuelFinalResult> get duelFinished => const Stream.empty();
   @override
   Stream<String> get duelCancelled => const Stream.empty();
+  @override
+  Stream<String> get opponentDisconnected => const Stream.empty();
+  @override
+  Stream<String> get opponentReconnected => const Stream.empty();
 
   @override
   Future<void> connect() async => _conn.add(true);

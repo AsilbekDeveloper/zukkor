@@ -46,6 +46,15 @@ abstract interface class DuelRepository {
   /// otherwise voided.
   Stream<String> get duelCancelled;
 
+  /// Fires (with the duel id) when the opponent's connection drops - the
+  /// server holds off forfeiting for a short grace window in case they
+  /// reconnect, rather than voiding the match instantly.
+  Stream<String> get opponentDisconnected;
+
+  /// Fires (with the duel id) once the opponent reconnects within that
+  /// grace window - the duel continues normally.
+  Stream<String> get opponentReconnected;
+
   /// Opens the WebSocket connection (no-op if already connected).
   Future<void> connect();
 

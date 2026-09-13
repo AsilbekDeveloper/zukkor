@@ -23,9 +23,15 @@ import '../models/duel_started_info_model.dart';
 class DuelRepositoryImpl implements DuelRepository {
   DuelRepositoryImpl(this._dataSource) {
     _dataSource.inviteAck.listen(_handleAck);
-    _dataSource.inviteAccepted.listen((json) => _handleOutcome(json, DuelInviteOutcomeStatus.accepted));
-    _dataSource.inviteDeclined.listen((json) => _handleOutcome(json, DuelInviteOutcomeStatus.declined));
-    _dataSource.inviteExpired.listen((json) => _handleOutcome(json, DuelInviteOutcomeStatus.expired));
+    _dataSource.inviteAccepted.listen(
+      (json) => _handleOutcome(json, DuelInviteOutcomeStatus.accepted),
+    );
+    _dataSource.inviteDeclined.listen(
+      (json) => _handleOutcome(json, DuelInviteOutcomeStatus.declined),
+    );
+    _dataSource.inviteExpired.listen(
+      (json) => _handleOutcome(json, DuelInviteOutcomeStatus.expired),
+    );
     _dataSource.error.listen(_handleInviteError);
   }
 
@@ -35,7 +41,8 @@ class DuelRepositoryImpl implements DuelRepository {
   // later accept/decline/expire events (keyed by that server id) are
   // mapped back to the client-generated id the caller already has.
   final Map<String, String> _clientInviteIdByServerId = {};
-  final StreamController<DuelInviteOutcome> _outcomeController = StreamController<DuelInviteOutcome>.broadcast();
+  final StreamController<DuelInviteOutcome> _outcomeController =
+      StreamController<DuelInviteOutcome>.broadcast();
 
   void _handleAck(Map<String, dynamic> json) {
     final String? clientId = json['client_invite_id'] as String?;
@@ -45,11 +52,18 @@ class DuelRepositoryImpl implements DuelRepository {
     }
   }
 
-  void _handleOutcome(Map<String, dynamic> json, DuelInviteOutcomeStatus status) {
+  void _handleOutcome(
+    Map<String, dynamic> json,
+    DuelInviteOutcomeStatus status,
+  ) {
     final String? serverId = json['invite_id'] as String?;
-    final String? clientId = serverId == null ? null : _clientInviteIdByServerId.remove(serverId);
+    final String? clientId = serverId == null
+        ? null
+        : _clientInviteIdByServerId.remove(serverId);
     if (clientId == null) return;
-    _outcomeController.add(DuelInviteOutcome(clientInviteId: clientId, status: status));
+    _outcomeController.add(
+      DuelInviteOutcome(clientInviteId: clientId, status: status),
+    );
   }
 
   /// A rejected `duel_invite` never reaches the ack step (no `invite_id`
@@ -75,22 +89,27 @@ class DuelRepositoryImpl implements DuelRepository {
   Stream<bool> get connectionStatus => _dataSource.connectionStatus;
 
   @override
-  Stream<DuelInvite> get incomingInvites =>
-      _dataSource.inviteReceived.map((json) => DuelInviteModel.fromJson(json).toEntity());
+  Stream<DuelInvite> get incomingInvites => _dataSource.inviteReceived.map(
+    (json) => DuelInviteModel.fromJson(json).toEntity(),
+  );
 
   @override
-  Stream<DuelInviteOutcome> get outgoingInviteOutcomes => _outcomeController.stream;
+  Stream<DuelInviteOutcome> get outgoingInviteOutcomes =>
+      _outcomeController.stream;
 
   @override
-  Stream<DuelStartedInfo> get duelStarted =>
-      _dataSource.duelStarted.map((json) => DuelStartedInfoModel.fromJson(json).toEntity());
+  Stream<DuelStartedInfo> get duelStarted => _dataSource.duelStarted.map(
+    (json) => DuelStartedInfoModel.fromJson(json).toEntity(),
+  );
 
   @override
-  Stream<DuelQuestionEvent> get duelQuestion =>
-      _dataSource.duelQuestion.map((json) => DuelQuestionEventModel.fromJson(json).toEntity());
+  Stream<DuelQuestionEvent> get duelQuestion => _dataSource.duelQuestion.map(
+    (json) => DuelQuestionEventModel.fromJson(json).toEntity(),
+  );
 
   @override
-  Stream<DuelOpponentProgressEvent> get opponentProgress => _dataSource.opponentProgress.map(
+  Stream<DuelOpponentProgressEvent> get opponentProgress =>
+      _dataSource.opponentProgress.map(
         (json) => DuelOpponentProgressEvent(
           duelId: json['duel_id'] as String,
           opponentQuestionIndex: json['opponent_question_index'] as int,
@@ -98,19 +117,30 @@ class DuelRepositoryImpl implements DuelRepository {
       );
 
   @override
-  Stream<DuelQuestionResult> get duelQuestionResult =>
-      _dataSource.duelQuestionResult.map((json) => DuelQuestionResultModel.fromJson(json).toEntity());
+  Stream<DuelQuestionResult> get duelQuestionResult => _dataSource
+      .duelQuestionResult
+      .map((json) => DuelQuestionResultModel.fromJson(json).toEntity());
 
   @override
   Stream<String> get waitingForOpponent =>
       _dataSource.waitingForOpponent.map((json) => json['duel_id'] as String);
 
   @override
-  Stream<DuelFinalResult> get duelFinished =>
-      _dataSource.duelFinished.map((json) => DuelFinalResultModel.fromJson(json).toEntity());
+  Stream<DuelFinalResult> get duelFinished => _dataSource.duelFinished.map(
+    (json) => DuelFinalResultModel.fromJson(json).toEntity(),
+  );
 
   @override
-  Stream<String> get duelCancelled => _dataSource.duelCancelled.map((json) => json['duel_id'] as String);
+  Stream<String> get duelCancelled =>
+      _dataSource.duelCancelled.map((json) => json['duel_id'] as String);
+
+  @override
+  Stream<String> get opponentDisconnected =>
+      _dataSource.opponentDisconnected.map((json) => json['duel_id'] as String);
+
+  @override
+  Stream<String> get opponentReconnected =>
+      _dataSource.opponentReconnected.map((json) => json['duel_id'] as String);
 
   @override
   Future<void> connect() => _dataSource.connect();
@@ -125,43 +155,51 @@ class DuelRepositoryImpl implements DuelRepository {
     required String clientInviteId,
     int? questionCount,
   }) {
-    unawaited(_dataSource.send({
-      'type': 'duel_invite',
-      'client_invite_id': clientInviteId,
-      'to_user_id': toUserId,
-      'category_id': categoryId,
-      'question_count': questionCount,
-    }));
+    unawaited(
+      _dataSource.send({
+        'type': 'duel_invite',
+        'client_invite_id': clientInviteId,
+        'to_user_id': toUserId,
+        'category_id': categoryId,
+        'question_count': questionCount,
+      }),
+    );
   }
 
   @override
   void respondToInvite({required String inviteId, required bool accept}) {
-    unawaited(_dataSource.send({
-      'type': 'duel_invite_respond',
-      'invite_id': inviteId,
-      'accept': accept,
-    }));
+    unawaited(
+      _dataSource.send({
+        'type': 'duel_invite_respond',
+        'invite_id': inviteId,
+        'accept': accept,
+      }),
+    );
   }
 
   @override
-  void submitAnswer({required String duelId, required int questionIndex, required int? selectedOption}) {
-    unawaited(_dataSource.send({
-      'type': 'duel_answer',
-      'duel_id': duelId,
-      'question_index': questionIndex,
-      'selected_option': selectedOption,
-    }));
+  void submitAnswer({
+    required String duelId,
+    required int questionIndex,
+    required int? selectedOption,
+  }) {
+    unawaited(
+      _dataSource.send({
+        'type': 'duel_answer',
+        'duel_id': duelId,
+        'question_index': questionIndex,
+        'selected_option': selectedOption,
+      }),
+    );
   }
 
   @override
   void forfeitDuel(String duelId) {
-    unawaited(_dataSource.send({
-      'type': 'duel_leave',
-      'duel_id': duelId,
-    }));
+    unawaited(_dataSource.send({'type': 'duel_leave', 'duel_id': duelId}));
   }
 }
 
-final Provider<DuelRepository> duelRepositoryProvider = Provider<DuelRepository>(
-  (ref) => DuelRepositoryImpl(ref.watch(duelSocketDataSourceProvider)),
-);
+final Provider<DuelRepository> duelRepositoryProvider =
+    Provider<DuelRepository>(
+      (ref) => DuelRepositoryImpl(ref.watch(duelSocketDataSourceProvider)),
+    );

@@ -73,6 +73,10 @@ class DuelSocketDataSource {
       StreamController<Map<String, dynamic>>.broadcast();
   final StreamController<Map<String, dynamic>> _errorController =
       StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<Map<String, dynamic>> _opponentDisconnectedController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  final StreamController<Map<String, dynamic>> _opponentReconnectedController =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   Stream<bool> get connectionStatus => _connectionController.stream;
   Stream<Map<String, dynamic>> get inviteReceived =>
@@ -106,6 +110,19 @@ class DuelSocketDataSource {
   /// its unrelated 20s "couldn't connect" timeout fired — the wrong
   /// explanation for what actually happened.
   Stream<Map<String, dynamic>> get error => _errorController.stream;
+
+  /// `{"type": "duel_opponent_disconnected", "duel_id", "grace_seconds"}`
+  /// — the OTHER player's socket dropped; the server gives them a grace
+  /// window to reconnect before forfeiting instead of cancelling
+  /// instantly (2026-09-13, so a brief mobile network blip doesn't void
+  /// the whole match).
+  Stream<Map<String, dynamic>> get opponentDisconnected =>
+      _opponentDisconnectedController.stream;
+
+  /// `{"type": "duel_opponent_reconnected", "duel_id"}` — the other
+  /// player came back within the grace window.
+  Stream<Map<String, dynamic>> get opponentReconnected =>
+      _opponentReconnectedController.stream;
 
   bool get isConnected => _channel != null;
 
@@ -178,7 +195,8 @@ class DuelSocketDataSource {
 
   void _checkConnectionHealth() {
     if (_channel == null) return;
-    if (DateTime.now().difference(_lastActivityAt) <= _deadConnectionThreshold) {
+    if (DateTime.now().difference(_lastActivityAt) <=
+        _deadConnectionThreshold) {
       return;
     }
     disconnect();
@@ -231,6 +249,10 @@ class DuelSocketDataSource {
         _duelCancelledController.add(json);
       case 'error':
         _errorController.add(json);
+      case 'duel_opponent_disconnected':
+        _opponentDisconnectedController.add(json);
+      case 'duel_opponent_reconnected':
+        _opponentReconnectedController.add(json);
     }
   }
 

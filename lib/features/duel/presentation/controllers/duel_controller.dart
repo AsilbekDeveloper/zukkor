@@ -58,15 +58,18 @@ class DuelState {
     String? Function()? outgoingErrorMessage,
     DuelGameState? Function()? game,
     bool? wasCancelled,
-  }) =>
-      DuelState(
-        isConnected: isConnected ?? this.isConnected,
-        incomingInvite: incomingInvite != null ? incomingInvite() : this.incomingInvite,
-        outgoingStatus: outgoingStatus ?? this.outgoingStatus,
-        outgoingErrorMessage: outgoingErrorMessage != null ? outgoingErrorMessage() : this.outgoingErrorMessage,
-        game: game != null ? game() : this.game,
-        wasCancelled: wasCancelled ?? this.wasCancelled,
-      );
+  }) => DuelState(
+    isConnected: isConnected ?? this.isConnected,
+    incomingInvite: incomingInvite != null
+        ? incomingInvite()
+        : this.incomingInvite,
+    outgoingStatus: outgoingStatus ?? this.outgoingStatus,
+    outgoingErrorMessage: outgoingErrorMessage != null
+        ? outgoingErrorMessage()
+        : this.outgoingErrorMessage,
+    game: game != null ? game() : this.game,
+    wasCancelled: wasCancelled ?? this.wasCancelled,
+  );
 }
 
 /// Owns the duel WebSocket's lifecycle and turns its event streams into
@@ -110,6 +113,12 @@ class DuelController extends Notifier<DuelState> {
       repository.waitingForOpponent.listen(_handleWaitingForOpponent);
       repository.duelFinished.listen(_handleDuelFinished);
       repository.duelCancelled.listen(_handleDuelCancelled);
+      repository.opponentDisconnected.listen(
+        (duelId) => _setOpponentDisconnected(duelId, true),
+      );
+      repository.opponentReconnected.listen(
+        (duelId) => _setOpponentDisconnected(duelId, false),
+      );
     }
     await repository.connect();
   }
@@ -139,12 +148,22 @@ class DuelController extends Notifier<DuelState> {
     );
   }
 
-  void sendInvite({required String toUserId, required int categoryId, int? questionCount}) {
+  void sendInvite({
+    required String toUserId,
+    required int categoryId,
+    int? questionCount,
+  }) {
     _clientInviteIdCounter++;
-    final String clientInviteId = '${DateTime.now().microsecondsSinceEpoch}-$_clientInviteIdCounter';
+    final String clientInviteId =
+        '${DateTime.now().microsecondsSinceEpoch}-$_clientInviteIdCounter';
     _currentOutgoingClientId = clientInviteId;
-    state = state.copyWith(outgoingStatus: OutgoingDuelStatus.waiting, outgoingErrorMessage: () => null);
-    ref.read(duelRepositoryProvider).sendInvite(
+    state = state.copyWith(
+      outgoingStatus: OutgoingDuelStatus.waiting,
+      outgoingErrorMessage: () => null,
+    );
+    ref
+        .read(duelRepositoryProvider)
+        .sendInvite(
           toUserId: toUserId,
           categoryId: categoryId,
           clientInviteId: clientInviteId,
@@ -156,7 +175,10 @@ class DuelController extends Notifier<DuelState> {
   /// (accepted/declined/expired/failed) so a later invite starts clean.
   void resetOutgoing() {
     _currentOutgoingClientId = null;
-    state = state.copyWith(outgoingStatus: OutgoingDuelStatus.idle, outgoingErrorMessage: () => null);
+    state = state.copyWith(
+      outgoingStatus: OutgoingDuelStatus.idle,
+      outgoingErrorMessage: () => null,
+    );
   }
 
   /// [inviteId] comes from the invite [DuelInviteScreen] was actually
@@ -165,7 +187,9 @@ class DuelController extends Notifier<DuelState> {
   /// other than the live Home listener (e.g. a direct deep link, or in
   /// tests), and responding should still work regardless.
   void respondToInvite({required String inviteId, required bool accept}) {
-    ref.read(duelRepositoryProvider).respondToInvite(inviteId: inviteId, accept: accept);
+    ref
+        .read(duelRepositoryProvider)
+        .respondToInvite(inviteId: inviteId, accept: accept);
     if (state.incomingInvite?.id == inviteId) {
       state = state.copyWith(incomingInvite: () => null);
     }
@@ -192,7 +216,11 @@ class DuelController extends Notifier<DuelState> {
       // path.
       wasCancelled: false,
     );
-    unawaited(ref.read(analyticsServiceProvider).logGameStart(mode: 'duel', categoryId: info.category.id));
+    unawaited(
+      ref
+          .read(analyticsServiceProvider)
+          .logGameStart(mode: 'duel', categoryId: info.category.id),
+    );
   }
 
   void _handleDuelQuestion(DuelQuestionEvent event) {
@@ -213,7 +241,11 @@ class DuelController extends Notifier<DuelState> {
     if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != event.duelId) return;
-    state = state.copyWith(game: () => game.copyWith(opponentQuestionIndex: () => event.opponentQuestionIndex));
+    state = state.copyWith(
+      game: () => game.copyWith(
+        opponentQuestionIndex: () => event.opponentQuestionIndex,
+      ),
+    );
   }
 
   void _handleDuelQuestionResult(DuelQuestionResult result) {
@@ -234,7 +266,9 @@ class DuelController extends Notifier<DuelState> {
     if (!ref.mounted) return;
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != result.duelId) return;
-    state = state.copyWith(game: () => game.copyWith(finalResult: () => result));
+    state = state.copyWith(
+      game: () => game.copyWith(finalResult: () => result),
+    );
     // This device's own XP/history just changed server-side — drop the
     // cached copy so History fetches fresh next visit (a regular pushed
     // screen, always remounts). Home/Profile live in the persistent
@@ -242,16 +276,23 @@ class DuelController extends Notifier<DuelState> {
     // them stuck at 0/0/0 - reload immediately instead.
     ref.invalidate(historyControllerProvider);
     ref.invalidate(myStatsControllerProvider);
-    final String? statsUserId = ref.read(currentUserControllerProvider).data?.id;
+    final String? statsUserId = ref
+        .read(currentUserControllerProvider)
+        .data
+        ?.id;
     if (statsUserId != null) {
       unawaited(ref.read(myStatsControllerProvider.notifier).load(statsUserId));
     }
-    unawaited(ref.read(analyticsServiceProvider).logGameComplete(
-          mode: 'duel',
-          categoryId: game.category.id,
-          xpEarned: result.xpEarned,
-          ballEarned: result.ballEarned,
-        ));
+    unawaited(
+      ref
+          .read(analyticsServiceProvider)
+          .logGameComplete(
+            mode: 'duel',
+            categoryId: game.category.id,
+            xpEarned: result.xpEarned,
+            ballEarned: result.ballEarned,
+          ),
+    );
   }
 
   void _handleDuelCancelled(String duelId) {
@@ -259,6 +300,15 @@ class DuelController extends Notifier<DuelState> {
     final DuelGameState? game = state.game;
     if (game == null || game.duelId != duelId) return;
     state = state.copyWith(wasCancelled: true);
+  }
+
+  void _setOpponentDisconnected(String duelId, bool disconnected) {
+    if (!ref.mounted) return;
+    final DuelGameState? game = state.game;
+    if (game == null || game.duelId != duelId) return;
+    state = state.copyWith(
+      game: () => game.copyWith(opponentDisconnected: disconnected),
+    );
   }
 
   /// Locks in an answer for the current question (or `null` on timeout).
@@ -274,9 +324,12 @@ class DuelController extends Notifier<DuelState> {
       yourCorrect: selectedOption == correctOption,
     );
     state = state.copyWith(
-      game: () => game.copyWith(hasAnswered: true, lastResult: () => localResult),
+      game: () =>
+          game.copyWith(hasAnswered: true, lastResult: () => localResult),
     );
-    ref.read(duelRepositoryProvider).submitAnswer(
+    ref
+        .read(duelRepositoryProvider)
+        .submitAnswer(
           duelId: game.duelId,
           questionIndex: game.questionIndex,
           selectedOption: selectedOption,

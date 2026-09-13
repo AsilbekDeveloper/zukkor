@@ -49,7 +49,8 @@ const DuelMatch _match = DuelMatch(opponent: _opponent, category: _math);
 /// serverdan "qabul qilindi/rad etildi/muddati tugadi" xabari kelganini
 /// simulyatsiya qilish imkonini beradi.
 class _FakeDuelRepository implements DuelRepository {
-  final StreamController<DuelInviteOutcome> _outcomeController = StreamController<DuelInviteOutcome>.broadcast();
+  final StreamController<DuelInviteOutcome> _outcomeController =
+      StreamController<DuelInviteOutcome>.broadcast();
 
   String? lastClientInviteId;
   String? lastToUserId;
@@ -62,7 +63,8 @@ class _FakeDuelRepository implements DuelRepository {
   Stream<DuelInvite> get incomingInvites => const Stream.empty();
 
   @override
-  Stream<DuelInviteOutcome> get outgoingInviteOutcomes => _outcomeController.stream;
+  Stream<DuelInviteOutcome> get outgoingInviteOutcomes =>
+      _outcomeController.stream;
 
   @override
   Stream<DuelStartedInfo> get duelStarted => const Stream.empty();
@@ -71,7 +73,8 @@ class _FakeDuelRepository implements DuelRepository {
   Stream<DuelQuestionEvent> get duelQuestion => const Stream.empty();
 
   @override
-  Stream<DuelOpponentProgressEvent> get opponentProgress => const Stream.empty();
+  Stream<DuelOpponentProgressEvent> get opponentProgress =>
+      const Stream.empty();
 
   @override
   Stream<DuelQuestionResult> get duelQuestionResult => const Stream.empty();
@@ -84,6 +87,12 @@ class _FakeDuelRepository implements DuelRepository {
 
   @override
   Stream<String> get duelCancelled => const Stream.empty();
+
+  @override
+  Stream<String> get opponentDisconnected => const Stream.empty();
+
+  @override
+  Stream<String> get opponentReconnected => const Stream.empty();
 
   @override
   Future<void> connect() async {}
@@ -107,7 +116,11 @@ class _FakeDuelRepository implements DuelRepository {
   void respondToInvite({required String inviteId, required bool accept}) {}
 
   @override
-  void submitAnswer({required String duelId, required int questionIndex, required int? selectedOption}) {}
+  void submitAnswer({
+    required String duelId,
+    required int questionIndex,
+    required int? selectedOption,
+  }) {}
 
   @override
   void forfeitDuel(String duelId) {}
@@ -115,7 +128,9 @@ class _FakeDuelRepository implements DuelRepository {
   void emitOutcome(DuelInviteOutcomeStatus status) {
     final String? clientId = lastClientInviteId;
     if (clientId == null) return;
-    _outcomeController.add(DuelInviteOutcome(clientInviteId: clientId, status: status));
+    _outcomeController.add(
+      DuelInviteOutcome(clientInviteId: clientId, status: status),
+    );
   }
 }
 
@@ -131,10 +146,14 @@ Future<({GoRouter router, _FakeDuelRepository repository})> _pumpDuelWaiting(
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
       GoRoute(
         path: AppRoutes.duelWaiting,
-        builder: (context, state) => DuelWaitingScreen(match: state.extra! as DuelMatch),
+        builder: (context, state) =>
+            DuelWaitingScreen(match: state.extra! as DuelMatch),
       ),
       GoRoute(
         path: AppRoutes.duelGame,
@@ -154,7 +173,10 @@ Future<({GoRouter router, _FakeDuelRepository repository})> _pumpDuelWaiting(
         duelRepositoryProvider.overrideWithValue(repository),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -167,20 +189,22 @@ Future<({GoRouter router, _FakeDuelRepository repository})> _pumpDuelWaiting(
 }
 
 void main() {
-  testWidgets('sends a real invite and renders the opponent, category and waiting indicator, no overflow',
-      (tester) async {
-    final result = await _pumpDuelWaiting(tester);
+  testWidgets(
+    'sends a real invite and renders the opponent, category and waiting indicator, no overflow',
+    (tester) async {
+      final result = await _pumpDuelWaiting(tester);
 
-    expect(result.repository.lastToUserId, 'u1');
-    expect(result.repository.lastCategoryId, _math.id);
-    expect(find.text(AppStrings.duelWaitingTitle), findsOneWidget);
-    expect(find.text('Malika Yusupova'), findsOneWidget);
-    // Home stays mounted underneath (pushed on top of it) and has its own
-    // "Math" category tile, so at least one match is enough here.
-    expect(find.text('Math'), findsWidgets);
-    expect(find.text(AppStrings.waitingForAcceptLabel), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      expect(result.repository.lastToUserId, 'u1');
+      expect(result.repository.lastCategoryId, _math.id);
+      expect(find.text(AppStrings.duelWaitingTitle), findsOneWidget);
+      expect(find.text('Malika Yusupova'), findsOneWidget);
+      // Home stays mounted underneath (pushed on top of it) and has its own
+      // "Math" category tile, so at least one match is enough here.
+      expect(find.text('Math'), findsWidgets);
+      expect(find.text(AppStrings.waitingForAcceptLabel), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('fits on the smallest supported phone width', (tester) async {
     await _pumpDuelWaiting(tester, size: const Size(360, 780));
@@ -189,7 +213,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('once the opponent accepts, opens the Duel game screen', (tester) async {
+  testWidgets('once the opponent accepts, opens the Duel game screen', (
+    tester,
+  ) async {
     final result = await _pumpDuelWaiting(tester);
 
     result.repository.emitOutcome(DuelInviteOutcomeStatus.accepted);
@@ -199,7 +225,9 @@ void main() {
     expect(find.byType(DuelGameScreen), findsOneWidget);
   });
 
-  testWidgets('if the opponent declines, shows a message and a way back', (tester) async {
+  testWidgets('if the opponent declines, shows a message and a way back', (
+    tester,
+  ) async {
     final result = await _pumpDuelWaiting(tester);
 
     result.repository.emitOutcome(DuelInviteOutcomeStatus.declined);
@@ -209,7 +237,9 @@ void main() {
     expect(find.text(AppStrings.duelWaitingBackToHome), findsOneWidget);
   });
 
-  testWidgets('if the invite expires, shows a message and a way back', (tester) async {
+  testWidgets('if the invite expires, shows a message and a way back', (
+    tester,
+  ) async {
     final result = await _pumpDuelWaiting(tester);
 
     result.repository.emitOutcome(DuelInviteOutcomeStatus.expired);
@@ -219,7 +249,9 @@ void main() {
     expect(find.text(AppStrings.duelWaitingBackToHome), findsOneWidget);
   });
 
-  testWidgets('the close button returns to Home when pushed on top of it', (tester) async {
+  testWidgets('the close button returns to Home when pushed on top of it', (
+    tester,
+  ) async {
     await _pumpDuelWaiting(tester);
 
     await tester.tap(find.byIcon(TablerIcons.x));

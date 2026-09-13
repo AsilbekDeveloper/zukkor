@@ -266,6 +266,7 @@
     "waitingForQuestion": "Подготовка вопроса…",
     "opponentProgress": "Соперник: вопрос $index/$total",
     "waitingForOpponent": "Вы ответили на все вопросы! Ждём соперника…",
+    "opponentReconnecting": "Связь соперника нестабильна, ожидаем…",
     "startFailed": "Игра не началась — проверьте соединение и попробуйте снова",
     "backToHome": "На главную"
   },

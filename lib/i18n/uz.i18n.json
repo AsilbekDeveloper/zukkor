@@ -251,6 +251,7 @@
     "waitingForQuestion": "Savol tayyorlanmoqda…",
     "opponentProgress": "Raqib: $index/$total savolda",
     "waitingForOpponent": "Siz barcha savollarga javob berdingiz! Sherigingizni kutmoqdamiz…",
+    "opponentReconnecting": "Raqibning aloqasi uzilgan, kutilmoqda…",
     "startFailed": "O'yin boshlanmadi — internetni tekshirib qayta urinib ko'ring",
     "backToHome": "Bosh sahifaga"
   },

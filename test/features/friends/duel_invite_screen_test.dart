@@ -39,7 +39,13 @@ final DuelInvite _invite = DuelInvite(
     avatarColor: 'a-teal',
     avatarImagePath: null,
   ),
-  category: const Category(id: 2, name: 'History', iconName: 'book', colorKey: 'terra', questionCount: 98),
+  category: const Category(
+    id: 2,
+    name: 'History',
+    iconName: 'book',
+    colorKey: 'terra',
+    questionCount: 98,
+  ),
   expiresAt: DateTime(2026, 7, 19),
 );
 
@@ -65,7 +71,8 @@ class _FakeDuelRepository implements DuelRepository {
   Stream<DuelQuestionEvent> get duelQuestion => const Stream.empty();
 
   @override
-  Stream<DuelOpponentProgressEvent> get opponentProgress => const Stream.empty();
+  Stream<DuelOpponentProgressEvent> get opponentProgress =>
+      const Stream.empty();
 
   @override
   Stream<DuelQuestionResult> get duelQuestionResult => const Stream.empty();
@@ -78,6 +85,12 @@ class _FakeDuelRepository implements DuelRepository {
 
   @override
   Stream<String> get duelCancelled => const Stream.empty();
+
+  @override
+  Stream<String> get opponentDisconnected => const Stream.empty();
+
+  @override
+  Stream<String> get opponentReconnected => const Stream.empty();
 
   @override
   Future<void> connect() async {}
@@ -99,7 +112,11 @@ class _FakeDuelRepository implements DuelRepository {
   }
 
   @override
-  void submitAnswer({required String duelId, required int questionIndex, required int? selectedOption}) {}
+  void submitAnswer({
+    required String duelId,
+    required int questionIndex,
+    required int? selectedOption,
+  }) {}
 
   @override
   void forfeitDuel(String duelId) {}
@@ -130,10 +147,14 @@ Future<GoRouter> _pumpDuelInvite(
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.notifications,
     routes: [
-      GoRoute(path: AppRoutes.notifications, builder: (context, state) => const NotificationsScreen()),
+      GoRoute(
+        path: AppRoutes.notifications,
+        builder: (context, state) => const NotificationsScreen(),
+      ),
       GoRoute(
         path: AppRoutes.duelInvite,
-        builder: (context, state) => DuelInviteScreen(invite: state.extra! as DuelInvite),
+        builder: (context, state) =>
+            DuelInviteScreen(invite: state.extra! as DuelInvite),
       ),
       GoRoute(
         path: AppRoutes.duelGame,
@@ -149,11 +170,18 @@ Future<GoRouter> _pumpDuelInvite(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        duelRepositoryProvider.overrideWithValue(repository ?? _FakeDuelRepository()),
-        notificationsRepositoryProvider.overrideWithValue(_FakeNotificationsRepository()),
+        duelRepositoryProvider.overrideWithValue(
+          repository ?? _FakeDuelRepository(),
+        ),
+        notificationsRepositoryProvider.overrideWithValue(
+          _FakeNotificationsRepository(),
+        ),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -163,7 +191,9 @@ Future<GoRouter> _pumpDuelInvite(
 }
 
 void main() {
-  testWidgets('renders the opponent, category and both actions, no overflow', (tester) async {
+  testWidgets('renders the opponent, category and both actions, no overflow', (
+    tester,
+  ) async {
     await _pumpDuelInvite(tester);
 
     expect(find.text(AppStrings.duelInviteTitle), findsOneWidget);
@@ -182,31 +212,39 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping "Accept" tells the server and opens the Duel game screen', (tester) async {
-    final _FakeDuelRepository repository = _FakeDuelRepository();
-    await _pumpDuelInvite(tester, repository: repository);
+  testWidgets(
+    'tapping "Accept" tells the server and opens the Duel game screen',
+    (tester) async {
+      final _FakeDuelRepository repository = _FakeDuelRepository();
+      await _pumpDuelInvite(tester, repository: repository);
 
-    await tester.tap(find.text(AppStrings.acceptButton));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.text(AppStrings.acceptButton));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
-    expect(repository.respondCalls, [(inviteId: 'invite-1', accept: true)]);
-    expect(find.byType(DuelGameScreen), findsOneWidget);
-  });
+      expect(repository.respondCalls, [(inviteId: 'invite-1', accept: true)]);
+      expect(find.byType(DuelGameScreen), findsOneWidget);
+    },
+  );
 
-  testWidgets('tapping "Decline" tells the server and returns to Notifications', (tester) async {
-    final _FakeDuelRepository repository = _FakeDuelRepository();
-    await _pumpDuelInvite(tester, repository: repository);
+  testWidgets(
+    'tapping "Decline" tells the server and returns to Notifications',
+    (tester) async {
+      final _FakeDuelRepository repository = _FakeDuelRepository();
+      await _pumpDuelInvite(tester, repository: repository);
 
-    await tester.tap(find.text(AppStrings.declineButton));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.declineButton));
+      await tester.pumpAndSettle();
 
-    expect(repository.respondCalls, [(inviteId: 'invite-1', accept: false)]);
-    expect(find.byType(NotificationsScreen), findsOneWidget);
-    expect(find.byType(DuelInviteScreen), findsNothing);
-  });
+      expect(repository.respondCalls, [(inviteId: 'invite-1', accept: false)]);
+      expect(find.byType(NotificationsScreen), findsOneWidget);
+      expect(find.byType(DuelInviteScreen), findsNothing);
+    },
+  );
 
-  testWidgets('the close button declines and returns to Notifications', (tester) async {
+  testWidgets('the close button declines and returns to Notifications', (
+    tester,
+  ) async {
     final _FakeDuelRepository repository = _FakeDuelRepository();
     await _pumpDuelInvite(tester, repository: repository);
 

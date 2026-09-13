@@ -552,6 +552,7 @@ class _Translations$duelGame$uz implements Translations$duelGame$en {
 	@override String get waitingForQuestion => 'Savol tayyorlanmoqda…';
 	@override String opponentProgress({required Object index, required Object total}) => 'Raqib: ${index}/${total} savolda';
 	@override String get waitingForOpponent => 'Siz barcha savollarga javob berdingiz! Sherigingizni kutmoqdamiz…';
+	@override String get opponentReconnecting => 'Raqibning aloqasi uzilgan, kutilmoqda…';
 	@override String get startFailed => 'O\'yin boshlanmadi — internetni tekshirib qayta urinib ko\'ring';
 	@override String get backToHome => 'Bosh sahifaga';
 }
@@ -1226,6 +1227,7 @@ extension on TranslationsUz {
 			'duelGame.waitingForQuestion' => 'Savol tayyorlanmoqda…',
 			'duelGame.opponentProgress' => ({required Object index, required Object total}) => 'Raqib: ${index}/${total} savolda',
 			'duelGame.waitingForOpponent' => 'Siz barcha savollarga javob berdingiz! Sherigingizni kutmoqdamiz…',
+			'duelGame.opponentReconnecting' => 'Raqibning aloqasi uzilgan, kutilmoqda…',
 			'duelGame.startFailed' => 'O\'yin boshlanmadi — internetni tekshirib qayta urinib ko\'ring',
 			'duelGame.backToHome' => 'Bosh sahifaga',
 			'duelResult.won' => 'Siz g\'olib bo\'ldingiz!',

@@ -5,21 +5,27 @@ import '../extensions/context_x.dart';
 import '../extensions/num_x.dart';
 import '../theme/app_spacing.dart';
 
-/// A slim banner for a live game screen (Duel/Lobby) whose WebSocket has
-/// dropped — without this, a lost connection looked identical to the
-/// game just hanging: the underlying socket data sources already track
-/// `isConnected` and retry on their own, but nothing ever showed the
-/// user that anything was happening (2026-09-13, found ahead of the
-/// first real-device test pass). Renders nothing when connected, so
-/// callers can drop it in unconditionally.
+/// A slim banner for a live game screen (Duel/Lobby) — used both for
+/// this device's own WebSocket dropping (the underlying socket data
+/// sources already track `isConnected` and retry on their own, but
+/// nothing ever showed the user that anything was happening) and, for
+/// Duel specifically, for the OPPONENT's connection dropping during
+/// their reconnect grace window (2026-09-13, found/added ahead of the
+/// first real-device test pass). Renders nothing while [visible] is
+/// false, so callers can drop it in unconditionally.
 class ReconnectingBanner extends StatelessWidget {
-  const ReconnectingBanner({required this.isConnected, super.key});
+  const ReconnectingBanner({required this.visible, this.message, super.key});
 
-  final bool isConnected;
+  final bool visible;
+
+  /// Defaults to the generic "Reconnecting…" copy (this device's own
+  /// connection); pass an explicit message for a different case, e.g.
+  /// the opponent's connection dropping.
+  final String? message;
 
   @override
   Widget build(BuildContext context) {
-    if (isConnected) return const SizedBox.shrink();
+    if (!visible) return const SizedBox.shrink();
 
     return SafeArea(
       bottom: false,
@@ -44,7 +50,7 @@ class ReconnectingBanner extends StatelessWidget {
             ),
             AppSpacing.xs.hGap,
             Text(
-              context.t.common.reconnecting,
+              message ?? context.t.common.reconnecting,
               style: context.textStyles.bodySmall?.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,

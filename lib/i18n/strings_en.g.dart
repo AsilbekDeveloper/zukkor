@@ -946,6 +946,9 @@ class Translations$duelGame$en {
 	/// en: 'You've answered every question! Waiting for your opponent…'
 	String get waitingForOpponent => 'You\'ve answered every question! Waiting for your opponent…';
 
+	/// en: 'Opponent's connection is unstable, waiting…'
+	String get opponentReconnecting => 'Opponent\'s connection is unstable, waiting…';
+
 	/// en: 'The game didn't start — check your connection and try again'
 	String get startFailed => 'The game didn\'t start — check your connection and try again';
 
@@ -2179,6 +2182,7 @@ extension on Translations {
 			'duelGame.waitingForQuestion' => 'Preparing the question…',
 			'duelGame.opponentProgress' => ({required Object index, required Object total}) => 'Opponent: question ${index}/${total}',
 			'duelGame.waitingForOpponent' => 'You\'ve answered every question! Waiting for your opponent…',
+			'duelGame.opponentReconnecting' => 'Opponent\'s connection is unstable, waiting…',
 			'duelGame.startFailed' => 'The game didn\'t start — check your connection and try again',
 			'duelGame.backToHome' => 'Back to home',
 			'duelResult.won' => 'You won!',

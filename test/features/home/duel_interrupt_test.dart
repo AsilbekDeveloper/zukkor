@@ -29,7 +29,8 @@ import 'package:zukkor/i18n/strings.g.dart';
 
 class _FakeDuelRepository extends Fake implements DuelRepository {
   final StreamController<bool> _conn = StreamController<bool>.broadcast();
-  final StreamController<DuelInvite> _invites = StreamController<DuelInvite>.broadcast();
+  final StreamController<DuelInvite> _invites =
+      StreamController<DuelInvite>.broadcast();
 
   @override
   Stream<bool> get connectionStatus => _conn.stream;
@@ -43,7 +44,8 @@ class _FakeDuelRepository extends Fake implements DuelRepository {
   @override
   Stream<DuelQuestionEvent> get duelQuestion => const Stream.empty();
   @override
-  Stream<DuelOpponentProgressEvent> get opponentProgress => const Stream.empty();
+  Stream<DuelOpponentProgressEvent> get opponentProgress =>
+      const Stream.empty();
   @override
   Stream<DuelQuestionResult> get duelQuestionResult => const Stream.empty();
   @override
@@ -52,6 +54,10 @@ class _FakeDuelRepository extends Fake implements DuelRepository {
   Stream<DuelFinalResult> get duelFinished => const Stream.empty();
   @override
   Stream<String> get duelCancelled => const Stream.empty();
+  @override
+  Stream<String> get opponentDisconnected => const Stream.empty();
+  @override
+  Stream<String> get opponentReconnected => const Stream.empty();
 
   @override
   Future<void> connect() async => _conn.add(true);
@@ -59,10 +65,11 @@ class _FakeDuelRepository extends Fake implements DuelRepository {
   void simulateInvite(DuelInvite invite) => _invites.add(invite);
 }
 
-class _FakeNotificationsRepository extends Fake implements NotificationsRepository {
+class _FakeNotificationsRepository extends Fake
+    implements NotificationsRepository {
   @override
   Future<List<NotificationRecord>> getNotifications() async => [];
-  
+
   @override
   Future<void> markAllRead() async {}
 }
@@ -95,12 +102,22 @@ void main() {
     expiresAt: DateTime.now().add(const Duration(minutes: 1)),
   );
 
-  Future<void> pumpHome(WidgetTester tester, ProviderContainer container) async {
+  Future<void> pumpHome(
+    WidgetTester tester,
+    ProviderContainer container,
+  ) async {
     final router = GoRouter(
       initialLocation: AppRoutes.home,
       routes: [
-        GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
-        GoRoute(path: AppRoutes.duelInvite, builder: (context, state) => const Scaffold(body: Text('INVITE_SCREEN'))),
+        GoRoute(
+          path: AppRoutes.home,
+          builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.duelInvite,
+          builder: (context, state) =>
+              const Scaffold(body: Text('INVITE_SCREEN')),
+        ),
       ],
     );
 
@@ -118,14 +135,24 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('if NOT in game, incoming invite opens full-screen DuelInvite', (tester) async {
-    final container = ProviderContainer(overrides: [
-      sharedPreferencesProvider.overrideWithValue(await SharedPreferences.getInstance()),
-      duelRepositoryProvider.overrideWithValue(duelRepo),
-      notificationsRepositoryProvider.overrideWithValue(_FakeNotificationsRepository()),
-      currentUserControllerProvider.overrideWith(() => CurrentUserController()),
-    ]);
-    
+  testWidgets('if NOT in game, incoming invite opens full-screen DuelInvite', (
+    tester,
+  ) async {
+    final container = ProviderContainer(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(
+          await SharedPreferences.getInstance(),
+        ),
+        duelRepositoryProvider.overrideWithValue(duelRepo),
+        notificationsRepositoryProvider.overrideWithValue(
+          _FakeNotificationsRepository(),
+        ),
+        currentUserControllerProvider.overrideWith(
+          () => CurrentUserController(),
+        ),
+      ],
+    );
+
     await pumpHome(tester, container);
 
     duelRepo.simulateInvite(invite);
@@ -136,26 +163,37 @@ void main() {
     expect(find.text('INVITE_SCREEN'), findsOneWidget);
   });
 
-  testWidgets('if IN game, incoming invite shows snackbar instead of opening screen', (tester) async {
-    final container = ProviderContainer(overrides: [
-      sharedPreferencesProvider.overrideWithValue(await SharedPreferences.getInstance()),
-      duelRepositoryProvider.overrideWithValue(duelRepo),
-      notificationsRepositoryProvider.overrideWithValue(_FakeNotificationsRepository()),
-      currentUserControllerProvider.overrideWith(() => CurrentUserController()),
-    ]);
-    
-    // Set "in game" state
-    container.read(isInActiveGameProvider.notifier).setInGame(true);
+  testWidgets(
+    'if IN game, incoming invite shows snackbar instead of opening screen',
+    (tester) async {
+      final container = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(
+            await SharedPreferences.getInstance(),
+          ),
+          duelRepositoryProvider.overrideWithValue(duelRepo),
+          notificationsRepositoryProvider.overrideWithValue(
+            _FakeNotificationsRepository(),
+          ),
+          currentUserControllerProvider.overrideWith(
+            () => CurrentUserController(),
+          ),
+        ],
+      );
 
-    await pumpHome(tester, container);
+      // Set "in game" state
+      container.read(isInActiveGameProvider.notifier).setInGame(true);
 
-    duelRepo.simulateInvite(invite);
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+      await pumpHome(tester, container);
 
-    // Screen should NOT be opened
-    expect(find.text('INVITE_SCREEN'), findsNothing);
-    // Snackbar should be visible (contains sender's name)
-    expect(find.textContaining('Ali'), findsOneWidget);
-  });
+      duelRepo.simulateInvite(invite);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Screen should NOT be opened
+      expect(find.text('INVITE_SCREEN'), findsNothing);
+      // Snackbar should be visible (contains sender's name)
+      expect(find.textContaining('Ali'), findsOneWidget);
+    },
+  );
 }

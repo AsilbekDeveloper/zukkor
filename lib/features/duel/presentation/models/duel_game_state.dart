@@ -20,6 +20,7 @@ class DuelGameState {
     this.waitingForOpponent = false,
     this.lastResult,
     this.finalResult,
+    this.opponentDisconnected = false,
   });
 
   final String duelId;
@@ -45,6 +46,13 @@ class DuelGameState {
   final DuelQuestionResult? lastResult;
   final DuelFinalResult? finalResult;
 
+  /// True from a `duel_opponent_disconnected` event until either
+  /// `duel_opponent_reconnected` arrives (cleared) or the duel is
+  /// cancelled outright once their grace window expires - drives a
+  /// "raqibning aloqasi uzilgan" banner instead of the game just
+  /// looking stuck with no explanation (2026-09-13, user request).
+  final bool opponentDisconnected;
+
   DuelGameState copyWith({
     int? questionIndex,
     DuelQuestion? Function()? question,
@@ -53,19 +61,21 @@ class DuelGameState {
     bool? waitingForOpponent,
     DuelQuestionResult? Function()? lastResult,
     DuelFinalResult? Function()? finalResult,
-  }) =>
-      DuelGameState(
-        duelId: duelId,
-        category: category,
-        opponent: opponent,
-        totalQuestions: totalQuestions,
-        questionIndex: questionIndex ?? this.questionIndex,
-        question: question != null ? question() : this.question,
-        hasAnswered: hasAnswered ?? this.hasAnswered,
-        opponentQuestionIndex:
-            opponentQuestionIndex != null ? opponentQuestionIndex() : this.opponentQuestionIndex,
-        waitingForOpponent: waitingForOpponent ?? this.waitingForOpponent,
-        lastResult: lastResult != null ? lastResult() : this.lastResult,
-        finalResult: finalResult != null ? finalResult() : this.finalResult,
-      );
+    bool? opponentDisconnected,
+  }) => DuelGameState(
+    duelId: duelId,
+    category: category,
+    opponent: opponent,
+    totalQuestions: totalQuestions,
+    questionIndex: questionIndex ?? this.questionIndex,
+    question: question != null ? question() : this.question,
+    hasAnswered: hasAnswered ?? this.hasAnswered,
+    opponentQuestionIndex: opponentQuestionIndex != null
+        ? opponentQuestionIndex()
+        : this.opponentQuestionIndex,
+    waitingForOpponent: waitingForOpponent ?? this.waitingForOpponent,
+    lastResult: lastResult != null ? lastResult() : this.lastResult,
+    finalResult: finalResult != null ? finalResult() : this.finalResult,
+    opponentDisconnected: opponentDisconnected ?? this.opponentDisconnected,
+  );
 }

@@ -558,6 +558,7 @@ class _Translations$duelGame$ru implements Translations$duelGame$en {
 	@override String get waitingForQuestion => 'Подготовка вопроса…';
 	@override String opponentProgress({required Object index, required Object total}) => 'Соперник: вопрос ${index}/${total}';
 	@override String get waitingForOpponent => 'Вы ответили на все вопросы! Ждём соперника…';
+	@override String get opponentReconnecting => 'Связь соперника нестабильна, ожидаем…';
 	@override String get startFailed => 'Игра не началась — проверьте соединение и попробуйте снова';
 	@override String get backToHome => 'На главную';
 }
@@ -1232,6 +1233,7 @@ extension on TranslationsRu {
 			'duelGame.waitingForQuestion' => 'Подготовка вопроса…',
 			'duelGame.opponentProgress' => ({required Object index, required Object total}) => 'Соперник: вопрос ${index}/${total}',
 			'duelGame.waitingForOpponent' => 'Вы ответили на все вопросы! Ждём соперника…',
+			'duelGame.opponentReconnecting' => 'Связь соперника нестабильна, ожидаем…',
 			'duelGame.startFailed' => 'Игра не началась — проверьте соединение и попробуйте снова',
 			'duelGame.backToHome' => 'На главную',
 			'duelResult.won' => 'Вы победили!',

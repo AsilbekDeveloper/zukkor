@@ -251,6 +251,7 @@
     "waitingForQuestion": "Preparing the question…",
     "opponentProgress": "Opponent: question $index/$total",
     "waitingForOpponent": "You've answered every question! Waiting for your opponent…",
+    "opponentReconnecting": "Opponent's connection is unstable, waiting…",
     "startFailed": "The game didn't start — check your connection and try again",
     "backToHome": "Back to home"
   },
