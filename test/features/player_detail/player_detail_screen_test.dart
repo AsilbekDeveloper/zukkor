@@ -51,8 +51,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     winRatePercent: 62,
     totalWins: 0,
     bestRankAchieved: 0,
-    friendsCount: 4,
-    publicQuizCount: 2,
   );
 }
 
@@ -145,8 +143,6 @@ void main() {
       expect(find.text(AppStrings.rankedLabel(2, 4510)), findsOneWidget);
       expect(find.text('62%'), findsOneWidget); // win rate
       expect(find.text('8'), findsOneWidget); // streak
-      expect(find.text('4'), findsOneWidget); // friends count
-      expect(find.text(AppStrings.friendsLabel), findsOneWidget);
       expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);
       expect(tester.takeException(), isNull);
     },

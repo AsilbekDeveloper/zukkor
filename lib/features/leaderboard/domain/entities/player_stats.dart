@@ -16,8 +16,6 @@ class PlayerStats {
     required this.winRatePercent,
     required this.totalWins,
     required this.bestRankAchieved,
-    required this.friendsCount,
-    required this.publicQuizCount,
   });
 
   final String userId;
@@ -37,6 +35,4 @@ class PlayerStats {
   final int winRatePercent;
   final int totalWins;
   final int bestRankAchieved;
-  final int friendsCount;
-  final int publicQuizCount;
 }

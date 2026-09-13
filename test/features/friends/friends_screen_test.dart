@@ -37,25 +37,41 @@ import 'package:zukkor/i18n/strings.g.dart';
 class _FakeQuizRepository implements QuizRepository {
   @override
   Future<List<Category>> getCategories() async => const [
-        Category(id: 1, name: 'Math', iconName: 'math-symbols', colorKey: 'coral', questionCount: 120),
-        Category(id: 2, name: 'History', iconName: 'book', colorKey: 'terra', questionCount: 98),
-      ];
+    Category(
+      id: 1,
+      name: 'Math',
+      iconName: 'math-symbols',
+      colorKey: 'coral',
+      questionCount: 120,
+    ),
+    Category(
+      id: 2,
+      name: 'History',
+      iconName: 'book',
+      colorKey: 'terra',
+      questionCount: 98,
+    ),
+  ];
 
   @override
-  Future<QuizStartResult> startQuiz({required int categoryId, required int questionCount}) =>
-      throw UnimplementedError();
+  Future<QuizStartResult> startQuiz({
+    required int categoryId,
+    required int questionCount,
+  }) => throw UnimplementedError();
 
   @override
   Future<AnswerResult> submitAnswer({
     required String sessionId,
     required int sessionQuestionId,
     required int? selectedOption,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
-  Future<void> reportQuestion({required int questionId, required String reason, String? comment}) =>
-      throw UnimplementedError();
+  Future<void> reportQuestion({
+    required int questionId,
+    required String reason,
+    String? comment,
+  }) => throw UnimplementedError();
 }
 
 class _FakeLeaderboardRepository implements LeaderboardRepository {
@@ -64,53 +80,50 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
-  }) async =>
-      const LeaderboardData(
-        entries: [
-          RankEntry(
-            userId: '1',
-            rank: 1,
-            username: 'aziz',
-            firstName: 'Aziz',
-            lastName: 'K.',
-            avatarColor: 'a-coral',
-            avatarImagePath: null,
-            totalXp: 4820,
-            isMe: false,
-          ),
-        ],
-        me: RankEntry(
-          userId: 'me',
-          rank: 42,
-          username: 'me',
-          firstName: null,
-          lastName: null,
-          avatarColor: 'a-coral',
-          avatarImagePath: null,
-          totalXp: 2140,
-          isMe: true,
-        ),
-      );
+  }) async => const LeaderboardData(
+    entries: [
+      RankEntry(
+        userId: '1',
+        rank: 1,
+        username: 'aziz',
+        firstName: 'Aziz',
+        lastName: 'K.',
+        avatarColor: 'a-coral',
+        avatarImagePath: null,
+        totalXp: 4820,
+        isMe: false,
+      ),
+    ],
+    me: RankEntry(
+      userId: 'me',
+      rank: 42,
+      username: 'me',
+      firstName: null,
+      lastName: null,
+      avatarColor: 'a-coral',
+      avatarImagePath: null,
+      totalXp: 2140,
+      isMe: true,
+    ),
+  );
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
-        userId: userId,
-        rank: 5,
-        username: 'malika_yusupova',
-        firstName: 'Malika',
-        lastName: 'Yusupova',
-        avatarColor: 'a-teal',
-        avatarImagePath: null,
-        totalXp: 3000,
-        currentStreak: 3,
-        longestStreak: 10,
-        gamesPlayed: 20,
-        winRatePercent: 55,
-        totalWins: 0,
-        bestRankAchieved: 0,
-        friendsCount: 0,
-        publicQuizCount: 0,
-      );
+    userId: userId,
+    rank: 5,
+    username: 'malika_yusupova',
+    firstName: 'Malika',
+    lastName: 'Yusupova',
+    avatarColor: 'a-teal',
+    avatarImagePath: null,
+    totalXp: 3000,
+    currentStreak: 3,
+    longestStreak: 10,
+    gamesPlayed: 20,
+    winRatePercent: 55,
+    totalWins: 0,
+    bestRankAchieved: 0,
+  );
 }
 
 class _FakeFriendsRepository implements FriendsRepository {
@@ -120,31 +133,31 @@ class _FakeFriendsRepository implements FriendsRepository {
 
   @override
   Future<List<Friend>> getFriends() async => const [
-        Friend(
-          id: '1',
-          username: 'malika_yusupova',
-          firstName: 'Malika',
-          lastName: 'Yusupova',
-          avatarColor: 'a-teal',
-          avatarImagePath: null,
-        ),
-        Friend(
-          id: '2',
-          username: 'shohruh_toshpulatov',
-          firstName: 'Shohruh',
-          lastName: 'Toshpulatov',
-          avatarColor: 'a-terra',
-          avatarImagePath: null,
-        ),
-        Friend(
-          id: '3',
-          username: 'dilnoza_rustamova',
-          firstName: 'Dilnoza',
-          lastName: 'Rustamova',
-          avatarColor: 'a-pink',
-          avatarImagePath: null,
-        ),
-      ];
+    Friend(
+      id: '1',
+      username: 'malika_yusupova',
+      firstName: 'Malika',
+      lastName: 'Yusupova',
+      avatarColor: 'a-teal',
+      avatarImagePath: null,
+    ),
+    Friend(
+      id: '2',
+      username: 'shohruh_toshpulatov',
+      firstName: 'Shohruh',
+      lastName: 'Toshpulatov',
+      avatarColor: 'a-terra',
+      avatarImagePath: null,
+    ),
+    Friend(
+      id: '3',
+      username: 'dilnoza_rustamova',
+      firstName: 'Dilnoza',
+      lastName: 'Rustamova',
+      avatarColor: 'a-pink',
+      avatarImagePath: null,
+    ),
+  ];
 
   @override
   Future<List<DiscoveredUser>> searchUsers(String query) async {
@@ -171,10 +184,12 @@ class _FakeFriendsRepository implements FriendsRepository {
   Future<List<FriendRequest>> getIncomingRequests() async => incomingRequests;
 
   @override
-  Future<void> acceptFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> acceptFriendRequest(String requestId) =>
+      throw UnimplementedError();
 
   @override
-  Future<void> declineFriendRequest(String requestId) => throw UnimplementedError();
+  Future<void> declineFriendRequest(String requestId) =>
+      throw UnimplementedError();
 }
 
 Future<GoRouter> _pumpFriends(
@@ -190,11 +205,26 @@ Future<GoRouter> _pumpFriends(
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.friends,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
-      GoRoute(path: AppRoutes.leaderboard, builder: (context, state) => const LeaderboardScreen()),
-      GoRoute(path: AppRoutes.friends, builder: (context, state) => const FriendsScreen()),
-      GoRoute(path: AppRoutes.addFriend, builder: (context, state) => const AddFriendScreen()),
-      GoRoute(path: AppRoutes.friendRequests, builder: (context, state) => const FriendRequestsScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.leaderboard,
+        builder: (context, state) => const LeaderboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.friends,
+        builder: (context, state) => const FriendsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.addFriend,
+        builder: (context, state) => const AddFriendScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.friendRequests,
+        builder: (context, state) => const FriendRequestsScreen(),
+      ),
       GoRoute(
         path: AppRoutes.categories,
         builder: (context, state) => const CategoriesScreen(),
@@ -227,11 +257,18 @@ Future<GoRouter> _pumpFriends(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
         quizRepositoryProvider.overrideWithValue(_FakeQuizRepository()),
-        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
-        friendsRepositoryProvider.overrideWithValue(repository ?? _FakeFriendsRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(
+          _FakeLeaderboardRepository(),
+        ),
+        friendsRepositoryProvider.overrideWithValue(
+          repository ?? _FakeFriendsRepository(),
+        ),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -240,7 +277,9 @@ Future<GoRouter> _pumpFriends(
 }
 
 void main() {
-  testWidgets('renders header, search bar and friend list with no overflow', (tester) async {
+  testWidgets('renders header, search bar and friend list with no overflow', (
+    tester,
+  ) async {
     await _pumpFriends(tester);
 
     expect(find.text(AppStrings.navFriends), findsWidgets);
@@ -263,7 +302,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('typing in the search bar filters by name or username', (tester) async {
+  testWidgets('typing in the search bar filters by name or username', (
+    tester,
+  ) async {
     await _pumpFriends(tester);
 
     await tester.enterText(find.byType(TextField), 'mal');
@@ -274,7 +315,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('typing "q" shows others section with results from server', (tester) async {
+  testWidgets('typing "q" shows others section with results from server', (
+    tester,
+  ) async {
     await _pumpFriends(tester);
 
     await tester.enterText(find.byType(TextField), 'q');
@@ -287,7 +330,9 @@ void main() {
     expect(find.text('@qodir_ali'), findsOneWidget);
   });
 
-  testWidgets('sending a friend request changes button to requested state', (tester) async {
+  testWidgets('sending a friend request changes button to requested state', (
+    tester,
+  ) async {
     await _pumpFriends(tester);
 
     await tester.enterText(find.byType(TextField), 'q');
@@ -303,20 +348,23 @@ void main() {
     expect(find.text(AppStrings.requestedLabel), findsOneWidget);
   });
 
-  testWidgets('a search with no matches anywhere shows the discover empty state', (tester) async {
-    await _pumpFriends(tester);
+  testWidgets(
+    'a search with no matches anywhere shows the discover empty state',
+    (tester) async {
+      await _pumpFriends(tester);
 
-    await tester.enterText(find.byType(TextField), 'zzz-no-such-friend');
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'zzz-no-such-friend');
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
 
-    // While searching, "no friends" (friends.noneFound) only applies to the
-    // zero-friends-total state (not searching) - a no-match search instead
-    // shows the "other users" section's own empty copy.
-    expect(find.text(AppStrings.noUsersFound), findsOneWidget);
-    expect(find.text(AppStrings.noFriendsFound), findsNothing);
-    expect(find.text('Malika Yusupova'), findsNothing);
-  });
+      // While searching, "no friends" (friends.noneFound) only applies to the
+      // zero-friends-total state (not searching) - a no-match search instead
+      // shows the "other users" section's own empty copy.
+      expect(find.text(AppStrings.noUsersFound), findsOneWidget);
+      expect(find.text(AppStrings.noFriendsFound), findsNothing);
+      expect(find.text('Malika Yusupova'), findsNothing);
+    },
+  );
 
   testWidgets('clearing the search restores the full list', (tester) async {
     await _pumpFriends(tester);
@@ -329,29 +377,37 @@ void main() {
     expect(find.text('Shohruh Toshpulatov'), findsOneWidget);
   });
 
-  testWidgets('tapping a duel button on the friends list starts a duel with that friend', (tester) async {
-    await _pumpFriends(tester);
+  testWidgets(
+    'tapping a duel button on the friends list starts a duel with that friend',
+    (tester) async {
+      await _pumpFriends(tester);
 
-    await tester.tap(find.byIcon(TablerIcons.swords).first);
-    await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(TablerIcons.swords).first);
+      await tester.pumpAndSettle();
 
-    expect(find.byType(CategoriesScreen), findsOneWidget);
-    expect(find.text(AppStrings.categoriesScreenTitle), findsOneWidget);
-  });
+      expect(find.byType(CategoriesScreen), findsOneWidget);
+      expect(find.text(AppStrings.categoriesScreenTitle), findsOneWidget);
+    },
+  );
 
-  testWidgets('tapping a friend row opens their profile with an already-friends badge', (tester) async {
-    await _pumpFriends(tester);
+  testWidgets(
+    'tapping a friend row opens their profile with an already-friends badge',
+    (tester) async {
+      await _pumpFriends(tester);
 
-    await tester.tap(find.text('Malika Yusupova'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('Malika Yusupova'));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(PlayerDetailScreen), findsOneWidget);
-    expect(find.text(AppStrings.alreadyFriendsLabel), findsOneWidget);
-    expect(find.text(AppStrings.addToFriendsButton), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+      expect(find.byType(PlayerDetailScreen), findsOneWidget);
+      expect(find.text(AppStrings.alreadyFriendsLabel), findsOneWidget);
+      expect(find.text(AppStrings.addToFriendsButton), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('tapping the requests button navigates to Friend Requests', (tester) async {
+  testWidgets('tapping the requests button navigates to Friend Requests', (
+    tester,
+  ) async {
     await _pumpFriends(tester);
 
     await tester.tap(find.byIcon(TablerIcons.userCheck));
@@ -360,22 +416,28 @@ void main() {
     expect(find.text(AppStrings.friendRequestsTitle), findsOneWidget);
   });
 
-  testWidgets('a pending incoming request shows a badge dot on the requests button', (tester) async {
-    final FriendRequest pending = FriendRequest(
-      id: 'req-1',
-      fromUserId: '9',
-      username: 'bekzod',
-      firstName: 'Bekzod',
-      lastName: 'Xolmatov',
-      avatarColor: 'a-blue',
-      avatarImagePath: null,
-      createdAt: DateTime(2026, 7, 18),
-    );
-    await _pumpFriends(tester, repository: _FakeFriendsRepository(incomingRequests: [pending]));
+  testWidgets(
+    'a pending incoming request shows a badge dot on the requests button',
+    (tester) async {
+      final FriendRequest pending = FriendRequest(
+        id: 'req-1',
+        fromUserId: '9',
+        username: 'bekzod',
+        firstName: 'Bekzod',
+        lastName: 'Xolmatov',
+        avatarColor: 'a-blue',
+        avatarImagePath: null,
+        createdAt: DateTime(2026, 7, 18),
+      );
+      await _pumpFriends(
+        tester,
+        repository: _FakeFriendsRepository(incomingRequests: [pending]),
+      );
 
-    await tester.tap(find.byIcon(TablerIcons.userCheck));
-    await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(TablerIcons.userCheck));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Bekzod Xolmatov'), findsOneWidget);
-  });
+      expect(find.text('Bekzod Xolmatov'), findsOneWidget);
+    },
+  );
 }

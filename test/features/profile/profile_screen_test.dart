@@ -162,8 +162,6 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     winRatePercent: 68,
     totalWins: 0,
     bestRankAchieved: 0,
-    friendsCount: 5,
-    publicQuizCount: 2,
   );
 }
 
@@ -323,25 +321,10 @@ void main() {
     expect(find.text('184'), findsOneWidget);
     expect(find.text('68%'), findsOneWidget);
     expect(find.text('12'), findsOneWidget); // longest-streak value
-    expect(find.text(AppStrings.friendsChipLabel), findsOneWidget);
-    expect(find.text(AppStrings.publicQuizzesChipLabel), findsOneWidget);
-    expect(find.text('5'), findsOneWidget); // friends count
-    expect(find.text('2'), findsOneWidget); // public quiz count
     expect(find.text(AppStrings.gameHistory), findsOneWidget);
     expect(find.text(AppStrings.settingsAndHelp), findsOneWidget);
 
     expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('tapping the friends chip switches to the Friends tab', (
-    tester,
-  ) async {
-    await _pumpProfile(tester);
-
-    await tester.tap(find.text(AppStrings.friendsChipLabel));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(FriendsScreen), findsOneWidget);
   });
 
   testWidgets('fits on the smallest supported phone width', (tester) async {

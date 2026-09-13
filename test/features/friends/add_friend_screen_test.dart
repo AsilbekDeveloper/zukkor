@@ -52,14 +52,17 @@ class _FakeFriendsRepository implements FriendsRepository {
   Future<List<DiscoveredUser>> searchUsers(String query) async {
     final String needle = query.toLowerCase();
     return _directory
-        .where((u) =>
-            (u.username?.toLowerCase().contains(needle) ?? false) ||
-            '${u.firstName} ${u.lastName}'.toLowerCase().contains(needle))
+        .where(
+          (u) =>
+              (u.username?.toLowerCase().contains(needle) ?? false) ||
+              '${u.firstName} ${u.lastName}'.toLowerCase().contains(needle),
+        )
         .toList();
   }
 
   @override
-  Future<void> sendFriendRequest(String userId) async => addedUserIds.add(userId);
+  Future<void> sendFriendRequest(String userId) async =>
+      addedUserIds.add(userId);
 
   @override
   Future<List<FriendRequest>> getIncomingRequests() async => const [];
@@ -79,28 +82,25 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
-        userId: userId,
-        rank: 20,
-        username: 'sardor_aliyev',
-        firstName: 'Sardor',
-        lastName: 'Aliyev',
-        avatarColor: 'a-blue',
-        avatarImagePath: null,
-        totalXp: 1200,
-        currentStreak: 1,
-        longestStreak: 2,
-        gamesPlayed: 5,
-        winRatePercent: 40,
-        totalWins: 0,
-        bestRankAchieved: 0,
-        friendsCount: 0,
-        publicQuizCount: 0,
-      );
+    userId: userId,
+    rank: 20,
+    username: 'sardor_aliyev',
+    firstName: 'Sardor',
+    lastName: 'Aliyev',
+    avatarColor: 'a-blue',
+    avatarImagePath: null,
+    totalXp: 1200,
+    currentStreak: 1,
+    longestStreak: 2,
+    gamesPlayed: 5,
+    winRatePercent: 40,
+    totalWins: 0,
+    bestRankAchieved: 0,
+  );
 }
 
 Future<GoRouter> _pumpAddFriend(
@@ -119,8 +119,14 @@ Future<GoRouter> _pumpAddFriend(
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.addFriend,
     routes: [
-      GoRoute(path: AppRoutes.friends, builder: (context, state) => const FriendsScreen()),
-      GoRoute(path: AppRoutes.addFriend, builder: (context, state) => const AddFriendScreen()),
+      GoRoute(
+        path: AppRoutes.friends,
+        builder: (context, state) => const FriendsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.addFriend,
+        builder: (context, state) => const AddFriendScreen(),
+      ),
       GoRoute(
         path: AppRoutes.playerDetail,
         builder: (context, state) {
@@ -145,11 +151,18 @@ Future<GoRouter> _pumpAddFriend(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        friendsRepositoryProvider.overrideWithValue(repository ?? _FakeFriendsRepository()),
-        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
+        friendsRepositoryProvider.overrideWithValue(
+          repository ?? _FakeFriendsRepository(),
+        ),
+        leaderboardRepositoryProvider.overrideWithValue(
+          _FakeLeaderboardRepository(),
+        ),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -166,7 +179,9 @@ Future<void> _search(WidgetTester tester, String query) async {
 }
 
 void main() {
-  testWidgets('renders title, search bar and invite code with no overflow', (tester) async {
+  testWidgets('renders title, search bar and invite code with no overflow', (
+    tester,
+  ) async {
     await _pumpAddFriend(tester);
 
     expect(find.text(AppStrings.addFriend), findsOneWidget);
@@ -185,16 +200,19 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('typing in the search bar shows matching users and hides the invite section', (tester) async {
-    await _pumpAddFriend(tester);
+  testWidgets(
+    'typing in the search bar shows matching users and hides the invite section',
+    (tester) async {
+      await _pumpAddFriend(tester);
 
-    await _search(tester, 'sardor');
+      await _search(tester, 'sardor');
 
-    expect(find.text('Sardor Aliyev'), findsOneWidget);
-    expect(find.text('@sardor_aliyev'), findsOneWidget);
-    expect(find.text(AppStrings.orViaInviteLink), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+      expect(find.text('Sardor Aliyev'), findsOneWidget);
+      expect(find.text('@sardor_aliyev'), findsOneWidget);
+      expect(find.text(AppStrings.orViaInviteLink), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('a search with no matches shows the empty state', (tester) async {
     await _pumpAddFriend(tester);
@@ -204,33 +222,41 @@ void main() {
     expect(find.text(AppStrings.noUsersFound), findsOneWidget);
   });
 
-  testWidgets('tapping Add on a result calls the real add-friend request and shows Added', (tester) async {
-    final _FakeFriendsRepository repository = _FakeFriendsRepository();
-    await _pumpAddFriend(tester, repository: repository);
+  testWidgets(
+    'tapping Add on a result calls the real add-friend request and shows Added',
+    (tester) async {
+      final _FakeFriendsRepository repository = _FakeFriendsRepository();
+      await _pumpAddFriend(tester, repository: repository);
 
-    await _search(tester, 'sardor');
+      await _search(tester, 'sardor');
 
-    await tester.tap(find.text(AppStrings.addButton));
-    await tester.pump();
+      await tester.tap(find.text(AppStrings.addButton));
+      await tester.pump();
 
-    expect(repository.addedUserIds, ['10']);
-    expect(find.text(AppStrings.requestedLabel), findsOneWidget);
-    expect(find.text(AppStrings.addButton), findsNothing);
-  });
+      expect(repository.addedUserIds, ['10']);
+      expect(find.text(AppStrings.requestedLabel), findsOneWidget);
+      expect(find.text(AppStrings.addButton), findsNothing);
+    },
+  );
 
-  testWidgets('tapping a search result row opens their profile with Add to friends', (tester) async {
-    await _pumpAddFriend(tester);
+  testWidgets(
+    'tapping a search result row opens their profile with Add to friends',
+    (tester) async {
+      await _pumpAddFriend(tester);
 
-    await _search(tester, 'sardor');
-    await tester.tap(find.text('Sardor Aliyev'));
-    await tester.pumpAndSettle();
+      await _search(tester, 'sardor');
+      await tester.tap(find.text('Sardor Aliyev'));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(PlayerDetailScreen), findsOneWidget);
-    expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      expect(find.byType(PlayerDetailScreen), findsOneWidget);
+      expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('clearing the search restores the invite section', (tester) async {
+  testWidgets('clearing the search restores the invite section', (
+    tester,
+  ) async {
     await _pumpAddFriend(tester);
 
     await _search(tester, 'sardor');
@@ -241,7 +267,9 @@ void main() {
     expect(find.text('Sardor Aliyev'), findsNothing);
   });
 
-  testWidgets('tapping "Share the link" shows a coming-soon snackbar', (tester) async {
+  testWidgets('tapping "Share the link" shows a coming-soon snackbar', (
+    tester,
+  ) async {
     await _pumpAddFriend(tester);
 
     await tester.tap(find.text(AppStrings.shareLink));
@@ -251,7 +279,9 @@ void main() {
     expect(find.text(AppStrings.comingSoon), findsOneWidget);
   });
 
-  testWidgets('the back button returns to Friends when pushed on top of it', (tester) async {
+  testWidgets('the back button returns to Friends when pushed on top of it', (
+    tester,
+  ) async {
     final GoRouter router = await _pumpAddFriend(tester);
     router.go(AppRoutes.friends);
     unawaited(router.push(AppRoutes.addFriend));

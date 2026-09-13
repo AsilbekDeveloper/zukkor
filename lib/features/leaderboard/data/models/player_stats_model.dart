@@ -16,11 +16,10 @@ class PlayerStatsModel {
     required this.winRatePercent,
     required this.totalWins,
     required this.bestRankAchieved,
-    required this.friendsCount,
-    required this.publicQuizCount,
   });
 
-  factory PlayerStatsModel.fromJson(Map<String, dynamic> json) => PlayerStatsModel(
+  factory PlayerStatsModel.fromJson(Map<String, dynamic> json) =>
+      PlayerStatsModel(
         userId: json['user_id'] as String,
         rank: json['rank'] as int,
         username: json['username'] as String?,
@@ -35,8 +34,6 @@ class PlayerStatsModel {
         winRatePercent: json['win_rate_percent'] as int,
         totalWins: json['total_wins'] as int,
         bestRankAchieved: json['best_rank_achieved'] as int,
-        friendsCount: json['friends_count'] as int,
-        publicQuizCount: json['public_quiz_count'] as int,
       );
 
   final String userId;
@@ -53,25 +50,21 @@ class PlayerStatsModel {
   final int winRatePercent;
   final int totalWins;
   final int bestRankAchieved;
-  final int friendsCount;
-  final int publicQuizCount;
 
   PlayerStats toEntity() => PlayerStats(
-        userId: userId,
-        rank: rank,
-        username: username,
-        firstName: firstName,
-        lastName: lastName,
-        avatarColor: avatarColor,
-        avatarImagePath: avatarImagePath,
-        totalXp: totalXp,
-        currentStreak: currentStreak,
-        longestStreak: longestStreak,
-        gamesPlayed: gamesPlayed,
-        winRatePercent: winRatePercent,
-        totalWins: totalWins,
-        bestRankAchieved: bestRankAchieved,
-        friendsCount: friendsCount,
-        publicQuizCount: publicQuizCount,
-      );
+    userId: userId,
+    rank: rank,
+    username: username,
+    firstName: firstName,
+    lastName: lastName,
+    avatarColor: avatarColor,
+    avatarImagePath: avatarImagePath,
+    totalXp: totalXp,
+    currentStreak: currentStreak,
+    longestStreak: longestStreak,
+    gamesPlayed: gamesPlayed,
+    winRatePercent: winRatePercent,
+    totalWins: totalWins,
+    bestRankAchieved: bestRankAchieved,
+  );
 }

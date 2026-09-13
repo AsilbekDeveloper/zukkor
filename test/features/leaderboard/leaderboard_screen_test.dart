@@ -96,90 +96,92 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
   );
 
   static const LeaderboardData _allTime = LeaderboardData(
-        entries: [
-          RankEntry(
-            userId: '1',
-            rank: 1,
-            username: 'aziz',
-            firstName: 'Aziz',
-            lastName: 'K.',
-            avatarColor: 'a-coral',
-            avatarImagePath: null,
-            totalXp: 4820,
-            isMe: false,
-          ),
-          RankEntry(
-            userId: '2',
-            rank: 2,
-            username: 'malika',
-            firstName: 'Malika',
-            lastName: null,
-            avatarColor: 'a-teal',
-            avatarImagePath: null,
-            totalXp: 4510,
-            isMe: false,
-          ),
-          RankEntry(
-            userId: '3',
-            rank: 3,
-            username: 'shohruh',
-            firstName: 'Shohruh',
-            lastName: null,
-            avatarColor: 'a-terra',
-            avatarImagePath: null,
-            totalXp: 4290,
-            isMe: false,
-          ),
-          RankEntry(
-            userId: '4',
-            rank: 4,
-            username: 'dilnoza',
-            firstName: 'Dilnoza',
-            lastName: 'Rustamova',
-            avatarColor: 'a-teal',
-            avatarImagePath: null,
-            totalXp: 3980,
-            isMe: false,
-          ),
-          RankEntry(
-            userId: '5',
-            rank: 5,
-            username: 'bekzod',
-            firstName: 'Bekzod',
-            lastName: 'Xolmatov',
-            avatarColor: 'a-terra',
-            avatarImagePath: null,
-            totalXp: 3840,
-            isMe: false,
-          ),
-          RankEntry(
-            userId: '6',
-            rank: 6,
-            username: 'nilufar',
-            firstName: 'Nilufar',
-            lastName: 'Yoqubova',
-            avatarColor: 'a-pink',
-            avatarImagePath: null,
-            totalXp: 3710,
-            isMe: false,
-          ),
-        ],
-        me: RankEntry(
-          userId: 'me',
-          rank: 312,
-          username: 'aziz2',
-          firstName: null,
-          lastName: null,
-          avatarColor: 'a-coral',
-          avatarImagePath: null,
-          totalXp: 2140,
-          isMe: true,
-        ),
-      );
+    entries: [
+      RankEntry(
+        userId: '1',
+        rank: 1,
+        username: 'aziz',
+        firstName: 'Aziz',
+        lastName: 'K.',
+        avatarColor: 'a-coral',
+        avatarImagePath: null,
+        totalXp: 4820,
+        isMe: false,
+      ),
+      RankEntry(
+        userId: '2',
+        rank: 2,
+        username: 'malika',
+        firstName: 'Malika',
+        lastName: null,
+        avatarColor: 'a-teal',
+        avatarImagePath: null,
+        totalXp: 4510,
+        isMe: false,
+      ),
+      RankEntry(
+        userId: '3',
+        rank: 3,
+        username: 'shohruh',
+        firstName: 'Shohruh',
+        lastName: null,
+        avatarColor: 'a-terra',
+        avatarImagePath: null,
+        totalXp: 4290,
+        isMe: false,
+      ),
+      RankEntry(
+        userId: '4',
+        rank: 4,
+        username: 'dilnoza',
+        firstName: 'Dilnoza',
+        lastName: 'Rustamova',
+        avatarColor: 'a-teal',
+        avatarImagePath: null,
+        totalXp: 3980,
+        isMe: false,
+      ),
+      RankEntry(
+        userId: '5',
+        rank: 5,
+        username: 'bekzod',
+        firstName: 'Bekzod',
+        lastName: 'Xolmatov',
+        avatarColor: 'a-terra',
+        avatarImagePath: null,
+        totalXp: 3840,
+        isMe: false,
+      ),
+      RankEntry(
+        userId: '6',
+        rank: 6,
+        username: 'nilufar',
+        firstName: 'Nilufar',
+        lastName: 'Yoqubova',
+        avatarColor: 'a-pink',
+        avatarImagePath: null,
+        totalXp: 3710,
+        isMe: false,
+      ),
+    ],
+    me: RankEntry(
+      userId: 'me',
+      rank: 312,
+      username: 'aziz2',
+      firstName: null,
+      lastName: null,
+      avatarColor: 'a-coral',
+      avatarImagePath: null,
+      totalXp: 2140,
+      isMe: true,
+    ),
+  );
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async {
-    final RankEntry entry = _allTime.entries.firstWhere((e) => e.userId == userId);
+    final RankEntry entry = _allTime.entries.firstWhere(
+      (e) => e.userId == userId,
+    );
     return PlayerStats(
       userId: userId,
       rank: entry.rank,
@@ -195,13 +197,12 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
       winRatePercent: 62,
       totalWins: 0,
       bestRankAchieved: 0,
-      friendsCount: 0,
-      publicQuizCount: 0,
     );
   }
 }
 
-Future<({GoRouter router, _FakeLeaderboardRepository repository})> _pumpLeaderboard(
+Future<({GoRouter router, _FakeLeaderboardRepository repository})>
+_pumpLeaderboard(
   WidgetTester tester, {
   Size size = const Size(390, 844),
 }) async {
@@ -217,7 +218,10 @@ Future<({GoRouter router, _FakeLeaderboardRepository repository})> _pumpLeaderbo
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.leaderboard,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
       GoRoute(
         path: AppRoutes.leaderboard,
         builder: (context, state) => const LeaderboardScreen(),
@@ -253,7 +257,10 @@ Future<({GoRouter router, _FakeLeaderboardRepository repository})> _pumpLeaderbo
         leaderboardRepositoryProvider.overrideWithValue(repository),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -262,31 +269,34 @@ Future<({GoRouter router, _FakeLeaderboardRepository repository})> _pumpLeaderbo
 }
 
 void main() {
-  testWidgets('renders header, segments, podium and rank list with no overflow', (tester) async {
-    await _pumpLeaderboard(tester);
+  testWidgets(
+    'renders header, segments, podium and rank list with no overflow',
+    (tester) async {
+      await _pumpLeaderboard(tester);
 
-    // Also appears as the (disabled, active) bottom-nav tab label.
-    expect(find.text(AppStrings.leaderboardGreeting), findsWidgets);
-    expect(find.text(AppStrings.leaderboardTitle), findsOneWidget);
-    expect(find.text(AppStrings.segmentWeekly), findsOneWidget);
-    expect(find.text(AppStrings.segmentAllTime), findsOneWidget);
-    // "Friends" also appears as the bottom-nav tab label.
-    expect(find.text(AppStrings.segmentFriends), findsWidgets);
+      // Also appears as the (disabled, active) bottom-nav tab label.
+      expect(find.text(AppStrings.leaderboardGreeting), findsWidgets);
+      expect(find.text(AppStrings.leaderboardTitle), findsOneWidget);
+      expect(find.text(AppStrings.segmentWeekly), findsOneWidget);
+      expect(find.text(AppStrings.segmentAllTime), findsOneWidget);
+      // "Friends" also appears as the bottom-nav tab label.
+      expect(find.text(AppStrings.segmentFriends), findsWidgets);
 
-    // Podium (top 3).
-    expect(find.text('Aziz K.'), findsOneWidget);
-    expect(find.text('Malika'), findsOneWidget);
-    expect(find.text('Shohruh'), findsOneWidget);
+      // Podium (top 3).
+      expect(find.text('Aziz K.'), findsOneWidget);
+      expect(find.text('Malika'), findsOneWidget);
+      expect(find.text('Shohruh'), findsOneWidget);
 
-    // Rest of the ranked list, including the current user's own row.
-    expect(find.text('Dilnoza Rustamova'), findsOneWidget);
-    expect(find.text('Bekzod Xolmatov'), findsOneWidget);
-    expect(find.text('Nilufar Yoqubova'), findsOneWidget);
-    expect(find.text(AppStrings.currentUserName), findsOneWidget);
+      // Rest of the ranked list, including the current user's own row.
+      expect(find.text('Dilnoza Rustamova'), findsOneWidget);
+      expect(find.text('Bekzod Xolmatov'), findsOneWidget);
+      expect(find.text('Nilufar Yoqubova'), findsOneWidget);
+      expect(find.text(AppStrings.currentUserName), findsOneWidget);
 
-    expect(find.text(AppStrings.seeFullRanking), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
+      expect(find.text(AppStrings.seeFullRanking), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('fits on the smallest supported phone width', (tester) async {
     await _pumpLeaderboard(tester, size: const Size(360, 780));
@@ -295,34 +305,51 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('switching to Weekly re-fetches and shows that scope\'s real data', (tester) async {
-    final result = await _pumpLeaderboard(tester);
+  testWidgets(
+    'switching to Weekly re-fetches and shows that scope\'s real data',
+    (tester) async {
+      final result = await _pumpLeaderboard(tester);
 
-    await tester.tap(find.text(AppStrings.segmentWeekly));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text(AppStrings.segmentWeekly));
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(result.repository.requestedScopes, [LeaderboardScope.allTime, LeaderboardScope.weekly]);
-    // Weekly's fake data is a single (non-podium) entry, not All-time's list.
-    expect(find.text('Aziz K.'), findsNothing);
-    expect(find.text('Kamola Tursunova'), findsOneWidget);
-  });
+      expect(tester.takeException(), isNull);
+      expect(result.repository.requestedScopes, [
+        LeaderboardScope.allTime,
+        LeaderboardScope.weekly,
+      ]);
+      // Weekly's fake data is a single (non-podium) entry, not All-time's list.
+      expect(find.text('Aziz K.'), findsNothing);
+      expect(find.text('Kamola Tursunova'), findsOneWidget);
+    },
+  );
 
-  testWidgets('switching to Friends re-fetches and shows that scope\'s real data', (tester) async {
-    final result = await _pumpLeaderboard(tester);
+  testWidgets(
+    'switching to Friends re-fetches and shows that scope\'s real data',
+    (tester) async {
+      final result = await _pumpLeaderboard(tester);
 
-    await tester.tap(
-      find.descendant(of: find.byType(LeaderboardSegmentControl), matching: find.text(AppStrings.segmentFriends)),
-    );
-    await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(
+          of: find.byType(LeaderboardSegmentControl),
+          matching: find.text(AppStrings.segmentFriends),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
-    expect(result.repository.requestedScopes, [LeaderboardScope.allTime, LeaderboardScope.friends]);
-    expect(find.text('Aziz K.'), findsNothing);
-    expect(find.text('Sardor Aliyev'), findsOneWidget);
-  });
+      expect(tester.takeException(), isNull);
+      expect(result.repository.requestedScopes, [
+        LeaderboardScope.allTime,
+        LeaderboardScope.friends,
+      ]);
+      expect(find.text('Aziz K.'), findsNothing);
+      expect(find.text('Sardor Aliyev'), findsOneWidget);
+    },
+  );
 
-  testWidgets('tapping "See full ranking" opens the Full Leaderboard screen', (tester) async {
+  testWidgets('tapping "See full ranking" opens the Full Leaderboard screen', (
+    tester,
+  ) async {
     await _pumpLeaderboard(tester);
 
     await tester.tap(find.text(AppStrings.seeFullRanking));
@@ -332,7 +359,9 @@ void main() {
     expect(find.text('Nilufar Yoqubova'), findsOneWidget);
   });
 
-  testWidgets('tapping a podium entry opens their Player Detail', (tester) async {
+  testWidgets('tapping a podium entry opens their Player Detail', (
+    tester,
+  ) async {
     await _pumpLeaderboard(tester);
 
     await tester.tap(find.text('Aziz K.'));
@@ -343,7 +372,9 @@ void main() {
     expect(find.text(AppStrings.addToFriendsButton), findsOneWidget);
   });
 
-  testWidgets('tapping a rank list entry opens their Player Detail', (tester) async {
+  testWidgets('tapping a rank list entry opens their Player Detail', (
+    tester,
+  ) async {
     await _pumpLeaderboard(tester);
 
     await tester.tap(find.text('Dilnoza Rustamova'));

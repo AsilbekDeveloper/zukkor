@@ -52,7 +52,8 @@ final List<FriendRequest> _requests = [
 /// Backendga murojaat qilmaydigan soxta friends repository — real
 /// `GET /friends/requests/incoming` / accept / decline javobiga mos.
 class _FakeFriendsRepository implements FriendsRepository {
-  _FakeFriendsRepository({List<FriendRequest>? requests}) : _pending = List.of(requests ?? _requests);
+  _FakeFriendsRepository({List<FriendRequest>? requests})
+    : _pending = List.of(requests ?? _requests);
 
   final List<FriendRequest> _pending;
   final List<String> acceptedIds = [];
@@ -62,7 +63,8 @@ class _FakeFriendsRepository implements FriendsRepository {
   Future<List<Friend>> getFriends() async => const [];
 
   @override
-  Future<List<DiscoveredUser>> searchUsers(String query) => throw UnimplementedError();
+  Future<List<DiscoveredUser>> searchUsers(String query) =>
+      throw UnimplementedError();
 
   @override
   Future<void> sendFriendRequest(String userId) => throw UnimplementedError();
@@ -91,31 +93,29 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
-        userId: userId,
-        rank: 9,
-        username: 'bekzod_xolmatov',
-        firstName: 'Bekzod',
-        lastName: 'Xolmatov',
-        avatarColor: 'a-blue',
-        avatarImagePath: null,
-        totalXp: 2800,
-        currentStreak: 2,
-        longestStreak: 6,
-        gamesPlayed: 18,
-        winRatePercent: 50,
-        totalWins: 0,
-        bestRankAchieved: 0,
-        friendsCount: 0,
-        publicQuizCount: 0,
-      );
+    userId: userId,
+    rank: 9,
+    username: 'bekzod_xolmatov',
+    firstName: 'Bekzod',
+    lastName: 'Xolmatov',
+    avatarColor: 'a-blue',
+    avatarImagePath: null,
+    totalXp: 2800,
+    currentStreak: 2,
+    longestStreak: 6,
+    gamesPlayed: 18,
+    winRatePercent: 50,
+    totalWins: 0,
+    bestRankAchieved: 0,
+  );
 }
 
-Future<({GoRouter router, _FakeFriendsRepository repository})> _pumpFriendRequests(
+Future<({GoRouter router, _FakeFriendsRepository repository})>
+_pumpFriendRequests(
   WidgetTester tester, {
   Size size = const Size(390, 844),
   List<FriendRequest>? requests,
@@ -127,13 +127,21 @@ Future<({GoRouter router, _FakeFriendsRepository repository})> _pumpFriendReques
 
   SharedPreferences.setMockInitialValues(<String, Object>{});
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final _FakeFriendsRepository repository = _FakeFriendsRepository(requests: requests);
+  final _FakeFriendsRepository repository = _FakeFriendsRepository(
+    requests: requests,
+  );
 
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.friendRequests,
     routes: [
-      GoRoute(path: AppRoutes.friends, builder: (context, state) => const FriendsScreen()),
-      GoRoute(path: AppRoutes.friendRequests, builder: (context, state) => const FriendRequestsScreen()),
+      GoRoute(
+        path: AppRoutes.friends,
+        builder: (context, state) => const FriendsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.friendRequests,
+        builder: (context, state) => const FriendRequestsScreen(),
+      ),
       GoRoute(
         path: AppRoutes.playerDetail,
         builder: (context, state) {
@@ -159,10 +167,15 @@ Future<({GoRouter router, _FakeFriendsRepository repository})> _pumpFriendReques
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
         friendsRepositoryProvider.overrideWithValue(repository),
-        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(
+          _FakeLeaderboardRepository(),
+        ),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -171,7 +184,9 @@ Future<({GoRouter router, _FakeFriendsRepository repository})> _pumpFriendReques
 }
 
 void main() {
-  testWidgets('renders title and both incoming requests, no overflow', (tester) async {
+  testWidgets('renders title and both incoming requests, no overflow', (
+    tester,
+  ) async {
     await _pumpFriendRequests(tester);
 
     expect(find.text(AppStrings.friendRequestsTitle), findsOneWidget);
@@ -193,29 +208,37 @@ void main() {
     expect(find.text(AppStrings.friendRequestsEmptyState), findsOneWidget);
   });
 
-  testWidgets('tapping accept calls the real accept request and removes the row', (tester) async {
-    final result = await _pumpFriendRequests(tester);
+  testWidgets(
+    'tapping accept calls the real accept request and removes the row',
+    (tester) async {
+      final result = await _pumpFriendRequests(tester);
 
-    await tester.tap(find.byIcon(TablerIcons.check).first);
-    await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(TablerIcons.check).first);
+      await tester.pumpAndSettle();
 
-    expect(result.repository.acceptedIds, ['req-1']);
-    expect(find.text('Bekzod Xolmatov'), findsNothing);
-    expect(find.text('Nodira Saidova'), findsOneWidget);
-  });
+      expect(result.repository.acceptedIds, ['req-1']);
+      expect(find.text('Bekzod Xolmatov'), findsNothing);
+      expect(find.text('Nodira Saidova'), findsOneWidget);
+    },
+  );
 
-  testWidgets('tapping decline calls the real decline request and removes the row', (tester) async {
-    final result = await _pumpFriendRequests(tester);
+  testWidgets(
+    'tapping decline calls the real decline request and removes the row',
+    (tester) async {
+      final result = await _pumpFriendRequests(tester);
 
-    await tester.tap(find.byIcon(TablerIcons.x).first);
-    await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(TablerIcons.x).first);
+      await tester.pumpAndSettle();
 
-    expect(result.repository.declinedIds, ['req-1']);
-    expect(find.text('Bekzod Xolmatov'), findsNothing);
-    expect(find.text('Nodira Saidova'), findsOneWidget);
-  });
+      expect(result.repository.declinedIds, ['req-1']);
+      expect(find.text('Bekzod Xolmatov'), findsNothing);
+      expect(find.text('Nodira Saidova'), findsOneWidget);
+    },
+  );
 
-  testWidgets('tapping a request row opens their profile with Accept/Decline', (tester) async {
+  testWidgets('tapping a request row opens their profile with Accept/Decline', (
+    tester,
+  ) async {
     final result = await _pumpFriendRequests(tester);
 
     await tester.tap(find.text('Bekzod Xolmatov'));
@@ -234,7 +257,9 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('the back button returns to Friends when pushed on top of it', (tester) async {
+  testWidgets('the back button returns to Friends when pushed on top of it', (
+    tester,
+  ) async {
     final result = await _pumpFriendRequests(tester);
     unawaited(result.router.push(AppRoutes.friends));
     await tester.pumpAndSettle();

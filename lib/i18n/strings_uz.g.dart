@@ -207,7 +207,6 @@ class _Translations$playerDetail$uz implements Translations$playerDetail$en {
 	// Translations
 	@override String get title => 'Profil';
 	@override String get streakLabel => 'Seriya';
-	@override String get friendsLabel => 'Do\'stlar';
 	@override String get addToFriends => 'Do\'stlikka qo\'shish';
 	@override String get requestSent => 'Yuborildi';
 	@override String rankedLabel({required Object rank, required Object xp}) => '#${rank} o\'rin · ${xp} XP';
@@ -284,8 +283,6 @@ class _Translations$profile$uz implements Translations$profile$en {
 	@override String get statLongestStreak => 'Eng uzun seriya';
 	@override String get gameHistory => 'O\'yinlar tarixi';
 	@override String get settingsAndHelp => 'Sozlamalar va yordam';
-	@override String get friendsChipLabel => 'Do\'stlar';
-	@override String get publicQuizzesChipLabel => 'Ochiq quizlar';
 }
 
 // Path: settings
@@ -1079,7 +1076,6 @@ extension on TranslationsUz {
 			'achievements.firstRankBadge' => '#1 o\'rin',
 			'playerDetail.title' => 'Profil',
 			'playerDetail.streakLabel' => 'Seriya',
-			'playerDetail.friendsLabel' => 'Do\'stlar',
 			'playerDetail.addToFriends' => 'Do\'stlikka qo\'shish',
 			'playerDetail.requestSent' => 'Yuborildi',
 			'playerDetail.rankedLabel' => ({required Object rank, required Object xp}) => '#${rank} o\'rin · ${xp} XP',
@@ -1111,8 +1107,6 @@ extension on TranslationsUz {
 			'profile.statLongestStreak' => 'Eng uzun seriya',
 			'profile.gameHistory' => 'O\'yinlar tarixi',
 			'profile.settingsAndHelp' => 'Sozlamalar va yordam',
-			'profile.friendsChipLabel' => 'Do\'stlar',
-			'profile.publicQuizzesChipLabel' => 'Ochiq quizlar',
 			'settings.groupGeneral' => 'Umumiy',
 			'settings.language' => 'Til',
 			'settings.notifications' => 'Bildirishnomalar',

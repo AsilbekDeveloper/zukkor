@@ -74,7 +74,6 @@ abstract final class AppStrings {
   // Player detail screen
   static const String playerDetailTitle = 'Profile';
   static const String streakLabel = 'Streak';
-  static const String friendsLabel = 'Friends';
   static const String addToFriendsButton = 'Add to friends';
   static const String friendRequestSentLabel = 'Sent';
   static String rankedLabel(int rank, int xp) =>
@@ -122,8 +121,6 @@ abstract final class AppStrings {
   static const String statLongestStreak = 'Longest streak';
   static const String gameHistory = 'Game history';
   static const String settingsAndHelp = 'Settings & help';
-  static const String friendsChipLabel = 'Friends';
-  static const String publicQuizzesChipLabel = 'Public quizzes';
 
   // Settings screen
   static const String settingsGroupGeneral = 'General';

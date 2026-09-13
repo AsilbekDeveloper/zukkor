@@ -43,57 +43,57 @@ class _FakeLeaderboardRepository implements LeaderboardRepository {
     int limit = 50,
     LeaderboardScope scope = LeaderboardScope.allTime,
     int offset = 0,
-  }) async =>
-      LeaderboardData(
-        entries: [
-          for (int i = 0; i < _topTen.length; i++)
-            RankEntry(
-              userId: '${i + 1}',
-              rank: i + 1,
-              username: 'user${i + 1}',
-              firstName: _topTen[i].name,
-              lastName: null,
-              avatarColor: 'a-coral',
-              avatarImagePath: null,
-              totalXp: _topTen[i].xp,
-              isMe: false,
-            ),
-        ],
-        me: const RankEntry(
-          userId: 'me',
-          rank: 312,
-          username: 'aziz2',
-          firstName: null,
+  }) async => LeaderboardData(
+    entries: [
+      for (int i = 0; i < _topTen.length; i++)
+        RankEntry(
+          userId: '${i + 1}',
+          rank: i + 1,
+          username: 'user${i + 1}',
+          firstName: _topTen[i].name,
           lastName: null,
           avatarColor: 'a-coral',
           avatarImagePath: null,
-          totalXp: 2140,
-          isMe: true,
+          totalXp: _topTen[i].xp,
+          isMe: false,
         ),
-      );
+    ],
+    me: const RankEntry(
+      userId: 'me',
+      rank: 312,
+      username: 'aziz2',
+      firstName: null,
+      lastName: null,
+      avatarColor: 'a-coral',
+      avatarImagePath: null,
+      totalXp: 2140,
+      isMe: true,
+    ),
+  );
 
   @override
   Future<PlayerStats> getPlayerStats(String userId) async => PlayerStats(
-        userId: userId,
-        rank: 8,
-        username: 'user8',
-        firstName: 'Kamola Tursunova',
-        lastName: null,
-        avatarColor: 'a-coral',
-        avatarImagePath: null,
-        totalXp: 3410,
-        currentStreak: 4,
-        longestStreak: 11,
-        gamesPlayed: 27,
-        winRatePercent: 68,
-        totalWins: 0,
-        bestRankAchieved: 0,
-        friendsCount: 0,
-        publicQuizCount: 0,
-      );
+    userId: userId,
+    rank: 8,
+    username: 'user8',
+    firstName: 'Kamola Tursunova',
+    lastName: null,
+    avatarColor: 'a-coral',
+    avatarImagePath: null,
+    totalXp: 3410,
+    currentStreak: 4,
+    longestStreak: 11,
+    gamesPlayed: 27,
+    winRatePercent: 68,
+    totalWins: 0,
+    bestRankAchieved: 0,
+  );
 }
 
-Future<GoRouter> _pumpFullLeaderboard(WidgetTester tester, {Size size = const Size(390, 844)}) async {
+Future<GoRouter> _pumpFullLeaderboard(
+  WidgetTester tester, {
+  Size size = const Size(390, 844),
+}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -102,7 +102,10 @@ Future<GoRouter> _pumpFullLeaderboard(WidgetTester tester, {Size size = const Si
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.home,
     routes: [
-      GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
+      GoRoute(
+        path: AppRoutes.home,
+        builder: (context, state) => const HomeScreen(),
+      ),
       GoRoute(
         path: AppRoutes.fullLeaderboard,
         builder: (context, state) => const FullLeaderboardScreen(),
@@ -134,10 +137,15 @@ Future<GoRouter> _pumpFullLeaderboard(WidgetTester tester, {Size size = const Si
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
-        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(
+          _FakeLeaderboardRepository(),
+        ),
       ],
       child: TranslationProvider(
-        child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        child: MaterialApp.router(
+          theme: AppTheme.light(),
+          routerConfig: router,
+        ),
       ),
     ),
   );
@@ -147,12 +155,18 @@ Future<GoRouter> _pumpFullLeaderboard(WidgetTester tester, {Size size = const Si
 }
 
 void main() {
-  testWidgets('renders the title and all 11 ranked rows, no overflow', (tester) async {
+  testWidgets('renders the title and all 11 ranked rows, no overflow', (
+    tester,
+  ) async {
     await _pumpFullLeaderboard(tester);
 
     expect(find.text(AppStrings.fullLeaderboardTitle), findsOneWidget);
     for (final ({String name, int xp}) entry in _topTen) {
-      expect(find.text(entry.name), findsOneWidget, reason: '${entry.name} should be listed');
+      expect(
+        find.text(entry.name),
+        findsOneWidget,
+        reason: '${entry.name} should be listed',
+      );
     }
     expect(find.text(AppStrings.currentUserName), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -185,7 +199,9 @@ void main() {
     expect(find.byType(PlayerDetailScreen), findsNothing);
   });
 
-  testWidgets('the back button returns to Home when pushed on top of it', (tester) async {
+  testWidgets('the back button returns to Home when pushed on top of it', (
+    tester,
+  ) async {
     final GoRouter router = await _pumpFullLeaderboard(tester);
     router.go(AppRoutes.home);
     unawaited(router.push(AppRoutes.fullLeaderboard));
