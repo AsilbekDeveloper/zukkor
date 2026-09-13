@@ -104,6 +104,7 @@ class _Translations$common$ru implements Translations$common$en {
 	@override String get loading => 'Загрузка...';
 	@override String get codeCopied => 'Код скопирован';
 	@override String get delete => 'Удалить';
+	@override String get reconnecting => 'Переподключение…';
 	@override String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count,
 		one: 'день',
 		few: 'дня',
@@ -1044,6 +1045,7 @@ extension on TranslationsRu {
 			'common.loading' => 'Загрузка...',
 			'common.codeCopied' => 'Код скопирован',
 			'common.delete' => 'Удалить',
+			'common.reconnecting' => 'Переподключение…',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: 'день', few: 'дня', many: 'дней', other: 'дня', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} друг', few: '${count} друга', many: '${count} друзей', other: '${count} друга', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ru'))(count, one: '${count} вопрос', few: '${count} вопроса', many: '${count} вопросов', other: '${count} вопроса', ), 

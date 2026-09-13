@@ -124,6 +124,9 @@ class Translations$common$en {
 	/// en: 'Delete'
 	String get delete => 'Delete';
 
+	/// en: 'Reconnecting…'
+	String get reconnecting => 'Reconnecting…';
+
 	/// en: '(one) {day} (other) {days}'
 	String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count,
 		one: 'day',
@@ -1989,6 +1992,7 @@ extension on Translations {
 			'common.loading' => 'Loading...',
 			'common.codeCopied' => 'Code copied',
 			'common.delete' => 'Delete',
+			'common.reconnecting' => 'Reconnecting…',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: 'day', other: 'days', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} friend', other: '${count} friends', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} question', other: '${count} questions', ), 

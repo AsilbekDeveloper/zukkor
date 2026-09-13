@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -204,9 +207,20 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> registerPushToken(String token) async {
     try {
       await _remoteDataSource.registerPushToken(token);
-    } on DioException {
+    } on DioException catch (e, st) {
       // Best-effort — bildirishnoma ishlamasligi kirish/ilovadan
-      // foydalanishni to'sib qo'ymasligi kerak.
+      // foydalanishni to'sib qo'ymasligi kerak, lekin avval bu yerda
+      // hech qayerga yozilmasdan jim yutilardi — endpoint yoki auth
+      // buzilsa, hech kim push-bildirishnoma butunlay to'xtaganini
+      // sezmasdi (2026-09-13 real-qurilma sinovi oldidan topilgan xato).
+      unawaited(
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          st,
+          fatal: false,
+          reason: 'push token registration failed',
+        ),
+      );
     }
   }
 

@@ -15,6 +15,7 @@ import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/close_header.dart';
+import '../../../../core/widgets/reconnecting_banner.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../quiz/presentation/widgets/answer_button.dart';
 import '../../../quiz/presentation/widgets/question_card.dart';
@@ -207,10 +208,12 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen>
   @override
   Widget build(BuildContext context) {
     ref.listen(lobbyControllerProvider, (previous, next) => _sync(next.game));
-    final LobbyGameState? game = ref.watch(lobbyControllerProvider).game;
+    final LobbyState lobbyState = ref.watch(lobbyControllerProvider);
+    final LobbyGameState? game = lobbyState.game;
 
+    final Widget content;
     if (game != null && game.waitingForOthers && game.finalResult == null) {
-      return PopScope(
+      content = PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
@@ -252,10 +255,8 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen>
           ),
         ),
       );
-    }
-
-    if (game == null || game.question == null) {
-      return Scaffold(
+    } else if (game == null || game.question == null) {
+      content = Scaffold(
         body: SafeArea(
           child: Padding(
             padding: AppSpacing.screenPadding,
@@ -319,59 +320,72 @@ class _LobbyGameScreenState extends ConsumerState<LobbyGameScreen>
           ),
         ),
       );
-    }
-
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        _onBack();
-      },
-      child: Scaffold(
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.screenHPad,
-              vertical: AppSpacing.xs,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: QuizProgressHeader(
-                        questionNumber: game.questionIndex + 1,
-                        totalQuestions: game.totalQuestions,
-                        score: _correctCount,
-                        onBack: _onBack,
+    } else {
+      content = PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          _onBack();
+        },
+        child: Scaffold(
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.screenHPad,
+                vertical: AppSpacing.xs,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: QuizProgressHeader(
+                          questionNumber: game.questionIndex + 1,
+                          totalQuestions: game.totalQuestions,
+                          score: _correctCount,
+                          onBack: _onBack,
+                        ),
                       ),
-                    ),
-                    AppSpacing.sm.hGap,
-                    QuestionTimer(controller: _timerController),
-                  ],
-                ),
-                AppSpacing.lg.vGap,
-                QuestionCard(
-                  categoryName: game.category.name,
-                  question: game.question!.text,
-                ),
-                AppSpacing.sm.vGap,
-                for (int i = 0; i < game.question!.options.length; i++) ...[
-                  AnswerButton(
-                    letter: String.fromCharCode(65 + i),
-                    text: game.question!.options[i],
-                    state: _stateFor(i, game),
-                    onTap: game.hasAnswered ? null : () => _selectAnswer(i),
+                      AppSpacing.sm.hGap,
+                      QuestionTimer(controller: _timerController),
+                    ],
                   ),
-                  if (i < game.question!.options.length - 1) AppSpacing.sm.vGap,
+                  AppSpacing.lg.vGap,
+                  QuestionCard(
+                    categoryName: game.category.name,
+                    question: game.question!.text,
+                  ),
+                  AppSpacing.sm.vGap,
+                  for (int i = 0; i < game.question!.options.length; i++) ...[
+                    AnswerButton(
+                      letter: String.fromCharCode(65 + i),
+                      text: game.question!.options[i],
+                      state: _stateFor(i, game),
+                      onTap: game.hasAnswered ? null : () => _selectAnswer(i),
+                    ),
+                    if (i < game.question!.options.length - 1)
+                      AppSpacing.sm.vGap,
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
-      ),
+      );
+    }
+
+    return Stack(
+      children: [
+        content,
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: ReconnectingBanner(isConnected: lobbyState.isConnected),
+        ),
+      ],
     );
   }
 }

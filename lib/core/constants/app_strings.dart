@@ -12,6 +12,7 @@ abstract final class AppStrings {
   static const String delete = 'Delete';
   static const String retry = 'Retry';
   static const String loading = 'Loading...';
+  static const String reconnecting = 'Reconnecting…';
 
   // Home
   static const String homeGreeting = 'Good morning';

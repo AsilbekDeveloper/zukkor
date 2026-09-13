@@ -8,6 +8,7 @@
     "loading": "Загрузка...",
     "codeCopied": "Код скопирован",
     "delete": "Удалить",
+    "reconnecting": "Переподключение…",
     "dayUnit(param=count)": {
       "one": "день",
       "few": "дня",

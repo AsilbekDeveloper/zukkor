@@ -8,6 +8,7 @@
     "loading": "Loading...",
     "codeCopied": "Code copied",
     "delete": "Delete",
+    "reconnecting": "Reconnecting…",
     "dayUnit(param=count)": { "one": "day", "other": "days" },
     "friendsCount(param=count)": { "one": "$count friend", "other": "$count friends" },
     "questionCount(param=count)": { "one": "$count question", "other": "$count questions" }

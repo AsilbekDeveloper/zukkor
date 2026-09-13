@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,6 +65,13 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
       ? (_defaultCount <= _maxCustom ? _defaultCount : _maxCustom)
       : _minCustom;
 
+  // A fast double-tap on "Start" (before the push transition to Duel
+  // Waiting/Lobby actually happens) used to fire `onStart` twice - for
+  // Duel that meant two separate invites sent to the same friend from
+  // one tap (2026-09-13 real-device-testing prep audit).
+  bool _starting = false;
+  Timer? _reenableStartTimer;
+
   // PillSegmentControl already fires its own tap sound + haptic
   // internally - this only updates the selection.
   void _selectQuick(int count) {
@@ -78,7 +87,28 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
   }
 
   void _start() {
+    if (_starting) return;
+    setState(() => _starting = true);
     widget.onStart(context, ref, _selectedCount);
+    // Re-enables shortly after - this only needs to survive the brief
+    // window before the push/controller call above actually takes
+    // effect (blocking a fast double-tap), not disable the button
+    // forever. Without this, popping back here later (e.g. cancelling
+    // a Duel invite from Duel Waiting) would leave Start permanently
+    // stuck disabled, since this screen's State survives underneath.
+    // Stored (and cancelled in dispose()) rather than a bare
+    // Future.delayed - otherwise a test/navigation that disposes this
+    // screen before the delay elapses trips Flutter's
+    // "Timer still pending after dispose" leak check.
+    _reenableStartTimer = Timer(const Duration(milliseconds: 800), () {
+      if (mounted) setState(() => _starting = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _reenableStartTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -121,7 +151,8 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
                 delay: const Duration(milliseconds: 180),
                 child: AppButton.primary(
                   label: context.t.quizSetup.startButton,
-                  onPressed: _hasQuestions ? _start : null,
+                  onPressed: _hasQuestions && !_starting ? _start : null,
+                  isLoading: _starting,
                 ),
               ),
               AppSpacing.lg.vGap,
