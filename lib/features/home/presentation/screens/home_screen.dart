@@ -330,9 +330,9 @@ class _DiscoverFeedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Boshqa Home kartalari (RivalCard, HistoryList qatorlari) bilan bir
-    // xil - chegara chizig'i emas, yumshoq soya (`shadowSm`) - avval bu
-    // karta shu jihatdan farq qilib turardi.
+    // Boshqa Home kartalari (HistoryList qatorlari) bilan bir xil -
+    // chegara chizig'i emas, yumshoq soya (`shadowSm`) - avval bu karta
+    // shu jihatdan farq qilib turardi.
     return PressableScale(
       child: Material(
         color: context.colors.card,

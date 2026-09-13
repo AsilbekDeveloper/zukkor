@@ -14,8 +14,7 @@ import 'pressable_scale.dart';
 /// screen ("Room code") — same visuals, different [label]. Tapping
 /// copies [code] to the clipboard - added 2026-09-06 (previously this
 /// card wasn't tappable at all, so sharing the code meant reading it
-/// off-screen and retyping it by hand; [CompactInviteCard] already had
-/// its own copy-to-clipboard, this brings the same behavior here).
+/// off-screen and retyping it by hand).
 class InviteCodeCard extends StatelessWidget {
   const InviteCodeCard({required this.label, required this.code, super.key});
 
