@@ -331,6 +331,20 @@ abstract final class AppStrings {
   static const String faqLobbyQuestion = 'How many players can join a room?';
   static const String faqLobbyAnswer =
       'Rooms currently support up to 10 players.';
+  static const String faqDuelStakeQuestion = 'Why does a duel stake Coin?';
+  static const String faqDuelStakeAnswer =
+      "When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.";
+  static const String faqDiamondFreeGetQuestion = 'How do I get free Diamond?';
+  static const String faqDiamondFreeGetAnswer =
+      'Link our Telegram bot and tap "Today\'s free Diamond" once a day. Your Diamond balance never exceeds 200.';
+  static const String faqAiLimitQuestion =
+      'Is there a limit on AI question/quiz generation?';
+  static const String faqAiLimitAnswer =
+      "Yes, each user can generate up to 5 AI quizzes per day. Once you hit the limit, you'll need to wait until the next day.";
+  static const String faqAppealQuestion =
+      'The AI rejected my question or submission, what can I do?';
+  static const String faqAppealAnswer =
+      'You can appeal a rejected submission - our team will review it manually.';
   static const String faqReportQuestion =
       'How do I report a bug or a bad question?';
   static const String faqReportAnswer =

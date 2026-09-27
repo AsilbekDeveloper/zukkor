@@ -19,6 +19,10 @@ class HelpCenterScreen extends StatelessWidget {
     (context.t.helpCenter.xpQuestion, context.t.helpCenter.xpAnswer),
     (context.t.helpCenter.streakQuestion, context.t.helpCenter.streakAnswer),
     (context.t.helpCenter.lobbyQuestion, context.t.helpCenter.lobbyAnswer),
+    (context.t.helpCenter.duelStakeQuestion, context.t.helpCenter.duelStakeAnswer),
+    (context.t.helpCenter.diamondFreeGetQuestion, context.t.helpCenter.diamondFreeGetAnswer),
+    (context.t.helpCenter.aiLimitQuestion, context.t.helpCenter.aiLimitAnswer),
+    (context.t.helpCenter.appealQuestion, context.t.helpCenter.appealAnswer),
     (context.t.helpCenter.reportQuestion, context.t.helpCenter.reportAnswer),
   ];
 

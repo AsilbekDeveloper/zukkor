@@ -664,6 +664,14 @@ class _Translations$helpCenter$uz implements Translations$helpCenter$en {
 	@override String get lobbyAnswer => 'Hozircha xonalar 10 tagacha o\'yinchini qo\'llab-quvvatlaydi.';
 	@override String get reportQuestion => 'Xato yoki noto\'g\'ri savol haqida qanday xabar beraman?';
 	@override String get reportAnswer => 'Shu Yordam markazi orqali biz bilan bog\'laning. Biz kichik jamoamiz va har bir xabar Zukkorni yaxshilashga yordam beradi.';
+	@override String get duelStakeQuestion => 'Duelda nega Coin tikiladi?';
+	@override String get duelStakeAnswer => 'Duel boshlanganda ikkala o\'yinchidan ham belgilangan miqdorda Coin yechiladi. G\'olib fondning bir qismini (soliqdan keyin) oladi, durang bo\'lsa ikkalasiga ham o\'z puli to\'liq qaytariladi. Bu firibgarlik va sun\'iy Coin ishlab chiqarishning oldini oladi.';
+	@override String get diamondFreeGetQuestion => 'Diamondni qanday bepul olaman?';
+	@override String get diamondFreeGetAnswer => 'Telegram botimizga ulanib, kuniga bir marta "Bugungi bepul Diamond" tugmasini bosing. Diamond balansingiz hech qachon 200 tadan oshmaydi.';
+	@override String get aiLimitQuestion => 'AI orqali savol/quiz yaratishning chegarasi bormi?';
+	@override String get aiLimitAnswer => 'Ha, har bir foydalanuvchi kuniga 5 martagacha AI-generatsiya qila oladi. Chegaraga yetsangiz, ertangi kunni kutishingiz kerak bo\'ladi.';
+	@override String get appealQuestion => 'AI savolimni/taklifimni rad etdi, nima qilaman?';
+	@override String get appealAnswer => 'Rad etilgan taklifingizga apellyatsiya yuborishingiz mumkin - jamoamiz uni qo\'lda ko\'rib chiqadi.';
 }
 
 // Path: bottomNav
@@ -1246,6 +1254,14 @@ extension on TranslationsUz {
 			'helpCenter.lobbyAnswer' => 'Hozircha xonalar 10 tagacha o\'yinchini qo\'llab-quvvatlaydi.',
 			'helpCenter.reportQuestion' => 'Xato yoki noto\'g\'ri savol haqida qanday xabar beraman?',
 			'helpCenter.reportAnswer' => 'Shu Yordam markazi orqali biz bilan bog\'laning. Biz kichik jamoamiz va har bir xabar Zukkorni yaxshilashga yordam beradi.',
+			'helpCenter.duelStakeQuestion' => 'Duelda nega Coin tikiladi?',
+			'helpCenter.duelStakeAnswer' => 'Duel boshlanganda ikkala o\'yinchidan ham belgilangan miqdorda Coin yechiladi. G\'olib fondning bir qismini (soliqdan keyin) oladi, durang bo\'lsa ikkalasiga ham o\'z puli to\'liq qaytariladi. Bu firibgarlik va sun\'iy Coin ishlab chiqarishning oldini oladi.',
+			'helpCenter.diamondFreeGetQuestion' => 'Diamondni qanday bepul olaman?',
+			'helpCenter.diamondFreeGetAnswer' => 'Telegram botimizga ulanib, kuniga bir marta "Bugungi bepul Diamond" tugmasini bosing. Diamond balansingiz hech qachon 200 tadan oshmaydi.',
+			'helpCenter.aiLimitQuestion' => 'AI orqali savol/quiz yaratishning chegarasi bormi?',
+			'helpCenter.aiLimitAnswer' => 'Ha, har bir foydalanuvchi kuniga 5 martagacha AI-generatsiya qila oladi. Chegaraga yetsangiz, ertangi kunni kutishingiz kerak bo\'ladi.',
+			'helpCenter.appealQuestion' => 'AI savolimni/taklifimni rad etdi, nima qilaman?',
+			'helpCenter.appealAnswer' => 'Rad etilgan taklifingizga apellyatsiya yuborishingiz mumkin - jamoamiz uni qo\'lda ko\'rib chiqadi.',
 			'bottomNav.home' => 'Bosh sahifa',
 			'bottomNav.leaderboard' => 'Reyting',
 			'bottomNav.friends' => 'Do\'stlar',

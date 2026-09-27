@@ -1155,6 +1155,30 @@ class Translations$helpCenter$en {
 
 	/// en: 'Reach out to us through this Help Center. We are a small team and every report helps us improve Zukkor.'
 	String get reportAnswer => 'Reach out to us through this Help Center. We are a small team and every report helps us improve Zukkor.';
+
+	/// en: 'Why does a duel stake Coin?'
+	String get duelStakeQuestion => 'Why does a duel stake Coin?';
+
+	/// en: 'When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.'
+	String get duelStakeAnswer => 'When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.';
+
+	/// en: 'How do I get free Diamond?'
+	String get diamondFreeGetQuestion => 'How do I get free Diamond?';
+
+	/// en: 'Link our Telegram bot and tap "Today's free Diamond" once a day. Your Diamond balance never exceeds 200.'
+	String get diamondFreeGetAnswer => 'Link our Telegram bot and tap "Today\'s free Diamond" once a day. Your Diamond balance never exceeds 200.';
+
+	/// en: 'Is there a limit on AI question/quiz generation?'
+	String get aiLimitQuestion => 'Is there a limit on AI question/quiz generation?';
+
+	/// en: 'Yes, each user can generate up to 5 AI quizzes per day. Once you hit the limit, you'll need to wait until the next day.'
+	String get aiLimitAnswer => 'Yes, each user can generate up to 5 AI quizzes per day. Once you hit the limit, you\'ll need to wait until the next day.';
+
+	/// en: 'The AI rejected my question or submission, what can I do?'
+	String get appealQuestion => 'The AI rejected my question or submission, what can I do?';
+
+	/// en: 'You can appeal a rejected submission - our team will review it manually.'
+	String get appealAnswer => 'You can appeal a rejected submission - our team will review it manually.';
 }
 
 // Path: bottomNav
@@ -2141,6 +2165,14 @@ extension on Translations {
 			'helpCenter.lobbyAnswer' => 'Rooms currently support up to 10 players.',
 			'helpCenter.reportQuestion' => 'How do I report a bug or a bad question?',
 			'helpCenter.reportAnswer' => 'Reach out to us through this Help Center. We are a small team and every report helps us improve Zukkor.',
+			'helpCenter.duelStakeQuestion' => 'Why does a duel stake Coin?',
+			'helpCenter.duelStakeAnswer' => 'When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.',
+			'helpCenter.diamondFreeGetQuestion' => 'How do I get free Diamond?',
+			'helpCenter.diamondFreeGetAnswer' => 'Link our Telegram bot and tap "Today\'s free Diamond" once a day. Your Diamond balance never exceeds 200.',
+			'helpCenter.aiLimitQuestion' => 'Is there a limit on AI question/quiz generation?',
+			'helpCenter.aiLimitAnswer' => 'Yes, each user can generate up to 5 AI quizzes per day. Once you hit the limit, you\'ll need to wait until the next day.',
+			'helpCenter.appealQuestion' => 'The AI rejected my question or submission, what can I do?',
+			'helpCenter.appealAnswer' => 'You can appeal a rejected submission - our team will review it manually.',
 			'bottomNav.home' => 'Home',
 			'bottomNav.leaderboard' => 'Leaderboard',
 			'bottomNav.friends' => 'Friends',

@@ -670,6 +670,14 @@ class _Translations$helpCenter$ru implements Translations$helpCenter$en {
 	@override String get lobbyAnswer => 'Сейчас комнаты поддерживают до 10 игроков.';
 	@override String get reportQuestion => 'Как сообщить об ошибке или некорректном вопросе?';
 	@override String get reportAnswer => 'Свяжитесь с нами через этот Центр помощи. Мы небольшая команда, и каждое сообщение помогает нам улучшать Zukkor.';
+	@override String get duelStakeQuestion => 'Почему в дуэли делается ставка Coin?';
+	@override String get duelStakeAnswer => 'При начале дуэли у обоих игроков списывается фиксированная ставка Coin. Победитель получает часть фонда (после налога), а при ничьей ставка полностью возвращается обоим. Это защищает от читерства и искусственного накопления Coin.';
+	@override String get diamondFreeGetQuestion => 'Как получить Diamond бесплатно?';
+	@override String get diamondFreeGetAnswer => 'Привяжите Telegram-бота и раз в день нажимайте кнопку «Бесплатный Diamond на сегодня». Баланс Diamond никогда не превышает 200.';
+	@override String get aiLimitQuestion => 'Есть ли лимит на создание вопросов/квизов через AI?';
+	@override String get aiLimitAnswer => 'Да, каждый пользователь может использовать AI-генерацию до 5 раз в день. При достижении лимита нужно подождать до следующего дня.';
+	@override String get appealQuestion => 'AI отклонил мой вопрос/предложение, что делать?';
+	@override String get appealAnswer => 'Вы можете подать апелляцию на отклонённое предложение - наша команда рассмотрит его вручную.';
 }
 
 // Path: bottomNav
@@ -1252,6 +1260,14 @@ extension on TranslationsRu {
 			'helpCenter.lobbyAnswer' => 'Сейчас комнаты поддерживают до 10 игроков.',
 			'helpCenter.reportQuestion' => 'Как сообщить об ошибке или некорректном вопросе?',
 			'helpCenter.reportAnswer' => 'Свяжитесь с нами через этот Центр помощи. Мы небольшая команда, и каждое сообщение помогает нам улучшать Zukkor.',
+			'helpCenter.duelStakeQuestion' => 'Почему в дуэли делается ставка Coin?',
+			'helpCenter.duelStakeAnswer' => 'При начале дуэли у обоих игроков списывается фиксированная ставка Coin. Победитель получает часть фонда (после налога), а при ничьей ставка полностью возвращается обоим. Это защищает от читерства и искусственного накопления Coin.',
+			'helpCenter.diamondFreeGetQuestion' => 'Как получить Diamond бесплатно?',
+			'helpCenter.diamondFreeGetAnswer' => 'Привяжите Telegram-бота и раз в день нажимайте кнопку «Бесплатный Diamond на сегодня». Баланс Diamond никогда не превышает 200.',
+			'helpCenter.aiLimitQuestion' => 'Есть ли лимит на создание вопросов/квизов через AI?',
+			'helpCenter.aiLimitAnswer' => 'Да, каждый пользователь может использовать AI-генерацию до 5 раз в день. При достижении лимита нужно подождать до следующего дня.',
+			'helpCenter.appealQuestion' => 'AI отклонил мой вопрос/предложение, что делать?',
+			'helpCenter.appealAnswer' => 'Вы можете подать апелляцию на отклонённое предложение - наша команда рассмотрит его вручную.',
 			'bottomNav.home' => 'Главная',
 			'bottomNav.leaderboard' => 'Рейтинг',
 			'bottomNav.friends' => 'Друзья',

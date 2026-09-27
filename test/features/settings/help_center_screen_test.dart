@@ -48,7 +48,7 @@ Future<GoRouter> _pumpHelpCenter(WidgetTester tester, {Size size = const Size(39
 }
 
 void main() {
-  testWidgets('renders the title and all 5 questions collapsed, no overflow', (tester) async {
+  testWidgets('renders the title and all 9 questions collapsed, no overflow', (tester) async {
     await _pumpHelpCenter(tester);
 
     expect(find.text(AppStrings.settingsHelpCenter), findsOneWidget);
@@ -56,6 +56,10 @@ void main() {
     expect(find.text(AppStrings.faqXpQuestion), findsOneWidget);
     expect(find.text(AppStrings.faqStreakQuestion), findsOneWidget);
     expect(find.text(AppStrings.faqLobbyQuestion), findsOneWidget);
+    expect(find.text(AppStrings.faqDuelStakeQuestion), findsOneWidget);
+    expect(find.text(AppStrings.faqDiamondFreeGetQuestion), findsOneWidget);
+    expect(find.text(AppStrings.faqAiLimitQuestion), findsOneWidget);
+    expect(find.text(AppStrings.faqAppealQuestion), findsOneWidget);
     expect(find.text(AppStrings.faqReportQuestion), findsOneWidget);
     // Collapsed by default: answers aren't built yet.
     expect(find.text(AppStrings.faqDuelAnswer), findsNothing);
