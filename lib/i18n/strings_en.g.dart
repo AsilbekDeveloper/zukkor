@@ -633,6 +633,9 @@ class Translations$quizSetup$en {
 
 	/// en: 'Start quiz'
 	String get startButton => 'Start quiz';
+
+	/// en: 'Export as PDF 💎'
+	String get exportPdfButton => 'Export as PDF 💎';
 }
 
 // Path: quizIntro
@@ -2048,6 +2051,7 @@ extension on Translations {
 			'quizSetup.availableCount' => ({required Object count}) => '${count} questions available',
 			'quizSetup.noQuestionsAvailable' => 'No questions in this category yet',
 			'quizSetup.startButton' => 'Start quiz',
+			'quizSetup.exportPdfButton' => 'Export as PDF 💎',
 			'quizIntro.startLabel' => 'Start!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Question ${current}/${total}',
 			'ballReveal.title' => 'Your points',

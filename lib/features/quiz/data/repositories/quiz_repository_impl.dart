@@ -68,6 +68,15 @@ class QuizRepositoryImpl implements QuizRepository {
       throw FailureMapper.fromDio(e);
     }
   }
+
+  @override
+  Future<List<int>> exportQuizPdf(int categoryId) async {
+    try {
+      return await _remoteDataSource.exportQuizPdf(categoryId);
+    } on DioException catch (e) {
+      throw FailureMapper.fromDio(e);
+    }
+  }
 }
 
 final Provider<QuizRepository> quizRepositoryProvider = Provider<QuizRepository>(

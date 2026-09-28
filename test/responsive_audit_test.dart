@@ -488,6 +488,8 @@ class _FakeQuizRepository implements QuizRepository {
     required String reason,
     String? comment,
   }) => throw UnimplementedError();
+  @override
+  Future<List<int>> exportQuizPdf(int categoryId) => throw UnimplementedError();
 }
 
 class _FakeHistoryRepository implements HistoryRepository {

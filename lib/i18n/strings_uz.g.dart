@@ -376,6 +376,7 @@ class _Translations$quizSetup$uz implements Translations$quizSetup$en {
 	@override String availableCount({required Object count}) => '${count} ta savol mavjud';
 	@override String get noQuestionsAvailable => 'Bu kategoriyada hali savol yo\'q';
 	@override String get startButton => 'Quizni boshlash';
+	@override String get exportPdfButton => 'PDF sifatida eksport qilish 💎';
 }
 
 // Path: quizIntro
@@ -1137,6 +1138,7 @@ extension on TranslationsUz {
 			'quizSetup.availableCount' => ({required Object count}) => '${count} ta savol mavjud',
 			'quizSetup.noQuestionsAvailable' => 'Bu kategoriyada hali savol yo\'q',
 			'quizSetup.startButton' => 'Quizni boshlash',
+			'quizSetup.exportPdfButton' => 'PDF sifatida eksport qilish 💎',
 			'quizIntro.startLabel' => 'Boshlash!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => '${current}/${total}-savol',
 			'ballReveal.title' => 'Sizning balingiz',

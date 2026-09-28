@@ -158,7 +158,8 @@
     "increment": "Increase",
     "availableCount(param=count)": "$count questions available",
     "noQuestionsAvailable": "No questions in this category yet",
-    "startButton": "Start quiz"
+    "startButton": "Start quiz",
+    "exportPdfButton": "Export as PDF 💎"
   },
   "quizIntro": {
     "startLabel": "Start!"

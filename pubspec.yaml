@@ -34,6 +34,11 @@ dependencies:
   # AI orqali quiz yaratish — hujjat (PDF/Word/matn) tanlash uchun.
   file_picker: ^8.1.7
 
+  # Quizni PDF qilib eksport qilib, tizim "Share" oynasi orqali
+  # saqlash/yuborish uchun (2026-09-28).
+  share_plus: ^10.1.4
+  path_provider: ^2.1.5
+
   # Google Sign-In
   google_sign_in: ^7.1.1
 

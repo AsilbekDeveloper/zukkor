@@ -81,6 +81,9 @@ class _FakeQuizRepository implements QuizRepository {
   Future<void> reportQuestion({required int questionId, required String reason, String? comment}) =>
       throw UnimplementedError();
 
+  @override
+  Future<List<int>> exportQuizPdf(int categoryId) => throw UnimplementedError();
+
   QuizQuestionData _questionFor(int order) => QuizQuestionData(
         sessionQuestionId: order,
         questionText: 'Question $order',

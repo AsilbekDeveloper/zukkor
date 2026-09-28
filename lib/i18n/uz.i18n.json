@@ -158,7 +158,8 @@
     "increment": "Ko'paytirish",
     "availableCount(param=count)": "$count ta savol mavjud",
     "noQuestionsAvailable": "Bu kategoriyada hali savol yo'q",
-    "startButton": "Quizni boshlash"
+    "startButton": "Quizni boshlash",
+    "exportPdfButton": "PDF sifatida eksport qilish 💎"
   },
   "quizIntro": {
     "startLabel": "Boshlash!"

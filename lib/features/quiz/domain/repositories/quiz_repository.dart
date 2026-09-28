@@ -20,4 +20,10 @@ abstract interface class QuizRepository {
   /// `POST /questions/{question_id}/report`. `reason` is one of
   /// 'wrong_answer' | 'unclear' | 'offensive' | 'other'.
   Future<void> reportQuestion({required int questionId, required String reason, String? comment});
+
+  /// `GET /quiz/{category_id}/export/pdf` — quizni bosma A4 test qog'ozi
+  /// sifatida PDF qilib eksport qiladi (javoblar kaliti bilan birga).
+  /// Diamond bilan to'lanadi; balans yetarli bo'lmasa `ValidationFailure`
+  /// (402) ko'taradi.
+  Future<List<int>> exportQuizPdf(int categoryId);
 }

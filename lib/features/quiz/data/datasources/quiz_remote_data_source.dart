@@ -55,6 +55,17 @@ class QuizRemoteDataSource {
       data: {'reason': reason, 'comment': comment},
     );
   }
+
+  /// Diamond bilan to'lanadi (backend narxni savollar soniga qarab
+  /// hisoblaydi, yetarli bo'lmasa 402 qaytaradi — [QuizRepositoryImpl]
+  /// buni [Failure]ga aylantiradi).
+  Future<List<int>> exportQuizPdf(int categoryId) async {
+    final Response<List<int>> response = await _dio.get<List<int>>(
+      ApiEndpoints.exportQuizPdf(categoryId),
+      options: Options(responseType: ResponseType.bytes),
+    );
+    return response.data ?? const [];
+  }
 }
 
 final Provider<QuizRemoteDataSource> quizRemoteDataSourceProvider = Provider<QuizRemoteDataSource>(

@@ -382,6 +382,7 @@ class _Translations$quizSetup$ru implements Translations$quizSetup$en {
 	@override String availableCount({required Object count}) => 'Доступно ${count} вопросов';
 	@override String get noQuestionsAvailable => 'В этой категории пока нет вопросов';
 	@override String get startButton => 'Начать викторину';
+	@override String get exportPdfButton => 'Экспортировать в PDF 💎';
 }
 
 // Path: quizIntro
@@ -1143,6 +1144,7 @@ extension on TranslationsRu {
 			'quizSetup.availableCount' => ({required Object count}) => 'Доступно ${count} вопросов',
 			'quizSetup.noQuestionsAvailable' => 'В этой категории пока нет вопросов',
 			'quizSetup.startButton' => 'Начать викторину',
+			'quizSetup.exportPdfButton' => 'Экспортировать в PDF 💎',
 			'quizIntro.startLabel' => 'Старт!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Вопрос ${current} из ${total}',
 			'ballReveal.title' => 'Ваши баллы',
