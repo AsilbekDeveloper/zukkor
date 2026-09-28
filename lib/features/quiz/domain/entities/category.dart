@@ -6,6 +6,7 @@ class Category {
     required this.iconName,
     required this.colorKey,
     required this.questionCount,
+    this.playCount = 0,
   });
 
   final int id;
@@ -13,4 +14,9 @@ class Category {
   final String iconName;
   final String colorKey;
   final int questionCount;
+
+  /// Shu kategoriyadan necha marta savol o'ynalgan (Solo+Duel+Lobby
+  /// yig'indisi) — Home ekranida "eng ko'p o'ynalgan 3 ta kategoriya"ni
+  /// aniqlash uchun ishlatiladi.
+  final int playCount;
 }

@@ -7,6 +7,7 @@ class CategoryModel {
     required this.iconName,
     required this.colorKey,
     required this.questionCount,
+    required this.playCount,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) => CategoryModel(
@@ -15,6 +16,7 @@ class CategoryModel {
         iconName: json['icon_name'] as String,
         colorKey: json['color_key'] as String,
         questionCount: json['question_count'] as int,
+        playCount: json['play_count'] as int? ?? 0,
       );
 
   final int id;
@@ -22,6 +24,7 @@ class CategoryModel {
   final String iconName;
   final String colorKey;
   final int questionCount;
+  final int playCount;
 
   Category toEntity() => Category(
         id: id,
@@ -29,5 +32,6 @@ class CategoryModel {
         iconName: iconName,
         colorKey: colorKey,
         questionCount: questionCount,
+        playCount: playCount,
       );
 }

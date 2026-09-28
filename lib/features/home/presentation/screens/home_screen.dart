@@ -28,6 +28,7 @@ import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
 import '../../../lobby/presentation/controllers/lobby_controller.dart';
 import '../../../lobby/presentation/screens/lobby_screen.dart';
 import '../../../notifications/presentation/controllers/notifications_controller.dart';
+import '../../../quiz/domain/entities/category.dart';
 import '../../../quiz/presentation/controllers/categories_controller.dart';
 import '../../../quiz/presentation/models/quiz_category.dart';
 import '../../../quiz/presentation/models/quiz_launch_args.dart';
@@ -263,6 +264,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  /// The 3 most-played categories (2026-09-28, foydalanuvchi so'rovi) —
+  /// `Category.playCount` (Solo+Duel+Lobby yig'indisi) bo'yicha kamayish
+  /// tartibida saralaydi. Teng playCount'lar (masalan hammasi 0, yangi
+  /// deploy'da) uchun asl (backend'dagi `sort_order`) tartib buziladigan
+  /// oddiy `List.sort` o'rniga, indeks bo'yicha barqaror (stable) tartib
+  /// saqlanadi — aks holda teng ballar qayta qurilishlar orasida
+  /// tasodifiy almashib, foydalanuvchiga sabab-oqibatsiz ko'rinardi.
+  List<Category> _topPlayedCategories(List<Category> all) {
+    final List<MapEntry<int, Category>> indexed = all.asMap().entries.toList()
+      ..sort((a, b) {
+        final int cmp = b.value.playCount.compareTo(a.value.playCount);
+        return cmp != 0 ? cmp : a.key.compareTo(b.key);
+      });
+    return indexed.take(3).map((entry) => entry.value).toList();
+  }
+
   /// Categories, horizontally scrollable — shows an [InlineRetryRow]
   /// instead of silently going empty when categories failed to load.
   /// Manual-quiz-creation/question-submission shortcuts used to live here
@@ -275,9 +292,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// once there were only 3 short "play now" blocks left.
   List<Widget> _discoverSection(BuildContext context) {
     final categoriesState = ref.watch(categoriesControllerProvider);
-    final List<QuizCategory> categories =
-        categoriesState.data?.map(QuizCategory.fromEntity).take(3).toList() ??
-        const [];
+    final List<QuizCategory> categories = _topPlayedCategories(
+      categoriesState.data ?? const [],
+    ).map(QuizCategory.fromEntity).toList();
 
     return [
       categoriesState.hasError
