@@ -202,14 +202,16 @@ class _AiQuizRow extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text(
-                            context.t.common.questionCount(
-                              count: quiz.questionCount,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: context.textStyles.labelSmall?.copyWith(
-                              color: context.colors.muted,
+                          Flexible(
+                            child: Text(
+                              context.t.common.questionCount(
+                                count: quiz.questionCount,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.textStyles.labelSmall?.copyWith(
+                                color: context.colors.muted,
+                              ),
                             ),
                           ),
                           Text(
@@ -218,12 +220,14 @@ class _AiQuizRow extends StatelessWidget {
                               color: context.colors.muted,
                             ),
                           ),
-                          Text(
-                            _sourceLabel(context),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: context.textStyles.labelSmall?.copyWith(
-                              color: context.colors.muted,
+                          Flexible(
+                            child: Text(
+                              _sourceLabel(context),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.textStyles.labelSmall?.copyWith(
+                                color: context.colors.muted,
+                              ),
                             ),
                           ),
                         ],
