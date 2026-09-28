@@ -38,13 +38,13 @@ class CurrentUserController extends Notifier<LoadState<User>> {
   LoadState<User> build() => const LoadState();
 
   Future<void> load() async {
-    state = const LoadState();
+    state = LoadState(data: state.data);
     try {
       final User user = await ref.read(getCurrentUserUseCaseProvider).call();
       state = LoadState(data: user);
       ref.read(activeUserIdSignalProvider.notifier).set(user.id);
     } catch (_) {
-      state = const LoadState(hasError: true);
+      state = LoadState(data: state.data, hasError: true);
     }
   }
 

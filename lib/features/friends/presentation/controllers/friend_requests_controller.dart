@@ -13,11 +13,11 @@ class FriendRequestsController extends Notifier<LoadState<List<FriendRequest>>> 
   LoadState<List<FriendRequest>> build() => const LoadState();
 
   Future<void> load() async {
-    state = const LoadState();
+    state = LoadState(data: state.data);
     try {
       state = LoadState(data: await ref.read(getIncomingFriendRequestsUseCaseProvider).call());
     } catch (_) {
-      state = const LoadState(hasError: true);
+      state = LoadState(data: state.data, hasError: true);
     }
   }
 

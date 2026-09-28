@@ -12,11 +12,11 @@ class FriendsController extends Notifier<LoadState<List<Friend>>> {
   LoadState<List<Friend>> build() => const LoadState();
 
   Future<void> load() async {
-    state = const LoadState();
+    state = LoadState(data: state.data);
     try {
       state = LoadState(data: await ref.read(getFriendsUseCaseProvider).call());
     } catch (_) {
-      state = const LoadState(hasError: true);
+      state = LoadState(data: state.data, hasError: true);
     }
   }
 }
