@@ -385,6 +385,9 @@ class Translations$addFriend$en {
 
 	/// en: 'Code copied'
 	String get codeCopied => 'Code copied';
+
+	/// en: 'Compete with me on Zukkor! My invite code: $code'
+	String shareMessage({required Object code}) => 'Compete with me on Zukkor! My invite code: ${code}';
 }
 
 // Path: friendRequests
@@ -2020,6 +2023,7 @@ extension on Translations {
 			'addFriend.requestedLabel' => 'Requested',
 			'addFriend.noUsersFound' => 'No users found',
 			'addFriend.codeCopied' => 'Code copied',
+			'addFriend.shareMessage' => ({required Object code}) => 'Compete with me on Zukkor! My invite code: ${code}',
 			'friendRequests.title' => 'Friend requests',
 			'friendRequests.emptyState' => 'No requests yet',
 			'duelPick.title' => '1v1 Duel',

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -8,8 +9,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import 'package:zukkor/core/constants/app_strings.dart';
 import 'package:zukkor/core/router/app_routes.dart';
+import 'package:zukkor/core/state/load_state.dart';
 import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
+import 'package:zukkor/features/auth/domain/entities/user.dart';
+import 'package:zukkor/features/auth/presentation/controllers/current_user_controller.dart';
 import 'package:zukkor/features/friends/data/repositories/friends_repository_impl.dart';
 import 'package:zukkor/features/friends/domain/entities/discovered_user.dart';
 import 'package:zukkor/features/friends/domain/entities/friend.dart';
@@ -25,6 +29,27 @@ import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repo
 import 'package:zukkor/features/player_detail/presentation/models/player_detail_args.dart';
 import 'package:zukkor/features/player_detail/presentation/screens/player_detail_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
+
+const String _testInviteCode = 'ZKR-9Q2M';
+
+final User _testUser = User(
+  id: 'me',
+  email: 'me@example.com',
+  isActive: true,
+  createdAt: DateTime(2026),
+  onboardingCompleted: true,
+  authProvider: 'email',
+  referralCode: _testInviteCode,
+);
+
+/// `AddFriendScreen` endi haqiqiy `User.referralCode`ni ko'rsatadi
+/// (2026-09-30, avvalgi hardcoded 'ZKR-AZ312' o'rniga - pre-launch
+/// auditda topilgan) - shuning uchun testlar `currentUserControllerProvider`ni
+/// shu tayyor foydalanuvchi bilan ustidan yozadi.
+class _FakeCurrentUserController extends CurrentUserController {
+  @override
+  LoadState<User> build() => LoadState(data: _testUser);
+}
 
 const List<DiscoveredUser> _directory = [
   DiscoveredUser(
@@ -116,6 +141,21 @@ Future<GoRouter> _pumpAddFriend(
   SharedPreferences.setMockInitialValues(<String, Object>{});
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+  // share_plus'ning platform kanali test muhitida haqiqiy OS "Share"
+  // oynasini ocholmaydi - mock qilinmasa `MissingPluginException`
+  // ko'taradi. Har qanday chaqiruvga muvaffaqiyatli javob qaytaramiz,
+  // haqiqiy ulashish UI'ini emas, faqat bizning kodimiz to'g'ri
+  // chaqirayotganini tekshiramiz.
+  const MethodChannel shareChannel = MethodChannel(
+    'dev.fluttercommunity.plus/share',
+  );
+  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .setMockMethodCallHandler(shareChannel, (call) async => null);
+  addTearDown(
+    () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(shareChannel, null),
+  );
+
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.addFriend,
     routes: [
@@ -157,6 +197,9 @@ Future<GoRouter> _pumpAddFriend(
         leaderboardRepositoryProvider.overrideWithValue(
           _FakeLeaderboardRepository(),
         ),
+        currentUserControllerProvider.overrideWith(
+          _FakeCurrentUserController.new,
+        ),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(
@@ -188,7 +231,7 @@ void main() {
     expect(find.text(AppStrings.searchByUsername), findsOneWidget);
     expect(find.text(AppStrings.orViaInviteLink), findsOneWidget);
     expect(find.text(AppStrings.yourInviteCode), findsOneWidget);
-    expect(find.text('ZKR-AZ312'), findsOneWidget);
+    expect(find.text(_testInviteCode), findsOneWidget);
     expect(find.text(AppStrings.shareLink), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -267,17 +310,21 @@ void main() {
     expect(find.text('Sardor Aliyev'), findsNothing);
   });
 
-  testWidgets('tapping "Share the link" shows a coming-soon snackbar', (
-    tester,
-  ) async {
-    await _pumpAddFriend(tester);
+  testWidgets(
+    'tapping "Share the link" invokes the OS share sheet with the real code',
+    (tester) async {
+      await _pumpAddFriend(tester);
 
-    await tester.tap(find.text(AppStrings.shareLink));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+      await tester.tap(find.text(AppStrings.shareLink));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text(AppStrings.comingSoon), findsOneWidget);
-  });
+      // No coming-soon toast, and no exception from the (mocked)
+      // share_plus platform call.
+      expect(find.text(AppStrings.comingSoon), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('the back button returns to Friends when pushed on top of it', (
     tester,

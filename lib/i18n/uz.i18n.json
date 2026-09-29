@@ -83,7 +83,8 @@
     "addButton": "Qo'shish",
     "requestedLabel": "So'rov yuborildi",
     "noUsersFound": "Foydalanuvchilar topilmadi",
-    "codeCopied": "Kod nusxalandi"
+    "codeCopied": "Kod nusxalandi",
+    "shareMessage(param=code)": "Zukkor'da men bilan bilim bo'yicha musobaqalash! Taklif kodim: $code"
   },
   "friendRequests": {
     "title": "Do'stlik so'rovlari",

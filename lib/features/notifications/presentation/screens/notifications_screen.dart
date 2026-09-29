@@ -19,10 +19,16 @@ import '../widgets/notification_list.dart';
 
 /// The notification inbox — mirrors the prototype's `view-notifications`.
 /// Loads real entries from `GET /notifications` and marks them all read
-/// on open. A real incoming duel challenge no longer opens from here —
-/// it arrives live over the duel WebSocket and opens Duel Invite directly
-/// (see [HomeScreen]). Tapping a `friend_request` entry opens the Friend
-/// Requests screen; other kinds still show a coming-soon snackbar.
+/// on open. A LIVE incoming duel challenge doesn't open from here — it
+/// arrives over the duel WebSocket and opens Duel Invite directly (see
+/// [HomeScreen]); a `duel_challenge` row here is always a PAST, already
+/// resolved one, so tapping it goes to game history instead.
+///
+/// 2026-09-30, pre-launch audit finding: every kind other than
+/// `friend_request` used to show a dead-end "coming soon" toast, even
+/// though `duel_challenge`/`streak_reminder`/`top50`/`welcome` are all
+/// real notification kinds the backend actually sends - a real user
+/// would hit this often, not a hypothetical edge case.
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
@@ -51,11 +57,17 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   void _onEntryTap(BuildContext context, NotificationEntry entry) {
-    if (entry.kind == NotificationKind.friendRequest) {
-      context.push(AppRoutes.friendRequests);
-      return;
+    switch (entry.kind) {
+      case NotificationKind.friendRequest:
+        context.push(AppRoutes.friendRequests);
+      case NotificationKind.top50:
+        context.push(AppRoutes.fullLeaderboard);
+      case NotificationKind.duelChallenge:
+        context.push(AppRoutes.history);
+      case NotificationKind.streakReminder:
+      case NotificationKind.welcome:
+        context.go(AppRoutes.home);
     }
-    context.showSnack(context.t.bottomNav.comingSoon);
   }
 
   @override

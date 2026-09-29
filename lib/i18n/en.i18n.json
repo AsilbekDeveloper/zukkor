@@ -83,7 +83,8 @@
     "addButton": "Add",
     "requestedLabel": "Requested",
     "noUsersFound": "No users found",
-    "codeCopied": "Code copied"
+    "codeCopied": "Code copied",
+    "shareMessage(param=code)": "Compete with me on Zukkor! My invite code: $code"
   },
   "friendRequests": {
     "title": "Friend requests",

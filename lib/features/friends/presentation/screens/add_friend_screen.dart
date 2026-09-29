@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
@@ -14,6 +15,7 @@ import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/invite_code_card.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../../auth/presentation/controllers/current_user_controller.dart';
 import '../../domain/entities/discovered_user.dart';
 import '../controllers/send_friend_request_controller.dart';
 import '../controllers/user_search_controller.dart';
@@ -28,9 +30,10 @@ import '../widgets/share_link_button.dart';
 /// CURRENT STATE: search hits the real `GET /friends/search` (debounced
 /// while typing). "Add" sends a real `POST /friends/requests` and becomes
 /// a disabled "Requested" state — the other user must accept it before
-/// you're actually friends (see [FriendRequestsScreen]). Sharing still
-/// goes through [_comingSoon] and the invite code is a static
-/// placeholder — there's no backend yet to generate a real invite link.
+/// you're actually friends (see [FriendRequestsScreen]). The invite code
+/// shown is the user's REAL `User.referralCode` (2026-09-30 - was a
+/// hardcoded placeholder shown to every single user, found in a
+/// pre-launch audit) and "Share" hands it to the OS share sheet.
 class AddFriendScreen extends ConsumerStatefulWidget {
   const AddFriendScreen({super.key});
 
@@ -39,7 +42,6 @@ class AddFriendScreen extends ConsumerStatefulWidget {
 }
 
 class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
-  static const String _mockInviteCode = 'ZKR-AZ312';
   static const Duration _debounce = Duration(milliseconds: 350);
 
   final TextEditingController _searchController = TextEditingController();
@@ -60,8 +62,9 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
     super.dispose();
   }
 
-  void _comingSoon(BuildContext context) =>
-      context.showSnack(context.t.bottomNav.comingSoon);
+  void _shareInviteCode(BuildContext context, String code) {
+    unawaited(Share.share(context.t.addFriend.shareMessage(code: code)));
+  }
 
   void _goBack(BuildContext context) {
     if (context.canPop()) {
@@ -117,6 +120,9 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
   @override
   Widget build(BuildContext context) {
     final bool isSearching = _query.isNotEmpty;
+    final String? inviteCode = ref.watch(
+      currentUserControllerProvider.select((state) => state.data?.referralCode),
+    );
     final List<DiscoveredUser>? searchResults = ref.watch(
       userSearchControllerProvider,
     );
@@ -187,15 +193,25 @@ class _AddFriendScreenState extends ConsumerState<AddFriendScreen> {
                 AppSpacing.sm.vGap,
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 120),
-                  child: InviteCodeCard(
-                    label: context.t.addFriend.yourInviteCode,
-                    code: _mockInviteCode,
-                  ),
+                  // `referralCode` faqat `GET /auth/me` javob berguncha
+                  // `null` - juda qisqa payt (odatda Home allaqachon
+                  // yuklab bo'lgan bo'ladi), shu payt uchun bo'sh joy
+                  // egallovchi ko'rsatiladi.
+                  child: inviteCode == null
+                      ? const ShimmerBox(height: 72)
+                      : InviteCodeCard(
+                          label: context.t.addFriend.yourInviteCode,
+                          code: inviteCode,
+                        ),
                 ),
                 AppSpacing.lg.vGap,
                 FadeSlideIn(
                   delay: const Duration(milliseconds: 180),
-                  child: ShareLinkButton(onTap: () => _comingSoon(context)),
+                  child: ShareLinkButton(
+                    onTap: inviteCode == null
+                        ? null
+                        : () => _shareInviteCode(context, inviteCode),
+                  ),
                 ),
               ],
             ],

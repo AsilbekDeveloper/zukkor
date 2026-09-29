@@ -246,6 +246,7 @@ class _Translations$addFriend$uz implements Translations$addFriend$en {
 	@override String get requestedLabel => 'So\'rov yuborildi';
 	@override String get noUsersFound => 'Foydalanuvchilar topilmadi';
 	@override String get codeCopied => 'Kod nusxalandi';
+	@override String shareMessage({required Object code}) => 'Zukkor\'da men bilan bilim bo\'yicha musobaqalash! Taklif kodim: ${code}';
 }
 
 // Path: friendRequests
@@ -1095,6 +1096,7 @@ extension on TranslationsUz {
 			'addFriend.requestedLabel' => 'So\'rov yuborildi',
 			'addFriend.noUsersFound' => 'Foydalanuvchilar topilmadi',
 			'addFriend.codeCopied' => 'Kod nusxalandi',
+			'addFriend.shareMessage' => ({required Object code}) => 'Zukkor\'da men bilan bilim bo\'yicha musobaqalash! Taklif kodim: ${code}',
 			'friendRequests.title' => 'Do\'stlik so\'rovlari',
 			'friendRequests.emptyState' => 'Hozircha so\'rovlar yo\'q',
 			'duelPick.title' => '1v1 Duel',

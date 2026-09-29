@@ -252,6 +252,7 @@ class _Translations$addFriend$ru implements Translations$addFriend$en {
 	@override String get requestedLabel => 'Запрос отправлен';
 	@override String get noUsersFound => 'Пользователи не найдены';
 	@override String get codeCopied => 'Код скопирован';
+	@override String shareMessage({required Object code}) => 'Соревнуйся со мной в Zukkor! Мой код приглашения: ${code}';
 }
 
 // Path: friendRequests
@@ -1101,6 +1102,7 @@ extension on TranslationsRu {
 			'addFriend.requestedLabel' => 'Запрос отправлен',
 			'addFriend.noUsersFound' => 'Пользователи не найдены',
 			'addFriend.codeCopied' => 'Код скопирован',
+			'addFriend.shareMessage' => ({required Object code}) => 'Соревнуйся со мной в Zukkor! Мой код приглашения: ${code}',
 			'friendRequests.title' => 'Запросы в друзья',
 			'friendRequests.emptyState' => 'Пока нет запросов',
 			'duelPick.title' => 'Дуэль 1×1',

@@ -50,9 +50,7 @@ import '../widgets/stats_strip.dart';
 /// to the Categories/quiz flow; "Create a room" and "Join with a code"
 /// go to the Lobby flow; the bell opens Notifications, which marks
 /// everything read on open — the dot here reflects that live, shared
-/// state (see [NotificationsController]), not a local flag. Every other
-/// action without a real destination yet (the Home tab itself) goes
-/// through [_comingSoon].
+/// state (see [NotificationsController]), not a local flag.
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 

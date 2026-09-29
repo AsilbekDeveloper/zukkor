@@ -16,12 +16,66 @@ import 'package:zukkor/features/friends/domain/entities/friend.dart';
 import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
 import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
 import 'package:zukkor/features/friends/presentation/screens/friend_requests_screen.dart';
+import 'package:zukkor/features/history/data/repositories/history_repository_impl.dart';
+import 'package:zukkor/features/history/domain/entities/session_history_entry.dart';
+import 'package:zukkor/features/history/domain/entities/weekly_activity.dart';
+import 'package:zukkor/features/history/domain/repositories/history_repository.dart';
+import 'package:zukkor/features/history/presentation/screens/history_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
+import 'package:zukkor/features/leaderboard/data/repositories/leaderboard_repository_impl.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_data.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/rank_entry.dart';
+import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
+import 'package:zukkor/features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import 'package:zukkor/features/notifications/data/repositories/notifications_repository_impl.dart';
 import 'package:zukkor/features/notifications/domain/entities/notification_record.dart';
 import 'package:zukkor/features/notifications/domain/repositories/notifications_repository.dart';
 import 'package:zukkor/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:zukkor/i18n/strings.g.dart';
+
+/// `duel_challenge`/`top50` bildirishnomalarini bosish endi mos ekranga
+/// o'tkazadi (2026-09-30, pre-launch audit topilmasi - avval ikkalasi
+/// ham "coming soon" degan o'lik tugma edi) - shu ekranlar (History,
+/// Full Leaderboard) o'z repository'lariga muhtoj, shuning uchun bu
+/// ikkita soxta implementatsiya kerak bo'ldi.
+class _FakeHistoryRepository implements HistoryRepository {
+  @override
+  Future<({List<SessionHistoryEntry> entries, bool hasMore})> getHistory({
+    int limit = 50,
+    int offset = 0,
+  }) async => (entries: <SessionHistoryEntry>[], hasMore: false);
+
+  @override
+  Future<WeeklyActivity> getWeeklyActivity() async =>
+      const WeeklyActivity(days: [false, false, false, false, false, false, false]);
+}
+
+class _FakeLeaderboardRepository implements LeaderboardRepository {
+  @override
+  Future<LeaderboardData> getLeaderboard({
+    int limit = 50,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async => const LeaderboardData(
+        entries: [],
+        me: RankEntry(
+          userId: 'me',
+          rank: 1,
+          username: 'me',
+          firstName: 'Men',
+          lastName: null,
+          avatarColor: 'a-coral',
+          avatarImagePath: null,
+          totalXp: 0,
+          isMe: true,
+        ),
+      );
+
+  @override
+  Future<PlayerStats> getPlayerStats(String userId) => throw UnimplementedError();
+}
 
 /// Backendga murojaat qilmaydigan soxta notifications repository — real
 /// `GET /notifications` javobiga mos, 5 ta namunali yozuv (3 tasi
@@ -113,6 +167,8 @@ Future<({GoRouter router, _FakeNotificationsRepository repository})> _pumpNotifi
       GoRoute(path: AppRoutes.home, builder: (context, state) => const HomeScreen()),
       GoRoute(path: AppRoutes.notifications, builder: (context, state) => const NotificationsScreen()),
       GoRoute(path: AppRoutes.friendRequests, builder: (context, state) => const FriendRequestsScreen()),
+      GoRoute(path: AppRoutes.history, builder: (context, state) => const HistoryScreen()),
+      GoRoute(path: AppRoutes.fullLeaderboard, builder: (context, state) => const FullLeaderboardScreen()),
     ],
   );
 
@@ -122,6 +178,8 @@ Future<({GoRouter router, _FakeNotificationsRepository repository})> _pumpNotifi
         sharedPreferencesProvider.overrideWithValue(prefs),
         notificationsRepositoryProvider.overrideWithValue(repository),
         friendsRepositoryProvider.overrideWithValue(_FakeFriendsRepository()),
+        historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository()),
+        leaderboardRepositoryProvider.overrideWithValue(_FakeLeaderboardRepository()),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
@@ -159,16 +217,40 @@ void main() {
     expect(result.repository.markAllReadCalled, isTrue);
   });
 
-  testWidgets('tapping a non-friend-request row shows a coming-soon snackbar', (tester) async {
+  testWidgets('tapping a duel_challenge row opens game history', (tester) async {
+    // A LIVE incoming duel challenge never opens from this list — it
+    // arrives over the duel WebSocket instead (see home_screen_test).
+    // A row here is always a past, already-resolved one.
     await _pumpNotifications(tester);
 
-    // A real incoming duel challenge no longer opens from this list — it
-    // arrives live over the duel WebSocket instead (see home_screen_test).
     await tester.tap(find.text(AppStrings.notifDuelChallenge('Malika')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pumpAndSettle();
 
-    expect(find.text(AppStrings.comingSoon), findsOneWidget);
+    expect(find.byType(HistoryScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tapping a top50 row opens the full leaderboard', (tester) async {
+    await _pumpNotifications(tester);
+
+    await tester.tap(find.text(AppStrings.notifTop50));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FullLeaderboardScreen), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tapping a streak_reminder or welcome row returns to Home', (
+    tester,
+  ) async {
+    await _pumpNotifications(tester);
+
+    await tester.tap(find.text(AppStrings.notifStreakReminder));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(NotificationsScreen), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('tapping a friend-request row opens Friend Requests', (tester) async {

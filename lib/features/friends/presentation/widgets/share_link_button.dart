@@ -10,19 +10,24 @@ import '../../../../i18n/strings.g.dart';
 class ShareLinkButton extends StatelessWidget {
   const ShareLinkButton({required this.onTap, super.key});
 
-  final VoidCallback onTap;
+  /// `null` bo'lsa tugma o'chirilgan (masalan taklif kodi hali
+  /// yuklanmagan) - `PressableScale`/`InkWell` avtomatik xiralashadi.
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return PressableScale(
+      enabled: onTap != null,
       child: Material(
         color: context.colors.surfaceDark,
         borderRadius: AppRadius.smAll,
         child: InkWell(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            onTap();
-          },
+          onTap: onTap == null
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  onTap!();
+                },
           borderRadius: AppRadius.smAll,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
