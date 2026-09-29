@@ -1,9 +1,24 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("com.google.gms.google-services")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// 2026-09-29, Play Console tayyorgarligi - `key.properties` (git'ga
+// KIRMAYDI, `android/.gitignore`da) haqiqiy release keystore ma'lumotlarini
+// saqlaydi. Fayl topilmasa (masalan CI/boshqa dasturchi kompyuterida)
+// bo'sh Properties bilan davom etadi - shunda pastdagi signingConfig
+// debug'ga tushib qoladi, build umuman qulamaydi (faqat Play Console'ga
+// yaroqsiz bo'ladi, buni build vaqtida ko'rish mumkin).
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -34,11 +49,29 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // `key.properties` mavjud bo'lsa haqiqiy release kalit bilan
+            // imzolanadi (Play Console'ga yuklash uchun shart), aks holda
+            // debug kalitga qaytadi - shunda `flutter run --release` hali
+            // ham ishlayveradi (masalan `key.properties`ga ega bo'lmagan
+            // boshqa dasturchi kompyuterida).
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
 
             // R8 (kod siqish/optimallashtirish/nomlarni xiralashtirish) va
             // resurslarni siqish - avval o'chirilgan edi (2026-09-13
