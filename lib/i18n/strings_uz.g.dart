@@ -805,10 +805,10 @@ class _Translations$export$uz implements Translations$export$en {
 
 	// Translations
 	@override String get title => 'Eksport';
+	@override String get subtitle => 'Yaratgan quizlaringizni bosma test sifatida PDF yoki Word formatida yuklab oling';
 	@override String get formatPdf => 'PDF';
 	@override String get formatDocx => 'Word (.docx)';
-	@override String get formatXlsxComingSoon => 'Excel (tez orada)';
-	@override String get formatComingSoonMessage => 'Bu format tez orada qo\'shiladi';
+	@override String costPerExport({required Object cost}) => 'Har bir eksport: ${cost} 💎';
 	@override String get emptyQuizzes => 'Hali eksport qilinadigan quizingiz yo\'q';
 	@override String generatingDialog({required Object name}) => '"${name}" tayyorlanmoqda...';
 }
@@ -1348,10 +1348,10 @@ extension on TranslationsUz {
 			'errors.sessionExpired' => 'Sessiyangiz muddati tugadi. Qaytadan tizimga kiring.',
 			'errors.googleCancelled' => 'Google orqali kirish bekor qilindi.',
 			'export.title' => 'Eksport',
+			'export.subtitle' => 'Yaratgan quizlaringizni bosma test sifatida PDF yoki Word formatida yuklab oling',
 			'export.formatPdf' => 'PDF',
 			'export.formatDocx' => 'Word (.docx)',
-			'export.formatXlsxComingSoon' => 'Excel (tez orada)',
-			'export.formatComingSoonMessage' => 'Bu format tez orada qo\'shiladi',
+			'export.costPerExport' => ({required Object cost}) => 'Har bir eksport: ${cost} 💎',
 			'export.emptyQuizzes' => 'Hali eksport qilinadigan quizingiz yo\'q',
 			'export.generatingDialog' => ({required Object name}) => '"${name}" tayyorlanmoqda...',
 			'aiQuiz.entryCardLabel' => 'AI orqali hujjatdan quiz yaratish',

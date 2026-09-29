@@ -17,6 +17,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
 import '../../../../i18n/strings.g.dart';
@@ -25,26 +26,28 @@ import '../../../ai_quiz/presentation/controllers/ai_quiz_controller.dart';
 import '../../../quiz/data/repositories/quiz_repository_impl.dart';
 import '../../../quiz/domain/repositories/quiz_repository.dart';
 
-/// Faqat PDF ishlaydi hozircha - Word/Excel keyinroq qo'shiladi (dropdown
-/// ularni ham ko'rsatadi, lekin "tez orada" bilan o'chirilgan holatda,
-/// tanlansa eksport ishga tushmaydi).
-enum _ExportFormat { pdf, docx, xlsx }
+/// Backend'dagi `economy_config.EXPORT_DIAMOND_COST` bilan bir xil qiymat
+/// (2026-09-29, foydalanuvchi qarori: qat'iy narx, savollar soniga
+/// qaramaydi) - qo'shimcha tarmoq so'rovi shart emas deb ATAYLAB
+/// qattiq yozilgan (foydalanuvchi so'rovi). Narx admin panelidan
+/// o'zgartirilsa, bu qiymat ham qo'lda yangilanishi kerak.
+const int _diamondExportCost = 40;
+
+/// 2026-09-29, foydalanuvchi qarori: Excel butunlay olib tashlandi (chop
+/// etiladigan test qog'ozi uchun tabiiy format emas edi) - endi faqat
+/// PDF va Word, ikkalasi ham har doim ishlaydi.
+enum _ExportFormat { pdf, docx }
 
 extension on _ExportFormat {
-  bool get isAvailable => this == _ExportFormat.pdf || this == _ExportFormat.docx;
-
   String get fileExtension => switch (this) {
     _ExportFormat.pdf => 'pdf',
     _ExportFormat.docx => 'docx',
-    _ExportFormat.xlsx => 'xlsx',
   };
 
   String get mimeType => switch (this) {
     _ExportFormat.pdf => 'application/pdf',
     _ExportFormat.docx =>
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    _ExportFormat.xlsx =>
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   };
 }
 
@@ -85,15 +88,9 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
   String _formatLabel(_ExportFormat format) => switch (format) {
     _ExportFormat.pdf => context.t.export.formatPdf,
     _ExportFormat.docx => context.t.export.formatDocx,
-    _ExportFormat.xlsx => context.t.export.formatXlsxComingSoon,
   };
 
   Future<void> _exportQuiz(AiQuiz quiz) async {
-    if (!_format.isAvailable) {
-      context.showSnack(context.t.export.formatComingSoonMessage);
-      return;
-    }
-
     unawaited(
       showDialog<void>(
         context: context,
@@ -127,45 +124,12 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
     }
   }
 
-  Widget _formatDropdown(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-      decoration: BoxDecoration(
-        color: context.colors.card,
-        borderRadius: AppRadius.smAll,
-        border: Border.all(color: context.colors.line),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<_ExportFormat>(
-          value: _format,
-          isExpanded: true,
-          icon: Icon(
-            TablerIcons.chevronDown,
-            color: context.colors.muted,
-            size: 18,
-          ),
-          items: _ExportFormat.values
-              .map(
-                (format) => DropdownMenuItem(
-                  value: format,
-                  child: Text(
-                    _formatLabel(format),
-                    style: context.textStyles.bodyMedium?.copyWith(
-                      color: format.isAvailable
-                          ? context.colors.ink
-                          : context.colors.muted,
-                    ),
-                  ),
-                ),
-              )
-              .toList(),
-          onChanged: (value) {
-            if (value == null) return;
-            HapticFeedback.selectionClick();
-            setState(() => _format = value);
-          },
-        ),
-      ),
+  Widget _formatSelector(BuildContext context) {
+    return PillSegmentControl<_ExportFormat>(
+      values: _ExportFormat.values,
+      selected: _format,
+      labelBuilder: _formatLabel,
+      onChanged: (format) => setState(() => _format = format),
     );
   }
 
@@ -188,10 +152,30 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
                   onBack: _goBack,
                 ),
               ),
+              AppSpacing.sm.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 40),
+                child: Text(
+                  context.t.export.subtitle,
+                  style: context.textStyles.bodyMedium?.copyWith(
+                    color: context.colors.muted,
+                  ),
+                ),
+              ),
               AppSpacing.lg.vGap,
               FadeSlideIn(
                 delay: const Duration(milliseconds: 60),
-                child: _formatDropdown(context),
+                child: _formatSelector(context),
+              ),
+              AppSpacing.xs.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 80),
+                child: Text(
+                  context.t.export.costPerExport(cost: _diamondExportCost),
+                  style: context.textStyles.bodySmall?.copyWith(
+                    color: context.colors.muted,
+                  ),
+                ),
               ),
               AppSpacing.lg.vGap,
               Expanded(

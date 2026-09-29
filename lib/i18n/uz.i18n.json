@@ -405,10 +405,10 @@
   },
   "export": {
     "title": "Eksport",
+    "subtitle": "Yaratgan quizlaringizni bosma test sifatida PDF yoki Word formatida yuklab oling",
     "formatPdf": "PDF",
     "formatDocx": "Word (.docx)",
-    "formatXlsxComingSoon": "Excel (tez orada)",
-    "formatComingSoonMessage": "Bu format tez orada qo'shiladi",
+    "costPerExport(param=cost)": "Har bir eksport: $cost 💎",
     "emptyQuizzes": "Hali eksport qilinadigan quizingiz yo'q",
     "generatingDialog(param=name)": "\"$name\" tayyorlanmoqda..."
   },

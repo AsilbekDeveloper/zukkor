@@ -420,10 +420,10 @@
   },
   "export": {
     "title": "Экспорт",
+    "subtitle": "Скачайте свои викторины в виде печатного теста - в формате PDF или Word",
     "formatPdf": "PDF",
     "formatDocx": "Word (.docx)",
-    "formatXlsxComingSoon": "Excel (скоро)",
-    "formatComingSoonMessage": "Этот формат появится позже",
+    "costPerExport(param=cost)": "Каждый экспорт: $cost 💎",
     "emptyQuizzes": "Пока нет викторин для экспорта",
     "generatingDialog(param=name)": "Готовится «$name»..."
   },

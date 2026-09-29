@@ -132,6 +132,7 @@ void main() {
     expect(find.text('Tarix testi'), findsOneWidget);
     expect(find.text('Matematika testi'), findsOneWidget);
     expect(find.text(t.export.formatPdf), findsOneWidget);
+    expect(find.text(t.export.costPerExport(cost: 40)), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

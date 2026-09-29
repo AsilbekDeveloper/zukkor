@@ -811,10 +811,10 @@ class _Translations$export$ru implements Translations$export$en {
 
 	// Translations
 	@override String get title => 'Экспорт';
+	@override String get subtitle => 'Скачайте свои викторины в виде печатного теста - в формате PDF или Word';
 	@override String get formatPdf => 'PDF';
 	@override String get formatDocx => 'Word (.docx)';
-	@override String get formatXlsxComingSoon => 'Excel (скоро)';
-	@override String get formatComingSoonMessage => 'Этот формат появится позже';
+	@override String costPerExport({required Object cost}) => 'Каждый экспорт: ${cost} 💎';
 	@override String get emptyQuizzes => 'Пока нет викторин для экспорта';
 	@override String generatingDialog({required Object name}) => 'Готовится «${name}»...';
 }
@@ -1354,10 +1354,10 @@ extension on TranslationsRu {
 			'errors.sessionExpired' => 'Сессия истекла. Пожалуйста, войдите снова.',
 			'errors.googleCancelled' => 'Вход через Google отменён.',
 			'export.title' => 'Экспорт',
+			'export.subtitle' => 'Скачайте свои викторины в виде печатного теста - в формате PDF или Word',
 			'export.formatPdf' => 'PDF',
 			'export.formatDocx' => 'Word (.docx)',
-			'export.formatXlsxComingSoon' => 'Excel (скоро)',
-			'export.formatComingSoonMessage' => 'Этот формат появится позже',
+			'export.costPerExport' => ({required Object cost}) => 'Каждый экспорт: ${cost} 💎',
 			'export.emptyQuizzes' => 'Пока нет викторин для экспорта',
 			'export.generatingDialog' => ({required Object name}) => 'Готовится «${name}»...',
 			'aiQuiz.entryCardLabel' => 'Создать викторину из документа с помощью AI',

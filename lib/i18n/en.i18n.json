@@ -405,10 +405,10 @@
   },
   "export": {
     "title": "Export",
+    "subtitle": "Download your quizzes as a printable test in PDF or Word format",
     "formatPdf": "PDF",
     "formatDocx": "Word (.docx)",
-    "formatXlsxComingSoon": "Excel (coming soon)",
-    "formatComingSoonMessage": "This format is coming soon",
+    "costPerExport(param=cost)": "Each export costs $cost 💎",
     "emptyQuizzes": "You don't have any quizzes to export yet",
     "generatingDialog(param=name)": "Preparing \"$name\"..."
   },

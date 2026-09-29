@@ -1451,17 +1451,17 @@ class Translations$export$en {
 	/// en: 'Export'
 	String get title => 'Export';
 
+	/// en: 'Download your quizzes as a printable test in PDF or Word format'
+	String get subtitle => 'Download your quizzes as a printable test in PDF or Word format';
+
 	/// en: 'PDF'
 	String get formatPdf => 'PDF';
 
 	/// en: 'Word (.docx)'
 	String get formatDocx => 'Word (.docx)';
 
-	/// en: 'Excel (coming soon)'
-	String get formatXlsxComingSoon => 'Excel (coming soon)';
-
-	/// en: 'This format is coming soon'
-	String get formatComingSoonMessage => 'This format is coming soon';
+	/// en: 'Each export costs $cost 💎'
+	String costPerExport({required Object cost}) => 'Each export costs ${cost} 💎';
 
 	/// en: 'You don't have any quizzes to export yet'
 	String get emptyQuizzes => 'You don\'t have any quizzes to export yet';
@@ -2273,10 +2273,10 @@ extension on Translations {
 			'errors.sessionExpired' => 'Your session has expired. Please sign in again.',
 			'errors.googleCancelled' => 'Google sign-in was cancelled.',
 			'export.title' => 'Export',
+			'export.subtitle' => 'Download your quizzes as a printable test in PDF or Word format',
 			'export.formatPdf' => 'PDF',
 			'export.formatDocx' => 'Word (.docx)',
-			'export.formatXlsxComingSoon' => 'Excel (coming soon)',
-			'export.formatComingSoonMessage' => 'This format is coming soon',
+			'export.costPerExport' => ({required Object cost}) => 'Each export costs ${cost} 💎',
 			'export.emptyQuizzes' => 'You don\'t have any quizzes to export yet',
 			'export.generatingDialog' => ({required Object name}) => 'Preparing "${name}"...',
 			'aiQuiz.entryCardLabel' => 'Create a quiz from a document with AI',
