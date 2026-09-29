@@ -26,4 +26,8 @@ abstract interface class QuizRepository {
   /// Diamond bilan to'lanadi; balans yetarli bo'lmasa `ValidationFailure`
   /// (402) ko'taradi.
   Future<List<int>> exportQuizPdf(int categoryId);
+
+  /// `GET /quiz/{category_id}/export/docx` — [exportQuizPdf]ning Word
+  /// (.docx) varianti, narxi bir xil.
+  Future<List<int>> exportQuizDocx(int categoryId);
 }

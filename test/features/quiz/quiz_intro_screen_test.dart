@@ -68,6 +68,9 @@ class _FakeQuizRepository implements QuizRepository {
 
   @override
   Future<List<int>> exportQuizPdf(int categoryId) => throw UnimplementedError();
+
+  @override
+  Future<List<int>> exportQuizDocx(int categoryId) => throw UnimplementedError();
 }
 
 Future<void> _pumpIntro(WidgetTester tester, {Size size = const Size(390, 844)}) async {

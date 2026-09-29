@@ -62,6 +62,9 @@ class _FakeQuizRepository extends Fake implements QuizRepository {
   @override
   Future<List<int>> exportQuizPdf(int categoryId) =>
       _exportCompleter?.future ?? Future.error(UnimplementedError());
+
+  @override
+  Future<List<int>> exportQuizDocx(int categoryId) => throw UnimplementedError();
 }
 
 Future<void> _pumpExportScreen(

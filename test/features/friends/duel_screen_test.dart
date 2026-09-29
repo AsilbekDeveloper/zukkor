@@ -53,6 +53,9 @@ class _FakeQuizRepository implements QuizRepository {
 
   @override
   Future<List<int>> exportQuizPdf(int categoryId) => throw UnimplementedError();
+
+  @override
+  Future<List<int>> exportQuizDocx(int categoryId) => throw UnimplementedError();
 }
 
 /// Backendga murojaat qilmaydigan soxta friends repository — real

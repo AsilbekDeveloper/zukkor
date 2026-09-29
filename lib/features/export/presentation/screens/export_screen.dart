@@ -23,6 +23,7 @@ import '../../../../i18n/strings.g.dart';
 import '../../../ai_quiz/domain/entities/ai_quiz.dart';
 import '../../../ai_quiz/presentation/controllers/ai_quiz_controller.dart';
 import '../../../quiz/data/repositories/quiz_repository_impl.dart';
+import '../../../quiz/domain/repositories/quiz_repository.dart';
 
 /// Faqat PDF ishlaydi hozircha - Word/Excel keyinroq qo'shiladi (dropdown
 /// ularni ham ko'rsatadi, lekin "tez orada" bilan o'chirilgan holatda,
@@ -30,7 +31,21 @@ import '../../../quiz/data/repositories/quiz_repository_impl.dart';
 enum _ExportFormat { pdf, docx, xlsx }
 
 extension on _ExportFormat {
-  bool get isAvailable => this == _ExportFormat.pdf;
+  bool get isAvailable => this == _ExportFormat.pdf || this == _ExportFormat.docx;
+
+  String get fileExtension => switch (this) {
+    _ExportFormat.pdf => 'pdf',
+    _ExportFormat.docx => 'docx',
+    _ExportFormat.xlsx => 'xlsx',
+  };
+
+  String get mimeType => switch (this) {
+    _ExportFormat.pdf => 'application/pdf',
+    _ExportFormat.docx =>
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    _ExportFormat.xlsx =>
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  };
 }
 
 /// Profil → "Eksport" - foydalanuvchining o'zi yaratgan (AI/qo'lda)
@@ -69,7 +84,7 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
 
   String _formatLabel(_ExportFormat format) => switch (format) {
     _ExportFormat.pdf => context.t.export.formatPdf,
-    _ExportFormat.docx => context.t.export.formatDocxComingSoon,
+    _ExportFormat.docx => context.t.export.formatDocx,
     _ExportFormat.xlsx => context.t.export.formatXlsxComingSoon,
   };
 
@@ -88,18 +103,19 @@ class _ExportScreenState extends ConsumerState<ExportScreen> {
     );
 
     try {
-      final List<int> bytes = await ref
-          .read(quizRepositoryProvider)
-          .exportQuizPdf(quiz.id);
+      final QuizRepository repo = ref.read(quizRepositoryProvider);
+      final List<int> bytes = _format == _ExportFormat.docx
+          ? await repo.exportQuizDocx(quiz.id)
+          : await repo.exportQuizPdf(quiz.id);
       final Directory tempDir = await getTemporaryDirectory();
       final String safeName = quiz.name.replaceAll(RegExp(r'[^\w\s-]'), '').trim();
       final File file = File(
-        '${tempDir.path}/${safeName.isEmpty ? "quiz" : safeName}.pdf',
+        '${tempDir.path}/${safeName.isEmpty ? "quiz" : safeName}.${_format.fileExtension}',
       );
       await file.writeAsBytes(bytes, flush: true);
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();
-      await Share.shareXFiles([XFile(file.path, mimeType: 'application/pdf')]);
+      await Share.shareXFiles([XFile(file.path, mimeType: _format.mimeType)]);
     } on Failure catch (e) {
       if (!mounted) return;
       Navigator.of(context, rootNavigator: true).pop();

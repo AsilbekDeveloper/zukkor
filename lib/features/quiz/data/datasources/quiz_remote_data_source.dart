@@ -66,6 +66,15 @@ class QuizRemoteDataSource {
     );
     return response.data ?? const [];
   }
+
+  /// Xuddi [exportQuizPdf] kabi - narxi bir xil, faqat fayl formati Word.
+  Future<List<int>> exportQuizDocx(int categoryId) async {
+    final Response<List<int>> response = await _dio.get<List<int>>(
+      ApiEndpoints.exportQuizDocx(categoryId),
+      options: Options(responseType: ResponseType.bytes),
+    );
+    return response.data ?? const [];
+  }
 }
 
 final Provider<QuizRemoteDataSource> quizRemoteDataSourceProvider = Provider<QuizRemoteDataSource>(

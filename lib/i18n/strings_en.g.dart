@@ -1454,8 +1454,8 @@ class Translations$export$en {
 	/// en: 'PDF'
 	String get formatPdf => 'PDF';
 
-	/// en: 'Word (coming soon)'
-	String get formatDocxComingSoon => 'Word (coming soon)';
+	/// en: 'Word (.docx)'
+	String get formatDocx => 'Word (.docx)';
 
 	/// en: 'Excel (coming soon)'
 	String get formatXlsxComingSoon => 'Excel (coming soon)';
@@ -2274,7 +2274,7 @@ extension on Translations {
 			'errors.googleCancelled' => 'Google sign-in was cancelled.',
 			'export.title' => 'Export',
 			'export.formatPdf' => 'PDF',
-			'export.formatDocxComingSoon' => 'Word (coming soon)',
+			'export.formatDocx' => 'Word (.docx)',
 			'export.formatXlsxComingSoon' => 'Excel (coming soon)',
 			'export.formatComingSoonMessage' => 'This format is coming soon',
 			'export.emptyQuizzes' => 'You don\'t have any quizzes to export yet',

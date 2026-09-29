@@ -406,7 +406,7 @@
   "export": {
     "title": "Eksport",
     "formatPdf": "PDF",
-    "formatDocxComingSoon": "Word (tez orada)",
+    "formatDocx": "Word (.docx)",
     "formatXlsxComingSoon": "Excel (tez orada)",
     "formatComingSoonMessage": "Bu format tez orada qo'shiladi",
     "emptyQuizzes": "Hali eksport qilinadigan quizingiz yo'q",

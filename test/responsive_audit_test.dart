@@ -490,6 +490,9 @@ class _FakeQuizRepository implements QuizRepository {
   }) => throw UnimplementedError();
   @override
   Future<List<int>> exportQuizPdf(int categoryId) => throw UnimplementedError();
+
+  @override
+  Future<List<int>> exportQuizDocx(int categoryId) => throw UnimplementedError();
 }
 
 class _FakeHistoryRepository implements HistoryRepository {

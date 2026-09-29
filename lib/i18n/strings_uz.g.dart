@@ -806,7 +806,7 @@ class _Translations$export$uz implements Translations$export$en {
 	// Translations
 	@override String get title => 'Eksport';
 	@override String get formatPdf => 'PDF';
-	@override String get formatDocxComingSoon => 'Word (tez orada)';
+	@override String get formatDocx => 'Word (.docx)';
 	@override String get formatXlsxComingSoon => 'Excel (tez orada)';
 	@override String get formatComingSoonMessage => 'Bu format tez orada qo\'shiladi';
 	@override String get emptyQuizzes => 'Hali eksport qilinadigan quizingiz yo\'q';
@@ -1349,7 +1349,7 @@ extension on TranslationsUz {
 			'errors.googleCancelled' => 'Google orqali kirish bekor qilindi.',
 			'export.title' => 'Eksport',
 			'export.formatPdf' => 'PDF',
-			'export.formatDocxComingSoon' => 'Word (tez orada)',
+			'export.formatDocx' => 'Word (.docx)',
 			'export.formatXlsxComingSoon' => 'Excel (tez orada)',
 			'export.formatComingSoonMessage' => 'Bu format tez orada qo\'shiladi',
 			'export.emptyQuizzes' => 'Hali eksport qilinadigan quizingiz yo\'q',

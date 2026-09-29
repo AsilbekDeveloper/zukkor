@@ -36,6 +36,8 @@ abstract final class ApiEndpoints {
 
   static String exportQuizPdf(int categoryId) => '/quiz/$categoryId/export/pdf';
 
+  static String exportQuizDocx(int categoryId) => '/quiz/$categoryId/export/docx';
+
   static String reportQuestion(int questionId) =>
       '/questions/$questionId/report';
 

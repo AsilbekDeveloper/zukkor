@@ -406,7 +406,7 @@
   "export": {
     "title": "Export",
     "formatPdf": "PDF",
-    "formatDocxComingSoon": "Word (coming soon)",
+    "formatDocx": "Word (.docx)",
     "formatXlsxComingSoon": "Excel (coming soon)",
     "formatComingSoonMessage": "This format is coming soon",
     "emptyQuizzes": "You don't have any quizzes to export yet",

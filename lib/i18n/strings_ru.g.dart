@@ -812,7 +812,7 @@ class _Translations$export$ru implements Translations$export$en {
 	// Translations
 	@override String get title => 'Экспорт';
 	@override String get formatPdf => 'PDF';
-	@override String get formatDocxComingSoon => 'Word (скоро)';
+	@override String get formatDocx => 'Word (.docx)';
 	@override String get formatXlsxComingSoon => 'Excel (скоро)';
 	@override String get formatComingSoonMessage => 'Этот формат появится позже';
 	@override String get emptyQuizzes => 'Пока нет викторин для экспорта';
@@ -1355,7 +1355,7 @@ extension on TranslationsRu {
 			'errors.googleCancelled' => 'Вход через Google отменён.',
 			'export.title' => 'Экспорт',
 			'export.formatPdf' => 'PDF',
-			'export.formatDocxComingSoon' => 'Word (скоро)',
+			'export.formatDocx' => 'Word (.docx)',
 			'export.formatXlsxComingSoon' => 'Excel (скоро)',
 			'export.formatComingSoonMessage' => 'Этот формат появится позже',
 			'export.emptyQuizzes' => 'Пока нет викторин для экспорта',
