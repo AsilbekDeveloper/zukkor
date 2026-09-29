@@ -158,8 +158,7 @@
     "increment": "Ko'paytirish",
     "availableCount(param=count)": "$count ta savol mavjud",
     "noQuestionsAvailable": "Bu kategoriyada hali savol yo'q",
-    "startButton": "Quizni boshlash",
-    "exportPdfButton": "PDF sifatida eksport qilish 💎"
+    "startButton": "Quizni boshlash"
   },
   "quizIntro": {
     "startLabel": "Boshlash!"
@@ -403,6 +402,15 @@
     "invalidCredentials": "Email yoki parol noto'g'ri.",
     "sessionExpired": "Sessiyangiz muddati tugadi. Qaytadan tizimga kiring.",
     "googleCancelled": "Google orqali kirish bekor qilindi."
+  },
+  "export": {
+    "title": "Eksport",
+    "formatPdf": "PDF",
+    "formatDocxComingSoon": "Word (tez orada)",
+    "formatXlsxComingSoon": "Excel (tez orada)",
+    "formatComingSoonMessage": "Bu format tez orada qo'shiladi",
+    "emptyQuizzes": "Hali eksport qilinadigan quizingiz yo'q",
+    "generatingDialog(param=name)": "\"$name\" tayyorlanmoqda..."
   },
   "aiQuiz": {
     "entryCardLabel": "AI orqali hujjatdan quiz yaratish",

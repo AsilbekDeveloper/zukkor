@@ -79,6 +79,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$auth$uz auth = _Translations$auth$uz._(_root);
 	@override late final _Translations$authValidation$uz authValidation = _Translations$authValidation$uz._(_root);
 	@override late final _Translations$errors$uz errors = _Translations$errors$uz._(_root);
+	@override late final _Translations$export$uz export = _Translations$export$uz._(_root);
 	@override late final _Translations$aiQuiz$uz aiQuiz = _Translations$aiQuiz$uz._(_root);
 	@override late final _Translations$questionSubmission$uz questionSubmission = _Translations$questionSubmission$uz._(_root);
 	@override late final _Translations$forgotPassword$uz forgotPassword = _Translations$forgotPassword$uz._(_root);
@@ -376,7 +377,6 @@ class _Translations$quizSetup$uz implements Translations$quizSetup$en {
 	@override String availableCount({required Object count}) => '${count} ta savol mavjud';
 	@override String get noQuestionsAvailable => 'Bu kategoriyada hali savol yo\'q';
 	@override String get startButton => 'Quizni boshlash';
-	@override String get exportPdfButton => 'PDF sifatida eksport qilish 💎';
 }
 
 // Path: quizIntro
@@ -797,6 +797,22 @@ class _Translations$errors$uz implements Translations$errors$en {
 	@override String get googleCancelled => 'Google orqali kirish bekor qilindi.';
 }
 
+// Path: export
+class _Translations$export$uz implements Translations$export$en {
+	_Translations$export$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Eksport';
+	@override String get formatPdf => 'PDF';
+	@override String get formatDocxComingSoon => 'Word (tez orada)';
+	@override String get formatXlsxComingSoon => 'Excel (tez orada)';
+	@override String get formatComingSoonMessage => 'Bu format tez orada qo\'shiladi';
+	@override String get emptyQuizzes => 'Hali eksport qilinadigan quizingiz yo\'q';
+	@override String generatingDialog({required Object name}) => '"${name}" tayyorlanmoqda...';
+}
+
 // Path: aiQuiz
 class _Translations$aiQuiz$uz implements Translations$aiQuiz$en {
 	_Translations$aiQuiz$uz._(this._root);
@@ -1138,7 +1154,6 @@ extension on TranslationsUz {
 			'quizSetup.availableCount' => ({required Object count}) => '${count} ta savol mavjud',
 			'quizSetup.noQuestionsAvailable' => 'Bu kategoriyada hali savol yo\'q',
 			'quizSetup.startButton' => 'Quizni boshlash',
-			'quizSetup.exportPdfButton' => 'PDF sifatida eksport qilish 💎',
 			'quizIntro.startLabel' => 'Boshlash!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => '${current}/${total}-savol',
 			'ballReveal.title' => 'Sizning balingiz',
@@ -1332,6 +1347,13 @@ extension on TranslationsUz {
 			'errors.invalidCredentials' => 'Email yoki parol noto\'g\'ri.',
 			'errors.sessionExpired' => 'Sessiyangiz muddati tugadi. Qaytadan tizimga kiring.',
 			'errors.googleCancelled' => 'Google orqali kirish bekor qilindi.',
+			'export.title' => 'Eksport',
+			'export.formatPdf' => 'PDF',
+			'export.formatDocxComingSoon' => 'Word (tez orada)',
+			'export.formatXlsxComingSoon' => 'Excel (tez orada)',
+			'export.formatComingSoonMessage' => 'Bu format tez orada qo\'shiladi',
+			'export.emptyQuizzes' => 'Hali eksport qilinadigan quizingiz yo\'q',
+			'export.generatingDialog' => ({required Object name}) => '"${name}" tayyorlanmoqda...',
 			'aiQuiz.entryCardLabel' => 'AI orqali hujjatdan quiz yaratish',
 			'aiQuiz.myQuizzesTitle' => 'Mening quizlarim',
 			'aiQuiz.createButton' => '+ Yangi AI quiz yaratish',

@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
-import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -20,7 +16,6 @@ import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/pill_segment_control.dart';
 import '../../../../core/widgets/pressable_scale.dart';
 import '../../../../i18n/strings.g.dart';
-import '../../data/repositories/quiz_repository_impl.dart';
 import '../models/quiz_category.dart';
 
 /// Savollar sonini tanlash — tezkor variantlar (5/10/15/20, faqat
@@ -74,41 +69,6 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
   // one tap (2026-09-13 real-device-testing prep audit).
   bool _starting = false;
   Timer? _reenableStartTimer;
-
-  // 2026-09-28: quizni PDF (bosma test) sifatida eksport qilish - Diamond
-  // bilan to'lanadi (server narxni savollar soniga qarab hisoblaydi).
-  // Har doim BUTUN kategoriya eksport qilinadi - yuqoridagi
-  // `_selectedCount` (faqat o'ynash uchun tanlanadigan miqdor) bunga
-  // ta'sir qilmaydi, chalkashtirmaslik uchun ataylab alohida.
-  bool _exporting = false;
-
-  Future<void> _exportPdf() async {
-    if (_exporting) return;
-    setState(() => _exporting = true);
-    try {
-      final List<int> bytes = await ref
-          .read(quizRepositoryProvider)
-          .exportQuizPdf(widget.category.id);
-      final Directory tempDir = await getTemporaryDirectory();
-      final String safeName = widget.category.name
-          .replaceAll(RegExp(r'[^\w\s-]'), '')
-          .trim();
-      final File file = File(
-        '${tempDir.path}/${safeName.isEmpty ? "quiz" : safeName}.pdf',
-      );
-      await file.writeAsBytes(bytes, flush: true);
-      if (!mounted) return;
-      await Share.shareXFiles([XFile(file.path, mimeType: 'application/pdf')]);
-    } on Failure catch (e) {
-      if (!mounted) return;
-      context.showSnack(e.message);
-    } catch (_) {
-      if (!mounted) return;
-      context.showSnack(t.errors.unknown);
-    } finally {
-      if (mounted) setState(() => _exporting = false);
-    }
-  }
 
   // PillSegmentControl already fires its own tap sound + haptic
   // internally - this only updates the selection.
@@ -192,17 +152,6 @@ class _QuizSetupScreenState extends ConsumerState<QuizSetupScreen> {
                   isLoading: _starting,
                 ),
               ),
-              if (_hasQuestions) ...[
-                AppSpacing.sm.vGap,
-                FadeSlideIn(
-                  delay: const Duration(milliseconds: 210),
-                  child: AppButton.secondary(
-                    label: context.t.quizSetup.exportPdfButton,
-                    onPressed: _exporting ? null : _exportPdf,
-                    isLoading: _exporting,
-                  ),
-                ),
-              ],
               AppSpacing.lg.vGap,
             ],
           ),

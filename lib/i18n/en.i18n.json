@@ -158,8 +158,7 @@
     "increment": "Increase",
     "availableCount(param=count)": "$count questions available",
     "noQuestionsAvailable": "No questions in this category yet",
-    "startButton": "Start quiz",
-    "exportPdfButton": "Export as PDF 💎"
+    "startButton": "Start quiz"
   },
   "quizIntro": {
     "startLabel": "Start!"
@@ -403,6 +402,15 @@
     "invalidCredentials": "Incorrect email or password.",
     "sessionExpired": "Your session has expired. Please sign in again.",
     "googleCancelled": "Google sign-in was cancelled."
+  },
+  "export": {
+    "title": "Export",
+    "formatPdf": "PDF",
+    "formatDocxComingSoon": "Word (coming soon)",
+    "formatXlsxComingSoon": "Excel (coming soon)",
+    "formatComingSoonMessage": "This format is coming soon",
+    "emptyQuizzes": "You don't have any quizzes to export yet",
+    "generatingDialog(param=name)": "Preparing \"$name\"..."
   },
   "aiQuiz": {
     "entryCardLabel": "Create a quiz from a document with AI",

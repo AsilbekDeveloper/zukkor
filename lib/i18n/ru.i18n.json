@@ -173,8 +173,7 @@
     "increment": "Увеличить",
     "availableCount(param=count)": "Доступно $count вопросов",
     "noQuestionsAvailable": "В этой категории пока нет вопросов",
-    "startButton": "Начать викторину",
-    "exportPdfButton": "Экспортировать в PDF 💎"
+    "startButton": "Начать викторину"
   },
   "quizIntro": {
     "startLabel": "Старт!"
@@ -418,6 +417,15 @@
     "invalidCredentials": "Неверный email или пароль.",
     "sessionExpired": "Сессия истекла. Пожалуйста, войдите снова.",
     "googleCancelled": "Вход через Google отменён."
+  },
+  "export": {
+    "title": "Экспорт",
+    "formatPdf": "PDF",
+    "formatDocxComingSoon": "Word (скоро)",
+    "formatXlsxComingSoon": "Excel (скоро)",
+    "formatComingSoonMessage": "Этот формат появится позже",
+    "emptyQuizzes": "Пока нет викторин для экспорта",
+    "generatingDialog(param=name)": "Готовится «$name»..."
   },
   "aiQuiz": {
     "entryCardLabel": "Создать викторину из документа с помощью AI",

@@ -82,6 +82,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$auth$en auth = Translations$auth$en._(_root);
 	late final Translations$authValidation$en authValidation = Translations$authValidation$en._(_root);
 	late final Translations$errors$en errors = Translations$errors$en._(_root);
+	late final Translations$export$en export = Translations$export$en._(_root);
 	late final Translations$aiQuiz$en aiQuiz = Translations$aiQuiz$en._(_root);
 	late final Translations$questionSubmission$en questionSubmission = Translations$questionSubmission$en._(_root);
 	late final Translations$forgotPassword$en forgotPassword = Translations$forgotPassword$en._(_root);
@@ -633,9 +634,6 @@ class Translations$quizSetup$en {
 
 	/// en: 'Start quiz'
 	String get startButton => 'Start quiz';
-
-	/// en: 'Export as PDF 💎'
-	String get exportPdfButton => 'Export as PDF 💎';
 }
 
 // Path: quizIntro
@@ -1442,6 +1440,36 @@ class Translations$errors$en {
 	String get googleCancelled => 'Google sign-in was cancelled.';
 }
 
+// Path: export
+class Translations$export$en {
+	Translations$export$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Export'
+	String get title => 'Export';
+
+	/// en: 'PDF'
+	String get formatPdf => 'PDF';
+
+	/// en: 'Word (coming soon)'
+	String get formatDocxComingSoon => 'Word (coming soon)';
+
+	/// en: 'Excel (coming soon)'
+	String get formatXlsxComingSoon => 'Excel (coming soon)';
+
+	/// en: 'This format is coming soon'
+	String get formatComingSoonMessage => 'This format is coming soon';
+
+	/// en: 'You don't have any quizzes to export yet'
+	String get emptyQuizzes => 'You don\'t have any quizzes to export yet';
+
+	/// en: 'Preparing "$name"...'
+	String generatingDialog({required Object name}) => 'Preparing "${name}"...';
+}
+
 // Path: aiQuiz
 class Translations$aiQuiz$en {
 	Translations$aiQuiz$en._(this._root);
@@ -2051,7 +2079,6 @@ extension on Translations {
 			'quizSetup.availableCount' => ({required Object count}) => '${count} questions available',
 			'quizSetup.noQuestionsAvailable' => 'No questions in this category yet',
 			'quizSetup.startButton' => 'Start quiz',
-			'quizSetup.exportPdfButton' => 'Export as PDF 💎',
 			'quizIntro.startLabel' => 'Start!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Question ${current}/${total}',
 			'ballReveal.title' => 'Your points',
@@ -2245,6 +2272,13 @@ extension on Translations {
 			'errors.invalidCredentials' => 'Incorrect email or password.',
 			'errors.sessionExpired' => 'Your session has expired. Please sign in again.',
 			'errors.googleCancelled' => 'Google sign-in was cancelled.',
+			'export.title' => 'Export',
+			'export.formatPdf' => 'PDF',
+			'export.formatDocxComingSoon' => 'Word (coming soon)',
+			'export.formatXlsxComingSoon' => 'Excel (coming soon)',
+			'export.formatComingSoonMessage' => 'This format is coming soon',
+			'export.emptyQuizzes' => 'You don\'t have any quizzes to export yet',
+			'export.generatingDialog' => ({required Object name}) => 'Preparing "${name}"...',
 			'aiQuiz.entryCardLabel' => 'Create a quiz from a document with AI',
 			'aiQuiz.myQuizzesTitle' => 'My quizzes',
 			'aiQuiz.createButton' => '+ Create a new AI quiz',

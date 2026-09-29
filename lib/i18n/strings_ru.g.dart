@@ -79,6 +79,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$auth$ru auth = _Translations$auth$ru._(_root);
 	@override late final _Translations$authValidation$ru authValidation = _Translations$authValidation$ru._(_root);
 	@override late final _Translations$errors$ru errors = _Translations$errors$ru._(_root);
+	@override late final _Translations$export$ru export = _Translations$export$ru._(_root);
 	@override late final _Translations$aiQuiz$ru aiQuiz = _Translations$aiQuiz$ru._(_root);
 	@override late final _Translations$questionSubmission$ru questionSubmission = _Translations$questionSubmission$ru._(_root);
 	@override late final _Translations$forgotPassword$ru forgotPassword = _Translations$forgotPassword$ru._(_root);
@@ -382,7 +383,6 @@ class _Translations$quizSetup$ru implements Translations$quizSetup$en {
 	@override String availableCount({required Object count}) => 'Доступно ${count} вопросов';
 	@override String get noQuestionsAvailable => 'В этой категории пока нет вопросов';
 	@override String get startButton => 'Начать викторину';
-	@override String get exportPdfButton => 'Экспортировать в PDF 💎';
 }
 
 // Path: quizIntro
@@ -803,6 +803,22 @@ class _Translations$errors$ru implements Translations$errors$en {
 	@override String get googleCancelled => 'Вход через Google отменён.';
 }
 
+// Path: export
+class _Translations$export$ru implements Translations$export$en {
+	_Translations$export$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Экспорт';
+	@override String get formatPdf => 'PDF';
+	@override String get formatDocxComingSoon => 'Word (скоро)';
+	@override String get formatXlsxComingSoon => 'Excel (скоро)';
+	@override String get formatComingSoonMessage => 'Этот формат появится позже';
+	@override String get emptyQuizzes => 'Пока нет викторин для экспорта';
+	@override String generatingDialog({required Object name}) => 'Готовится «${name}»...';
+}
+
 // Path: aiQuiz
 class _Translations$aiQuiz$ru implements Translations$aiQuiz$en {
 	_Translations$aiQuiz$ru._(this._root);
@@ -1144,7 +1160,6 @@ extension on TranslationsRu {
 			'quizSetup.availableCount' => ({required Object count}) => 'Доступно ${count} вопросов',
 			'quizSetup.noQuestionsAvailable' => 'В этой категории пока нет вопросов',
 			'quizSetup.startButton' => 'Начать викторину',
-			'quizSetup.exportPdfButton' => 'Экспортировать в PDF 💎',
 			'quizIntro.startLabel' => 'Старт!',
 			'quiz.questionProgress' => ({required Object current, required Object total}) => 'Вопрос ${current} из ${total}',
 			'ballReveal.title' => 'Ваши баллы',
@@ -1338,6 +1353,13 @@ extension on TranslationsRu {
 			'errors.invalidCredentials' => 'Неверный email или пароль.',
 			'errors.sessionExpired' => 'Сессия истекла. Пожалуйста, войдите снова.',
 			'errors.googleCancelled' => 'Вход через Google отменён.',
+			'export.title' => 'Экспорт',
+			'export.formatPdf' => 'PDF',
+			'export.formatDocxComingSoon' => 'Word (скоро)',
+			'export.formatXlsxComingSoon' => 'Excel (скоро)',
+			'export.formatComingSoonMessage' => 'Этот формат появится позже',
+			'export.emptyQuizzes' => 'Пока нет викторин для экспорта',
+			'export.generatingDialog' => ({required Object name}) => 'Готовится «${name}»...',
 			'aiQuiz.entryCardLabel' => 'Создать викторину из документа с помощью AI',
 			'aiQuiz.myQuizzesTitle' => 'Мои викторины',
 			'aiQuiz.createButton' => '+ Создать новую AI-викторину',

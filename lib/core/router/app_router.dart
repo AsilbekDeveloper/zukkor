@@ -16,6 +16,7 @@ import '../../features/duel/domain/entities/duel_invite.dart';
 import '../../features/duel/presentation/models/duel_game_state.dart';
 import '../../features/duel/presentation/screens/duel_game_screen.dart';
 import '../../features/duel/presentation/screens/duel_result_screen.dart';
+import '../../features/export/presentation/screens/export_screen.dart';
 import '../../features/friends/presentation/models/duel_match.dart';
 import '../../features/friends/presentation/models/friend_entry.dart';
 import '../../features/friends/presentation/screens/add_friend_screen.dart';
@@ -226,6 +227,10 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
           }
           return const MyAiQuizzesScreen();
         },
+      ),
+      GoRoute(
+        path: AppRoutes.export,
+        builder: (context, state) => const ExportScreen(),
       ),
       GoRoute(
         path: AppRoutes.generateAiQuiz,
