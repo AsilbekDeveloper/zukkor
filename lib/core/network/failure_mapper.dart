@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../../i18n/strings.g.dart';
@@ -25,7 +27,7 @@ abstract final class FailureMapper {
 
   static Failure _fromResponse(Response<dynamic>? response) {
     final int status = response?.statusCode ?? 0;
-    final dynamic data = response?.data;
+    final dynamic data = _decodeBytesBody(response?.data);
 
     final String? detailMessage = _extractDetailMessage(data);
 
@@ -50,6 +52,22 @@ abstract final class FailureMapper {
       >= 500 => ServerFailure(detailMessage),
       _ => UnknownFailure(),
     };
+  }
+
+  /// `responseType: ResponseType.bytes` bilan yuborilgan so'rovlar (masalan
+  /// quiz eksport - PDF/DOCX baytlarini olish uchun) xato javobini ham
+  /// XOM BAYTLAR (`List<int>`) sifatida qaytaradi, JSON'ga avtomatik
+  /// parse qilinmagan holda - aks holda `_extractDetailMessage` buni
+  /// `Map` emas deb, backend aniq aytgan xabar ("Diamond balansi yetarli
+  /// emas...") o'rniga umumiy "kutilmagan xatolik"ni ko'rsatib qo'yardi
+  /// (2026-09-29, foydalanuvchi real qurilmada topilgan xato).
+  static dynamic _decodeBytesBody(dynamic data) {
+    if (data is! List<int>) return data;
+    try {
+      return jsonDecode(utf8.decode(data));
+    } catch (_) {
+      return data;
+    }
   }
 
   /// `detail` oddiy matn bo'lsa — o'zi xabar; ro'yxat (422 validatsiya

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:zukkor/core/error/failures.dart';
@@ -93,6 +95,20 @@ void main() {
       expect(failure, isA<ValidationFailure>());
       expect(failure.message, 'Diamond balansi yetarli emas');
     });
+
+    test(
+      "402 responseType: bytes (masalan quiz eksport) - xom baytlar ham "
+      "JSON sifatida o'qiladi, umumiy xabarga tushib qolmaydi",
+      () {
+        final List<int> rawBytes = utf8.encode(
+          jsonEncode({'detail': 'Diamond balansi yetarli emas: 40 \u{1f48e} kerak'}),
+        );
+        final Failure failure = FailureMapper.fromDio(_badResponse(402, rawBytes));
+
+        expect(failure, isA<ValidationFailure>());
+        expect(failure.message, 'Diamond balansi yetarli emas: 40 \u{1f48e} kerak');
+      },
+    );
 
     test('500 → ServerFailure', () {
       expect(
