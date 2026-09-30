@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -20,23 +19,20 @@ class GoogleAuthDataSource {
   }
 
   /// Backendga yuboriladigan Firebase ID token — foydalanuvchi hisob
-  /// tanlagichini hech kimni tanlamasdan yopsa `null` (xato emas).
+  /// tanlagichini hech kimni tanlamasdan yopsa `null` (xato emas, bekor
+  /// qilish).
   ///
-  /// TEMP DIAGNOSTIC (2026-09-30): `idToken == null` avval sukut bilan
-  /// bekor qilish (`null`) deb hisoblanardi — bu bekor qilish bilan
-  /// haqiqiy sozlash xatosini (masalan noto'g'ri `serverClientId`) bir-
-  /// biridan ajratmasdi, shuning uchun foydalanuvchiga hech qanday xato
-  /// ko'rinmasdi. Endi aniq log chiqaradi va xato tashlaydi — muammo
-  /// topilgach, bu diagnostika olib tashlanadi.
+  /// `idToken == null` (bekor qilishdan farqli, haqiqiy sozlash xatosi)
+  /// endi xato tashlaydi — avvalgidek sukut bilan `null` qaytarilsa,
+  /// ikkalasi UI'da bir xil "hech narsa bo'lmadi" ko'rinishga ega bo'lib,
+  /// haqiqiy nosozlikni bekor qilishdan ajratib bo'lmasdi.
   Future<String?> signIn() async {
     await _ensureInitialized();
     final String? googleIdToken;
     try {
       final GoogleSignInAccount account = await GoogleSignIn.instance.authenticate();
       googleIdToken = account.authentication.idToken;
-      debugPrint('[ZUKKOR-DIAG] Google account: ${account.email}, idToken null? ${googleIdToken == null}');
     } on GoogleSignInException catch (e) {
-      debugPrint('[ZUKKOR-DIAG] GoogleSignInException code=${e.code} description=${e.description}');
       if (e.code == GoogleSignInExceptionCode.canceled) return null;
       rethrow;
     }
@@ -47,7 +43,6 @@ class GoogleAuthDataSource {
     final UserCredential credential = await FirebaseAuth.instance.signInWithCredential(
       GoogleAuthProvider.credential(idToken: googleIdToken),
     );
-    debugPrint('[ZUKKOR-DIAG] Firebase sign-in ok, uid=${credential.user?.uid}');
     return credential.user?.getIdToken();
   }
 }
