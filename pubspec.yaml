@@ -2,7 +2,7 @@ name: zukkor
 description: "Zukkor — bilim musobaqasi. Real-time multiplayer quiz o'yini."
 publish_to: 'none'
 
-version: 0.1.0+4
+version: 0.1.0+5
 
 environment:
   sdk: ^3.11.0
