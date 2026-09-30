@@ -13,7 +13,6 @@ import 'package:zukkor/features/friends/domain/entities/discovered_user.dart';
 import 'package:zukkor/features/friends/domain/entities/friend.dart';
 import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
 import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
-import 'package:zukkor/features/friends/presentation/screens/add_friend_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/friend_requests_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/friends_screen.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
@@ -222,10 +221,6 @@ Future<GoRouter> _pumpFriends(
       GoRoute(
         path: AppRoutes.friends,
         builder: (context, state) => const FriendsScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.addFriend,
-        builder: (context, state) => const AddFriendScreen(),
       ),
       GoRoute(
         path: AppRoutes.friendRequests,

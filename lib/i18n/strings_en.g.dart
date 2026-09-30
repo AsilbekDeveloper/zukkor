@@ -362,18 +362,6 @@ class Translations$addFriend$en {
 
 	// Translations
 
-	/// en: 'Search by username'
-	String get searchByUsername => 'Search by username';
-
-	/// en: 'Or via invite link'
-	String get orViaInviteLink => 'Or via invite link';
-
-	/// en: 'Your invite code'
-	String get yourInviteCode => 'Your invite code';
-
-	/// en: 'Share the link'
-	String get shareLink => 'Share the link';
-
 	/// en: 'Add'
 	String get addButton => 'Add';
 
@@ -382,12 +370,6 @@ class Translations$addFriend$en {
 
 	/// en: 'No users found'
 	String get noUsersFound => 'No users found';
-
-	/// en: 'Code copied'
-	String get codeCopied => 'Code copied';
-
-	/// en: 'Compete with me on Zukkor! My invite code: $code'
-	String shareMessage({required Object code}) => 'Compete with me on Zukkor! My invite code: ${code}';
 }
 
 // Path: friendRequests
@@ -1204,9 +1186,6 @@ class Translations$bottomNav$en {
 
 	/// en: 'Profile'
 	String get profile => 'Profile';
-
-	/// en: 'Coming soon'
-	String get comingSoon => 'Coming soon';
 }
 
 // Path: onboarding
@@ -2015,15 +1994,9 @@ extension on Translations {
 			'friends.allSection' => 'All friends',
 			'friends.otherUsersSection' => 'Other users',
 			'friends.noneFound' => 'No friends found',
-			'addFriend.searchByUsername' => 'Search by username',
-			'addFriend.orViaInviteLink' => 'Or via invite link',
-			'addFriend.yourInviteCode' => 'Your invite code',
-			'addFriend.shareLink' => 'Share the link',
 			'addFriend.addButton' => 'Add',
 			'addFriend.requestedLabel' => 'Requested',
 			'addFriend.noUsersFound' => 'No users found',
-			'addFriend.codeCopied' => 'Code copied',
-			'addFriend.shareMessage' => ({required Object code}) => 'Compete with me on Zukkor! My invite code: ${code}',
 			'friendRequests.title' => 'Friend requests',
 			'friendRequests.emptyState' => 'No requests yet',
 			'duelPick.title' => '1v1 Duel',
@@ -2212,7 +2185,6 @@ extension on Translations {
 			'bottomNav.leaderboard' => 'Leaderboard',
 			'bottomNav.friends' => 'Friends',
 			'bottomNav.profile' => 'Profile',
-			'bottomNav.comingSoon' => 'Coming soon',
 			'onboarding.stepCount' => 'Step',
 			'onboarding.continueButton' => 'Continue',
 			'onboarding.start' => 'Start',

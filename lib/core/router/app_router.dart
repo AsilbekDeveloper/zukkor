@@ -19,7 +19,6 @@ import '../../features/duel/presentation/screens/duel_result_screen.dart';
 import '../../features/export/presentation/screens/export_screen.dart';
 import '../../features/friends/presentation/models/duel_match.dart';
 import '../../features/friends/presentation/models/friend_entry.dart';
-import '../../features/friends/presentation/screens/add_friend_screen.dart';
 import '../../features/friends/presentation/screens/duel_invite_screen.dart';
 import '../../features/friends/presentation/screens/duel_screen.dart';
 import '../../features/friends/presentation/screens/duel_waiting_screen.dart';
@@ -252,10 +251,6 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.submitQuestion,
         builder: (context, state) => const SubmitQuestionScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.addFriend,
-        builder: (context, state) => const AddFriendScreen(),
       ),
       GoRoute(
         path: AppRoutes.friendRequests,

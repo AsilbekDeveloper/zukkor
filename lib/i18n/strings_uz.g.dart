@@ -238,15 +238,9 @@ class _Translations$addFriend$uz implements Translations$addFriend$en {
 	final TranslationsUz _root; // ignore: unused_field
 
 	// Translations
-	@override String get searchByUsername => 'Foydalanuvchi nomi bo\'yicha qidirish';
-	@override String get orViaInviteLink => 'Yoki taklif havolasi orqali';
-	@override String get yourInviteCode => 'Sizning taklif kodingiz';
-	@override String get shareLink => 'Havolani ulashish';
 	@override String get addButton => 'Qo\'shish';
 	@override String get requestedLabel => 'So\'rov yuborildi';
 	@override String get noUsersFound => 'Foydalanuvchilar topilmadi';
-	@override String get codeCopied => 'Kod nusxalandi';
-	@override String shareMessage({required Object code}) => 'Zukkor\'da men bilan bilim bo\'yicha musobaqalash! Taklif kodim: ${code}';
 }
 
 // Path: friendRequests
@@ -687,7 +681,6 @@ class _Translations$bottomNav$uz implements Translations$bottomNav$en {
 	@override String get leaderboard => 'Reyting';
 	@override String get friends => 'Do\'stlar';
 	@override String get profile => 'Profil';
-	@override String get comingSoon => 'Tez orada';
 }
 
 // Path: onboarding
@@ -1088,15 +1081,9 @@ extension on TranslationsUz {
 			'friends.allSection' => 'Barcha do\'stlar',
 			'friends.otherUsersSection' => 'Boshqa foydalanuvchilar',
 			'friends.noneFound' => 'Do\'stlar topilmadi',
-			'addFriend.searchByUsername' => 'Foydalanuvchi nomi bo\'yicha qidirish',
-			'addFriend.orViaInviteLink' => 'Yoki taklif havolasi orqali',
-			'addFriend.yourInviteCode' => 'Sizning taklif kodingiz',
-			'addFriend.shareLink' => 'Havolani ulashish',
 			'addFriend.addButton' => 'Qo\'shish',
 			'addFriend.requestedLabel' => 'So\'rov yuborildi',
 			'addFriend.noUsersFound' => 'Foydalanuvchilar topilmadi',
-			'addFriend.codeCopied' => 'Kod nusxalandi',
-			'addFriend.shareMessage' => ({required Object code}) => 'Zukkor\'da men bilan bilim bo\'yicha musobaqalash! Taklif kodim: ${code}',
 			'friendRequests.title' => 'Do\'stlik so\'rovlari',
 			'friendRequests.emptyState' => 'Hozircha so\'rovlar yo\'q',
 			'duelPick.title' => '1v1 Duel',
@@ -1285,7 +1272,6 @@ extension on TranslationsUz {
 			'bottomNav.leaderboard' => 'Reyting',
 			'bottomNav.friends' => 'Do\'stlar',
 			'bottomNav.profile' => 'Profil',
-			'bottomNav.comingSoon' => 'Tez orada',
 			'onboarding.stepCount' => 'Bosqich',
 			'onboarding.continueButton' => 'Davom etish',
 			'onboarding.start' => 'Boshlash',

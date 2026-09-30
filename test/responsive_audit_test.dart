@@ -33,7 +33,6 @@ import 'package:zukkor/features/friends/domain/entities/friend_request.dart';
 import 'package:zukkor/features/friends/domain/repositories/friends_repository.dart';
 import 'package:zukkor/features/friends/presentation/models/duel_match.dart';
 import 'package:zukkor/features/friends/presentation/models/friend_entry.dart';
-import 'package:zukkor/features/friends/presentation/screens/add_friend_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_invite_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_screen.dart';
 import 'package:zukkor/features/friends/presentation/screens/duel_waiting_screen.dart';
@@ -185,7 +184,6 @@ final List<_ScreenCase> _screens = [
   ),
   (name: 'Leaderboard', builder: (_) => const LeaderboardScreen()),
   (name: 'Friends', builder: (_) => const FriendsScreen()),
-  (name: 'AddFriend', builder: (_) => const AddFriendScreen()),
   (name: 'FriendRequests', builder: (_) => const FriendRequestsScreen()),
   (name: 'Duel', builder: (_) => const DuelScreen()),
   (name: 'Profile', builder: (_) => const ProfileScreen()),

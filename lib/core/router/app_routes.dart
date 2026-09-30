@@ -11,7 +11,6 @@ abstract final class AppRoutes {
   static const String categories = '/categories';
   static const String leaderboard = '/leaderboard';
   static const String friends = '/friends';
-  static const String addFriend = '/friends/add';
   static const String friendRequests = '/friends/requests';
   static const String duel = '/duel';
   static const String profile = '/profile';

@@ -89,11 +89,7 @@ abstract final class AppStrings {
   static const String otherUsersSectionTitle = 'Other users';
   static const String noFriendsFound = 'No friends found';
 
-  // Add friend screen
-  static const String searchByUsername = 'Search by username';
-  static const String orViaInviteLink = 'Or via invite link';
-  static const String yourInviteCode = 'Your invite code';
-  static const String shareLink = 'Share the link';
+  // Add friend
   static const String addButton = 'Add';
   static const String requestedLabel = 'Requested';
   static const String noUsersFound = 'No users found';
@@ -355,7 +351,6 @@ abstract final class AppStrings {
   static const String navLeaderboard = 'Leaderboard';
   static const String navFriends = 'Friends';
   static const String navProfile = 'Profile';
-  static const String comingSoon = 'Coming soon';
   static const String manualQuizScreenTitle = 'Create a quiz manually';
 
   // Onboarding — 2-step wizard (Zukkor_Profil_Yaratish.docx)

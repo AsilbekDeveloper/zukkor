@@ -76,15 +76,9 @@
     "noneFound": "Do'stlar topilmadi"
   },
   "addFriend": {
-    "searchByUsername": "Foydalanuvchi nomi bo'yicha qidirish",
-    "orViaInviteLink": "Yoki taklif havolasi orqali",
-    "yourInviteCode": "Sizning taklif kodingiz",
-    "shareLink": "Havolani ulashish",
     "addButton": "Qo'shish",
     "requestedLabel": "So'rov yuborildi",
-    "noUsersFound": "Foydalanuvchilar topilmadi",
-    "codeCopied": "Kod nusxalandi",
-    "shareMessage(param=code)": "Zukkor'da men bilan bilim bo'yicha musobaqalash! Taklif kodim: $code"
+    "noUsersFound": "Foydalanuvchilar topilmadi"
   },
   "friendRequests": {
     "title": "Do'stlik so'rovlari",
@@ -328,8 +322,7 @@
     "home": "Bosh sahifa",
     "leaderboard": "Reyting",
     "friends": "Do'stlar",
-    "profile": "Profil",
-    "comingSoon": "Tez orada"
+    "profile": "Profil"
   },
   "onboarding": {
     "stepCount": "Bosqich",

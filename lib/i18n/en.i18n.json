@@ -76,15 +76,9 @@
     "noneFound": "No friends found"
   },
   "addFriend": {
-    "searchByUsername": "Search by username",
-    "orViaInviteLink": "Or via invite link",
-    "yourInviteCode": "Your invite code",
-    "shareLink": "Share the link",
     "addButton": "Add",
     "requestedLabel": "Requested",
-    "noUsersFound": "No users found",
-    "codeCopied": "Code copied",
-    "shareMessage(param=code)": "Compete with me on Zukkor! My invite code: $code"
+    "noUsersFound": "No users found"
   },
   "friendRequests": {
     "title": "Friend requests",
@@ -328,8 +322,7 @@
     "home": "Home",
     "leaderboard": "Leaderboard",
     "friends": "Friends",
-    "profile": "Profile",
-    "comingSoon": "Coming soon"
+    "profile": "Profile"
   },
   "onboarding": {
     "stepCount": "Step",

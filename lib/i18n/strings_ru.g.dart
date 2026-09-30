@@ -244,15 +244,9 @@ class _Translations$addFriend$ru implements Translations$addFriend$en {
 	final TranslationsRu _root; // ignore: unused_field
 
 	// Translations
-	@override String get searchByUsername => 'Поиск по имени пользователя';
-	@override String get orViaInviteLink => 'Или по пригласительной ссылке';
-	@override String get yourInviteCode => 'Ваш код приглашения';
-	@override String get shareLink => 'Поделиться ссылкой';
 	@override String get addButton => 'Добавить';
 	@override String get requestedLabel => 'Запрос отправлен';
 	@override String get noUsersFound => 'Пользователи не найдены';
-	@override String get codeCopied => 'Код скопирован';
-	@override String shareMessage({required Object code}) => 'Соревнуйся со мной в Zukkor! Мой код приглашения: ${code}';
 }
 
 // Path: friendRequests
@@ -693,7 +687,6 @@ class _Translations$bottomNav$ru implements Translations$bottomNav$en {
 	@override String get leaderboard => 'Рейтинг';
 	@override String get friends => 'Друзья';
 	@override String get profile => 'Профиль';
-	@override String get comingSoon => 'Скоро';
 }
 
 // Path: onboarding
@@ -1094,15 +1087,9 @@ extension on TranslationsRu {
 			'friends.allSection' => 'Все друзья',
 			'friends.otherUsersSection' => 'Другие пользователи',
 			'friends.noneFound' => 'Друзья не найдены',
-			'addFriend.searchByUsername' => 'Поиск по имени пользователя',
-			'addFriend.orViaInviteLink' => 'Или по пригласительной ссылке',
-			'addFriend.yourInviteCode' => 'Ваш код приглашения',
-			'addFriend.shareLink' => 'Поделиться ссылкой',
 			'addFriend.addButton' => 'Добавить',
 			'addFriend.requestedLabel' => 'Запрос отправлен',
 			'addFriend.noUsersFound' => 'Пользователи не найдены',
-			'addFriend.codeCopied' => 'Код скопирован',
-			'addFriend.shareMessage' => ({required Object code}) => 'Соревнуйся со мной в Zukkor! Мой код приглашения: ${code}',
 			'friendRequests.title' => 'Запросы в друзья',
 			'friendRequests.emptyState' => 'Пока нет запросов',
 			'duelPick.title' => 'Дуэль 1×1',
@@ -1291,7 +1278,6 @@ extension on TranslationsRu {
 			'bottomNav.leaderboard' => 'Рейтинг',
 			'bottomNav.friends' => 'Друзья',
 			'bottomNav.profile' => 'Профиль',
-			'bottomNav.comingSoon' => 'Скоро',
 			'onboarding.stepCount' => 'Шаг',
 			'onboarding.continueButton' => 'Продолжить',
 			'onboarding.start' => 'Начать',

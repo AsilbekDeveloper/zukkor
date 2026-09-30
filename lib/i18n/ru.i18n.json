@@ -91,15 +91,9 @@
     "noneFound": "Друзья не найдены"
   },
   "addFriend": {
-    "searchByUsername": "Поиск по имени пользователя",
-    "orViaInviteLink": "Или по пригласительной ссылке",
-    "yourInviteCode": "Ваш код приглашения",
-    "shareLink": "Поделиться ссылкой",
     "addButton": "Добавить",
     "requestedLabel": "Запрос отправлен",
-    "noUsersFound": "Пользователи не найдены",
-    "codeCopied": "Код скопирован",
-    "shareMessage(param=code)": "Соревнуйся со мной в Zukkor! Мой код приглашения: $code"
+    "noUsersFound": "Пользователи не найдены"
   },
   "friendRequests": {
     "title": "Запросы в друзья",
@@ -343,8 +337,7 @@
     "home": "Главная",
     "leaderboard": "Рейтинг",
     "friends": "Друзья",
-    "profile": "Профиль",
-    "comingSoon": "Скоро"
+    "profile": "Профиль"
   },
   "onboarding": {
     "stepCount": "Шаг",
