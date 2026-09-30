@@ -14,7 +14,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "555852548477-sdmtc8jjdrmci7s7ji6k8iomnbarreq8.apps.googleusercontent.com",
+          "client_id": "555852548477-hsn25jk1n312p9cbqg16oul103bs5510.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zukkor.app",
+            "certificate_hash": "e21a130cd74353087cb4521b60b128e1a31a8b7f"
+          }
+        },
+        {
+          "client_id": "555852548477-v8d5abfke8th2i29vinrolgtg9jakbt8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zukkor.app",
+            "certificate_hash": "aa0d502247c6223804d3903f6f60b80e256e7abf"
+          }
+        },
+        {
+          "client_id": "555852548477-dua2j5ckbnekll14stvgq2d1500ad8oj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +43,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "555852548477-sdmtc8jjdrmci7s7ji6k8iomnbarreq8.apps.googleusercontent.com",
+              "client_id": "555852548477-dua2j5ckbnekll14stvgq2d1500ad8oj.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

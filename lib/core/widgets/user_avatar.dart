@@ -4,8 +4,10 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 import '../config/app_config.dart';
 
 /// A user's avatar — a real uploaded photo when [avatarImagePath] is set,
-/// otherwise a neutral gray person-silhouette placeholder (Instagram-style,
-/// 2026-09-30 foydalanuvchi so'rovi) instead of [initials]. Used everywhere
+/// otherwise a person-silhouette placeholder (Instagram-style, 2026-09-30
+/// foydalanuvchi so'rovi) instead of [initials], on the user's chosen
+/// [backgroundColor]/[gradient] when given (matching Edit Profile's color
+/// picker preview), or a neutral gray when neither is set. Used everywhere
 /// a real user's avatar appears (Home, Profile, Leaderboard, Friends) so a
 /// photo or the same default shows up consistently across the app instead
 /// of each screen drawing its own placeholder circle.
@@ -70,23 +72,24 @@ class UserAvatar extends StatelessWidget {
     return path.startsWith('/') ? '${AppConfig.apiBaseUrl}$path' : '${AppConfig.apiBaseUrl}/$path';
   }
 
-  static const Color _silhouetteBackground = Color(0xFFDBDBDB);
-  static const Color _silhouetteIcon = Color(0xFFAFAFAF);
+  static const Color _neutralBackground = Color(0xFFDBDBDB);
+  static const Color _neutralIcon = Color(0xFFAFAFAF);
 
   Widget _fallback(BuildContext context, BorderRadius radius) {
+    final bool hasColor = gradient != null || backgroundColor != null;
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         borderRadius: radius,
-        color: gradient == null ? _silhouetteBackground : null,
+        color: gradient == null ? (backgroundColor ?? _neutralBackground) : null,
         gradient: gradient,
       ),
       alignment: Alignment.center,
       child: Icon(
         TablerIcons.userFilled,
         size: size * 0.62,
-        color: _silhouetteIcon,
+        color: hasColor ? Colors.white : _neutralIcon,
       ),
     );
   }
