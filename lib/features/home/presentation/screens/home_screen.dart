@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +14,10 @@ import '../../../../core/notifications/push_notification_service.dart';
 import '../../../../core/responsive/responsive.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/state/game_status_provider.dart';
+import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/widgets/app_bottom_nav_bar.dart' show bottomNavCoachMarkKey;
+import '../../../../core/widgets/coach_mark.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/inline_retry_row.dart';
 import '../../../../core/widgets/pressable_scale.dart';
@@ -59,6 +63,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  // Birinchi-kirish coachmark turi shu tugmalarni nishonga oladi.
+  final GlobalKey _duelKey = GlobalKey();
+  final GlobalKey _multiplayerKey = GlobalKey();
+  final GlobalKey _categoriesKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -94,6 +103,53 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       () => ref.read(weeklyActivityControllerProvider.notifier).load(),
     );
     Future.microtask(_syncPushToken);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowHomeTour());
+  }
+
+  /// Ilovaga birinchi marta kirganda (device-level, bir marta) asosiy
+  /// tugmalarni tushuntiruvchi coachmark tur — 2026-10-01, foydalanuvchi
+  /// so'rovi: "qaysi tugma nima qilishi xuddi boshqa applarga o'xshab"
+  /// ko'rsatilsin.
+  Future<void> _maybeShowHomeTour() async {
+    // `flutter test` shu muhit o'zgaruvchisini o'rnatadi — tur widget
+    // testlarida to'liq ekranli overlay sifatida chiqib, boshqa
+    // testlarning taplarini yutib yubormasligi uchun shu yerda o'chiramiz
+    // (2026-10-01: haqiqiy sinov bunga duch kelgan).
+    if (Platform.environment.containsKey('FLUTTER_TEST')) return;
+    final AppPreferences prefs = ref.read(appPreferencesProvider);
+    if (prefs.hasSeenHomeTour || !mounted) return;
+    // Bottom nav/kartalar birinchi kadrda hali joylashmagan bo'lishi
+    // mumkin — bir kadr kutamiz.
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    if (!mounted) return;
+    final t = context.t.homeTour;
+    CoachMarkController(
+      steps: [
+        CoachMarkStep(
+          targetKey: _duelKey,
+          title: t.duelTitle,
+          description: t.duelDesc,
+        ),
+        CoachMarkStep(
+          targetKey: _multiplayerKey,
+          title: t.multiplayerTitle,
+          description: t.multiplayerDesc,
+        ),
+        CoachMarkStep(
+          targetKey: _categoriesKey,
+          title: t.categoriesTitle,
+          description: t.categoriesDesc,
+        ),
+        CoachMarkStep(
+          targetKey: bottomNavCoachMarkKey,
+          title: t.navTitle,
+          description: t.navDesc,
+        ),
+      ],
+      skipLabel: t.skip,
+      nextLabel: t.next,
+      doneLabel: t.done,
+    ).start(context, onFinished: () => prefs.saveHasSeenHomeTour(true));
   }
 
   /// Categories + current user + my stats, reloaded together - used both
@@ -238,6 +294,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return [
       DuelHeroCard(
+        key: _duelKey,
         streakDays: stats?.currentStreak ?? 0,
         weeklyActivity: weeklyActivityState.data?.days,
         onStartDuel: () => context.push(AppRoutes.duel),
@@ -248,6 +305,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           : StatsStrip(totalXp: stats?.totalXp ?? 0, rank: stats?.rank ?? 0),
       AppSpacing.md.vGap,
       MultiplayerRow(
+        key: _multiplayerKey,
         onCreateRoom: () =>
             context.push(AppRoutes.lobby, extra: LobbyRole.host),
         onJoinWithCode: () => context.push(AppRoutes.joinCode),
@@ -301,6 +359,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ref.read(categoriesControllerProvider.notifier).load(),
             )
           : CategoryScrollRow(
+              key: _categoriesKey,
               categories: categories,
               onSeeAll: () => context.push(AppRoutes.categories),
               onCategoryTap: (category) => context.push(

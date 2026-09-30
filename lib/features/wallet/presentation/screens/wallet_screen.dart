@@ -11,6 +11,7 @@ import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/error_retry_view.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
 import '../../../../core/widgets/shimmer_placeholder.dart';
+import '../../../../core/widgets/telegram_bot_button.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../domain/entities/currency_transaction.dart';
 import '../controllers/wallet_controller.dart';
@@ -89,7 +90,12 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   onBack: () => _goBack(context),
                 ),
               ),
-              AppSpacing.lg.vGap,
+              AppSpacing.md.vGap,
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 30),
+                child: _DiamondPurchaseBanner(),
+              ),
+              AppSpacing.md.vGap,
               Expanded(
                 child: walletState.hasError
                     ? ErrorRetryView(
@@ -143,6 +149,40 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Diamond sotib olish uchun Telegram botga ishora — avval bu ekranda
+/// bot haqida umuman hech narsa aytilmasdi (2026-10-01, foydalanuvchi
+/// so'rovi).
+class _DiamondPurchaseBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: context.colors.teal.withValues(alpha: 0.08),
+        borderRadius: AppRadius.smAll,
+        border: Border.all(color: context.colors.teal.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              context.t.wallet.buyDiamondsHint,
+              style: context.textStyles.bodySmall?.copyWith(
+                color: context.colors.ink2,
+              ),
+            ),
+          ),
+          AppSpacing.sm.hGap,
+          TelegramBotButton(label: context.t.wallet.openBot),
+        ],
       ),
     );
   }

@@ -12,6 +12,7 @@ import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/back_header.dart';
 import '../../../../core/widgets/fade_slide_in.dart';
+import '../../../../core/widgets/telegram_bot_button.dart';
 import '../../../../i18n/strings.g.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../auth/presentation/controllers/current_user_controller.dart';
@@ -109,6 +110,16 @@ class _TelegramLinkScreenState extends ConsumerState<TelegramLinkScreen> {
                     context.t.telegramLink.description,
                     style: context.textStyles.bodySmall?.copyWith(
                       color: context.colors.muted,
+                    ),
+                  ),
+                ),
+                AppSpacing.sm.vGap,
+                FadeSlideIn(
+                  delay: const Duration(milliseconds: 80),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: TelegramBotButton(
+                      label: context.t.telegramLink.openBot,
                     ),
                   ),
                 ),

@@ -10,6 +10,13 @@ import '../theme/app_spacing.dart';
 /// through [onTabTap]/[onPlayTap] as coming-soon stubs until built.
 enum AppTab { home, leaderboard, friends, profile }
 
+/// Home ekranidagi birinchi-kirish coachmark turi pastki panelni shu
+/// global kalit orqali nishonga oladi — [AppBottomNavBar] [MainShell]da
+/// yaratiladi, Home esa alohida widget daraxtida bo'lsa ham, ikkalasi bir
+/// vaqtning o'zida ekranda chizilgani uchun shu kalit orqali topish
+/// (prop-drilling shart emas) eng sodda yechim.
+final GlobalKey bottomNavCoachMarkKey = GlobalKey();
+
 /// Bottom navigation bar shared by every top-level screen — mirrors the
 /// prototype's `.tabbar` (5 items, elevated center "play" button).
 class AppBottomNavBar extends StatelessWidget {

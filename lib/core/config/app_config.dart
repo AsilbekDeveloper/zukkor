@@ -27,4 +27,11 @@ abstract final class AppConfig {
   /// tokenni shu client ID'ga qarshi tekshiradi. Bo'sh bo'lsa Google
   /// Sign-In tugmasi ishlamaydi (hali sozlanmagan).
   static const String googleServerClientId = String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+
+  /// Diamond sotib olish va akkaunt bog'lash uchun ishlatiladigan rasmiy
+  /// Telegram bot. Foydalanuvchiga ko'rsatiladigan har qanday matn/havola
+  /// shu yerga ishora qilishi kerak (2026-10-01 — avval bot nomi hech
+  /// qayerda aytilmagan edi).
+  static const String telegramBotUsername = 'zukkor_bot';
+  static const String telegramBotUrl = 'https://t.me/$telegramBotUsername';
 }

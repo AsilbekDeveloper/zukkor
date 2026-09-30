@@ -35,6 +35,7 @@ class MainShell extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: AppBottomNavBar(
+        key: bottomNavCoachMarkKey,
         current: AppTab.values[navigationShell.currentIndex],
         onTabTap: _onTabTap,
         onPlayTap: () => _onPlayTap(context),

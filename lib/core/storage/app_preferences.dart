@@ -18,6 +18,7 @@ class AppPreferences {
 
   static const String _themeModeKey = 'zukkor.theme_mode';
   static const String _hasSeenIntroductionKey = 'zukkor.has_seen_introduction';
+  static const String _hasSeenHomeTourKey = 'zukkor.has_seen_home_tour';
   static const String _localeCodeKey = 'zukkor.locale_code';
 
   ThemeMode get themeMode {
@@ -38,6 +39,13 @@ class AppPreferences {
 
   Future<void> saveHasSeenIntroduction(bool value) =>
       _prefs.setBool(_hasSeenIntroductionKey, value);
+
+  // Global (device-level) setting — Home ekranidagi asosiy tugmalarni
+  // tushuntiruvchi coachmark tur faqat bir marta ko'rsatiladi.
+  bool get hasSeenHomeTour => _prefs.getBool(_hasSeenHomeTourKey) ?? false;
+
+  Future<void> saveHasSeenHomeTour(bool value) =>
+      _prefs.setBool(_hasSeenHomeTourKey, value);
 
   /// Saqlangan til kodi ('en'/'uz'/'ru').
   String? get localeCode => _prefs.getString(_key(_localeCodeKey));

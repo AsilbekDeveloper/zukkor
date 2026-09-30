@@ -88,6 +88,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$gameLeave$ru gameLeave = _Translations$gameLeave$ru._(_root);
 	@override late final _Translations$wallet$ru wallet = _Translations$wallet$ru._(_root);
 	@override late final _Translations$telegramLink$ru telegramLink = _Translations$telegramLink$ru._(_root);
+	@override late final _Translations$homeTour$ru homeTour = _Translations$homeTour$ru._(_root);
 }
 
 // Path: common
@@ -668,8 +669,10 @@ class _Translations$helpCenter$ru implements Translations$helpCenter$en {
 	@override String get reportAnswer => 'Свяжитесь с нами через этот Центр помощи. Мы небольшая команда, и каждое сообщение помогает нам улучшать Zukkor.';
 	@override String get duelStakeQuestion => 'Почему в дуэли делается ставка Coin?';
 	@override String get duelStakeAnswer => 'При начале дуэли у обоих игроков списывается фиксированная ставка Coin. Победитель получает часть фонда (после налога), а при ничьей ставка полностью возвращается обоим. Это защищает от читерства и искусственного накопления Coin.';
+	@override String get telegramBotQuestion => 'Зачем нужен Telegram-бот Zukkor?';
+	@override String get telegramBotAnswer => '@zukkor_bot - наш официальный Telegram-бот. Через него вы покупаете Diamond и привязываете свой Telegram-аккаунт к аккаунту Zukkor, чтобы раз в день получать бесплатный Diamond. Откройте его через «Настройки → Привязать Telegram» или кнопку на экране Кошелька.';
 	@override String get diamondFreeGetQuestion => 'Как получить Diamond бесплатно?';
-	@override String get diamondFreeGetAnswer => 'Привяжите Telegram-бота и раз в день нажимайте кнопку «Бесплатный Diamond на сегодня». Баланс Diamond никогда не превышает 200.';
+	@override String get diamondFreeGetAnswer => 'Привяжите @zukkor_bot и раз в день нажимайте кнопку «Бесплатный Diamond на сегодня». Баланс Diamond никогда не превышает 200.';
 	@override String get aiLimitQuestion => 'Есть ли лимит на создание вопросов/квизов через AI?';
 	@override String get aiLimitAnswer => 'Да, каждый пользователь может использовать AI-генерацию до 5 раз в день. При достижении лимита нужно подождать до следующего дня.';
 	@override String get appealQuestion => 'AI отклонил мой вопрос/предложение, что делать?';
@@ -988,6 +991,8 @@ class _Translations$wallet$ru implements Translations$wallet$en {
 
 	// Translations
 	@override String get title => 'Кошелёк';
+	@override String get buyDiamondsHint => 'Чтобы купить Diamond, используйте наш Telegram-бот';
+	@override String get openBot => 'Открыть бота';
 	@override String get emptyState => 'Пока нет ни одной операции';
 	@override String get currentBalance => 'Текущий баланс';
 	@override String get reasonDailyLogin => 'Бонус за ежедневный вход';
@@ -1011,12 +1016,33 @@ class _Translations$telegramLink$ru implements Translations$telegramLink$en {
 
 	// Translations
 	@override String get title => 'Привязать Telegram';
-	@override String get description => 'Откройте нашего Telegram-бота и отправьте /start - бот пришлёт 6-значный код. Введите его здесь.';
+	@override String get description => 'Откройте @zukkor_bot и отправьте /start - бот пришлёт 6-значный код. Введите его здесь.';
+	@override String get openBot => 'Открыть @zukkor_bot';
 	@override String get codeLabel => 'Код';
 	@override String get codeHint => '123456';
 	@override String get submit => 'Привязать';
 	@override String get success => 'Успешно привязано!';
 	@override String get alreadyLinked => 'Ваш Telegram-аккаунт привязан ✅';
+}
+
+// Path: homeTour
+class _Translations$homeTour$ru implements Translations$homeTour$en {
+	_Translations$homeTour$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get duelTitle => 'Дуэль';
+	@override String get duelDesc => 'Бросьте вызов другу и сразитесь в реальном времени 1 на 1, чтобы узнать, кто сильнее.';
+	@override String get multiplayerTitle => 'Комната';
+	@override String get multiplayerDesc => 'Создайте комнату, чтобы играть с несколькими друзьями, или присоединитесь по коду.';
+	@override String get categoriesTitle => 'Категории';
+	@override String get categoriesDesc => 'Выберите тему, чтобы сыграть в одиночку - все категории смотрите через «Все».';
+	@override String get navTitle => 'Нижняя панель';
+	@override String get navDesc => 'Главная, Рейтинг, Друзья и Профиль - переключайтесь отсюда. Центральная кнопка быстро создаёт квиз через AI.';
+	@override String get skip => 'Пропустить';
+	@override String get next => 'Далее';
+	@override String get done => 'Понятно';
 }
 
 /// The flat map containing all translations for locale <ru>.
@@ -1268,8 +1294,10 @@ extension on TranslationsRu {
 			'helpCenter.reportAnswer' => 'Свяжитесь с нами через этот Центр помощи. Мы небольшая команда, и каждое сообщение помогает нам улучшать Zukkor.',
 			'helpCenter.duelStakeQuestion' => 'Почему в дуэли делается ставка Coin?',
 			'helpCenter.duelStakeAnswer' => 'При начале дуэли у обоих игроков списывается фиксированная ставка Coin. Победитель получает часть фонда (после налога), а при ничьей ставка полностью возвращается обоим. Это защищает от читерства и искусственного накопления Coin.',
+			'helpCenter.telegramBotQuestion' => 'Зачем нужен Telegram-бот Zukkor?',
+			'helpCenter.telegramBotAnswer' => '@zukkor_bot - наш официальный Telegram-бот. Через него вы покупаете Diamond и привязываете свой Telegram-аккаунт к аккаунту Zukkor, чтобы раз в день получать бесплатный Diamond. Откройте его через «Настройки → Привязать Telegram» или кнопку на экране Кошелька.',
 			'helpCenter.diamondFreeGetQuestion' => 'Как получить Diamond бесплатно?',
-			'helpCenter.diamondFreeGetAnswer' => 'Привяжите Telegram-бота и раз в день нажимайте кнопку «Бесплатный Diamond на сегодня». Баланс Diamond никогда не превышает 200.',
+			'helpCenter.diamondFreeGetAnswer' => 'Привяжите @zukkor_bot и раз в день нажимайте кнопку «Бесплатный Diamond на сегодня». Баланс Diamond никогда не превышает 200.',
 			'helpCenter.aiLimitQuestion' => 'Есть ли лимит на создание вопросов/квизов через AI?',
 			'helpCenter.aiLimitAnswer' => 'Да, каждый пользователь может использовать AI-генерацию до 5 раз в день. При достижении лимита нужно подождать до следующего дня.',
 			'helpCenter.appealQuestion' => 'AI отклонил мой вопрос/предложение, что делать?',
@@ -1462,6 +1490,8 @@ extension on TranslationsRu {
 			'gameLeave.stay' => 'Остаться',
 			'gameLeave.leave' => 'Выйти',
 			'wallet.title' => 'Кошелёк',
+			'wallet.buyDiamondsHint' => 'Чтобы купить Diamond, используйте наш Telegram-бот',
+			'wallet.openBot' => 'Открыть бота',
 			'wallet.emptyState' => 'Пока нет ни одной операции',
 			'wallet.currentBalance' => 'Текущий баланс',
 			'wallet.reasonDailyLogin' => 'Бонус за ежедневный вход',
@@ -1476,12 +1506,24 @@ extension on TranslationsRu {
 			'wallet.reasonStreakFreeze' => 'Заморозка серии',
 			'wallet.reasonOther' => 'Другое',
 			'telegramLink.title' => 'Привязать Telegram',
-			'telegramLink.description' => 'Откройте нашего Telegram-бота и отправьте /start - бот пришлёт 6-значный код. Введите его здесь.',
+			'telegramLink.description' => 'Откройте @zukkor_bot и отправьте /start - бот пришлёт 6-значный код. Введите его здесь.',
+			'telegramLink.openBot' => 'Открыть @zukkor_bot',
 			'telegramLink.codeLabel' => 'Код',
 			'telegramLink.codeHint' => '123456',
 			'telegramLink.submit' => 'Привязать',
 			'telegramLink.success' => 'Успешно привязано!',
 			'telegramLink.alreadyLinked' => 'Ваш Telegram-аккаунт привязан ✅',
+			'homeTour.duelTitle' => 'Дуэль',
+			'homeTour.duelDesc' => 'Бросьте вызов другу и сразитесь в реальном времени 1 на 1, чтобы узнать, кто сильнее.',
+			'homeTour.multiplayerTitle' => 'Комната',
+			'homeTour.multiplayerDesc' => 'Создайте комнату, чтобы играть с несколькими друзьями, или присоединитесь по коду.',
+			'homeTour.categoriesTitle' => 'Категории',
+			'homeTour.categoriesDesc' => 'Выберите тему, чтобы сыграть в одиночку - все категории смотрите через «Все».',
+			'homeTour.navTitle' => 'Нижняя панель',
+			'homeTour.navDesc' => 'Главная, Рейтинг, Друзья и Профиль - переключайтесь отсюда. Центральная кнопка быстро создаёт квиз через AI.',
+			'homeTour.skip' => 'Пропустить',
+			'homeTour.next' => 'Далее',
+			'homeTour.done' => 'Понятно',
 			_ => null,
 		};
 	}

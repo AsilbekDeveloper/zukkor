@@ -311,8 +311,10 @@
     "reportAnswer": "Reach out to us through this Help Center. We are a small team and every report helps us improve Zukkor.",
     "duelStakeQuestion": "Why does a duel stake Coin?",
     "duelStakeAnswer": "When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.",
+    "telegramBotQuestion": "What is the Zukkor Telegram bot for?",
+    "telegramBotAnswer": "@zukkor_bot is our official Telegram bot. Use it to buy Diamonds and link your Telegram account to your Zukkor account so you can claim a free Diamond once a day. Open it from \"Settings → Link Telegram\" or the button on the Wallet screen.",
     "diamondFreeGetQuestion": "How do I get free Diamond?",
-    "diamondFreeGetAnswer": "Link our Telegram bot and tap \"Today's free Diamond\" once a day. Your Diamond balance never exceeds 200.",
+    "diamondFreeGetAnswer": "Link @zukkor_bot and tap \"Today's free Diamond\" once a day. Your Diamond balance never exceeds 200.",
     "aiLimitQuestion": "Is there a limit on AI question/quiz generation?",
     "aiLimitAnswer": "Yes, each user can generate up to 5 AI quizzes per day. Once you hit the limit, you'll need to wait until the next day.",
     "appealQuestion": "The AI rejected my question or submission, what can I do?",
@@ -533,6 +535,8 @@
   },
   "wallet": {
     "title": "Wallet",
+    "buyDiamondsHint": "Use our Telegram bot to buy Diamonds",
+    "openBot": "Open bot",
     "emptyState": "No activity yet",
     "currentBalance": "Current balance",
     "reasonDailyLogin": "Daily login bonus",
@@ -549,11 +553,25 @@
   },
   "telegramLink": {
     "title": "Link Telegram",
-    "description": "Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.",
+    "description": "Open @zukkor_bot and send /start - the bot will give you a 6-digit code. Enter it here.",
+    "openBot": "Open @zukkor_bot",
     "codeLabel": "Code",
     "codeHint": "123456",
     "submit": "Link",
     "success": "Linked successfully!",
     "alreadyLinked": "Your Telegram account is linked ✅"
+  },
+  "homeTour": {
+    "duelTitle": "Duel",
+    "duelDesc": "Challenge a friend to a live 1v1 knowledge match and see who's sharper.",
+    "multiplayerTitle": "Room",
+    "multiplayerDesc": "Create a room to play with several friends, or join one with a code.",
+    "categoriesTitle": "Categories",
+    "categoriesDesc": "Pick a topic to play solo - see every category via \"See all\".",
+    "navTitle": "Bottom bar",
+    "navDesc": "Home, Leaderboard, Friends and Profile live here. The center button opens a quick AI-generated quiz.",
+    "skip": "Skip",
+    "next": "Next",
+    "done": "Got it"
   }
 }

@@ -88,6 +88,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$gameLeave$uz gameLeave = _Translations$gameLeave$uz._(_root);
 	@override late final _Translations$wallet$uz wallet = _Translations$wallet$uz._(_root);
 	@override late final _Translations$telegramLink$uz telegramLink = _Translations$telegramLink$uz._(_root);
+	@override late final _Translations$homeTour$uz homeTour = _Translations$homeTour$uz._(_root);
 }
 
 // Path: common
@@ -662,8 +663,10 @@ class _Translations$helpCenter$uz implements Translations$helpCenter$en {
 	@override String get reportAnswer => 'Shu Yordam markazi orqali biz bilan bog\'laning. Biz kichik jamoamiz va har bir xabar Zukkorni yaxshilashga yordam beradi.';
 	@override String get duelStakeQuestion => 'Duelda nega Coin tikiladi?';
 	@override String get duelStakeAnswer => 'Duel boshlanganda ikkala o\'yinchidan ham belgilangan miqdorda Coin yechiladi. G\'olib fondning bir qismini (soliqdan keyin) oladi, durang bo\'lsa ikkalasiga ham o\'z puli to\'liq qaytariladi. Bu firibgarlik va sun\'iy Coin ishlab chiqarishning oldini oladi.';
+	@override String get telegramBotQuestion => 'Zukkor Telegram boti nima uchun kerak?';
+	@override String get telegramBotAnswer => '@zukkor_bot - rasmiy Telegram botimiz. U orqali Diamond sotib olasiz va Telegram hisobingizni Zukkor akkauntingizga bog\'lab, kuniga bir marta bepul Diamond olishingiz mumkin. Ochish uchun "Sozlamalar → Telegram bilan bog\'lash" yoki Hamyon ekranidagi tugmani bosing.';
 	@override String get diamondFreeGetQuestion => 'Diamondni qanday bepul olaman?';
-	@override String get diamondFreeGetAnswer => 'Telegram botimizga ulanib, kuniga bir marta "Bugungi bepul Diamond" tugmasini bosing. Diamond balansingiz hech qachon 200 tadan oshmaydi.';
+	@override String get diamondFreeGetAnswer => '@zukkor_bot\'ga ulanib, kuniga bir marta "Bugungi bepul Diamond" tugmasini bosing. Diamond balansingiz hech qachon 200 tadan oshmaydi.';
 	@override String get aiLimitQuestion => 'AI orqali savol/quiz yaratishning chegarasi bormi?';
 	@override String get aiLimitAnswer => 'Ha, har bir foydalanuvchi kuniga 5 martagacha AI-generatsiya qila oladi. Chegaraga yetsangiz, ertangi kunni kutishingiz kerak bo\'ladi.';
 	@override String get appealQuestion => 'AI savolimni/taklifimni rad etdi, nima qilaman?';
@@ -982,6 +985,8 @@ class _Translations$wallet$uz implements Translations$wallet$en {
 
 	// Translations
 	@override String get title => 'Hamyon';
+	@override String get buyDiamondsHint => 'Diamond sotib olish uchun Telegram botimizdan foydalaning';
+	@override String get openBot => 'Botni ochish';
 	@override String get emptyState => 'Hali hech qanday harakat yo\'q';
 	@override String get currentBalance => 'Joriy balans';
 	@override String get reasonDailyLogin => 'Kunlik kirish bonusi';
@@ -1005,12 +1010,33 @@ class _Translations$telegramLink$uz implements Translations$telegramLink$en {
 
 	// Translations
 	@override String get title => 'Telegram bilan bog\'lash';
-	@override String get description => 'Telegram botimizga o\'ting va /start yozing - bot sizga 6 xonali kod beradi. Kodni shu yerga kiriting.';
+	@override String get description => '@zukkor_bot\'ga o\'ting va /start yozing - bot sizga 6 xonali kod beradi. Kodni shu yerga kiriting.';
+	@override String get openBot => '@zukkor_bot\'ni ochish';
 	@override String get codeLabel => 'Kod';
 	@override String get codeHint => '123456';
 	@override String get submit => 'Bog\'lash';
 	@override String get success => 'Muvaffaqiyatli bog\'landi!';
 	@override String get alreadyLinked => 'Telegram hisobingiz ulangan ✅';
+}
+
+// Path: homeTour
+class _Translations$homeTour$uz implements Translations$homeTour$en {
+	_Translations$homeTour$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get duelTitle => 'Duel';
+	@override String get duelDesc => 'Do\'stingizni chaqirib, jonli 1v1 bilim musobaqasida kim kuchli ekanini aniqlang.';
+	@override String get multiplayerTitle => 'Xona';
+	@override String get multiplayerDesc => 'Bir nechta do\'stingiz bilan birga o\'ynash uchun xona yarating yoki kod orqali qo\'shiling.';
+	@override String get categoriesTitle => 'Kategoriyalar';
+	@override String get categoriesDesc => 'Yakka o\'zingiz sinab ko\'rish uchun mavzuni tanlang - barcha kategoriyalarni "Hammasi" orqali ko\'rasiz.';
+	@override String get navTitle => 'Pastki panel';
+	@override String get navDesc => 'Bosh sahifa, Reyting, Do\'stlar va Profil - shu yerdan o\'tasiz. Markazdagi tugma AI yordamida tezkor quiz yaratadi.';
+	@override String get skip => 'O\'tkazib yuborish';
+	@override String get next => 'Keyingisi';
+	@override String get done => 'Tushunarli';
 }
 
 /// The flat map containing all translations for locale <uz>.
@@ -1262,8 +1288,10 @@ extension on TranslationsUz {
 			'helpCenter.reportAnswer' => 'Shu Yordam markazi orqali biz bilan bog\'laning. Biz kichik jamoamiz va har bir xabar Zukkorni yaxshilashga yordam beradi.',
 			'helpCenter.duelStakeQuestion' => 'Duelda nega Coin tikiladi?',
 			'helpCenter.duelStakeAnswer' => 'Duel boshlanganda ikkala o\'yinchidan ham belgilangan miqdorda Coin yechiladi. G\'olib fondning bir qismini (soliqdan keyin) oladi, durang bo\'lsa ikkalasiga ham o\'z puli to\'liq qaytariladi. Bu firibgarlik va sun\'iy Coin ishlab chiqarishning oldini oladi.',
+			'helpCenter.telegramBotQuestion' => 'Zukkor Telegram boti nima uchun kerak?',
+			'helpCenter.telegramBotAnswer' => '@zukkor_bot - rasmiy Telegram botimiz. U orqali Diamond sotib olasiz va Telegram hisobingizni Zukkor akkauntingizga bog\'lab, kuniga bir marta bepul Diamond olishingiz mumkin. Ochish uchun "Sozlamalar → Telegram bilan bog\'lash" yoki Hamyon ekranidagi tugmani bosing.',
 			'helpCenter.diamondFreeGetQuestion' => 'Diamondni qanday bepul olaman?',
-			'helpCenter.diamondFreeGetAnswer' => 'Telegram botimizga ulanib, kuniga bir marta "Bugungi bepul Diamond" tugmasini bosing. Diamond balansingiz hech qachon 200 tadan oshmaydi.',
+			'helpCenter.diamondFreeGetAnswer' => '@zukkor_bot\'ga ulanib, kuniga bir marta "Bugungi bepul Diamond" tugmasini bosing. Diamond balansingiz hech qachon 200 tadan oshmaydi.',
 			'helpCenter.aiLimitQuestion' => 'AI orqali savol/quiz yaratishning chegarasi bormi?',
 			'helpCenter.aiLimitAnswer' => 'Ha, har bir foydalanuvchi kuniga 5 martagacha AI-generatsiya qila oladi. Chegaraga yetsangiz, ertangi kunni kutishingiz kerak bo\'ladi.',
 			'helpCenter.appealQuestion' => 'AI savolimni/taklifimni rad etdi, nima qilaman?',
@@ -1456,6 +1484,8 @@ extension on TranslationsUz {
 			'gameLeave.stay' => 'Qolish',
 			'gameLeave.leave' => 'Chiqish',
 			'wallet.title' => 'Hamyon',
+			'wallet.buyDiamondsHint' => 'Diamond sotib olish uchun Telegram botimizdan foydalaning',
+			'wallet.openBot' => 'Botni ochish',
 			'wallet.emptyState' => 'Hali hech qanday harakat yo\'q',
 			'wallet.currentBalance' => 'Joriy balans',
 			'wallet.reasonDailyLogin' => 'Kunlik kirish bonusi',
@@ -1470,12 +1500,24 @@ extension on TranslationsUz {
 			'wallet.reasonStreakFreeze' => 'Streak himoyasi',
 			'wallet.reasonOther' => 'Boshqa',
 			'telegramLink.title' => 'Telegram bilan bog\'lash',
-			'telegramLink.description' => 'Telegram botimizga o\'ting va /start yozing - bot sizga 6 xonali kod beradi. Kodni shu yerga kiriting.',
+			'telegramLink.description' => '@zukkor_bot\'ga o\'ting va /start yozing - bot sizga 6 xonali kod beradi. Kodni shu yerga kiriting.',
+			'telegramLink.openBot' => '@zukkor_bot\'ni ochish',
 			'telegramLink.codeLabel' => 'Kod',
 			'telegramLink.codeHint' => '123456',
 			'telegramLink.submit' => 'Bog\'lash',
 			'telegramLink.success' => 'Muvaffaqiyatli bog\'landi!',
 			'telegramLink.alreadyLinked' => 'Telegram hisobingiz ulangan ✅',
+			'homeTour.duelTitle' => 'Duel',
+			'homeTour.duelDesc' => 'Do\'stingizni chaqirib, jonli 1v1 bilim musobaqasida kim kuchli ekanini aniqlang.',
+			'homeTour.multiplayerTitle' => 'Xona',
+			'homeTour.multiplayerDesc' => 'Bir nechta do\'stingiz bilan birga o\'ynash uchun xona yarating yoki kod orqali qo\'shiling.',
+			'homeTour.categoriesTitle' => 'Kategoriyalar',
+			'homeTour.categoriesDesc' => 'Yakka o\'zingiz sinab ko\'rish uchun mavzuni tanlang - barcha kategoriyalarni "Hammasi" orqali ko\'rasiz.',
+			'homeTour.navTitle' => 'Pastki panel',
+			'homeTour.navDesc' => 'Bosh sahifa, Reyting, Do\'stlar va Profil - shu yerdan o\'tasiz. Markazdagi tugma AI yordamida tezkor quiz yaratadi.',
+			'homeTour.skip' => 'O\'tkazib yuborish',
+			'homeTour.next' => 'Keyingisi',
+			'homeTour.done' => 'Tushunarli',
 			_ => null,
 		};
 	}

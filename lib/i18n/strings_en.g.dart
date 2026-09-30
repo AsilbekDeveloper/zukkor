@@ -91,6 +91,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$gameLeave$en gameLeave = Translations$gameLeave$en._(_root);
 	late final Translations$wallet$en wallet = Translations$wallet$en._(_root);
 	late final Translations$telegramLink$en telegramLink = Translations$telegramLink$en._(_root);
+	late final Translations$homeTour$en homeTour = Translations$homeTour$en._(_root);
 }
 
 // Path: common
@@ -1148,11 +1149,17 @@ class Translations$helpCenter$en {
 	/// en: 'When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.'
 	String get duelStakeAnswer => 'When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.';
 
+	/// en: 'What is the Zukkor Telegram bot for?'
+	String get telegramBotQuestion => 'What is the Zukkor Telegram bot for?';
+
+	/// en: '@zukkor_bot is our official Telegram bot. Use it to buy Diamonds and link your Telegram account to your Zukkor account so you can claim a free Diamond once a day. Open it from "Settings → Link Telegram" or the button on the Wallet screen.'
+	String get telegramBotAnswer => '@zukkor_bot is our official Telegram bot. Use it to buy Diamonds and link your Telegram account to your Zukkor account so you can claim a free Diamond once a day. Open it from "Settings → Link Telegram" or the button on the Wallet screen.';
+
 	/// en: 'How do I get free Diamond?'
 	String get diamondFreeGetQuestion => 'How do I get free Diamond?';
 
-	/// en: 'Link our Telegram bot and tap "Today's free Diamond" once a day. Your Diamond balance never exceeds 200.'
-	String get diamondFreeGetAnswer => 'Link our Telegram bot and tap "Today\'s free Diamond" once a day. Your Diamond balance never exceeds 200.';
+	/// en: 'Link @zukkor_bot and tap "Today's free Diamond" once a day. Your Diamond balance never exceeds 200.'
+	String get diamondFreeGetAnswer => 'Link @zukkor_bot and tap "Today\'s free Diamond" once a day. Your Diamond balance never exceeds 200.';
 
 	/// en: 'Is there a limit on AI question/quiz generation?'
 	String get aiLimitQuestion => 'Is there a limit on AI question/quiz generation?';
@@ -1856,6 +1863,12 @@ class Translations$wallet$en {
 	/// en: 'Wallet'
 	String get title => 'Wallet';
 
+	/// en: 'Use our Telegram bot to buy Diamonds'
+	String get buyDiamondsHint => 'Use our Telegram bot to buy Diamonds';
+
+	/// en: 'Open bot'
+	String get openBot => 'Open bot';
+
 	/// en: 'No activity yet'
 	String get emptyState => 'No activity yet';
 
@@ -1907,8 +1920,11 @@ class Translations$telegramLink$en {
 	/// en: 'Link Telegram'
 	String get title => 'Link Telegram';
 
-	/// en: 'Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.'
-	String get description => 'Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.';
+	/// en: 'Open @zukkor_bot and send /start - the bot will give you a 6-digit code. Enter it here.'
+	String get description => 'Open @zukkor_bot and send /start - the bot will give you a 6-digit code. Enter it here.';
+
+	/// en: 'Open @zukkor_bot'
+	String get openBot => 'Open @zukkor_bot';
 
 	/// en: 'Code'
 	String get codeLabel => 'Code';
@@ -1924,6 +1940,48 @@ class Translations$telegramLink$en {
 
 	/// en: 'Your Telegram account is linked ✅'
 	String get alreadyLinked => 'Your Telegram account is linked ✅';
+}
+
+// Path: homeTour
+class Translations$homeTour$en {
+	Translations$homeTour$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Duel'
+	String get duelTitle => 'Duel';
+
+	/// en: 'Challenge a friend to a live 1v1 knowledge match and see who's sharper.'
+	String get duelDesc => 'Challenge a friend to a live 1v1 knowledge match and see who\'s sharper.';
+
+	/// en: 'Room'
+	String get multiplayerTitle => 'Room';
+
+	/// en: 'Create a room to play with several friends, or join one with a code.'
+	String get multiplayerDesc => 'Create a room to play with several friends, or join one with a code.';
+
+	/// en: 'Categories'
+	String get categoriesTitle => 'Categories';
+
+	/// en: 'Pick a topic to play solo - see every category via "See all".'
+	String get categoriesDesc => 'Pick a topic to play solo - see every category via "See all".';
+
+	/// en: 'Bottom bar'
+	String get navTitle => 'Bottom bar';
+
+	/// en: 'Home, Leaderboard, Friends and Profile live here. The center button opens a quick AI-generated quiz.'
+	String get navDesc => 'Home, Leaderboard, Friends and Profile live here. The center button opens a quick AI-generated quiz.';
+
+	/// en: 'Skip'
+	String get skip => 'Skip';
+
+	/// en: 'Next'
+	String get next => 'Next';
+
+	/// en: 'Got it'
+	String get done => 'Got it';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -2175,8 +2233,10 @@ extension on Translations {
 			'helpCenter.reportAnswer' => 'Reach out to us through this Help Center. We are a small team and every report helps us improve Zukkor.',
 			'helpCenter.duelStakeQuestion' => 'Why does a duel stake Coin?',
 			'helpCenter.duelStakeAnswer' => 'When a duel starts, a fixed Coin stake is taken from both players. The winner gets a share of the pot (after a small tax), and a draw refunds both players in full. This protects against cheating and artificial Coin farming.',
+			'helpCenter.telegramBotQuestion' => 'What is the Zukkor Telegram bot for?',
+			'helpCenter.telegramBotAnswer' => '@zukkor_bot is our official Telegram bot. Use it to buy Diamonds and link your Telegram account to your Zukkor account so you can claim a free Diamond once a day. Open it from "Settings → Link Telegram" or the button on the Wallet screen.',
 			'helpCenter.diamondFreeGetQuestion' => 'How do I get free Diamond?',
-			'helpCenter.diamondFreeGetAnswer' => 'Link our Telegram bot and tap "Today\'s free Diamond" once a day. Your Diamond balance never exceeds 200.',
+			'helpCenter.diamondFreeGetAnswer' => 'Link @zukkor_bot and tap "Today\'s free Diamond" once a day. Your Diamond balance never exceeds 200.',
 			'helpCenter.aiLimitQuestion' => 'Is there a limit on AI question/quiz generation?',
 			'helpCenter.aiLimitAnswer' => 'Yes, each user can generate up to 5 AI quizzes per day. Once you hit the limit, you\'ll need to wait until the next day.',
 			'helpCenter.appealQuestion' => 'The AI rejected my question or submission, what can I do?',
@@ -2369,6 +2429,8 @@ extension on Translations {
 			'gameLeave.stay' => 'Stay',
 			'gameLeave.leave' => 'Leave',
 			'wallet.title' => 'Wallet',
+			'wallet.buyDiamondsHint' => 'Use our Telegram bot to buy Diamonds',
+			'wallet.openBot' => 'Open bot',
 			'wallet.emptyState' => 'No activity yet',
 			'wallet.currentBalance' => 'Current balance',
 			'wallet.reasonDailyLogin' => 'Daily login bonus',
@@ -2383,12 +2445,24 @@ extension on Translations {
 			'wallet.reasonStreakFreeze' => 'Streak freeze',
 			'wallet.reasonOther' => 'Other',
 			'telegramLink.title' => 'Link Telegram',
-			'telegramLink.description' => 'Open our Telegram bot and send /start - the bot will give you a 6-digit code. Enter it here.',
+			'telegramLink.description' => 'Open @zukkor_bot and send /start - the bot will give you a 6-digit code. Enter it here.',
+			'telegramLink.openBot' => 'Open @zukkor_bot',
 			'telegramLink.codeLabel' => 'Code',
 			'telegramLink.codeHint' => '123456',
 			'telegramLink.submit' => 'Link',
 			'telegramLink.success' => 'Linked successfully!',
 			'telegramLink.alreadyLinked' => 'Your Telegram account is linked ✅',
+			'homeTour.duelTitle' => 'Duel',
+			'homeTour.duelDesc' => 'Challenge a friend to a live 1v1 knowledge match and see who\'s sharper.',
+			'homeTour.multiplayerTitle' => 'Room',
+			'homeTour.multiplayerDesc' => 'Create a room to play with several friends, or join one with a code.',
+			'homeTour.categoriesTitle' => 'Categories',
+			'homeTour.categoriesDesc' => 'Pick a topic to play solo - see every category via "See all".',
+			'homeTour.navTitle' => 'Bottom bar',
+			'homeTour.navDesc' => 'Home, Leaderboard, Friends and Profile live here. The center button opens a quick AI-generated quiz.',
+			'homeTour.skip' => 'Skip',
+			'homeTour.next' => 'Next',
+			'homeTour.done' => 'Got it',
 			_ => null,
 		};
 	}
