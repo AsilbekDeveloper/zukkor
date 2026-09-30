@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../config/app_config.dart';
-import '../extensions/context_x.dart';
 
 /// A user's avatar — a real uploaded photo when [avatarImagePath] is set,
-/// otherwise a colored circle (or [gradient]) with [initials]. Used
-/// everywhere a real user's avatar appears (Home, Profile, Leaderboard,
-/// Friends) so a photo or color choice shows up consistently across the
-/// app instead of each screen drawing its own placeholder circle.
+/// otherwise a neutral gray person-silhouette placeholder (Instagram-style,
+/// 2026-09-30 foydalanuvchi so'rovi) instead of [initials]. Used everywhere
+/// a real user's avatar appears (Home, Profile, Leaderboard, Friends) so a
+/// photo or the same default shows up consistently across the app instead
+/// of each screen drawing its own placeholder circle.
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
     required this.size,
@@ -69,24 +70,23 @@ class UserAvatar extends StatelessWidget {
     return path.startsWith('/') ? '${AppConfig.apiBaseUrl}$path' : '${AppConfig.apiBaseUrl}/$path';
   }
 
+  static const Color _silhouetteBackground = Color(0xFFDBDBDB);
+  static const Color _silhouetteIcon = Color(0xFFAFAFAF);
+
   Widget _fallback(BuildContext context, BorderRadius radius) {
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         borderRadius: radius,
-        color: gradient == null ? (backgroundColor ?? context.colors.coral) : null,
+        color: gradient == null ? _silhouetteBackground : null,
         gradient: gradient,
       ),
       alignment: Alignment.center,
-      child: Text(
-        initials,
-        style: TextStyle(
-          fontFamily: 'PlusJakartaSans',
-          fontWeight: FontWeight.w700,
-          fontSize: fontSize ?? size * 0.32,
-          color: Colors.white,
-        ),
+      child: Icon(
+        TablerIcons.userFilled,
+        size: size * 0.62,
+        color: _silhouetteIcon,
       ),
     );
   }
