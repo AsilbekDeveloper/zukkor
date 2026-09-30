@@ -23,7 +23,16 @@ Future<void> main() async {
 
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+      FlutterError.onError = (FlutterErrorDetails details) {
+        // RenderFlex overflow (UI piksel to'lishi) ilovani qulatmaydi, shuning uchun
+        // Crashlytics'da "Fatal Crash" o'rniga non-fatal qilib yozamiz.
+        final bool isOverflowError = details.exceptionAsString().contains('RenderFlex overflowed');
+        if (isOverflowError) {
+          FirebaseCrashlytics.instance.recordFlutterError(details);
+        } else {
+          FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+        }
+      };
       PlatformDispatcher.instance.onError = (error, stack) {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return true;

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "555852548477-b7rfsjp2uph63jglphjr6gsrc9ng8ghm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zukkor.app",
+            "certificate_hash": "d02536430d301356b3e3327900ba022020747916"
+          }
+        },
+        {
           "client_id": "555852548477-dp6aq0m0arqpegg0jlkmhcebuk8htahi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

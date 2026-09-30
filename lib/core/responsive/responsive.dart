@@ -11,8 +11,8 @@ extension ScreenPaddingX on BuildContext {
 Widget clampTextScaling(
   BuildContext context,
   Widget? child, {
-  double min = 1.0,
-  double max = 1.3,
+  double min = 0.9,
+  double max = 1.2,
 }) {
   final MediaQueryData mq = MediaQuery.of(context);
   return MediaQuery(

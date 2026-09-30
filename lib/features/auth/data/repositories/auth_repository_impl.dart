@@ -75,8 +75,26 @@ class AuthRepositoryImpl implements AuthRepository {
     final String? idToken;
     try {
       idToken = await _googleAuthDataSource.signIn();
-    } on GoogleSignInException {
+    } on GoogleSignInException catch (e, st) {
+      unawaited(
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          st,
+          fatal: false,
+          reason: 'Google Sign-In failed: ${e.code}',
+        ),
+      );
       throw UnknownFailure();
+    } catch (e, st) {
+      unawaited(
+        FirebaseCrashlytics.instance.recordError(
+          e,
+          st,
+          fatal: false,
+          reason: 'Google Auth unexpected failure',
+        ),
+      );
+      rethrow;
     }
     if (idToken == null) return null;
 

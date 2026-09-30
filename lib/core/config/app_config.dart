@@ -26,7 +26,10 @@ abstract final class AppConfig {
   /// mo'ljallangan (`aud` da'vosi) bo'lishini ta'minlaydi, backend ham
   /// tokenni shu client ID'ga qarshi tekshiradi. Bo'sh bo'lsa Google
   /// Sign-In tugmasi ishlamaydi (hali sozlanmagan).
-  static const String googleServerClientId = String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+  static const String googleServerClientId = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+    defaultValue: '555852548477-dua2j5ckbnekll14stvgq2d1500ad8oj.apps.googleusercontent.com',
+  );
 
   /// Diamond sotib olish va akkaunt bog'lash uchun ishlatiladigan rasmiy
   /// Telegram bot. Foydalanuvchiga ko'rsatiladigan har qanday matn/havola
