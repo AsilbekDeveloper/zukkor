@@ -23,6 +23,7 @@ abstract final class AppRoutes {
   static const String lobby = '/lobby';
   static const String lobbyResult = '/lobby-result';
   static const String fullLeaderboard = '/leaderboard/full';
+  static const String categoryLeaderboard = '/leaderboard/category';
   static const String playerDetail = '/leaderboard/player';
   static const String settings = '/profile/settings';
   static const String history = '/profile/history';

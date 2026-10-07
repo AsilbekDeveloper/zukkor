@@ -44,10 +44,14 @@
     "you": "Siz",
     "seeFullRanking": "To'liq reytingni ko'rish",
     "xpValue": "$xp XP",
-    "anonymousPlayer": "O'yinchi"
+    "anonymousPlayer": "O'yinchi",
+    "byCategoryButton": "Kategoriya bo'yicha reyting"
   },
   "fullLeaderboard": {
     "title": "To'liq reyting"
+  },
+  "categoryLeaderboard": {
+    "emptyState": "Bu kategoriyada hali hech kim o'ynamagan"
   },
   "achievements": {
     "title": "Yutuqlaringiz",

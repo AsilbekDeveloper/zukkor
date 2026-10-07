@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../domain/entities/leaderboard_scope.dart';
+import '../models/category_leaderboard_data_model.dart';
 import '../models/leaderboard_data_model.dart';
 import '../models/player_stats_model.dart';
 
@@ -34,6 +35,18 @@ class LeaderboardRemoteDataSource {
   Future<PlayerStatsModel> getPlayerStats(String userId) async {
     final Response<dynamic> response = await _dio.get(ApiEndpoints.playerStats(userId));
     return PlayerStatsModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  Future<CategoryLeaderboardDataModel> getCategoryLeaderboard({
+    required int categoryId,
+    int limit = 20,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async {
+    final Response<dynamic> response = await _dio.get(
+      ApiEndpoints.categoryLeaderboard(categoryId, limit: limit, scope: _scopeParam(scope), offset: offset),
+    );
+    return CategoryLeaderboardDataModel.fromJson(response.data as Map<String, dynamic>);
   }
 }
 

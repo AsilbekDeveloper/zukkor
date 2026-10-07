@@ -28,6 +28,7 @@ import 'package:zukkor/features/history/domain/entities/weekly_activity.dart';
 import 'package:zukkor/features/history/domain/repositories/history_repository.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/leaderboard/data/repositories/leaderboard_repository_impl.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/category_leaderboard_data.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_data.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
@@ -125,6 +126,15 @@ class _FakeHistoryRepository extends Fake implements HistoryRepository {
 }
 
 class _FakeLeaderboardRepository implements LeaderboardRepository {
+  @override
+  Future<CategoryLeaderboardData> getCategoryLeaderboard({
+    required int categoryId,
+    int limit = 20,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async =>
+      throw UnimplementedError('getCategoryLeaderboard not faked in this test');
+
   @override
   Future<LeaderboardData> getLeaderboard({
     int limit = 50,

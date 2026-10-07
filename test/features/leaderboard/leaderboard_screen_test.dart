@@ -9,6 +9,7 @@ import 'package:zukkor/core/storage/app_preferences.dart';
 import 'package:zukkor/core/theme/app_theme.dart';
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/leaderboard/data/repositories/leaderboard_repository_impl.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/category_leaderboard_data.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_data.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
@@ -25,6 +26,15 @@ import 'package:zukkor/i18n/strings.g.dart';
 /// `GET /leaderboard?scope=...` javobiga mos, har bir kesim uchun turli
 /// ma'lumot (kesimlar haqiqatan alohida so'rov ekanini tekshirish uchun).
 class _FakeLeaderboardRepository implements LeaderboardRepository {
+  @override
+  Future<CategoryLeaderboardData> getCategoryLeaderboard({
+    required int categoryId,
+    int limit = 20,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async =>
+      throw UnimplementedError('getCategoryLeaderboard not faked in this test');
+
   final List<LeaderboardScope> requestedScopes = [];
 
   @override

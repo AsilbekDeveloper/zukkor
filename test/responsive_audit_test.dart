@@ -46,12 +46,14 @@ import 'package:zukkor/features/history/presentation/screens/history_screen.dart
 import 'package:zukkor/features/home/presentation/screens/home_screen.dart';
 import 'package:zukkor/features/introduction/presentation/screens/introduction_screen.dart';
 import 'package:zukkor/features/leaderboard/data/repositories/leaderboard_repository_impl.dart';
+import 'package:zukkor/features/leaderboard/domain/entities/category_leaderboard_data.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_data.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/leaderboard_scope.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/player_stats.dart';
 import 'package:zukkor/features/leaderboard/domain/entities/rank_entry.dart';
 import 'package:zukkor/features/leaderboard/domain/repositories/leaderboard_repository.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/achievements_screen.dart';
+import 'package:zukkor/features/leaderboard/presentation/screens/category_leaderboard_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import 'package:zukkor/features/leaderboard/presentation/screens/leaderboard_screen.dart';
 import 'package:zukkor/features/lobby/domain/entities/lobby_final_result.dart';
@@ -232,6 +234,13 @@ final List<_ScreenCase> _screens = [
     ),
   ),
   (name: 'FullLeaderboard', builder: (_) => const FullLeaderboardScreen()),
+  (
+    name: 'CategoryLeaderboard',
+    builder: (_) => const CategoryLeaderboardScreen(
+      categoryId: 1,
+      categoryName: 'Tarix',
+    ),
+  ),
   (
     name: 'PlayerDetail',
     builder: (_) =>
@@ -417,6 +426,15 @@ class _FakePushNotificationService implements PushNotificationService {
 }
 
 class _FakeLeaderboardRepository implements LeaderboardRepository {
+  @override
+  Future<CategoryLeaderboardData> getCategoryLeaderboard({
+    required int categoryId,
+    int limit = 20,
+    LeaderboardScope scope = LeaderboardScope.allTime,
+    int offset = 0,
+  }) async =>
+      throw UnimplementedError('getCategoryLeaderboard not faked in this test');
+
   @override
   Future<LeaderboardData> getLeaderboard({
     int limit = 50,

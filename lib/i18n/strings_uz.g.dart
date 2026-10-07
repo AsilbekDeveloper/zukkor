@@ -42,6 +42,7 @@ class TranslationsUz with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$categories$uz categories = _Translations$categories$uz._(_root);
 	@override late final _Translations$leaderboard$uz leaderboard = _Translations$leaderboard$uz._(_root);
 	@override late final _Translations$fullLeaderboard$uz fullLeaderboard = _Translations$fullLeaderboard$uz._(_root);
+	@override late final _Translations$categoryLeaderboard$uz categoryLeaderboard = _Translations$categoryLeaderboard$uz._(_root);
 	@override late final _Translations$achievements$uz achievements = _Translations$achievements$uz._(_root);
 	@override late final _Translations$playerDetail$uz playerDetail = _Translations$playerDetail$uz._(_root);
 	@override late final _Translations$friends$uz friends = _Translations$friends$uz._(_root);
@@ -173,6 +174,7 @@ class _Translations$leaderboard$uz implements Translations$leaderboard$en {
 	@override String get seeFullRanking => 'To\'liq reytingni ko\'rish';
 	@override String xpValue({required Object xp}) => '${xp} XP';
 	@override String get anonymousPlayer => 'O\'yinchi';
+	@override String get byCategoryButton => 'Kategoriya bo\'yicha reyting';
 }
 
 // Path: fullLeaderboard
@@ -183,6 +185,16 @@ class _Translations$fullLeaderboard$uz implements Translations$fullLeaderboard$e
 
 	// Translations
 	@override String get title => 'To\'liq reyting';
+}
+
+// Path: categoryLeaderboard
+class _Translations$categoryLeaderboard$uz implements Translations$categoryLeaderboard$en {
+	_Translations$categoryLeaderboard$uz._(this._root);
+
+	final TranslationsUz _root; // ignore: unused_field
+
+	// Translations
+	@override String get emptyState => 'Bu kategoriyada hali hech kim o\'ynamagan';
 }
 
 // Path: achievements
@@ -1086,7 +1098,9 @@ extension on TranslationsUz {
 			'leaderboard.seeFullRanking' => 'To\'liq reytingni ko\'rish',
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
 			'leaderboard.anonymousPlayer' => 'O\'yinchi',
+			'leaderboard.byCategoryButton' => 'Kategoriya bo\'yicha reyting',
 			'fullLeaderboard.title' => 'To\'liq reyting',
+			'categoryLeaderboard.emptyState' => 'Bu kategoriyada hali hech kim o\'ynamagan',
 			'achievements.title' => 'Yutuqlaringiz',
 			'achievements.streakBadge' => ({required Object count}) => '${count} kunlik olov',
 			'achievements.winsBadge' => ({required Object count}) => '${count}-g\'alaba',

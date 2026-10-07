@@ -28,6 +28,7 @@ import '../../features/history/presentation/screens/history_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/introduction/presentation/screens/introduction_screen.dart';
 import '../../features/leaderboard/presentation/screens/achievements_screen.dart';
+import '../../features/leaderboard/presentation/screens/category_leaderboard_screen.dart';
 import '../../features/leaderboard/presentation/screens/full_leaderboard_screen.dart';
 import '../../features/leaderboard/presentation/screens/leaderboard_screen.dart';
 import '../../features/lobby/presentation/controllers/lobby_controller.dart';
@@ -104,6 +105,23 @@ CategoryPickedCallback _lobbyCategoryPicked(String roomId) =>
           ctx.pop();
         },
       ),
+    );
+
+/// `/categories`ga shu sentinel `extra` bilan kelinsa, tanlangan
+/// kategoriya o'ynash uchun emas, balki uning reytingini ko'rish uchun
+/// ishlatiladi — [_duelCategoryPicked]/[_lobbyCategoryPicked] bilan bir
+/// xil "kim bosilganda nima bo'ladi"ni router darajasida hal qilish
+/// naqshi (2026-10-07).
+class CategoryLeaderboardPick {
+  const CategoryLeaderboardPick();
+}
+
+const CategoryLeaderboardPick categoryLeaderboardPick = CategoryLeaderboardPick();
+
+CategoryPickedCallback _leaderboardCategoryPicked() =>
+    (context, ref, category) => context.push(
+      AppRoutes.categoryLeaderboard,
+      extra: (categoryId: category.id, categoryName: category.name),
     );
 
 /// Marshrutlar. Ilova [SplashScreen]dan boshlanadi: u saqlangan token'ni
@@ -205,6 +223,11 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
               onCategoryPicked: _lobbyCategoryPicked(extra),
               onAiQuizEntryTap: () =>
                   context.push(AppRoutes.myAiQuizzes, extra: extra),
+            );
+          }
+          if (extra is CategoryLeaderboardPick) {
+            return CategoriesScreen(
+              onCategoryPicked: _leaderboardCategoryPicked(),
             );
           }
           return const CategoriesScreen();
@@ -335,6 +358,20 @@ final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.fullLeaderboard,
         builder: (context, state) => const FullLeaderboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.categoryLeaderboard,
+        redirect: (context, state) =>
+            state.extra is ({int categoryId, String categoryName})
+            ? null
+            : AppRoutes.leaderboard,
+        builder: (context, state) {
+          final args = state.extra! as ({int categoryId, String categoryName});
+          return CategoryLeaderboardScreen(
+            categoryId: args.categoryId,
+            categoryName: args.categoryName,
+          );
+        },
       ),
       // `extra` is a plain `Map` (userId + optional relation/requestId/
       // requestSent) rather than a typed args object — this is the one

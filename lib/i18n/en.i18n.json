@@ -44,10 +44,14 @@
     "you": "You",
     "seeFullRanking": "See full ranking",
     "xpValue": "$xp XP",
-    "anonymousPlayer": "Player"
+    "anonymousPlayer": "Player",
+    "byCategoryButton": "Leaderboard by category"
   },
   "fullLeaderboard": {
     "title": "Full ranking"
+  },
+  "categoryLeaderboard": {
+    "emptyState": "No one has played this category yet"
   },
   "achievements": {
     "title": "Your achievements",

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../../../core/models/avatar_color_option.dart';
 import '../../../../i18n/strings.g.dart';
+import '../../domain/entities/category_leaderboard_data.dart';
 import '../../domain/entities/leaderboard_data.dart';
 import '../../domain/entities/player_stats.dart';
 import '../../domain/entities/rank_entry.dart';
@@ -124,6 +125,32 @@ extension LeaderboardDataRankedWithMe on LeaderboardData {
     if (ranked.any((entry) => entry.isCurrentUser)) return ranked;
 
     final LeaderboardEntry meEntry = LeaderboardEntry.fromEntity(me);
+    final int insertIndex = ranked.indexWhere(
+      (entry) => entry.rank > meEntry.rank,
+    );
+    if (insertIndex == -1) {
+      ranked.add(meEntry);
+    } else {
+      ranked.insert(insertIndex, meEntry);
+    }
+    return ranked;
+  }
+}
+
+extension CategoryLeaderboardDataRankedWithMe on CategoryLeaderboardData {
+  /// [LeaderboardDataRankedWithMe.rankedWithMe] bilan bir xil, faqat [me]
+  /// `null` bo'lishi mumkin — foydalanuvchi shu kategoriyada hali hech
+  /// qachon o'ynamagan bo'lsa, reytingga qo'shiladigan "o'zi" qatori yo'q.
+  List<LeaderboardEntry> get rankedWithMe {
+    final List<LeaderboardEntry> ranked = entries
+        .map(LeaderboardEntry.fromEntity)
+        .toList();
+    final RankEntry? myEntry = me;
+    if (myEntry == null || ranked.any((entry) => entry.isCurrentUser)) {
+      return ranked;
+    }
+
+    final LeaderboardEntry meEntry = LeaderboardEntry.fromEntity(myEntry);
     final int insertIndex = ranked.indexWhere(
       (entry) => entry.rank > meEntry.rank,
     );

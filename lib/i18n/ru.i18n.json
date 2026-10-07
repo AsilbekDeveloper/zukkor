@@ -59,10 +59,14 @@
     "you": "Вы",
     "seeFullRanking": "Смотреть полный рейтинг",
     "xpValue": "$xp XP",
-    "anonymousPlayer": "Игрок"
+    "anonymousPlayer": "Игрок",
+    "byCategoryButton": "Рейтинг по категории"
   },
   "fullLeaderboard": {
     "title": "Полный рейтинг"
+  },
+  "categoryLeaderboard": {
+    "emptyState": "В этой категории ещё никто не играл"
   },
   "achievements": {
     "title": "Ваши достижения",

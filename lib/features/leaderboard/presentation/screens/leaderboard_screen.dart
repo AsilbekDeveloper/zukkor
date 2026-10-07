@@ -6,6 +6,7 @@ import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/responsive/responsive.dart';
+import '../../../../core/router/app_router.dart' show categoryLeaderboardPick;
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/error_retry_view.dart';
@@ -77,6 +78,9 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
     context.push(AppRoutes.playerDetail, extra: {'userId': entry.id!});
   }
 
+  void _openCategoryPicker(BuildContext context) =>
+      context.push(AppRoutes.categories, extra: categoryLeaderboardPick);
+
   /// Segment control + top-3 podium + the rest of the ranked list. Falls
   /// back to a plain list (no podium) if there aren't at least 3 ranked
   /// players yet.
@@ -103,6 +107,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
         _SeeFullRankingButton(
           onTap: () => context.push(AppRoutes.fullLeaderboard),
         ),
+        _CategoryLeaderboardButton(onTap: () => _openCategoryPicker(context)),
       ];
     }
 
@@ -126,6 +131,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
       _SeeFullRankingButton(
         onTap: () => context.push(AppRoutes.fullLeaderboard),
       ),
+      _CategoryLeaderboardButton(onTap: () => _openCategoryPicker(context)),
     ];
   }
 
@@ -201,6 +207,31 @@ class _SeeFullRankingButton extends StatelessWidget {
             icon: const Icon(TablerIcons.chevronRight, size: 16),
             label: Text(context.t.leaderboard.seeFullRanking),
             iconAlignment: IconAlignment.end,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryLeaderboardButton extends StatelessWidget {
+  const _CategoryLeaderboardButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeSlideIn(
+      delay: const Duration(milliseconds: 180),
+      child: Center(
+        child: PressableScale(
+          child: TextButton.icon(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              onTap();
+            },
+            icon: const Icon(TablerIcons.category, size: 16),
+            label: Text(context.t.leaderboard.byCategoryButton),
           ),
         ),
       ),

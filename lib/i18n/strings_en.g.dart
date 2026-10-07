@@ -45,6 +45,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final Translations$categories$en categories = Translations$categories$en._(_root);
 	late final Translations$leaderboard$en leaderboard = Translations$leaderboard$en._(_root);
 	late final Translations$fullLeaderboard$en fullLeaderboard = Translations$fullLeaderboard$en._(_root);
+	late final Translations$categoryLeaderboard$en categoryLeaderboard = Translations$categoryLeaderboard$en._(_root);
 	late final Translations$achievements$en achievements = Translations$achievements$en._(_root);
 	late final Translations$playerDetail$en playerDetail = Translations$playerDetail$en._(_root);
 	late final Translations$friends$en friends = Translations$friends$en._(_root);
@@ -254,6 +255,9 @@ class Translations$leaderboard$en {
 
 	/// en: 'Player'
 	String get anonymousPlayer => 'Player';
+
+	/// en: 'Leaderboard by category'
+	String get byCategoryButton => 'Leaderboard by category';
 }
 
 // Path: fullLeaderboard
@@ -266,6 +270,18 @@ class Translations$fullLeaderboard$en {
 
 	/// en: 'Full ranking'
 	String get title => 'Full ranking';
+}
+
+// Path: categoryLeaderboard
+class Translations$categoryLeaderboard$en {
+	Translations$categoryLeaderboard$en._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'No one has played this category yet'
+	String get emptyState => 'No one has played this category yet';
 }
 
 // Path: achievements
@@ -2031,7 +2047,9 @@ extension on Translations {
 			'leaderboard.seeFullRanking' => 'See full ranking',
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
 			'leaderboard.anonymousPlayer' => 'Player',
+			'leaderboard.byCategoryButton' => 'Leaderboard by category',
 			'fullLeaderboard.title' => 'Full ranking',
+			'categoryLeaderboard.emptyState' => 'No one has played this category yet',
 			'achievements.title' => 'Your achievements',
 			'achievements.streakBadge' => ({required Object count}) => '${count}-day streak',
 			'achievements.winsBadge' => ({required Object count}) => '${count} wins',

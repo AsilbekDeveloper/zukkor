@@ -52,6 +52,15 @@ abstract final class ApiEndpoints {
   }) => '/leaderboard?limit=$limit&scope=$scope&offset=$offset';
   static String playerStats(String userId) => '/leaderboard/$userId';
 
+  // Kategoriya bo'yicha reyting (2026-10-07'da qo'shildi).
+  static String categoryLeaderboard(
+    int categoryId, {
+    int limit = 20,
+    String scope = 'all_time',
+    int offset = 0,
+  }) =>
+      '/leaderboard/category/$categoryId?limit=$limit&scope=$scope&offset=$offset';
+
   // Game history (2026-07-18'da qo'shildi).
   static String history({int limit = 50, int offset = 0}) =>
       '/history?limit=$limit&offset=$offset';

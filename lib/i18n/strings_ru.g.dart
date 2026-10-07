@@ -42,6 +42,7 @@ class TranslationsRu with BaseTranslations<AppLocale, Translations> implements T
 	@override late final _Translations$categories$ru categories = _Translations$categories$ru._(_root);
 	@override late final _Translations$leaderboard$ru leaderboard = _Translations$leaderboard$ru._(_root);
 	@override late final _Translations$fullLeaderboard$ru fullLeaderboard = _Translations$fullLeaderboard$ru._(_root);
+	@override late final _Translations$categoryLeaderboard$ru categoryLeaderboard = _Translations$categoryLeaderboard$ru._(_root);
 	@override late final _Translations$achievements$ru achievements = _Translations$achievements$ru._(_root);
 	@override late final _Translations$playerDetail$ru playerDetail = _Translations$playerDetail$ru._(_root);
 	@override late final _Translations$friends$ru friends = _Translations$friends$ru._(_root);
@@ -179,6 +180,7 @@ class _Translations$leaderboard$ru implements Translations$leaderboard$en {
 	@override String get seeFullRanking => 'Смотреть полный рейтинг';
 	@override String xpValue({required Object xp}) => '${xp} XP';
 	@override String get anonymousPlayer => 'Игрок';
+	@override String get byCategoryButton => 'Рейтинг по категории';
 }
 
 // Path: fullLeaderboard
@@ -189,6 +191,16 @@ class _Translations$fullLeaderboard$ru implements Translations$fullLeaderboard$e
 
 	// Translations
 	@override String get title => 'Полный рейтинг';
+}
+
+// Path: categoryLeaderboard
+class _Translations$categoryLeaderboard$ru implements Translations$categoryLeaderboard$en {
+	_Translations$categoryLeaderboard$ru._(this._root);
+
+	final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get emptyState => 'В этой категории ещё никто не играл';
 }
 
 // Path: achievements
@@ -1092,7 +1104,9 @@ extension on TranslationsRu {
 			'leaderboard.seeFullRanking' => 'Смотреть полный рейтинг',
 			'leaderboard.xpValue' => ({required Object xp}) => '${xp} XP',
 			'leaderboard.anonymousPlayer' => 'Игрок',
+			'leaderboard.byCategoryButton' => 'Рейтинг по категории',
 			'fullLeaderboard.title' => 'Полный рейтинг',
+			'categoryLeaderboard.emptyState' => 'В этой категории ещё никто не играл',
 			'achievements.title' => 'Ваши достижения',
 			'achievements.streakBadge' => ({required Object count}) => '${count} дн. подряд',
 			'achievements.winsBadge' => ({required Object count}) => '${count} побед',
