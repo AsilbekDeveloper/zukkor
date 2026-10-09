@@ -130,6 +130,21 @@ class Translations$common$en {
 	/// en: 'Reconnecting…'
 	String get reconnecting => 'Reconnecting…';
 
+	/// en: 'Back'
+	String get back => 'Back';
+
+	/// en: 'Close'
+	String get close => 'Close';
+
+	/// en: 'Show password'
+	String get showPassword => 'Show password';
+
+	/// en: 'Hide password'
+	String get hidePassword => 'Hide password';
+
+	/// en: 'Clear search'
+	String get clearSearch => 'Clear search';
+
 	/// en: '(one) {day} (other) {days}'
 	String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count,
 		one: 'day',
@@ -2017,6 +2032,11 @@ extension on Translations {
 			'common.codeCopied' => 'Code copied',
 			'common.delete' => 'Delete',
 			'common.reconnecting' => 'Reconnecting…',
+			'common.back' => 'Back',
+			'common.close' => 'Close',
+			'common.showPassword' => 'Show password',
+			'common.hidePassword' => 'Hide password',
+			'common.clearSearch' => 'Clear search',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: 'day', other: 'days', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} friend', other: '${count} friends', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(count, one: '${count} question', other: '${count} questions', ), 

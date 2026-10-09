@@ -108,6 +108,11 @@ class _Translations$common$uz implements Translations$common$en {
 	@override String get codeCopied => 'Kod nusxalandi';
 	@override String get delete => 'O\'chirish';
 	@override String get reconnecting => 'Qayta ulanmoqda…';
+	@override String get back => 'Orqaga';
+	@override String get close => 'Yopish';
+	@override String get showPassword => 'Parolni ko\'rsatish';
+	@override String get hidePassword => 'Parolni berkitish';
+	@override String get clearSearch => 'Qidiruvni tozalash';
 	@override String dayUnit({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count,
 		one: 'kun',
 		other: 'kun',
@@ -1068,6 +1073,11 @@ extension on TranslationsUz {
 			'common.codeCopied' => 'Kod nusxalandi',
 			'common.delete' => 'O\'chirish',
 			'common.reconnecting' => 'Qayta ulanmoqda…',
+			'common.back' => 'Orqaga',
+			'common.close' => 'Yopish',
+			'common.showPassword' => 'Parolni ko\'rsatish',
+			'common.hidePassword' => 'Parolni berkitish',
+			'common.clearSearch' => 'Qidiruvni tozalash',
 			'common.dayUnit' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: 'kun', other: 'kun', ), 
 			'common.friendsCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} do\'stingiz bor', other: '${count} do\'stingiz bor', ), 
 			'common.questionCount' => ({required num count}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uz'))(count, one: '${count} savol', other: '${count} savol', ), 

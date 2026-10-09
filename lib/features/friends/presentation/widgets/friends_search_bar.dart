@@ -6,6 +6,7 @@ import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/pressable_scale.dart';
+import '../../../../i18n/strings.g.dart';
 
 /// A real search field — mirrors the prototype's `.search-bar`. Reused by
 /// both the Friends list ("Search friends") and Add Friend ("Search by
@@ -88,10 +89,12 @@ class FriendsSearchBar extends StatelessWidget {
           ),
           if (controller.text.isNotEmpty)
             PressableScale(
-              child: InkWell(
-                onTap: _clear,
-                borderRadius: AppRadius.smAll,
-                child: Icon(
+              child: IconButton(
+                onPressed: _clear,
+                tooltip: context.t.common.clearSearch,
+                constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                padding: EdgeInsets.zero,
+                icon: Icon(
                   TablerIcons.x,
                   color: context.colors.muted,
                   size: 16,

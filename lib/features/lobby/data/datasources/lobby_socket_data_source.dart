@@ -144,7 +144,8 @@ class LobbySocketDataSource {
 
   void _checkConnectionHealth() {
     if (_channel == null) return;
-    if (DateTime.now().difference(_lastActivityAt) <= _deadConnectionThreshold) {
+    if (DateTime.now().difference(_lastActivityAt) <=
+        _deadConnectionThreshold) {
       return;
     }
     disconnect();
@@ -209,11 +210,28 @@ class LobbySocketDataSource {
     _channel = null;
     _connectionController.add(false);
   }
+
+  /// Permanently releases this data source — only call on provider
+  /// disposal, never on a routine reconnect (unlike [disconnect], this
+  /// closes the broadcast controllers, so no further events can be
+  /// emitted afterwards).
+  void dispose() {
+    disconnect();
+    _connectionController.close();
+    _roomUpdateController.close();
+    _joinErrorController.close();
+    _closedController.close();
+    _gameStartedController.close();
+    _questionController.close();
+    _waitingForOthersController.close();
+    _questionResultController.close();
+    _gameFinishedController.close();
+  }
 }
 
 final Provider<LobbySocketDataSource> lobbySocketDataSourceProvider =
     Provider<LobbySocketDataSource>((ref) {
       final ds = LobbySocketDataSource(ref.watch(tokenStorageProvider));
-      ref.onDispose(() => ds.disconnect());
+      ref.onDispose(ds.dispose);
       return ds;
     });

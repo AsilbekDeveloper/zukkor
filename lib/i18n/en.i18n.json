@@ -9,6 +9,11 @@
     "codeCopied": "Code copied",
     "delete": "Delete",
     "reconnecting": "Reconnecting…",
+    "back": "Back",
+    "close": "Close",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "clearSearch": "Clear search",
     "dayUnit(param=count)": { "one": "day", "other": "days" },
     "friendsCount(param=count)": { "one": "$count friend", "other": "$count friends" },
     "questionCount(param=count)": { "one": "$count question", "other": "$count questions" }

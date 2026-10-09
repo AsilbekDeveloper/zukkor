@@ -274,11 +274,35 @@ class DuelSocketDataSource {
     _channel = null;
     _connectionController.add(false);
   }
+
+  /// Permanently releases this data source — only call on provider
+  /// disposal, never on a routine reconnect (unlike [disconnect], this
+  /// closes the broadcast controllers, so no further events can be
+  /// emitted afterwards).
+  void dispose() {
+    disconnect();
+    _connectionController.close();
+    _inviteReceivedController.close();
+    _inviteAckController.close();
+    _inviteAcceptedController.close();
+    _inviteDeclinedController.close();
+    _inviteExpiredController.close();
+    _duelStartedController.close();
+    _duelQuestionController.close();
+    _opponentProgressController.close();
+    _duelQuestionResultController.close();
+    _waitingForOpponentController.close();
+    _duelFinishedController.close();
+    _duelCancelledController.close();
+    _errorController.close();
+    _opponentDisconnectedController.close();
+    _opponentReconnectedController.close();
+  }
 }
 
 final Provider<DuelSocketDataSource> duelSocketDataSourceProvider =
     Provider<DuelSocketDataSource>((ref) {
       final ds = DuelSocketDataSource(ref.watch(tokenStorageProvider));
-      ref.onDispose(() => ds.disconnect());
+      ref.onDispose(ds.dispose);
       return ds;
     });

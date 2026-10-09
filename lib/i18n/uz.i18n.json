@@ -9,6 +9,11 @@
     "codeCopied": "Kod nusxalandi",
     "delete": "O'chirish",
     "reconnecting": "Qayta ulanmoqda…",
+    "back": "Orqaga",
+    "close": "Yopish",
+    "showPassword": "Parolni ko'rsatish",
+    "hidePassword": "Parolni berkitish",
+    "clearSearch": "Qidiruvni tozalash",
     "dayUnit(param=count)": { "one": "kun", "other": "kun" },
     "friendsCount(param=count)": { "one": "$count do'stingiz bor", "other": "$count do'stingiz bor" },
     "questionCount(param=count)": { "one": "$count savol", "other": "$count savol" }

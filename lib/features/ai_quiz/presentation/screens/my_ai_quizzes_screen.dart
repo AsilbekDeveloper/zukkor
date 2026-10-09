@@ -237,7 +237,11 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
       final bool hasSelection = _selectedIds.isNotEmpty;
       return Row(
         children: [
-          _HeaderIconButton(icon: TablerIcons.x, onTap: _exitSelectionMode),
+          _HeaderIconButton(
+            icon: TablerIcons.x,
+            onTap: _exitSelectionMode,
+            semanticLabel: context.t.common.close,
+          ),
           Expanded(
             child: Text(
               context.t.aiQuiz.selectedCount(count: _selectedIds.length),
@@ -253,6 +257,7 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
                 ? context.colors.coralDeep
                 : context.colors.muted,
             onTap: hasSelection ? _confirmDeleteSelected : null,
+            semanticLabel: context.t.common.delete,
           ),
         ],
       );
@@ -260,7 +265,11 @@ class _MyAiQuizzesScreenState extends ConsumerState<MyAiQuizzesScreen> {
 
     return Row(
       children: [
-        _HeaderIconButton(icon: TablerIcons.arrowLeft, onTap: _goBack),
+        _HeaderIconButton(
+          icon: TablerIcons.arrowLeft,
+          onTap: _goBack,
+          semanticLabel: context.t.common.back,
+        ),
         Expanded(
           child: Text(
             context.t.aiQuiz.myQuizzesTitle,
@@ -389,11 +398,13 @@ class _HeaderIconButton extends StatelessWidget {
   const _HeaderIconButton({
     required this.icon,
     required this.onTap,
+    required this.semanticLabel,
     this.color,
   });
 
   final IconData icon;
   final VoidCallback? onTap;
+  final String semanticLabel;
   final Color? color;
 
   @override
@@ -417,7 +428,12 @@ class _HeaderIconButton extends StatelessWidget {
           child: SizedBox(
             width: 44,
             height: 44,
-            child: Icon(icon, color: color ?? context.colors.ink, size: 20),
+            child: Icon(
+              icon,
+              color: color ?? context.colors.ink,
+              size: 20,
+              semanticLabel: semanticLabel,
+            ),
           ),
         ),
       ),

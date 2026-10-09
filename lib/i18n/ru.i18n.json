@@ -9,6 +9,11 @@
     "codeCopied": "Код скопирован",
     "delete": "Удалить",
     "reconnecting": "Переподключение…",
+    "back": "Назад",
+    "close": "Закрыть",
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль",
+    "clearSearch": "Очистить поиск",
     "dayUnit(param=count)": {
       "one": "день",
       "few": "дня",

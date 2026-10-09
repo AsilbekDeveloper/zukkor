@@ -22,16 +22,19 @@ class AuthInterceptor extends QueuedInterceptor {
     required TokenStorage tokenStorage,
     required void Function() onSessionExpired,
     Dio? refreshDio,
-  })  : _tokenStorage = tokenStorage,
-        _onSessionExpired = onSessionExpired,
-        // Refresh so'rovi uchun ALOHIDA, interceptor'siz Dio —
-        // aks holda refresh'ning o'zi 401 olsa cheksiz tsikl bo'lardi.
-        _refreshDio = refreshDio ??
-            Dio(BaseOptions(
-              baseUrl: AppConfig.apiBaseUrl,
-              connectTimeout: AppConfig.connectTimeout,
-              receiveTimeout: AppConfig.receiveTimeout,
-            ));
+  }) : _tokenStorage = tokenStorage,
+       _onSessionExpired = onSessionExpired,
+       // Refresh so'rovi uchun ALOHIDA, interceptor'siz Dio —
+       // aks holda refresh'ning o'zi 401 olsa cheksiz tsikl bo'lardi.
+       _refreshDio =
+           refreshDio ??
+           Dio(
+             BaseOptions(
+               baseUrl: AppConfig.apiBaseUrl,
+               connectTimeout: AppConfig.connectTimeout,
+               receiveTimeout: AppConfig.receiveTimeout,
+             ),
+           );
 
   final TokenStorage _tokenStorage;
   final void Function() _onSessionExpired;
@@ -70,6 +73,31 @@ class AuthInterceptor extends QueuedInterceptor {
 
     if (!isUnauthorized || isAuthRequest) {
       handler.next(err);
+      return;
+    }
+
+    // [QueuedInterceptor] only serializes `onError` calls — it doesn't by
+    // itself dedupe the refresh. If several requests 401 at once with the
+    // SAME stale token, by the time this one's turn comes another sibling
+    // may have already refreshed: the stored access token will then
+    // differ from what THIS failed request was sent with. In that case,
+    // just retry with the token that's already current instead of
+    // hitting the refresh endpoint again — that's what makes "refresh
+    // fires only once" actually true instead of once per 401.
+    final String? requestAccessHeader =
+        err.requestOptions.headers['Authorization'] as String?;
+    final String? currentAccess = await _tokenStorage.readAccessToken();
+    if (currentAccess != null &&
+        requestAccessHeader != null &&
+        requestAccessHeader != 'Bearer $currentAccess') {
+      try {
+        final RequestOptions original = err.requestOptions;
+        original.headers['Authorization'] = 'Bearer $currentAccess';
+        final Response<dynamic> retried = await _refreshDio.fetch(original);
+        handler.resolve(retried);
+      } on DioException catch (retryError) {
+        handler.next(retryError);
+      }
       return;
     }
 

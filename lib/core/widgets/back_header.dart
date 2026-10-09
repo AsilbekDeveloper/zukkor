@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../i18n/strings.g.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
 import 'pressable_scale.dart';
@@ -66,6 +67,7 @@ class _BackIconButton extends StatelessWidget {
               TablerIcons.arrowLeft,
               color: context.colors.ink,
               size: 20,
+              semanticLabel: context.t.common.back,
             ),
           ),
         ),

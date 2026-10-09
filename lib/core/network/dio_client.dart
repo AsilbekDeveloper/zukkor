@@ -28,9 +28,16 @@ final Provider<Dio> dioProvider = Provider<Dio>((ref) {
   );
 
   // So'rov loglari faqat debug buildda — release'da hech narsa chiqmaydi.
+  // requestHeader/responseHeader o'chirilgan: aks holda Authorization
+  // tokeni har bir so'rovda konsolga (logcat) chiqib qolardi.
   if (kDebugMode) {
     dio.interceptors.add(
-      LogInterceptor(requestBody: true, responseBody: true),
+      LogInterceptor(
+        requestHeader: false,
+        responseHeader: false,
+        requestBody: true,
+        responseBody: true,
+      ),
     );
   }
 

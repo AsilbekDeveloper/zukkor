@@ -50,6 +50,7 @@ class QuizProgressHeader extends StatelessWidget {
                   TablerIcons.arrowLeft,
                   color: context.colors.ink,
                   size: 20,
+                  semanticLabel: context.t.common.back,
                 ),
               ),
             ),

@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/analytics/analytics_service.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extensions/context_x.dart';
 import '../../../../core/extensions/num_x.dart';
@@ -14,14 +13,9 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/state/game_status_provider.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../i18n/strings.g.dart';
-import '../../../auth/presentation/controllers/current_user_controller.dart';
-import '../../../history/presentation/controllers/history_controller.dart';
-import '../../../leaderboard/presentation/controllers/my_stats_controller.dart';
-import '../../domain/entities/answer_result.dart';
 import '../../domain/entities/quiz_question_data.dart';
 import '../controllers/quiz_controller.dart';
 import '../models/quiz_category.dart';
-import '../models/quiz_result.dart';
 import '../widgets/answer_button.dart';
 import '../widgets/question_card.dart';
 import '../widgets/question_timer.dart';
@@ -31,6 +25,12 @@ import '../widgets/quiz_progress_header.dart';
 /// real `POST /quiz/start` / `POST /quiz/{session_id}/answer` session loop
 /// for [category] (Categories/Home → Setup → Intro, and Duel all pick from
 /// the same real category grid) — scoring is server-authoritative.
+///
+/// The session itself (current question, running ball total, server
+/// summary) lives in [QuizController] — this screen only renders that
+/// state and drives navigation off it. The countdown [AnimationController]
+/// and the leave-confirm dialog are the only things that stay here, since
+/// those are genuinely view concerns.
 class QuizScreen extends ConsumerStatefulWidget {
   const QuizScreen({
     required this.category,
@@ -52,16 +52,6 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
 
   late final AnimationController _timerController;
   Timer? _pauseTimer;
-
-  bool _answered = false;
-  int? _selectedIndex;
-
-  bool _starting = true;
-  String? _sessionId;
-  QuizQuestionData? _currentQuestion;
-  int? _lastCorrectIndex;
-  AnswerResult? _pendingAnswerResult;
-  int _totalBall = 0;
 
   @override
   void initState() {
@@ -101,25 +91,16 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
 
   Future<void> _startSession() async {
     try {
-      final result = await ref
+      await ref
           .read(quizControllerProvider.notifier)
-          .startQuiz(
-            categoryId: widget.category.id,
+          .startSession(
+            category: widget.category,
             questionCount: widget.questionCount,
           );
       if (!mounted) return;
-      setState(() {
-        _sessionId = result.sessionId;
-        _currentQuestion = result.question;
-        _starting = false;
-      });
-      unawaited(
-        ref
-            .read(analyticsServiceProvider)
-            .logGameStart(mode: 'solo', categoryId: widget.category.id),
-      );
+      final QuizSessionState session = ref.read(quizControllerProvider);
       _timerController.duration = Duration(
-        milliseconds: _currentQuestion!.timeLimitMs,
+        milliseconds: session.currentQuestion!.timeLimitMs,
       );
       unawaited(_timerController.forward());
     } on Failure catch (e) {
@@ -134,25 +115,23 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
   }
 
   void _onTimerStatusChanged(AnimationStatus status) {
-    if (status == AnimationStatus.completed && !_answered) {
+    if (status == AnimationStatus.completed &&
+        !ref.read(quizControllerProvider).answered) {
       _lockInAnswer(null);
     }
   }
 
   void _lockInAnswer(int? pickedIndex) {
-    if (_answered || _starting) return;
+    final QuizSessionState session = ref.read(quizControllerProvider);
+    if (session.answered || session.starting) return;
     unawaited(_lockInAnswerReal(pickedIndex));
   }
 
   Future<void> _lockInAnswerReal(int? pickedIndex) async {
     _timerController.stop();
-    final int correctIndex = _currentQuestion!.correctOptionIndex;
-    setState(() {
-      _answered = true;
-      _selectedIndex = pickedIndex;
-      _lastCorrectIndex = correctIndex;
-    });
-    final bool wasCorrect = pickedIndex == correctIndex;
+    final bool wasCorrect =
+        pickedIndex ==
+        ref.read(quizControllerProvider).currentQuestion!.correctOptionIndex;
     // Duel/Lobby o'yin ekranlari bilan bir xil - alohida his qilinadigan
     // haptic ([[duel_game_screen]]).
     unawaited(
@@ -163,24 +142,28 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
     // reveal" pause run CONCURRENTLY, not one after the other — a slow
     // network no longer stacks on top of the fixed pause (previously the
     // wait was network_time + 900ms; now it's max(network_time, 900ms)).
-    final Future<AnswerResult> answerFuture = ref
+    final Future<void> submitFuture = ref
         .read(quizControllerProvider.notifier)
-        .submitAnswer(
-          sessionId: _sessionId!,
-          sessionQuestionId: _currentQuestion!.sessionQuestionId,
-          selectedOption: pickedIndex,
-        );
+        .submitAnswer(selectedOption: pickedIndex);
     final Future<void> pauseFuture = _pause(_feedbackDelay);
 
     try {
-      final AnswerResult result =
-          (await Future.wait([answerFuture, pauseFuture]))[0] as AnswerResult;
+      await Future.wait([submitFuture, pauseFuture]);
       if (!mounted) return;
-      setState(() {
-        _totalBall += result.ballEarned;
-        _pendingAnswerResult = result;
-      });
-      _advanceReal();
+      ref
+          .read(quizControllerProvider.notifier)
+          .commitPendingResult(widget.category);
+      final QuizSessionState session = ref.read(quizControllerProvider);
+      if (session.result != null) {
+        context.pushReplacement(AppRoutes.ballReveal, extra: session.result);
+        return;
+      }
+      _timerController
+        ..duration = Duration(
+          milliseconds: session.currentQuestion!.timeLimitMs,
+        )
+        ..reset();
+      unawaited(_timerController.forward());
     } on Failure catch (e) {
       if (!mounted) return;
       context.showSnack(e.message);
@@ -192,68 +175,15 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
     }
   }
 
-  void _advanceReal() {
-    if (!mounted) return;
-    final AnswerResult result = _pendingAnswerResult!;
-
-    if (result.isSessionComplete) {
-      final summary = result.summary!;
-      final QuizResult quizResult = QuizResult(
-        category: widget.category,
-        correctCount: summary.correctCount,
-        totalCount: summary.totalQuestions,
-        xpEarned: summary.xpEarned,
-        totalBall: summary.totalBall,
-        breakdown: summary.breakdown,
-      );
-      // This session's own XP/history just changed server-side — drop
-      // the cached copy so History fetches fresh next time it's visited
-      // (a regular pushed screen, so it always remounts). Home/Profile
-      // are different: they live in the persistent bottom-nav shell and
-      // never remount, so merely invalidating would leave them stuck
-      // showing 0/0/0 forever (2026-09-06, reported from a live device -
-      // "stats go to 0 after finishing any quiz and returning home") -
-      // reload it immediately here instead of hoping some screen's
-      // initState notices the invalidation later.
-      ref.invalidate(historyControllerProvider);
-      ref.invalidate(myStatsControllerProvider);
-      final String? statsUserId = ref
-          .read(currentUserControllerProvider)
-          .data
-          ?.id;
-      if (statsUserId != null) {
-        unawaited(
-          ref.read(myStatsControllerProvider.notifier).load(statsUserId),
-        );
-      }
-      ref
-          .read(analyticsServiceProvider)
-          .logGameComplete(
-            mode: 'solo',
-            categoryId: widget.category.id,
-            xpEarned: summary.xpEarned,
-            ballEarned: summary.totalBall,
-          );
-      context.pushReplacement(AppRoutes.ballReveal, extra: quizResult);
-      return;
+  AnswerVisualState _stateFor(
+    int optionIndex,
+    int? correctIndex,
+    QuizSessionState session,
+  ) {
+    if (!session.answered || correctIndex == null) {
+      return AnswerVisualState.idle;
     }
-
-    setState(() {
-      _currentQuestion = result.nextQuestion;
-      _answered = false;
-      _selectedIndex = null;
-      _lastCorrectIndex = null;
-      _pendingAnswerResult = null;
-    });
-    _timerController
-      ..duration = Duration(milliseconds: _currentQuestion!.timeLimitMs)
-      ..reset()
-      ..forward();
-  }
-
-  AnswerVisualState _stateFor(int optionIndex, int? correctIndex) {
-    if (!_answered || correctIndex == null) return AnswerVisualState.idle;
-    if (optionIndex == _selectedIndex) {
+    if (optionIndex == session.selectedIndex) {
       return optionIndex == correctIndex
           ? AnswerVisualState.pickedCorrect
           : AnswerVisualState.pickedWrong;
@@ -300,17 +230,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_starting) {
+    final QuizSessionState session = ref.watch(quizControllerProvider);
+    if (session.starting) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final QuizQuestionData question = _currentQuestion!;
+    final QuizQuestionData question = session.currentQuestion!;
     final int questionNumber = question.order;
     final int totalQuestions = question.total;
     final String questionText = question.questionText;
     final List<String> options = question.options;
-    final int score = _totalBall;
-    final int? correctIndexForDisplay = _lastCorrectIndex;
+    final int score = session.totalBall;
+    final int? correctIndexForDisplay = session.lastCorrectIndex;
 
     return PopScope(
       canPop: false,
@@ -353,8 +284,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen>
                   AnswerButton(
                     letter: String.fromCharCode(65 + i),
                     text: options[i],
-                    state: _stateFor(i, correctIndexForDisplay),
-                    onTap: _answered ? null : () => _lockInAnswer(i),
+                    state: _stateFor(i, correctIndexForDisplay, session),
+                    onTap: session.answered ? null : () => _lockInAnswer(i),
                   ),
                   if (i < options.length - 1) AppSpacing.sm.vGap,
                 ],

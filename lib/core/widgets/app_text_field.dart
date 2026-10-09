@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tabler_icons_plus/tabler_icons_plus.dart';
 
+import '../../i18n/strings.g.dart';
 import '../extensions/context_x.dart';
 import '../theme/app_spacing.dart';
 import 'pressable_scale.dart';
@@ -106,6 +107,9 @@ class _AppTextFieldState extends State<AppTextField> {
                         HapticFeedback.lightImpact();
                         setState(() => _obscured = !_obscured);
                       },
+                      tooltip: _obscured
+                          ? context.t.common.showPassword
+                          : context.t.common.hidePassword,
                       icon: Icon(
                         _obscured ? TablerIcons.eye : TablerIcons.eyeOff,
                         size: 20,
